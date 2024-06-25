@@ -12,5 +12,6 @@ public class Yj_TripController {
 	private Yj_TripService service;
 	
 	// 예진 깃허브 연결 확인용 주석
+	// 데스크탑 확인
 
 }
