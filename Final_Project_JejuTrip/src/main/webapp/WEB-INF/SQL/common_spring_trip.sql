@@ -127,22 +127,22 @@ CREATE TABLE tbl_food_store (
 	food_main_img VARCHAR2(100), /* 대표이미지 */
 	review_division VARCHAR2(10) default 'B', /* 리뷰용구분컬럼(default) B */
     CONSTRAINT PK_tbl_food_store PRIMARY KEY (food_store_code),
-    CONSTRAINT FK_tbl_local_TO_tbl_food_store FOREIGN KEY (fk_local_code) REFERENCES tbl_local (local_code) on delete cascade,
-	CONSTRAINT FK_tbl_food_category_TO_tbl_food_store FOREIGN KEY (fk_food_category_code) REFERENCES tbl_food_category (food_category_code)  on delete cascade	
+    CONSTRAINT FK_tbl_local_code FOREIGN KEY (fk_local_code) REFERENCES tbl_local (local_code) on delete cascade,
+	CONSTRAINT FK_tbl_food_category_code FOREIGN KEY (fk_food_category_code) REFERENCES tbl_food_category (food_category_code)  on delete cascade	
 );
+-- Table TBL_FOOD_STORE이(가) 생성되었습니다.
 
 
 /* 숙소 */
 CREATE TABLE tbl_lodging(
 	lodging_code VARCHAR2(20) NOT NULL, /* 숙소일련번호 */
-	fk_local_code VARCHAR2(20), /* 지역코드 */
-	fk_lodging_category_code VARCHAR2(20), /* 숙소카테고리일련번호 */
-	fk_companyid VARCHAR2(20), /* 업체아이디 */
-	lodging_name VARCHAR2(50), /* 숙소이름 */
+	fk_local_code VARCHAR2(20) NOT NULL, /* 지역코드 */
+	fk_lodging_category_code VARCHAR2(20) NOT NULL, /* 숙소카테고리일련번호 */
+	fk_companyid VARCHAR2(20) NOT NULL, /* 업체아이디 */
+	lodging_name VARCHAR2(50) NOT NULL, /* 숙소이름 */
 	lodging_tell VARCHAR2(20), /* 숙소연락처 */
 	lodging_content VARCHAR2(1000), /* 숙소설명 */
 	lodging_address VARCHAR2(200), /* 상세주소 */
-	conventent VARCHAR2(100), /* 편의시설 */
 	main_img VARCHAR2(100), /* 대표이미지 */
 	review_division VARCHAR2(10) default 'A', /* 리뷰용구분컬럼(default) A */
     CONSTRAINT PK_tbl_lodging PRIMARY KEY (lodging_code),
@@ -150,6 +150,7 @@ CREATE TABLE tbl_lodging(
     CONSTRAINT FK_tbl_lodging_category_code FOREIGN KEY (fk_lodging_category_code) REFERENCES tbl_lodging_category (lodging_category_code) on delete cascade,
     CONSTRAINT FK_tbl_company_fk_companyid FOREIGN KEY (fk_companyid) REFERENCES tbl_company (companyid) on delete cascade
 );
+-- Table TBL_LODGING이(가) 생성되었습니다.
 
 
 /* 숙소별 편의시설 */
@@ -160,6 +161,7 @@ CREATE TABLE tbl_lodging_convenient  (
     CONSTRAINT FK_tbl_convenient_code FOREIGN KEY (fk_convenient_code) REFERENCES tbl_convenient (convenient_code) on delete cascade,
     CONSTRAINT FK_tbl_lodging_code FOREIGN KEY (fk_lodging_code) REFERENCES tbl_lodging (lodging_code) on delete cascade
 );
+-- Table TBL_LODGING_CONVENIENT이(가) 생성되었습니다.
 
 /* 즐길거리 */
 CREATE TABLE tbl_play (
