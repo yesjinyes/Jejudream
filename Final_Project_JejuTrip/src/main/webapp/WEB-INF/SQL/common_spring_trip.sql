@@ -166,15 +166,16 @@ CREATE TABLE tbl_lodging_convenient  (
 /* 즐길거리 */
 CREATE TABLE tbl_play (
 	play_code VARCHAR2(20) NOT NULL, /* 즐길거리일련번호 */
-	fk_play_category_code VARCHAR2(20), /* 즐길거리카테고리일련번호 */
-	fk_local_code VARCHAR2(20), /* 지역코드 */
+	fk_play_category_code VARCHAR2(20) NOT NULL, /* 즐길거리카테고리일련번호 */
+	fk_local_code VARCHAR2(20) NOT NULL, /* 지역코드 */
 	play_address VARCHAR2(200), /* 상세주소 */
 	play_main_img VARCHAR2(100), /* 대표이미지 */
-	review_divisionC VARCHAR2(10), /* 리뷰용구분컬럼(default) C */
+	review_division VARCHAR2(10) default 'C', /* 리뷰용구분컬럼(default) C */
     CONSTRAINT PK_tbl_play 	PRIMARY KEY (play_code),
-    CONSTRAINT FK_tbl_local_TO_tbl_play FOREIGN KEY (fk_local_code) REFERENCES tbl_local (local_code) on delete cascade,
-    CONSTRAINT FK_tbl_play_category_TO_tbl_play FOREIGN KEY (fk_play_category_code)	REFERENCES tbl_play_category (play_category_code) on delete cascade
+    CONSTRAINT FK_tbl_play_local_code FOREIGN KEY (fk_local_code) REFERENCES tbl_local (local_code) on delete cascade,
+    CONSTRAINT FK_tbl_play_category_code FOREIGN KEY (fk_play_category_code) REFERENCES tbl_play_category (play_category_code) on delete cascade
 );
+-- Table TBL_PLAY이(가) 생성되었습니다.
 
 
 
@@ -182,18 +183,18 @@ CREATE TABLE tbl_play (
 /* 숙소객실 */
 CREATE TABLE tbl_room_detail (
 	room_detail_code VARCHAR2(20) NOT NULL, /* 숙소객실일련번호 */
-	fk_lodging_code VARCHAR2(20), /* 숙소일련번호 */
-	room_name VARCHAR2(50), /* 객실이름 */
-	price VARCHAR2(50), /* 객실가격 */
-	check_in VARCHAR2(100), /* 체크인시간 */
-	check_out VARCHAR2(100), /* 체크아웃시간 */
-	room_stock VARCHAR2(20), /* 객실수량 */
-	min_person VARCHAR2(20), /* 기존인원 */
-	max_person VARCHAR2(20), /* 최대인원 */
+	fk_lodging_code VARCHAR2(20) NOT NULL, /* 숙소일련번호 */
+	room_name VARCHAR2(50) NOT NULL, /* 객실이름 */
+	price NUMBER(10) NOT NULL, /* 객실가격 */
+	check_in VARCHAR2(100) NOT NULL, /* 체크인시간 */
+	check_out VARCHAR2(100) NOT NULL, /* 체크아웃시간 */
+	room_stock NUMBER(1) NOT NULL, /* 객실수량 */
+	min_person NUMBER(2) default 2, /* 기존인원 */
+	max_person NUMBER(2) default 2, /* 최대인원 */
     CONSTRAINT PK_tbl_room_detail_code PRIMARY KEY (room_detail_code),
-    CONSTRAINT FK_tbl_room_detail_fk_lodging_code FOREIGN KEY (fk_lodging_code) REFERENCES tbl_lodging (lodging_code) on delete cascade
+    CONSTRAINT FK_tbl_room_detail_fk_code FOREIGN KEY (fk_lodging_code) REFERENCES tbl_lodging (lodging_code) on delete cascade
 );
-
+-- Table TBL_ROOM_DETAIL이(가) 생성되었습니다.
 
 
 
@@ -202,15 +203,15 @@ CREATE TABLE tbl_reservation (
 	reservation_code VARCHAR2(20) NOT NULL, /* 예약일련번호 */
 	fk_userid VARCHAR2(20), /* 아이디 */
 	fk_room_detail_code VARCHAR2(20), /* 숙소객실일련번호 */
-	reservation_date DATE, /* 예약일자 */
-	check_in VARCHAR2(100), /* 체크인일자 */
-	check_out VARCHAR2(100), /* 체크아웃일자 */
-	price VARCHAR2(100), /* 예약가격 */
+	reservation_date DATE default sysdate, /* 예약일자 */
+	check_in date, /* 체크인일자 */
+	check_out date, /* 체크아웃일자 */
+	reservation_price NUMBER(10) NOT NULL, /* 예약가격 */
     CONSTRAINT PK_tbl_reservation_code PRIMARY KEY (reservation_code),
-    CONSTRAINT FK_tbl_reservation_fk_room_detail_code FOREIGN KEY (fk_room_detail_code) REFERENCES tbl_room_detail (room_detail_code) on delete cascade,
+    CONSTRAINT FK_tbl_reservation_fk_roomcode FOREIGN KEY (fk_room_detail_code) REFERENCES tbl_room_detail (room_detail_code) on delete cascade,
     CONSTRAINT FK_tbl_member_fk_userid FOREIGN KEY (fk_userid)	REFERENCES tbl_member (userid) on delete cascade
 );
-
+-- Table TBL_RESERVATION이(가) 생성되었습니다.
 
 
 
@@ -222,7 +223,7 @@ CREATE TABLE tbl_food_add_img (
     CONSTRAINT PK_tbl_food_add_img_code PRIMARY KEY (food_add_code),
     CONSTRAINT FK_tbl_food_store_code FOREIGN KEY (fk_food_store_code) REFERENCES tbl_food_store (food_store_code) on delete cascade
 );
-
+-- Table TBL_FOOD_ADD_IMG이(가) 생성되었습니다.
 
 
 /* 객실추가이미지 */
@@ -233,6 +234,8 @@ CREATE TABLE tbl_room_add_img (
     CONSTRAINT PK_tbl_room_add_code PRIMARY KEY (room_add_code),
     CONSTRAINT FK_tbl_room_detail_code FOREIGN KEY (fk_room_detail_code) REFERENCES tbl_room_detail (room_detail_code) on delete cascade
 );
+-- Table TBL_ROOM_ADD_IMG이(가) 생성되었습니다.
+
 
 /* 즐길거리추가이미지 */
 CREATE TABLE tbl_play_add_img (
@@ -242,7 +245,7 @@ CREATE TABLE tbl_play_add_img (
     CONSTRAINT PK_tbl_play_add_code PRIMARY KEY (play_add_code),
     CONSTRAINT FK_tbl_play_code FOREIGN KEY (fk_play_code) REFERENCES tbl_play (play_code) on delete cascade
 );
-
+-- Table TBL_PLAY_ADD_IMG이(가) 생성되었습니다.
 
 
 
