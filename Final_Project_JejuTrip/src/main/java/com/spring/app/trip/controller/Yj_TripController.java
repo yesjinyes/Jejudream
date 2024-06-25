@@ -11,6 +11,6 @@ public class Yj_TripController {
 	@Autowired // Type에 따라 알아서 Bean 을 주입해준다.
 	private Yj_TripService service;
 	
-	
+	// 예진 깃허브 연결 확인용 주석
 
 }
