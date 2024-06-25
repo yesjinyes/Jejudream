@@ -46,6 +46,32 @@ input#birthday {
     width: 50%;
 }
 
+/* Date Picker */
+.month {
+    padding: 0 10px;
+}
+
+.yearselect {
+    display : inline-block;
+    float: left;
+    border : none;
+    max-width: 65px;
+    min-width: 65px;
+}
+
+.monthselect {
+    display : inline-block;
+    float: right;
+    border : none;
+    max-width : 65px;
+    min-width : 65px;
+}
+
+.weekend {
+    color : red;
+}
+/* Date Picker === END === */
+
 div#gender_block {
     width: 50%;
     padding: 0  10%;

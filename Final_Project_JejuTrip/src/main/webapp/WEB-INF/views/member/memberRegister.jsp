@@ -26,6 +26,11 @@
 	
     <%-- 우편번호찾기 API --%>
     <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    
+    <%-- Date Picker --%>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
     <%-- Main CSS --%>
     <link rel="stylesheet" href="<%=ctxPath%>/resources/css/member/memberRegister.css">
@@ -69,7 +74,8 @@
                         <div class="d-flex">
                             <input type="text" name="email_id" id="email_id" class="mr-3" placeholder="이메일">
                             <span style="font-size: 14pt; margin-top: 1%;">@</span>
-                            <select name="email2" id="email_dropdown" class="ml-3">
+                            <select name="email_dropdown" id="email_dropdown" class="ml-3">
+                                <option value="">선택하세요</option>
                                 <option value="naver.com">naver.com</option>
                                 <option value="gmail.com">gmail.com</option>
                                 <option value="daum.net">daum.net</option>
@@ -79,7 +85,7 @@
                         <span class="error"></span>
                     </div>
                     <div class="info_block mt-3 d-flex">
-                        <input type="date" name="birthday" id="birthday" max="">
+                        <input type="text" class="datepicker" name="birthday" id="birthday">
                         <div id="gender_block">
                             <label style="margin-right: 15%;">남자
                                 <input type="radio" checked="checked" name="gender" value="1">
@@ -93,7 +99,7 @@
                     </div>
                     <div class="info_block mt-3">
                         <input type="text" name="mobile" id="mobile" placeholder="휴대폰 번호 입력 ('-' 제외 11자리 입력)">
-                        <span class="error">유효하지 않은 연락처입니다.</span>
+                        <span class="error"></span>
                     </div>
                     <div class="info_block mt-3">
                         <input type="text" name="address" id="address" placeholder="주소">
@@ -104,7 +110,7 @@
                 </div>
         
                 <div style="text-align: center; margin-bottom: 13%;">
-                    <button type="button" class="btn" id="registerBtn">가입하기</button>
+                    <button type="button" class="btn" id="registerBtn" onclick="goRegister()">가입하기</button>
                 </div>
 
             </form>

@@ -1,29 +1,44 @@
+let checkUserid = false;
+let checkName = false;
+let checkPw = false;
+let checkPwCheck = false;
+let checkEmailId = false;
+let checkMobile = false;
+
 $(function () {
 
-    let checkUserid = false;
-    let checkName = false;
-    let checkPw = false;
-    let checkPwCheck = false;
-    let checkEmailId = false;
-    let checkEmailDropdown = false;
-    let checkMobile = false;
-
     $("span.error").hide();
-    // $("button#registerBtn").prop("disabled", true);
-
-    // 생년월일
-    let today = new Date();
-    let day = today.getDate();
-    let month = today.getMonth() + 1;
-    let year = today.getFullYear();
-    if (day < 10) day = '0' + day;
-    if (month < 10) month = '0' + month;
-    today = year + '-' + month + '-' + day;
-
-    // 기본값 및 선택할 수 있는 최대 날짜를 현재 날짜로 설정
-    document.getElementById("birthday").setAttribute("value", today);
-    document.getElementById("birthday").setAttribute("max", today);
     
+    // 생년월일 Date Picker
+    $('.datepicker').daterangepicker({
+        singleDatePicker: true,
+         locale: {
+            "format": 'YYYY-MM-DD',
+            "applyLabel": "확인",
+            "cancelLabel": "취소",
+            "daysOfWeek": ["일", "월", "화", "수", "목", "금", "토"],
+            "monthNames": ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
+         },
+        showDropdowns: true,
+        minYear: 1900,
+        maxYear: 2025,
+        maxDate: moment()
+    }, function(start, end, label) {
+        // 생년월일 선택 후의 콜백 함수
+        const selectedDate = start.format('YYYY-MM-DD');
+        const today = moment().format('YYYY-MM-DD');
+    
+        if (selectedDate === today) {
+            alert("생년월일은 오늘 날짜 이전으로만 선택 가능합니다.");
+            // 선택된 값을 초기화
+            $("input#birthday").val("");
+        }
+    });
+  
+    // 생년월일 키보드 입력 막기
+    $("input#birthday").on("keypress keydown keyup", function(e) {
+        e.preventDefault();
+    });
 
     // 주소 클릭 시
     $('input#address').click(function () {
@@ -120,6 +135,7 @@ $(function () {
         } else if(!bool) {
             $(e.target).addClass("input_error");
             $(e.target).next().show();
+            $(e.target).val("");
             $(e.target).next().text("비밀번호는 조건에 맞게 입력해주세요.");
             checkPw = false;
 
@@ -184,7 +200,84 @@ $(function () {
 
     });
 
+    // ===== 휴대폰 유효성 검사 =====
+    $("input#mobile").blur((e) => {
+
+        const mobile = $(e.target).val().trim();
+
+        const regExp_mobile = new RegExp(/^01[016789]{1}[0-9]{3,4}[0-9]{4}$/);
+        const bool = regExp_mobile.test(mobile);
+
+        if(mobile == "") {
+            $(e.target).addClass("input_error");
+            $(e.target).next().show();
+            $(e.target).next().text("휴대폰 번호를 입력해주세요.");
+            checkMobile = false;
+
+        } else if(!bool) {
+            $(e.target).addClass("input_error");
+            $(e.target).next().show();
+            $(e.target).next().text("유효하지 않은 연락처입니다.");
+            checkMobile = false;
+
+        } else {
+            $(e.target).removeClass("input_error");
+            $(e.target).next().hide();
+            checkMobile = true;
+        }
+
+    });
 
 
+    $("input#detail_address").keyup(function(e) {
+        if(e.keyCode == 13) {
+            goRegister();
+        }
+    });
 
 });
+
+
+function goRegister() {
+
+    if(checkUserid && checkName && checkPw && checkPwCheck && checkEmailId && checkMobile) {
+
+        const email_dropdown = $("select#email_dropdown").val();
+
+        if(email_dropdown == "") {
+            alert("이메일 주소를 선택해주세요.");
+            return;
+        }
+
+        // 생년월일 값 확인
+        const birthday = $("input#birthday").val().trim();
+        const today = new Date().toISOString().split('T')[0]; // 오늘 날짜를 YYYY-MM-DD 형식으로 변환
+
+        if (birthday == today) {
+            alert("생년월일을 선택해주세요.");
+            return;
+        }
+
+        const address = $("input#address").val().trim();
+        const detail_address = $("input#detail_address").val().trim();
+
+        if(address == "") {
+            alert("주소를 입력해주세요.");
+            return;
+
+        } else if(detail_address == "") {
+            alert("상세주소를 입력해주세요.");
+            return;
+        }
+
+        const frm = document.registerFrm;
+        frm.action = "";
+        frm.method = "post";
+        // frm.submit();
+
+    } else {
+        alert("가입 정보를 모두 입력하세요.");
+        return;
+    }
+
+}
