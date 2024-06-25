@@ -11,6 +11,6 @@ public class Hs_TripController {
 	@Autowired // Type에 따라 알아서 Bean 을 주입해준다.
 	private Hs_TripService service;
 	
-	
+	//헤헤
 
 }
