@@ -1,0 +1,468 @@
+@charset "UTF-8";
+
+/* 상단 탭 CSS */
+body {
+  /* background-color: rgba(230, 238, 249, 0.5); */
+  background-color: rgba(242, 242, 242, 0.4);
+}
+
+div#category {
+  border: solid 0px red;
+  margin-top: 5%;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+}
+
+div#category > h2 {
+  border: solid 0px red;
+  margin: 0 5% 0 -15%;	
+  font-size: 30pt;
+  font-weight: 600;
+}
+
+.tabs {
+  padding-top: 5%;
+  display: flex;
+  position: relative;
+  background-color: #fff;
+  box-shadow: 0 0 1px 0 rgba(255, 168, 128, 0.15), 0 6px 12px 0 rgba(255, 168, 128, 0.15);
+  padding: 0.75rem;
+  border-radius: 99px;
+}
+.tabs * {
+  z-index: 2;
+}
+
+.tab {
+  margin-bottom: -0.3%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 54px;
+  /* width: 180px; */
+  width: 180px;
+  font-size: 14pt;;
+  border-radius: 99px;
+  cursor: pointer;
+  transition: color 0.15s ease-in;
+}
+
+input[type=radio] {
+  display: none;
+}
+
+input[id=radio-1]:checked ~ .glider {
+  transform: translateX(0);
+}
+
+input[id=radio-2]:checked ~ .glider {
+  transform: translateX(100%);
+}
+
+input[id=radio-3]:checked ~ .glider {
+  transform: translateX(200%);
+}
+
+input[id=radio-4]:checked ~ .glider {
+  transform: translateX(300%);
+}
+
+input[id=radio-5]:checked ~ .glider {
+  transform: translateX(400%);
+}
+
+input[id=radio-6]:checked ~ .glider {
+  transform: translateX(500%);
+}
+
+.glider {
+  position: absolute;
+  display: flex;
+  height: 54px;
+  width: 180px;
+  background-color: #ffdccc;
+  z-index: 1;
+  border-radius: 99px;
+  transition: 0.25s ease-out;
+}
+
+@media (max-width: 700px) {
+  .tabs {
+    transform: scale(0.6);
+  }
+}
+
+/*-------------------------------------------------------*/
+/* 검색바 CSS */
+.search {
+  position: relative;
+  width: 12%;
+  margin: 0 -18% 0 6%;
+}
+
+input#inputSearch {
+  width: 100%;
+  border: 1px solid #bbb;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 15pt;
+}
+
+.search > img {
+  position : absolute;
+  width: 9%;
+  top: 13px;
+  right: 12px;
+  margin: 0;
+}
+
+
+
+/*-------------------------------------------------------*/
+/* 추천 게시글 CSS */
+div#content1 {
+  border: solid 1px #bfbfbf;
+  border-radius: 8px;
+  width: 80%;
+  margin: 3% auto 1% auto;
+  padding: 1%;
+}
+
+div#content1 > h4 {
+  margin: 0.4% 0 1.5% 1%;
+  color: #ff854d;;
+  font-weight: 550;
+}
+
+div#contentList {
+  border: solid 0px orange;
+}
+
+
+div.recommendList {
+  border: solid 1px #cccccc;
+  border-radius: 5px;
+  margin-right: 0.4%;
+  width: 19.4%;
+  display: inline-block;
+  padding-bottom: -2%;
+}
+
+a.recommend {
+  color: inherit;
+  font-weight: bold;
+  text-decoration-line: none;
+}
+
+a.recommend > div > h2.recommend-title {
+  border: solid 0px black;
+  font-size: 16pt;
+  background-color: white;
+  height: 55px;
+  padding: 4%;
+}
+
+img.commu-imgMain {
+ height: 250px;
+ width: 100%;
+} 
+
+
+/*---------------------------*/
+
+@media (max-width: 768px) {
+    .carousel-inner .carousel-item > div {
+        display: none;
+    }
+    .carousel-inner .carousel-item > div:first-child {
+        display: block;
+    }
+}
+
+.carousel-inner .carousel-item.active,
+.carousel-inner .carousel-item-next,
+.carousel-inner .carousel-item-prev {
+    display: flex;
+}
+
+@media (min-width: 768px) {
+    .carousel-inner .carousel-item-right.active,
+    .carousel-inner .carousel-item-next {
+      transform: translateX(25%);
+    }
+    .carousel-inner .carousel-item-left.active, 
+    .carousel-inner .carousel-item-prev {
+      transform: translateX(-25%);
+    }
+}
+
+.carousel-inner .carousel-item-right,
+.carousel-inner .carousel-item-left{ 
+  transform: translateX(0);
+}
+
+div.card {
+  height: 380px;
+}
+
+img.card-img-top {
+  width: 100;
+  height: 240px;
+}
+
+img.prev_icon {
+  border: solid 0px red;
+  width: 10%;
+  margin-left: -100%;
+}
+
+img.next_icon {
+  border: solid 0px red;
+  width: 10%;
+  margin-left: 100%;
+}
+
+
+
+/*-------------------------------------------------------*/
+/* 실시간 인기글 CSS */
+div#content2 {
+  border: solid 1px #bfbfbf;
+  border-radius: 8px;
+  width: 30%;
+  margin: 0 0 10% 10%;
+/*   height: 680px; */
+}
+
+div#content2 > h4 {
+  margin: 4% 0 0 5%;
+  color: #ff854d;
+  font-weight: 550;
+}
+
+/* 실시간 인기글 table CSS */
+main {
+  padding: 2em;
+  float: left;
+  width: 100%;
+}
+
+table {
+  width: 100%;
+  float: left;
+  margin: 0 0 2em;
+  font-size: 14pt;
+  font-weight: 500;
+}
+
+td.tableNo {
+  border: solid 0px gray;
+  width: 8%;
+}
+
+span.categoryName {
+  margin-right: 4%;
+  color: gray;
+}
+
+a.rankTitle {
+  color: inherit;
+  text-decoration-line: none;
+}
+
+a.rankTitle:hover {
+  font-weight: bold;
+}
+
+#rankTable tr {
+  display: table-row;
+  border: none;
+  border-bottom: 1px solid #eee;
+  float: none;
+  margin: 0;
+  box-shadow: none;
+}
+
+#rankTable tr td {
+  padding: 0.75em 0 0.75em 0.25em;
+  float: none;
+}
+
+
+
+/*-------------------------------------------------------*/
+/* 이달의 행사 CSS */
+div#content3 {
+  border: solid 1px #bfbfbf;
+  border-radius: 8px;
+  margin: 0 1%;
+  width: 21%;
+margin-bottom: 10%;
+/*   height: 680px; */
+}
+
+div#content3 > h4 {
+  margin: 5% 0 5% 6%;
+  color: #ff854d;;
+  font-weight: 550;
+}
+
+/*------------------*/
+@import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro);
+
+div#festivalList {
+  border: solid 0px red;
+  width: 80%;
+/*   margin: 0 auto 5% auto; */
+  margin: 0 auto;
+}
+
+div.festivalObject {
+  border: solid 1px #bfbfbf;
+  border-radius: 5px;
+  padding: 3% 4% 0 4%;
+  margin-bottom: 2.5%; 
+}
+
+h2.festivalTitle {
+  font-size: 16pt;
+  margin-bottom: 4%;
+}
+
+div.festivalTitle > span {
+  margin: auto;
+}
+
+figure.snip1504 {
+  border: solid 0px #bfbfbf;
+  border-radius: 5px;
+  position: relative;
+  overflow: hidden;
+  min-width: 50%; 
+  width: 100%;
+  color: #000000;
+  text-align: left;
+  font-size: 16px;
+  background-color: #fff;
+}
+
+img.imgFestival {
+  width: 100%;
+  height: 200px;
+}
+
+figure.snip1504 * {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-transition: all 0.45s ease;
+  transition: all 0.45s ease;
+}
+
+figure.snip1504 img {
+  vertical-align: top;
+  backface-visibility: hidden;
+}
+
+.snip1504 figcaption {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  align-items: center;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.snip1504 h3,
+.snip1504 h5 {
+  margin: 0;
+  opacity: 0;
+  letter-spacing: 1px;
+}
+
+.snip1504 h3 {
+  text-align: center;
+  font-size: 15pt;
+  margin: 7% 7% 0 7%;
+  -webkit-transform: translateY(-100%);
+  transform: translateY(-100%);
+  text-transform: uppercase;
+  font-weight: 400;
+}
+
+.snip1504 h5 {
+  margin-top: 4%;
+  font-weight: normal;
+  font-style: italic;
+  color: #888;
+  -webkit-transform: translateY(100%);
+  transform: translateY(100%);
+}
+
+.snip1504 a {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+}
+
+.snip1504:hover > img,
+.snip1504.hover > img {
+  opacity: 0.1;
+}
+
+.snip1504:hover h3,
+.snip1504.hover h3,
+.snip1504:hover h5,
+.snip1504.hover h5 {
+  -webkit-transform: translateY(0);
+  transform: translateY(0);
+  opacity: 1;
+}
+
+
+
+/*-------------------------------------------------------*/
+/* 스탭 게시판 CSS */
+div#content4 {
+  border: solid 1px #bfbfbf;
+  border-radius: 8px;
+  width: 27%;
+  margin-bottom: 20%;
+/*   height: 480px; */
+  padding: 1.1% 0 1% 1.1%;
+}
+
+div#content4 > h4 {
+  margin: 0.4% 0 5% 2%;
+  color: #ff854d;;
+  font-weight: 550;
+    
+}
+
+div#content4 > ul {
+  width: 90%; 
+}
+
+a.staffTitle {
+  font-size: 14pt;
+  color: inherit;
+  text-decoration-line: none;
+  line-height: 230%;
+}
+
+a.staffTitle:hover {
+	font-weight: bold;
+}
+
+
