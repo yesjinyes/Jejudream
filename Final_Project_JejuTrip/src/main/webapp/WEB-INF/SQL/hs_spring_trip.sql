@@ -1,12 +1,12 @@
 show user;
--- USERì´(ê°€) "SYS"ì…ë‹ˆë‹¤.
+-- USERÀÌ(°¡) "SYS"ÀÔ´Ï´Ù.
 
--- ì´ì œ ë¶€í„° ì˜¤ë¼í´ ê³„ì •ìƒì„±ì‹œ ê³„ì •ëª…ì•ì— c## ë¶™ì´ì§€ ì•Šê³  ìƒì„±í•˜ë„ë¡ í•˜ê² ë‹¤.
+-- ÀÌÁ¦ ºÎÅÍ ¿À¶óÅ¬ °èÁ¤»ı¼º½Ã °èÁ¤¸í¾Õ¿¡ c## ºÙÀÌÁö ¾Ê°í »ı¼ºÇÏµµ·Ï ÇÏ°Ú´Ù.
 alter session set "_ORACLE_SCRIPT"=true;
--- Sessionì´(ê°€) ë³€ê²½ë˜ì—ˆìŠµë‹ˆë‹¤.
+-- SessionÀÌ(°¡) º¯°æµÇ¾ú½À´Ï´Ù.
 
 create user final_orauser2 identified by gclass default tablespace users;
--- User SEMI_ORAUSER2ì´(ê°€) ìƒì„±ë˜ì—ˆìŠµë‹ˆë‹¤.
+-- User SEMI_ORAUSER2ÀÌ(°¡) »ı¼ºµÇ¾ú½À´Ï´Ù.
 
 grant connect, resource, create view, unlimited tablespace to final_orauser2;
--- Grantì„(ë¥¼) ì„±ê³µí–ˆìŠµë‹ˆë‹¤.
+-- GrantÀ»(¸¦) ¼º°øÇß½À´Ï´Ù.
