@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ==== #29. mapper 기본설정 ==== -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- ==== #29. 루트 엘리먼트 & 네임스페이스 설정(네임스페이스명은 프로젝트 전체내에서 유일해야 한다!!!!!) ====  절대  ; 쓰지마라 !!!!!!!!!! 
+메퍼가 바뀌면 무조건  WAS를 껐다 켜야한다!!!!!!!!! -->
+<mapper namespace="yj_trip">
+
+</mapper>
