@@ -47,5 +47,20 @@ public class Dy_TripController {
 		// /WEB-INF/views/login/pwFind.jsp
 	}
 	
-
+	// 비밀번호 찾기 후 변경 페이지 요청 (임시!!)
+	@GetMapping("pwFindEnd.trip")
+	public String pwFindEnd() {
+		
+		return "login/pwFindEnd";
+		// /WEB-INF/views/login/pwFindEnd.jsp
+	}
+	
+	
+	// 업체 회원가입 페이지 요청
+	@GetMapping("companyRegister.trip")
+	public String companyRegister() {
+		
+		return "company/companyRegister";
+		// /WEB-INF/views/company/companyRegister.jsp
+	}
 }

@@ -41,7 +41,7 @@
 
 <body>
     <div class="container">
-        <div class="m-5">
+        <div class="m-4">
 
             <div style="width: 80%; margin: 7% auto;">
                 <h2 style="margin-top: 20%;" class="font-weight-bold">회원가입</h2>

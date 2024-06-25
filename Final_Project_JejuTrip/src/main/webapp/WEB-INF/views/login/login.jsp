@@ -24,7 +24,7 @@
 	<script type="text/javascript" src="<%=ctxPath%>/resources/bootstrap-4.6.2-dist/js/bootstrap.bundle.min.js" ></script>
 	
     <%-- Main CSS --%>
-    <link rel="stylesheet" href="<%=ctxPath%>/resources/css/login.css">
+    <link rel="stylesheet" href="<%=ctxPath%>/resources/css/login/login.css">
 
     <script type="text/javascript">
         $(document).ready(function() {
@@ -34,14 +34,14 @@
         function goLogin() {
 
             const userid = $("input#userid").val().trim();
-            const pwd = $("input#pwd").val().trim();
+            const pw = $("input#pw").val().trim();
 
             if(userid == "") {
                 alert("아이디를 입력해주세요!");
                 return;
             }
 
-            if(pwd == "") {
+            if(pw == "") {
                 alert("비밀번호를 입력해주세요!");
                 return;
             }
@@ -51,7 +51,7 @@
 </head>
 <body>
     <div class="container">
-        <div class="m-5">
+        <div class="m-4">
             <div style="width: 80%; margin: 7% auto;">
                 <h2 style="margin-top: 20%;" class="font-weight-bold">로그인</h2>
                 <h5>로그인 후 다양한 서비스를 이용하실 수 있습니다.</h5>
@@ -76,7 +76,7 @@
                             <span id="pwFind" style="margin-left: 5%;">비밀번호 찾기</span>
                         </div>
                         <div style="width: 30%;">
-                            <span id="register" style="margin-left: 57.3%;">회원가입</span>
+                            <span id="register" style="margin-left: 56%;">회원가입</span>
                         </div>
                     </div>
                 </form>

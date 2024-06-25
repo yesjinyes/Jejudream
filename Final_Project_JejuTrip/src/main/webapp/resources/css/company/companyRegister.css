@@ -4,7 +4,7 @@ body {
 }
 
 div.container {
-    width: 45%;
+    width: 40%;
     margin: 5% auto;
     border: solid 1px rgba(0, 0, 0, 0.15);
     border-radius: 40px;
@@ -27,59 +27,6 @@ div.info_block > input:first-child {
     border: solid 1px rgba(15, 19, 42, .1);
     padding: 0 0 0 15px;
     font-size: 16px;
-}
-
-input#email_id,
-select#email_dropdown {
-    display: block;
-    width: 50%;
-    max-width: 680px;
-    height: 50px;
-    border-radius: 8px;
-    border: solid 1px rgba(15, 19, 42, .1);
-    padding: 0 0 0 15px;
-    font-size: 16px;
-}
-
-input#birthday {
-    margin: 0;
-    width: 50%;
-}
-
-/* Date Picker */
-.month {
-    padding: 0 10px;
-}
-
-.yearselect {
-    display : inline-block;
-    float: left;
-    border : none;
-    max-width: 65px;
-    min-width: 65px;
-}
-
-.monthselect {
-    display : inline-block;
-    float: right;
-    border : none;
-    max-width : 65px;
-    min-width : 65px;
-}
-
-.weekend {
-    color : red;
-}
-/* Date Picker === END === */
-
-div#gender_block {
-    width: 50%;
-    padding: 0  10%;
-}
-
-div#gender_block > label {
-    border: solid 0px green;
-    margin-top: 9%;
 }
 
 span.error {

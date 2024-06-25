@@ -29,7 +29,7 @@
             font-optical-sizing: auto;
         }
         div.container {
-            width: 40%;
+            width: 45%;
             margin: 5% auto;
             border: solid 1px rgba(0, 0, 0, 0.15);
             border-radius: 40px;
@@ -141,7 +141,7 @@
 </head>
 <body>
     <div class="container">
-        <div class="m-5">
+        <div class="m-4">
             <div style="width: 80%; margin: 7% auto;">
                 <h2 style="margin-top: 20%;" class="font-weight-bold">비밀번호 찾기</h2>
 
