@@ -16,8 +16,8 @@ public class Dy_TripController {
 	@GetMapping("memberRegister.trip")
 	public String memberRegister() {
 		
-		return "member/memberRegister";
-		// /WEB-INF/views/member/memberRegister.jsp
+		return "member/memberRegister.tile1";
+		// /WEB-INF/views/tile1/member/memberRegister.jsp
 	}
 	
 	

@@ -19,16 +19,16 @@
    <!-- tiles-layout.xml 에서 선언된 name으로 put-attribute 된게 해당 jsp에서 insert-attribute된다!  -->
    <!-- 각 .tiles1처럼 끝에 숫자에 따라서 해당 레이아웃(참조틀), 끼워넣어줘서 완성되는 뷰단   -->
    
-   <definition name="*/*/*.tiles1" extends="layout-tiles1">
-      <put-attribute name="content" value="/WEB-INF/views/tiles1/{1}/{2}/{3}.jsp"/>
+   <definition name="*/*/*.tile1" extends="layout-tiles1">
+      <put-attribute name="content" value="/WEB-INF/views/tile1/{1}/{2}/{3}.jsp"/>
    </definition>
    
-   <definition name="*/*.tiles1" extends="layout-tiles1">
-      <put-attribute name="content" value="/WEB-INF/views/tiles1/{1}/{2}.jsp"/>
+   <definition name="*/*.tile1" extends="layout-tiles1">
+      <put-attribute name="content" value="/WEB-INF/views/tile1/{1}/{2}.jsp"/>
    </definition>
    
-   <definition name="*.tiles1" extends="layout-tiles1">
-      <put-attribute name="content" value="/WEB-INF/views/tiles1/{1}.jsp"/>
+   <definition name="*.tile1" extends="layout-tiles1">
+      <put-attribute name="content" value="/WEB-INF/views/tile1/{1}.jsp"/>
    </definition>
    
    <!-- ==== tiles 를 사용하는 레이아웃(header,content,footer) 설정 끝 ==== -->
@@ -43,15 +43,15 @@
    </definition>
 
    <definition name="*/*/*.tiles2" extends="layout-tiles2">
-      <put-attribute name="content" value="/WEB-INF/views/tiles2/{1}/{2}/{3}.jsp"/>
+      <put-attribute name="content" value="/WEB-INF/views/tile2/{1}/{2}/{3}.jsp"/>
    </definition>
    
    <definition name="*/*.tiles2" extends="layout-tiles2">
-      <put-attribute name="content" value="/WEB-INF/views/tiles2/{1}/{2}.jsp"/>
+      <put-attribute name="content" value="/WEB-INF/views/tile2/{1}/{2}.jsp"/>
    </definition>
    
    <definition name="*.tiles2" extends="layout-tiles2">
-      <put-attribute name="content" value="/WEB-INF/views/tiles2/{1}.jsp"/>
+      <put-attribute name="content" value="/WEB-INF/views/tile2/{1}.jsp"/>
    </definition>
 
     <!-- ==== tiles 를 사용하는 레이아웃(header,content,sideinfo,footer) 설정 끝 ==== -->
