@@ -95,3 +95,7 @@ replay_pid*
 
 /Final_Project_JejuTrip/target/
 # End of https://www.toptal.com/developers/gitignore/api/java,eclipse
+Final_Project_JejuTrip/.classpath
+Final_Project_JejuTrip/.settings/org.eclipse.wst.common.project.facet.core.xml
+Final_Project_JejuTrip/src/main/webapp/WEB-INF/spring/appServlet/servlet-context.xml
+Final_Project_JejuTrip/.classpath
