@@ -25,6 +25,6 @@ public class Yj_TripController {
 		return "community/community_main"; 
 		// /WEB-INF/views/community/community_main.jsp 파일 생성
 	}
-	
+	// 수정
 
 }
