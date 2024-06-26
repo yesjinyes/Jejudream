@@ -14,11 +14,11 @@ public class Js_TripController {
 	@Autowired // Type에 따라 알아서 Bean 을 주입해준다.
 	private Js_TripService service;
 	
-	@RequestMapping(value = "/test.trip")
+	@RequestMapping(value = "/lodging/lodgingList.trip")
 	public String test_select (HttpServletRequest request) {
 		
 		
-		return "home";
+		return "/lodging/lodgingList";
 	}
 	
 	
