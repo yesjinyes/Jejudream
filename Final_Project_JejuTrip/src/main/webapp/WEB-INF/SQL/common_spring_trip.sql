@@ -118,11 +118,18 @@ CREATE TABLE tbl_review (
 -- Table TBL_REVIEW이(가) 생성되었습니다.
 
 
+
+-- 맛집 테이블 컬럼 추가해야되서 삭제후 재생성 
+
 /* 맛집 */
 CREATE TABLE tbl_food_store (
 	food_store_code VARCHAR2(20) NOT NULL, /* 맛집일련번호 */
 	fk_food_category_code VARCHAR2(20) NOT NULL, /* 맛집카테고리 일련번호 */
 	fk_local_code VARCHAR2(20) NOT NULL, /* 지역코드 */
+    food_name VARCHAR2(20) NOT NULL, /* 맛집식당이름 */
+    food_content VARCHAR2(200), /* 맛집간단정보 */
+    food_businesshours VARCHAR2(100), /* 영업시간 */
+    food_mobile VARCHAR2(100),  /* 맛집 연락처 */
 	food_address VARCHAR2(200), /* 상세주소 */
 	food_main_img VARCHAR2(100), /* 대표이미지 */
 	review_division VARCHAR2(10) default 'B', /* 리뷰용구분컬럼(default) B */
@@ -163,11 +170,19 @@ CREATE TABLE tbl_lodging_convenient  (
 );
 -- Table TBL_LODGING_CONVENIENT이(가) 생성되었습니다.
 
+
+
+
+-- 즐길거리테이블 컬럼추가를 위해 삭제후 재생성
 /* 즐길거리 */
 CREATE TABLE tbl_play (
 	play_code VARCHAR2(20) NOT NULL, /* 즐길거리일련번호 */
 	fk_play_category_code VARCHAR2(20) NOT NULL, /* 즐길거리카테고리일련번호 */
 	fk_local_code VARCHAR2(20) NOT NULL, /* 지역코드 */
+    play_name VARCHAR2(20) NOT NULL, /* 즐길거리 명칭 */
+    play_content VARCHAR2(100), /* 즐길거리 짧은상세정보 */
+    play_mobile VARCHAR2(100), /* 즐길거리 연락처 */
+    play_businesshours VARCHAR2(100), /* 즐길거리 운영시간 */
 	play_address VARCHAR2(200), /* 상세주소 */
 	play_main_img VARCHAR2(100), /* 대표이미지 */
 	review_division VARCHAR2(10) default 'C', /* 리뷰용구분컬럼(default) C */
@@ -247,6 +262,186 @@ CREATE TABLE tbl_play_add_img (
 );
 -- Table TBL_PLAY_ADD_IMG이(가) 생성되었습니다.
 
+--------------------------------------------------------------------------------
+
+-- 숙소, 맛집, 즐길거리 공용 시퀀스 생성
+create sequence seq_common
+start with 5000
+increment by 1
+nomaxvalue
+nominvalue
+nocycle
+nocache;
+-- Sequence SEQ_COMMON이(가) 생성되었습니다.
+
+
+-- 지역구분(서부,동부 를위한) 시퀀스 생성
+create sequence seq_local
+start with 100
+increment by 1
+nomaxvalue
+nominvalue
+nocycle
+nocache;
+-- Sequence SEQ_LOCAL이(가) 생성되었습니다.
+
+-- 제주시 서부 데이터
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '제주시 애월읍','제주시 서부');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '제주시 한림읍','제주시 서부');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '제주시 한경면','제주시 서부');
+
+-- 제주시 시내권 데이터
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '제주시 건입동','제주시 시내권');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '제주시 노형동','제주시 시내권');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '제주시 도두동','제주시 시내권');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '제주시 봉개동','제주시 시내권');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '제주시 삼도1동','제주시 시내권');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '제주시 삼도2동','제주시 시내권');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '제주시 삼양동','제주시 시내권');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '제주시 아라동','제주시 시내권');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '제주시 연동','제주시 시내권');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '제주시 오라동','제주시 시내권');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '제주시 외도동','제주시 시내권');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '제주시 용담1동','제주시 시내권');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '제주시 용담2동','제주시 시내권');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '제주시 이도1동','제주시 시내권');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '제주시 이도2동','제주시 시내권');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '제주시 이호동','제주시 시내권');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '제주시 일도1동','제주시 시내권');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '제주시 일도2동','제주시 시내권');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '제주시 화북동','제주시 시내권');
+
+-- 제주시 동부 데이터
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '제주시 구좌읍','제주시 동부');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '제주시 조천읍','제주시 동부');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '제주시 우도면','제주시 동부');
+
+
+-- 서귀포시 동부 데이터
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '서귀포시 대정읍','서귀포시 서부');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '서귀포시 안덕면','서귀포시 서부');
+
+
+-- 서귀포시 시내권(중문 포함) 데이터
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '서귀포시 송산동','서귀포시 시내권');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '서귀포시 정방동','서귀포시 시내권');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '서귀포시 중앙동','서귀포시 시내권');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '서귀포시 천지동','서귀포시 시내권');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '서귀포시 효돈동','서귀포시 시내권');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '서귀포시 영천동','서귀포시 시내권');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '서귀포시 동홍동','서귀포시 시내권');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '서귀포시 서홍동','서귀포시 시내권');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '서귀포시 대륜동','서귀포시 시내권');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '서귀포시 대천동','서귀포시 시내권');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '서귀포시 중문동','서귀포시 시내권');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '서귀포시 예래동','서귀포시 시내권');
+
+
+-- 서귀포시 동부 데이터
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '서귀포시 남원읍','서귀포시 동부');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '서귀포시 표선면','서귀포시 동부');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '서귀포시 성산읍','서귀포시 동부');
+
+
+commit;
+-- 커밋 완료.
+select * from tbl_local;
+
+
+-- 맛집 카테고리 시퀀스 생성
+create sequence seq_food_category
+start with 1
+increment by 1
+nomaxvalue
+nominvalue
+nocycle
+nocache;
+
+select * from tbl_food_category;
+-- 맛집 카테고리 insert
+insert into tbl_food_category (food_category_code, food_category_name) values (seq_food_category.nextval, '한식');
+insert into tbl_food_category (food_category_code, food_category_name) values (seq_food_category.nextval, '중식');
+insert into tbl_food_category (food_category_code, food_category_name) values (seq_food_category.nextval, '양식');
+insert into tbl_food_category (food_category_code, food_category_name) values (seq_food_category.nextval, '일식');
+insert into tbl_food_category (food_category_code, food_category_name) values (seq_food_category.nextval, '카페');
+insert into tbl_food_category (food_category_code, food_category_name) values (seq_food_category.nextval, '기타');
+
+commit;
+-- 커밋 완료.
+
+
+-- 즐길거리 카테고리 시퀀스 생성
+create sequence seq_play_category
+start with 1
+increment by 1
+nomaxvalue
+nominvalue
+nocycle
+nocache;
+
+select * from tbl_play_category;
+-- 즐길거리 카테고리 insert
+insert into tbl_play_category (play_category_code, play_category_name) values (seq_play_category.nextval, '관광지');
+insert into tbl_play_category (play_category_code, play_category_name) values (seq_play_category.nextval, '전시회');
+insert into tbl_play_category (play_category_code, play_category_name) values (seq_play_category.nextval, '체험');
+insert into tbl_play_category (play_category_code, play_category_name) values (seq_play_category.nextval, '기타');
+
+commit;
+-- 커밋 완료.
+
+
+
+-- 숙소 카테고리 시퀀스 생성
+create sequence seq_lodging_category
+start with 1
+increment by 1
+nomaxvalue
+nominvalue
+nocycle
+nocache;
+
+select *
+from tbl_lodging_category;
+
+insert into tbl_lodging_category (lodging_category_code, lodging_category_name) values (seq_lodging_category.nextval, '호텔');
+insert into tbl_lodging_category (lodging_category_code, lodging_category_name) values (seq_lodging_category.nextval, '펜션');
+insert into tbl_lodging_category (lodging_category_code, lodging_category_name) values (seq_lodging_category.nextval, '리조트');
+insert into tbl_lodging_category (lodging_category_code, lodging_category_name) values (seq_lodging_category.nextval, '게스트하우스');
+insert into tbl_lodging_category (lodging_category_code, lodging_category_name) values (seq_lodging_category.nextval, '기타');
+
+commit;
+-- 커밋 완료.
+
+
+
+-- 편의시설 카테고리 시퀀스 생성
+create sequence seq_convenient
+start with 1
+increment by 1
+nomaxvalue
+nominvalue
+nocycle
+nocache;
+
+
+select * from tbl_convenient;
+-- 편의시설 카테고리 insert
+insert into tbl_convenient (convenient_code, convenient_name) values(seq_convenient.nextval, '주차장 보유');
+insert into tbl_convenient (convenient_code, convenient_name) values(seq_convenient.nextval, '수영장');
+insert into tbl_convenient (convenient_code, convenient_name) values(seq_convenient.nextval, '바비큐');
+insert into tbl_convenient (convenient_code, convenient_name) values(seq_convenient.nextval, '조식운영');
+insert into tbl_convenient (convenient_code, convenient_name) values(seq_convenient.nextval, '반려동물 허용');
+insert into tbl_convenient (convenient_code, convenient_name) values(seq_convenient.nextval, '편의점');
+insert into tbl_convenient (convenient_code, convenient_name) values(seq_convenient.nextval, '스파/사우나');
+insert into tbl_convenient (convenient_code, convenient_name) values(seq_convenient.nextval, 'WIFI');
+insert into tbl_convenient (convenient_code, convenient_name) values(seq_convenient.nextval, '전기차충전소');
+insert into tbl_convenient (convenient_code, convenient_name) values(seq_convenient.nextval, '레스토랑');
+insert into tbl_convenient (convenient_code, convenient_name) values(seq_convenient.nextval, '피트니스센터');
+
+commit;
+-- 커밋 완료.
+
+-----------------------------------------------------------------------
 
 
 
