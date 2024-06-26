@@ -1,114 +1,52 @@
-let checkUserid = false;
+let checkId = false;
 let checkName = false;
 let checkPw = false;
 let checkPwCheck = false;
-let checkEmailId = false;
+let checkEmail = false;
 let checkMobile = false;
 
 $(function () {
 
     $("span.error").hide();
     
-    // 생년월일 Date Picker
-    $('.datepicker').daterangepicker({
-        singleDatePicker: true,
-         locale: {
-            "format": 'YYYY-MM-DD',
-            "applyLabel": "확인",
-            "cancelLabel": "취소",
-            "daysOfWeek": ["일", "월", "화", "수", "목", "금", "토"],
-            "monthNames": ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
-         },
-        showDropdowns: true,
-        minYear: 1900,
-        maxYear: 2025,
-        maxDate: moment()
-    }, function(start, end, label) {
-        // 생년월일 선택 후의 콜백 함수
-        const selectedDate = start.format('YYYY-MM-DD');
-        const today = moment().format('YYYY-MM-DD');
-    
-        if (selectedDate === today) {
-            alert("생년월일은 오늘 날짜 이전으로만 선택 가능합니다.");
-            // 선택된 값을 초기화
-            $("input#birthday").val("");
-        }
-    });
-  
-    // 생년월일 키보드 입력 막기
-    $("input#birthday").on("keypress keydown keyup", function(e) {
-        e.preventDefault();
-    });
-
-    // 주소 클릭 시
-    $('input#address').click(function () {
-
-        new daum.Postcode({
-            oncomplete: function (data) {
-
-                let addr = '';
-
-                if (data.userSelectedType === 'R') {
-                    addr = data.roadAddress;
-                } else {
-                    addr = data.jibunAddress;
-                }
-
-                document.getElementById("address").value = addr;
-                document.getElementById("detail_address").focus();
-
-            }
-        }).open();
-
-    });
-
     // ===== 아이디 유효성 검사 =====
-    $("input#userid").blur((e) => {
+    $("input#companyid").blur((e) => {
 
-        const userid = $(e.target).val().trim();
+        const companyid = $(e.target).val().trim();
 
-        const regExp_userid = new RegExp(/^(?=.*[A-Za-z])[A-Za-z0-9]{5,20}$/);
-        const bool = regExp_userid.test(userid);
+        const regExp_companyid = new RegExp(/^(?=.*[A-Za-z])[A-Za-z0-9]{5,20}$/);
+        const bool = regExp_companyid.test(companyid);
 
-        if(userid == "") {
+        if(companyid == "") {
             $(e.target).addClass("input_error");
             $(e.target).next().show();
             $(e.target).next().text("아이디를 입력해주세요.");
-            checkUserid = false;
+            checkId = false;
 
         } else if(!bool) {
             $(e.target).addClass("input_error");
             $(e.target).next().show();
             $(e.target).next().text("아이디는 5~20자 이내의 영문, 숫자로만 입력해주세요.");
-            checkUserid = false;
+            checkId = false;
         }
         // else if(아이디 중복확인 로직 추가하기) {}
         
         else {
             $(e.target).removeClass("input_error");
             $(e.target).next().hide();
-            checkUserid = true;
+            checkId = true;
         }
     });
 
     // ===== 성명 유효성 검사 =====
-    $("input#user_name").blur((e) => {
+    $("input#company_name").blur((e) => {
 
         const name = $(e.target).val().trim();
-
-        const regExp_name = new RegExp(/^[가-힣]{2,6}$/);
-        const bool = regExp_name.test(name);
 
         if(name == "") {
             $(e.target).addClass("input_error");
             $(e.target).next().show();
-            $(e.target).next().text("성명을 입력해주세요.");
-            checkName = false;
-
-        } else if(!bool) {
-            $(e.target).addClass("input_error");
-            $(e.target).next().show();
-            $(e.target).next().text("성명은 2~6자 이내 한글로만 입력해주세요.");
+            $(e.target).next().text("업체명을 입력해주세요.");
             checkName = false;
 
         } else {
@@ -173,29 +111,30 @@ $(function () {
     });
 
     // ===== 이메일 유효성 검사 =====
-    $("input#email_id").blur((e) => {
+    $("input#email").blur((e) => {
 
-        const email_id = $(e.target).val().trim();
+        const email = $(e.target).val().trim();
 
-        const regExp_emailId = new RegExp(/^[a-z]{5,20}$/);
-        const bool = regExp_emailId.test(email_id);
+        const regExp_email = new RegExp(/^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i);  
+        const bool = regExp_email.test(email);
 
-        if(email_id == "") {
+        if(email == "") {
             $(e.target).addClass("input_error");
-            $(e.target).parent().next().show();
-            $(e.target).parent().next().text("이메일 아이디를 입력해주세요.");
-            checkEmailId = false;
+            $(e.target).next().show();
+            $(e.target).next().text("이메일을 입력해주세요.");
+            checkEmail = false;
 
         } else if(!bool) {
             $(e.target).addClass("input_error");
-            $(e.target).parent().next().show();
-            $(e.target).parent().next().text("이메일 아이디는 5~20자 이내 영문으로만 입력해주세요.");
-            checkEmailId = false;
+            $(e.target).next().show();
+            $(e.target).next().text("올바른 이메일 형식이 아닙니다.");
+            $("input#email").val("");
+            checkEmail = false;
 
         } else {
             $(e.target).removeClass("input_error");
-            $(e.target).parent().next().hide();
-            checkEmailId = true;
+            $(e.target).next().hide();
+            checkEmail = true;
         }
 
     });
@@ -211,7 +150,7 @@ $(function () {
         if(mobile == "") {
             $(e.target).addClass("input_error");
             $(e.target).next().show();
-            $(e.target).next().text("휴대폰 번호를 입력해주세요.");
+            $(e.target).next().text("업체 연락처를 입력해주세요.");
             checkMobile = false;
 
         } else if(!bool) {
@@ -229,7 +168,7 @@ $(function () {
     });
 
 
-    $("input#detail_address").keyup(function(e) {
+    $("input#mobile").keyup(function(e) {
         if(e.keyCode == 13) {
             goRegister();
         }
@@ -240,35 +179,7 @@ $(function () {
 
 function goRegister() {
 
-    if(checkUserid && checkName && checkPw && checkPwCheck && checkEmailId && checkMobile) {
-
-        const email_dropdown = $("select#email_dropdown").val();
-
-        if(email_dropdown == "") {
-            alert("이메일 주소를 선택해주세요.");
-            return;
-        }
-
-        // 생년월일 값 확인
-        const birthday = $("input#birthday").val().trim();
-        const today = new Date().toISOString().split('T')[0]; // 오늘 날짜를 YYYY-MM-DD 형식으로 변환
-
-        if (birthday == today) {
-            alert("생년월일을 선택해주세요.");
-            return;
-        }
-
-        const address = $("input#address").val().trim();
-        const detail_address = $("input#detail_address").val().trim();
-
-        if(address == "") {
-            alert("주소를 입력해주세요.");
-            return;
-
-        } else if(detail_address == "") {
-            alert("상세주소를 입력해주세요.");
-            return;
-        }
+    if(checkId && checkName && checkPw && checkPwCheck && checkEmail && checkMobile) {
 
         const frm = document.registerFrm;
         frm.action = "";

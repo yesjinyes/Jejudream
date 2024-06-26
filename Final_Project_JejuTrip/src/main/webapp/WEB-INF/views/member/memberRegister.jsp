@@ -59,7 +59,7 @@
                         <span class="error"></span>
                     </div>
                     <div class="info_block mt-3">
-                        <input type="text" name="user_name" id="user_name" placeholder="성명 입력">
+                        <input type="text" name="user_name" id="user_name" placeholder="성명 입력" maxlength="20">
                         <span class="error"></span>
                     </div>
                     <div class="info_block mt-3">

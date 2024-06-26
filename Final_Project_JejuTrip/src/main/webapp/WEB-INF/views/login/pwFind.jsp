@@ -131,11 +131,24 @@
 
             if(!bool) {
                 alert("올바른 이메일 형식이 아닙니다.\n이메일을 다시 입력해주세요.");
+                $("input#email").val("");
                 return;
             }
 
             /* 비밀번호 찾기 후 이메일 인증 임시 구현 */
             $("div#emailConfirm").show();
+        }
+        
+        function goPwUpdate() {
+        	const input_confirmCode = $("input[name='input_confirmCode']").val().trim();
+        	
+        	if(input_confirmCode == "") {
+        		alert("인증번호를 입력해주세요.");
+        		return;
+        	}
+        	
+        	alert("인증이 완료되었습니다.\n비밀번호 변경 페이지로 이동합니다.");
+        	location.href = "<%=ctxPath%>/pwFindEnd.trip";
         }
     </script>
 </head>
@@ -162,7 +175,7 @@
                     </div>
                     <div style="position: relative;">
                         <input type="text" name="input_confirmCode" placeholder="인증번호 입력">
-                        <button type="button" class="btn btn-success" id="confirmBtn">인증하기</button>
+                        <button type="button" class="btn btn-success" id="confirmBtn" onclick="goPwUpdate()">인증하기</button>
                     </div>
                 </div>
 

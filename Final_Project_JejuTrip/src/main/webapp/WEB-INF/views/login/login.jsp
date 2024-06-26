@@ -29,6 +29,18 @@
     <script type="text/javascript">
         $(document).ready(function() {
 
+        	$("span#idFind").click(function() {
+        		location.href = "<%=ctxPath%>/idFind.trip";
+        	});
+        	
+        	$("span#pwFind").click(function() {
+        		location.href = "<%=ctxPath%>/pwFind.trip";
+        	});
+        	
+        	$("span#register").click(function() { // 일반 회원가입으로 임시 이동
+        		location.href = "<%=ctxPath%>/memberRegister.trip";
+        	});
+        	
         });
 
         function goLogin() {

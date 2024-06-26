@@ -116,6 +116,7 @@
 
             if(!bool) {
                 alert("올바른 이메일 형식이 아닙니다.\n이메일을 다시 입력해주세요.");
+                $("input#email").val("");
                 return;
             }
 

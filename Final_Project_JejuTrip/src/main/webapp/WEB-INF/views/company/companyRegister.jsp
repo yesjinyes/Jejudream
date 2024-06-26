@@ -48,23 +48,24 @@
                     <!-- 유효성 검사 시 input 테두리 색 변경 및 span error 띄우기 -->
         
                     <div class="info_block">
-                        <input type="text" name="userid" id="userid" placeholder="업체 아이디 입력 (5~20자)">
+                        <input type="text" name="companyid" id="companyid" placeholder="업체 아이디 입력 (5~20자)">
                         <span class="error"></span>
                     </div>
                     <div class="info_block mt-3">
-                        <input type="text" name="user_name" id="user_name" placeholder="업체명 입력">
-                        <span class="error">업체명은 2~6자 이내 한글만 입력 가능합니다.</span>
+                        <input type="text" name="company_name" id="company_name" placeholder="업체명 입력" maxlength="20">
+                        <span class="error"></span>
                     </div>
                     <div class="info_block mt-3">
                         <input type="password" name="pw" id="pw" placeholder="비밀번호 입력 (영문, 숫자, 특수문자 포함 8~15자)">
-                        <span class="error">20자 이내의 비밀번호를 입력해주세요.</span>
+                        <span class="error"></span>
                     </div>
                     <div class="info_block mt-3">
                         <input type="password" name="pwCheck" id="pwCheck" placeholder="비밀번호 재입력">
-                        <span class="error">비밀번호가 일치하지 않습니다.</span>
+                        <span class="error"></span>
                     </div>
                     <div class="info_block mt-3">
                         <input type="text" name="email" id="email" placeholder="업체 이메일 주소">
+                        <span class="error"></span>
                     </div>
                     <div class="info_block mt-3">
                         <input type="text" name="mobile" id="mobile" placeholder="업체 연락처 입력 ('-' 제외 입력)">
@@ -73,7 +74,7 @@
                 </div>
         
                 <div style="text-align: center; margin-bottom: 13%;">
-                    <button type="button" class="btn" id="registerBtn">가입하기</button>
+                    <button type="button" class="btn" id="registerBtn" onclick="goRegister()">가입하기</button>
                 </div>
 
             </form>

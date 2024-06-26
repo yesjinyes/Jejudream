@@ -89,7 +89,7 @@
             }
 
             const regExp_pw = new RegExp(/^.*(?=^.{8,15}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).*$/g); 
-            const bool = regExp_pw.test(pwd);
+            const bool = regExp_pw.test(pw);
 
             if(!bool) {
                 alert("올바른 비밀번호 형식이 아닙니다.\n비밀번호를 다시 입력해주세요.");
