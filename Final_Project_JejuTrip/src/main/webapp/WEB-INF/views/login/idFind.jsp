@@ -91,7 +91,6 @@
             });
 			            
             // '비밀번호 찾기' 버튼 클릭 시
-            
             $(document).on("click", "button#pwFindBtn", function() {
             	location.href = "<%=ctxPath%>/pwFind.trip";
             });
