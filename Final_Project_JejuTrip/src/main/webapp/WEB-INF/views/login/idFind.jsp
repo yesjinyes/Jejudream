@@ -28,6 +28,7 @@
             font-family: "Noto Sans KR", sans-serif;
             font-optical-sizing: auto;
         }
+        
         div.container {
             width: 45%;
             margin: 5% auto;
@@ -35,6 +36,7 @@
             border-radius: 40px;
             box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
         }
+        
         div.info {
             width: 100%;
             margin: 10% 5% 0 0;
@@ -136,22 +138,20 @@
 </head>
 <body>
     <div class="container">
-        <div class="m-4">
-            <div style="width: 80%; margin: 7% auto;">
-                <h2 style="margin-top: 20%;" class="font-weight-bold">아이디 찾기</h2>
-
-                <form name="idFindFrm">
-                    <div class="info">
-                        <input type="text" name="name" id="name" placeholder="성명">
-                        <input type="text" name="email" id="email" placeholder="이메일">
-                    </div>
-
-                    <div class="mt-5 text-center" style="margin-bottom: 20%;">
-                        <button type="button" class="btn" id="idFindBtn" onclick="goIdFind()">아이디 찾기</button>
-                    </div>
-                </form>
-            </div>
-        </div>
+	    <div style="width: 80%; margin: 7% auto;">
+	        <h2 style="margin-top: 20%;" class="font-weight-bold">아이디 찾기</h2>
+	
+	        <form name="idFindFrm">
+	            <div class="info">
+	                <input type="text" name="name" id="name" placeholder="성명">
+	                <input type="text" name="email" id="email" placeholder="이메일">
+	            </div>
+	
+	            <div class="mt-5 text-center" style="margin-bottom: 20%;">
+	                <button type="button" class="btn" id="idFindBtn" onclick="goIdFind()">아이디 찾기</button>
+	            </div>
+	        </form>
+	    </div>
     </div>
 </body>
 </html>

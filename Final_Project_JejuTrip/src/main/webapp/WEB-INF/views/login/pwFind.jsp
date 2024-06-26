@@ -154,33 +154,31 @@
 </head>
 <body>
     <div class="container">
-        <div class="m-4">
-            <div style="width: 80%; margin: 7% auto;">
-                <h2 style="margin-top: 20%;" class="font-weight-bold">비밀번호 찾기</h2>
-
-                <form name="pwdFindFrm">
-                    <div class="info">
-                        <input type="text" name="userid" id="userid" placeholder="아이디">
-                        <input type="text" name="email" id="email" placeholder="이메일">
-                    </div>
-
-                    <div class="mt-5 text-center">
-                        <button type="button" class="btn" id="pwFindBtn" onclick="goPwFind()">비밀번호 찾기</button>
-                    </div>
-                </form>
-
-                <div id="emailConfirm" class="mt-5" style="margin-bottom: 20%;">
-                    <div class="text-center mb-3">
-                        <span><span class="font-weight-bold">kimdy@naver.com</span> 으로 메일이 발송되었습니다.</span>
-                    </div>
-                    <div style="position: relative;">
-                        <input type="text" name="input_confirmCode" placeholder="인증번호 입력">
-                        <button type="button" class="btn btn-success" id="confirmBtn" onclick="goPwUpdate()">인증하기</button>
-                    </div>
-                </div>
-
-            </div>
-        </div>
+	    <div style="width: 80%; margin: 7% auto;">
+	        <h2 style="margin-top: 20%;" class="font-weight-bold">비밀번호 찾기</h2>
+	
+	        <form name="pwdFindFrm">
+	            <div class="info">
+	                <input type="text" name="userid" id="userid" placeholder="아이디">
+	                <input type="text" name="email" id="email" placeholder="이메일">
+	            </div>
+	
+	            <div class="mt-5 text-center">
+	                <button type="button" class="btn" id="pwFindBtn" onclick="goPwFind()">비밀번호 찾기</button>
+	            </div>
+	        </form>
+	
+	        <div id="emailConfirm" class="mt-5" style="margin-bottom: 20%;">
+	            <div class="text-center mb-3">
+	                <span><span class="font-weight-bold">kimdy@naver.com</span> 으로 메일이 발송되었습니다.</span>
+	            </div>
+	            <div style="position: relative;">
+	                <input type="text" name="input_confirmCode" placeholder="인증번호 입력">
+	                <button type="button" class="btn btn-success" id="confirmBtn" onclick="goPwUpdate()">인증하기</button>
+	            </div>
+	        </div>
+	
+	    </div>
     </div>
 </body>
 </html>

@@ -3,8 +3,41 @@ body {
     font-optical-sizing: auto;
 }
 
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+    div.container {
+        width: 70vw !important;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    div.container {
+        width: 80vw !important;
+    }
+}
+
+@media screen and (max-width: 425px) {
+    div.container {
+        width: 100vw !important;
+        margin-top: 0 !important;
+    }
+
+    h2 {
+        font-size: 1.4rem !important;
+    }
+
+    h5 {
+        font-size: 1rem !important;
+    }
+
+    div.info_block > input,
+    input#email,
+    span.error {
+        font-size: 0.8rem !important;
+    }
+}
+
 div.container {
-    width: 40%;
+    width: 45%;
     margin: 5% auto;
     border: solid 1px rgba(0, 0, 0, 0.15);
     border-radius: 40px;

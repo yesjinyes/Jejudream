@@ -113,24 +113,21 @@
 </head>
 <body>
     <div class="container">
-        <div class="m-4">
-            <div style="width: 80%; margin: 7% auto;">
-                <h2 style="margin-top: 20%;" class="font-weight-bold">비밀번호 찾기</h2>
-                <h5>비밀번호 변경</h5>
-
-                <form name="pwFindEndFrm">
-                    <div class="info">
-                        <input type="password" name="pw" id="pw" placeholder="비밀번호">
-                        <input type="password" name="pwCheck" id="pwCheck" placeholder="비밀번호 재입력">
-                    </div>
-                    
-                    <div class="mt-5" style="margin-bottom: 20%;">
-                        <button type="button" class="btn" id="pwUpdateBtn" onclick="goPwUpdate()">변경하기</button>
-                    </div>
-                </form>
-            </div>
-
-        </div>
+	    <div style="width: 80%; margin: 7% auto;">
+	        <h2 style="margin-top: 20%;" class="font-weight-bold">비밀번호 찾기</h2>
+	        <h5>비밀번호 변경</h5>
+	
+	        <form name="pwFindEndFrm">
+	            <div class="info">
+	                <input type="password" name="pw" id="pw" placeholder="비밀번호">
+	                <input type="password" name="pwCheck" id="pwCheck" placeholder="비밀번호 재입력">
+	            </div>
+	            
+	            <div class="mt-5" style="margin-bottom: 20%;">
+	                <button type="button" class="btn" id="pwUpdateBtn" onclick="goPwUpdate()">변경하기</button>
+	            </div>
+	        </form>
+	    </div>
     </div>
 </body>
 </html>
