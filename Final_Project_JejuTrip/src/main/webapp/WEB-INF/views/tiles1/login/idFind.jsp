@@ -121,6 +121,22 @@
     <div style="width: 80%; margin: 7% auto;">
         <h2 style="margin-top: 20%;" class="font-weight-bold">아이디 찾기</h2>
 
+        <div class="d-flex justify-content-center mt-5">
+           <div class="form-check form-check-inline">
+             <input class="form-check-input" type="radio" name="memberType" id="inlineRadio1" value="member" checked>
+             <label class="form-check-label" for="inlineRadio1">일반회원</label>
+           </div>
+           <div class="form-check form-check-inline pl-3">
+             <input class="form-check-input" type="radio" name="memberType" id="inlineRadio2" value="company">
+             <label class="form-check-label" for="inlineRadio2">업체회원</label>
+           </div>
+           <div class="form-check form-check-inline pl-3">
+             <input class="form-check-input" type="radio" name="memberType" id="inlineRadio3" value="admin">
+             <label class="form-check-label" for="inlineRadio3">관리자</label>
+           </div>
+        </div>
+    
+
         <form name="idFindFrm">
             <div class="info">
                 <input type="text" name="name" id="name" placeholder="성명">

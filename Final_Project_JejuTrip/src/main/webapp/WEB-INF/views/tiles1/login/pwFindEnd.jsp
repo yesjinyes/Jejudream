@@ -98,6 +98,22 @@
         <h5>비밀번호 변경</h5>
 
         <form name="pwFindEndFrm">
+        
+            <div class="d-flex justify-content-center mt-5">
+               <div class="form-check form-check-inline">
+                 <input class="form-check-input" type="radio" name="memberType" id="inlineRadio1" value="member" checked>
+                 <label class="form-check-label" for="inlineRadio1">일반회원</label>
+               </div>
+               <div class="form-check form-check-inline pl-3">
+                 <input class="form-check-input" type="radio" name="memberType" id="inlineRadio2" value="company">
+                 <label class="form-check-label" for="inlineRadio2">업체회원</label>
+               </div>
+               <div class="form-check form-check-inline pl-3">
+                 <input class="form-check-input" type="radio" name="memberType" id="inlineRadio3" value="admin">
+                 <label class="form-check-label" for="inlineRadio3">관리자</label>
+               </div>
+            </div>
+        
             <div class="info">
                 <input type="password" name="pw" id="pw" placeholder="비밀번호">
                 <input type="password" name="pwCheck" id="pwCheck" placeholder="비밀번호 재입력">

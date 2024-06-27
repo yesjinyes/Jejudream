@@ -3,6 +3,8 @@ package com.spring.app.trip.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.spring.app.trip.service.Dy_TripService;
 
@@ -19,6 +21,17 @@ public class Dy_TripController {
 		return "member/memberRegister.tiles1";
 		// /WEB-INF/views/tiles1/member/memberRegister.jsp
 	}
+	
+	// 회원가입 처리하기
+	@ResponseBody
+	@PostMapping("memberRegister.trip")
+	public String memberRegisterEnd() {
+		
+		
+		
+		return "json"; // 임시
+	}
+	
 	
 	
 	// 로그인 페이지 요청

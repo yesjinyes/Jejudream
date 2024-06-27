@@ -270,10 +270,33 @@ function goRegister() {
             return;
         }
 
-        const frm = document.registerFrm;
-        frm.action = "";
-        frm.method = "post";
-        // frm.submit();
+        // const frm = document.registerFrm;
+        // frm.action = "";
+        // frm.method = "post";
+        // // frm.submit();
+
+        const queryString = $("form[name='registerFrm']").serialize();
+        
+        const email = $("input#email_id").val() + "@" + email_dropdown;
+
+        // email 값을 쿼리 문자열에 추가
+        if (queryString) {
+            queryString += "&";
+        }
+        queryString += "email=" + encodeURIComponent(email);
+
+        $.ajax({
+            url: "<%=ctxPath%>/memberRegister.trip",
+            type: "post",
+            data: queryString,
+            dataType: "json",
+            success: function(json) {
+
+            },
+            error: function(request, status, error) {
+                alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+            }
+        });
 
     } else {
         alert("가입 정보를 모두 입력하세요.");
