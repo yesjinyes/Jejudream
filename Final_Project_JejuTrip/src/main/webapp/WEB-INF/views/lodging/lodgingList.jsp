@@ -343,7 +343,7 @@ $(document).ready(function(){
             	
             	<div class="row">
             		
-                    <div class="sort-filter main" style="display: flex;">
+                    <div class="sort-filter main" style="display: flex; justify-content:space-between; width:100%;">
                     	
                         <div>
                                 <button type="button" onclick="" class="sort active" value="">추천순</button>
