@@ -59,7 +59,7 @@ li {
 }
 
 .title a:hover {
-  color: #ffdccc;
+  color: #ff854d;
   text-decoration: none;
 }
 
