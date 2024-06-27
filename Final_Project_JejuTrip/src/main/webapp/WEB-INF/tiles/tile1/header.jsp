@@ -43,7 +43,7 @@ p#header_title {
 }
 
 ul.menu_bar {
-	width: 35%;
+	width: 40%;
 }
 
 ul.menu_bar > li {
@@ -57,6 +57,7 @@ ul.menu_bar > li:hover {
 
 a.menu_bar_a {
 	color: black !important;
+	font-size: 1.2rem;
 }
 </style>
 
