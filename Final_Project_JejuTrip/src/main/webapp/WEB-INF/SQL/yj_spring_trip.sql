@@ -12,33 +12,6 @@ grant connect, resource, create view, unlimited tablespace to final_orauser2;
 -- Grant을(를) 성공했습니다.
 
 ----------------------------------------------------------------------------
-/* 업체 */
-CREATE TABLE tbl_company (
-	companyid VARCHAR2(20) NOT NULL, /* 업체아이디 */
-	company_name VARCHAR2(20), /* 업체명 */
-	pw VARCHAR2(200) NOT NULL, /* 비밀번호 */
-	email VARCHAR2(200) NOT NULL, /* 이메일 */
-	mobile VARCHAR2(200) NOT NULL, /* 연락처 */
-	registerday DATE DEFAULT sysdate, /* 가입일자 */
-	lastpwdchangedate DATE DEFAULT sysdate, /* 마지막암호변경일자 */
-	status NUMBER(1) DEFAULT 1 NOT NULL, /* 회원탈퇴유무 */
-	idle NUMBER(1) DEFAULT 0 NOT NULL, /* 휴면유무 */
-    CONSTRAINT PK_tbl_company_companyid PRIMARY KEY (companyid),
-    CONSTRAINT UK_tbl_company_email UNIQUE (email),
-    CONSTRAINT UK_tbl_company_mobile UNIQUE (mobile)
-);
-
-
-select *
-from tbl_food_category;
-
-
-
-
-select *
-from tbl_local;
-
-
 
 
 /* 맛집 */
@@ -71,4 +44,28 @@ CREATE TABLE tbl_food_category (
 	food_category_name VARCHAR2(20), /* 맛집카테고리명칭 */
     CONSTRAINT PK_tbl_food_category_code PRIMARY KEY (food_category_code)
 );
+
+
+
+
+
+-- 맛집 테이블
+select *
+from tbl_food_store;
+
+-- 즐길거리 테이블
+select *
+from tbl_play;
+
+desc tbl_play;
+
+-- 지역 테이블
+select *
+from tbl_local;
+
+
+
+insert into 
+
+
 
