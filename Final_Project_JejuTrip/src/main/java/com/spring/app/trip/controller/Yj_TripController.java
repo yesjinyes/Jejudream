@@ -16,15 +16,28 @@ public class Yj_TripController {
 	
 
 	// === 커뮤니티 메인 페이지 보이기 === //
-	@GetMapping("/community_main.trip")
-	public String community_main(HttpServletRequest request) {
+	@GetMapping("/communityMain.trip")
+	public String communityMain() {
 		
-//		String ctxPath = request.getContextPath();
-//		System.out.println("ctxPath => " + ctxPath);
-		
-		return "community/community_main"; 
-		// /WEB-INF/views/community/community_main.jsp 파일 생성
+		return "community/communityMain"; 
+		// /WEB-INF/views/community/communityMain.jsp 파일 생성
 	}
-	// 수정
+	
+	
+	// === 맛집 리스트 페이지 보이기 === //
+	@GetMapping("/foodStoreList.trip")
+	public String foodStoreList() {
+		
+		return "foodStore/foodStoreList";
+		// /WEB-INF/views/foodStore/foodStoreList.jsp 파일 생성
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 
 }
