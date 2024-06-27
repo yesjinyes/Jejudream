@@ -16,8 +16,8 @@ public class Dy_TripController {
 	@GetMapping("memberRegister.trip")
 	public String memberRegister() {
 		
-		return "member/memberRegister.tile1";
-		// /WEB-INF/views/tile1/member/memberRegister.jsp
+		return "member/memberRegister.tiles1";
+		// /WEB-INF/views/tiles1/member/memberRegister.jsp
 	}
 	
 	
@@ -25,8 +25,8 @@ public class Dy_TripController {
 	@GetMapping("login.trip")
 	public String login() {
 		
-		return "login/login";
-		// /WEB-INF/views/login/login.jsp
+		return "login/login.tiles1";
+		// /WEB-INF/views/tiles1/login/login.jsp
 	}
 	
 	
@@ -34,8 +34,8 @@ public class Dy_TripController {
 	@GetMapping("idFind.trip")
 	public String idFind() {
 		
-		return "login/idFind";
-		// /WEB-INF/views/login/idFind.jsp
+		return "login/idFind.tiles1";
+		// /WEB-INF/views/tiles1/login/idFind.jsp
 	}
 	
 	
@@ -43,16 +43,16 @@ public class Dy_TripController {
 	@GetMapping("pwFind.trip")
 	public String pwFind() {
 		
-		return "login/pwFind";
-		// /WEB-INF/views/login/pwFind.jsp
+		return "login/pwFind.tiles1";
+		// /WEB-INF/views/tiles1/login/pwFind.jsp
 	}
 	
 	// 비밀번호 찾기 후 변경 페이지 요청 (임시!!)
 	@GetMapping("pwFindEnd.trip")
 	public String pwFindEnd() {
 		
-		return "login/pwFindEnd";
-		// /WEB-INF/views/login/pwFindEnd.jsp
+		return "login/pwFindEnd.tiles1";
+		// /WEB-INF/views/tiles1/login/pwFindEnd.jsp
 	}
 	
 	
@@ -60,7 +60,7 @@ public class Dy_TripController {
 	@GetMapping("companyRegister.trip")
 	public String companyRegister() {
 		
-		return "company/companyRegister";
-		// /WEB-INF/views/company/companyRegister.jsp
+		return "company/companyRegister.tiles1";
+		// /WEB-INF/views/tiles1/company/companyRegister.jsp
 	}
 }

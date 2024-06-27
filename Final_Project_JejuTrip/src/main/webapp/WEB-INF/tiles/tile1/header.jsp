@@ -35,95 +35,116 @@
  // serverName : http://172.18.80.1:9090
 %>
 
-<div id="_header">
-	
-	<div class="re_header">
-		<div class="inner">
-			<div class="header-top">
-				<div class="box__usermenu">
-					<ul class="list__usermenu">
-						
-						
-						
-							<li class="list-item">
-								<a class="link__usermenu" href="javascript:fn_login();">로그인</a>
-							</li>
-							<li class="list-item">
-								<a class="link__usermenu" href="/web/signUp00.do">회원가입</a>
-							</li>
-						
-						<li class="list-item">
-							<a class="link__usermenu" href="/web/coustmer/viewCorpPns.do?menuIndex=2">입점신청</a>
-						</li>
-						<li class="list-item">
-							<a class="link__usermenu" href="/web/coustmer/qaList.do">고객센터</a>
-						</li>
-					</ul>
-				</div>
-				<nav class="navbar navbar-light bg-light">
-				  <a class="navbar-brand" href="#" title="Jeju Dream">
-				    <img src="<%=ctxPath%>/resources/images/logo.png" width="100" height="100" alt="JejuDream">
-				  </a>
-				</nav>
-				<div class="srh_area">
-					
-					<form name="totalSearchForm" id="totalSearchForm" onSubmit="return false;">
-						<fieldset>
-							<legend class="for-a11y"> 검색</legend>
-							<div class="top_search" >
-								<input name="search" id="search" title="검색어 입력" class="form_input" value="" onkeydown="javascript:if(event.keyCode==13){fn_searBtClick();}" placeholder="검색어를 입력해주세요">
-								<button type="button" title="검색" class="srh_btn" id="searBT" onclick="javascript:fn_searBtClick();">
-									<img src="/images/web/r_main/srh_btn.png" alt="검색">
-								</button>
-							</div>
-						</fieldset>
-					</form>
-				</div>
-				<div class="util_menu">
-					<ul>
-						
-						<li class="promotion more">
-							<a href="/web/evnt/prmtPlanList.do">
-								<span class="ico"></span>
-								<span class="txt">기획전/이벤트</span>
-							</a>
-						</li>
-						
-						<li class="cart more">
-							<a href="/web/cart.do">
-								<span class="ico">&nbsp;</span>
-								<span class="cnt" id="headCartCnt">0</span>
-								<span class="txt">장바구니</span>
-							</a>
-						</li>
-						<li class="mypage more">
-							<a href="/web/mypage/rsvList.do">
-								<span class="ico">&nbsp;</span>
-								<span class="txt">마이탐나오</span>
-							</a>
-						</li>
-					</ul>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="gnb2">
-		<div class="inner">
-			<div class="box__service-all">
-				<ul class="menu">
-					<li><a href="/web/av/mainList.do">항공</a></li>
-					
-					<li><a href="/web/stay/jeju.do">숙소</a></li>
-					<li><a href="/web/rentcar/jeju.do">렌트카</a></li>
-					<li><a href="/web/tour/jeju.do?sCtgr=C200">관광지</a></li>
-					<li><a href="/web/tour/jeju.do?sCtgr=C300">맛집</a></li>
-					<li><a href="/web/sp/packageList.do">여행사 상품</a></li>
-					<li><a href="/web/goods/jeju.do">특산/기념품</a></li>
-					
-					
-					<li><a href="/web/sv/sixIntro.do">제주 농부의 장</a></li>
+<style type="text/css">
+p#header_title {
+	font-family: "Gugi", sans-serif;
+	font-weight: 400;
+	font-style: normal;
+}
+
+ul.menu_bar {
+	width: 35%;
+}
+
+ul.menu_bar > li {
+	margin-right: 7%;
+}
+
+ul.menu_bar > li:hover {
+	font-weight: bold;
+	border-bottom: solid 3px #ff5000;
+}
+
+a.menu_bar_a {
+	color: black !important;
+}
+</style>
+
+<div style="background-color: #F5F5F5;">
+
+	<div class="pt-2" style="width: 70%; margin: 0 auto;">
+		<nav class="navbar navbar-expand-lg navbar-light" style="font-size: 0.8rem;">
+			
+			<div class="collapse navbar-collapse" id="inner_bar">
+				
+				<ul class="navbar-nav ml-auto my-2 my-lg-0" style="justify-content: ">
+					<li class="nav-item">
+						<a class="nav-link" href="<%=ctxPath%>/login.trip">로그인<span class="sr-only">(current)</span></a>
+					</li>
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" href="#" id="registerDropdown" data-toggle="dropdown">
+							회원가입
+						</a>
+						<div class="dropdown-menu" aria-labelledby="registerDropdown" style="margin-right: 20%;">
+							<a class="dropdown-item" href="<%=ctxPath%>/memberRegister.trip">개인 회원가입</a>
+							<a class="dropdown-item" href="<%=ctxPath%>/companyRegister.trip">업체 회원가입</a>
+						</div>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="#">고객센터</a>
+					</li>
 				</ul>
 			</div>
-		</div>
+	
+		</nav>
 	</div>
+	
+	<div style="width: 70%; margin: 0 auto;">
+		<nav class="navbar navbar-expand-lg navbar-light">
+			
+			<a class="navbar-brand mr-4" href="#" title="Jeju Dream">
+				<img src="<%=ctxPath%>/resources/images/logo.png" width="80">
+				<p id="header_title">제주드림</p>
+			</a>
+					
+			<button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+		
+			<div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+				
+				<ul class="menu_bar navbar-nav mt-2 mt-lg-0">
+			      <li class="nav-item">
+			        <a class="nav-link menu_bar_a" href="#">숙소</a>
+			      </li>
+			      <li class="nav-item">
+			        <a class="nav-link menu_bar_a" href="#">맛집</a>
+			      </li>
+			      <li class="nav-item">
+			        <a class="nav-link menu_bar_a" href="#">즐길거리</a>
+			      </li>
+			      <li class="nav-item">
+			        <a class="nav-link menu_bar_a" href="#">커뮤니티</a>
+			      </li>
+			    </ul>
+			    
+			    
+			      <form class="form-inline mt-2 mt-lg-0 mr-auto">
+					    <input type="text" class="mr-sm-2" style="background-color: #F5F5F5; border-width: 0 0 1px;" placeholder="검색어를 입력하세요">
+					    <button class="btn my-2 my-sm-0" type="button"><i class="fa-solid fa-magnifying-glass"></i></button>
+				  </form>
+				
+				<ul class="navbar-nav my-2 my-lg-0">
+					<li class="nav-item mr-3">
+						<a class="nav-link text-center" href="#">
+							<i class="fa-solid fa-cart-shopping"></i>
+							<div>장바구니</div>
+						</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link text-center" href="#">
+							<i class="fa-solid fa-user"></i>
+							<div>마이페이지</div>
+						</a>
+					</li>
+				</ul>
+			  
+			</div>
+		</nav>
+	</div>
+
 </div>
+
+
+
+

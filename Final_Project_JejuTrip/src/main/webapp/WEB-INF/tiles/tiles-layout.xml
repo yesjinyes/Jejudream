@@ -19,15 +19,15 @@
    <!-- tiles-layout.xml 에서 선언된 name으로 put-attribute 된게 해당 jsp에서 insert-attribute된다!  -->
    <!-- 각 .tiles1처럼 끝에 숫자에 따라서 해당 레이아웃(참조틀), 끼워넣어줘서 완성되는 뷰단   -->
    
-   <definition name="*/*/*.tile1" extends="layout-tiles1">
+   <definition name="*/*/*.tiles1" extends="layout-tiles1">
       <put-attribute name="content" value="/WEB-INF/views/tiles1/{1}/{2}/{3}.jsp"/>
    </definition>
    
-   <definition name="*/*.tile1" extends="layout-tiles1">
+   <definition name="*/*.tiles1" extends="layout-tiles1">
       <put-attribute name="content" value="/WEB-INF/views/tiles1/{1}/{2}.jsp"/>
    </definition>
    
-   <definition name="*.tile1" extends="layout-tiles1">
+   <definition name="*.tiles1" extends="layout-tiles1">
       <put-attribute name="content" value="/WEB-INF/views/tiles1/{1}.jsp"/>
    </definition>
    
