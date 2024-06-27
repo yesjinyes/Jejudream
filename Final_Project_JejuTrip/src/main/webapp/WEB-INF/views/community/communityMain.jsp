@@ -125,9 +125,9 @@
 		                        <div class="card">  
 		                            <img class="img-fluid card-img-top" src="<%= ctxPath%>/resources/images/community/jeju2.jpg">
 		                            <div class="card-body">
-								    <h5 class="card-title" align="left">여름엔 청보리밭도 좋지만 여기 한번 가보세요</h5>
-									 <a href="#" class="btn btn-light stretched-link">글보기</a>
-								  </div>
+									    <h5 class="card-title" align="left">여름엔 청보리밭도 좋지만 여기 한번 가보세요</h5>
+										<a href="#" class="btn btn-light stretched-link">글보기</a>
+									</div>
 		                        </div>
 		                    </div>
 		                </div>
