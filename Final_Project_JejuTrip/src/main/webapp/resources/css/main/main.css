@@ -41,14 +41,14 @@ body > div.main_header > div.main_header_menu > a.login {
 }
 
 div.main_video_div {
-    height:800px;
+    height:600px;
     overflow: hidden;
     border:solid 0px red;
 }
 
 div.main_video_div > video{
     position:relative;
-    top: -120px;
+    top: -220px;
 }
 /* === 메인페이지 헤더 및 영상 끝 === */
 
@@ -61,31 +61,51 @@ div.main_recommend > div.main_recommend_title {
 
 div.main_recommend {
     border: solid 0px red;
-    background-color: #e9ffdf;
+    background-color: #ededff;
     text-align: center;
-    padding: 20px 0 20px 0;
+    padding: 50px 0 50px 0;
+    margin-top: 100px;
 }
 
 div.main_recommend > a > img{
-    width:60%;
+    width:70%;
 }
 
 div.main_recommend > div.main_recommend_banner {
+    border:solid 0px red;
     padding-top: 20px;
-    width:60%;
+    width:70%;
     margin: auto;
 }
 
+div.main_recommend > div.main_recommend_banner > a {
+    border:solid 0px red;
+    width:65%;
+}
+
 div.main_recommend > div.main_recommend_banner > a > img{
-    width:90%;
     border-radius: 8px;
+    width:100%;
+}
+
+div.main_recommend > div.main_recommend_banner > div.main_recommend_carousel {
+    border:solid 0px red;
+    width:430px;
+    height:430px;
+    overflow: hidden;
+    margin-left: 3%;
+    border-radius: 8px;
+}
+
+div.main_recommend > div.main_recommend_banner > div.main_recommend_carousel img{
+    height:430px;
 }
 /* === 메인페이지 여행정보 배너 끝 === */
 
 /* === 메인페이지 호텔 컨텐츠 시작 === */
 div.main_hotel {
     border:solid 0px red;
-    width:80%;
+    width:70%;
     margin: auto;
     margin-top: 40px;
 }
@@ -123,5 +143,77 @@ div.main_hotel > div.jeju_hotel > div:nth-child(2) > img,
 div.main_hotel > div.jeju_hotel > div:nth-child(3) > img,
 div.main_hotel > div.jeju_hotel > div:nth-child(4) > img {
     height:100%;
+}
+
+div.main_hotel > div.jeju_resort {
+    margin-top: 30px;
+}
+
+div.main_hotel > div.jeju_resort > div:nth-child(4) {
+    background-color: #b4ff96;
+    color:white;
+    text-align: center;
+    padding-top: 85px;
+    font-size: 40pt;
+    width:250px;
+    height:250px;
+    margin:auto;
+    border-radius: 8px;
+}
+
+div.main_hotel > div.jeju_resort > div:nth-child(1),
+div.main_hotel > div.jeju_resort > div:nth-child(2),
+div.main_hotel > div.jeju_resort > div:nth-child(3) {
+    border:solid 0px red;
+    width:300px;
+    height:250px;
+    margin:auto;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+div.main_hotel > div.jeju_resort > div:nth-child(1) > img,
+div.main_hotel > div.jeju_resort > div:nth-child(2) > img,
+div.main_hotel > div.jeju_resort > div:nth-child(3) > img {
+    height:100%;
+}
+
+div.main_hotel > div.jeju_airbnb {
+    margin-top: 30px;
+}
+
+div.main_hotel > div.jeju_airbnb > div:nth-child(1) {
+    background-color: #96b7ff;
+    color:white;
+    text-align: center;
+    padding-top: 85px;
+    font-size: 40pt;
+    width:250px;
+    height:250px;
+    margin:auto;
+    border-radius: 8px;
+}
+
+div.main_hotel > div.jeju_airbnb > div:nth-child(2),
+div.main_hotel > div.jeju_airbnb > div:nth-child(3),
+div.main_hotel > div.jeju_airbnb > div:nth-child(4) {
+    border:solid 0px red;
+    width:300px;
+    height:250px;
+    margin:auto;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+div.main_hotel > div.jeju_airbnb > div:nth-child(2) > img,
+div.main_hotel > div.jeju_airbnb > div:nth-child(3) > img,
+div.main_hotel > div.jeju_airbnb > div:nth-child(4) > img {
+    height:100%;
+}
+
+div.main_hotel > div div:hover {
+    transform:scale(1.05);
+    transition:0.2s;
+    cursor: pointer;
 }
 /* === 메인페이지 호텔 컨텐츠 끝 === */
