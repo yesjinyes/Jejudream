@@ -666,5 +666,15 @@ $(document).ready(function(){
         
 	</div> 
  
+ 
+ 	<form name="foodStoreFrm">
+ 		<input type="text" name="foodName" />
+ 		<input type="text" name="content" />
+ 		<input type="text" name="category" />
+ 		<input type="text" name="address" />
+ 	</form>
+ 
+ 
+ 
 </body>
 </html>

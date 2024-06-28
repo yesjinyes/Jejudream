@@ -1,11 +1,15 @@
 package com.spring.app.trip.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.servlet.ModelAndView;
 
+import com.spring.app.trip.domain.FoodStoreVO;
 import com.spring.app.trip.service.Yj_TripService;
 
 @Controller
@@ -23,7 +27,7 @@ public class Yj_TripController {
 		// /WEB-INF/views/community/communityMain.jsp 파일 생성
 	}
 	
-	
+/*	
 	// === 맛집 리스트 페이지 보이기 === //
 	@GetMapping("/foodStoreList.trip")
 	public String foodStoreList() {
@@ -31,10 +35,22 @@ public class Yj_TripController {
 		return "foodStore/foodStoreList";
 		// /WEB-INF/views/foodStore/foodStoreList.jsp 파일 생성
 	}
+*/	
 	
 	
-	
-	
+	// === 맛집 리스트 페이지 보이기 === //
+	@GetMapping("/foodStoreList.trip")
+	public ModelAndView foodStoreList(ModelAndView mav) {
+		
+		List<FoodStoreVO> foodStoreList = service.viewFoodStoreList();
+		
+		mav.addObject("foodStoreList", foodStoreList);
+		
+		mav.setViewName("foodStore/foodStoreList");
+		
+		return mav;
+		// /WEB-INF/views/foodStore/foodStoreList.jsp 파일 생성
+	}
 	
 	
 	
