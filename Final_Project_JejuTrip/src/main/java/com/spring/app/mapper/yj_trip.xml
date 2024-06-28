@@ -7,12 +7,13 @@
 메퍼가 바뀌면 무조건  WAS를 껐다 켜야한다!!!!!!!!! -->
 <mapper namespace="yj_trip">
 
-	<select id="viewFoodStoreList" resultType="com.spring.app.trip.domain.FoodStoreVO">
-		select food_main_img
+	<select id="viewFoodstoreList" resultType="com.spring.app.trip.domain.FoodstoreVO">
+		select food_store_code, food_category, fk_local_code, food_name, food_content, food_businesshours, food_mobile
+			 , substr(food_address, 0, instr(food_address, ' ', 1, 2)-1) AS food_address
+			 , food_main_img, review_division
 		from tbl_food_store
+		order by food_store_code
 	</select>
-
-
 
 
 </mapper>
