@@ -4,6 +4,9 @@
     String ctxPath = request.getContextPath();
     //    /JejuDream
 %>
+
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -238,7 +241,7 @@ $(document).ready(function(){
     	<!-- Jeju Dream 로고 -->
 		<div class="col-12 text-center">
 		    <h2>
-		    	<img src="<%= ctxPath %>/resources/images/foodStore/logo.jpg" style="width: 5%;"/> 
+		    	<img src="<%= ctxPath %>/resources/images/foodstore/logo.jpg" style="width: 5%;"/> 
 		        <a href="index.html">Jeju Dream</a>
 		    </h2>
 		</div>
@@ -354,27 +357,30 @@ $(document).ready(function(){
 		
 			<!-- 맛집 리스트 -->
 			<div class="col-md-8"> 
-				<div class="row">
-			    	<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
-			    		<div class="imgMainList">
-				    		<a href="">
-				            	<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/물꼬해녀의집.jpg" alt="..." />
-				        	</a>
-			        	</div>
-				        <div class="contentList">
-				            <div class="mb-3">
-				            	<h3 class="pt-3 title"><a href="#">물꼬해녀의집</a></h3>
-				            	<span>해녀가 바로 손질해주는 해산물 맛집</span>
-				            </div>
-				            <div class="pb-3">
-				                <span style="color:#b5aec4;">한식</span><br>
-				                <span>제주시 우도면</span>
-				            </div>
-				        </div>
-				    </div>
-				</div>
+				<c:forEach var="foodstoreList" items="${requestScope.foodstoreList}">	
+					<div class="row">
+				    	<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
+				    		<div class="imgMainList">
+					    		<a href="#">
+					            	<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/${foodstoreList.food_main_img}" alt="..." />
+					        	</a>
+				        	</div>
+					        <div class="contentList">
+					            <div class="mb-3">
+					            	<h3 class="pt-3 title"><a href="#">${foodstoreList.food_name}</a></h3>
+					            	<span>${foodstoreList.food_content}</span>
+					            </div>
+					            <div class="pb-3">
+					                <span style="color:#b5aec4;">${foodstoreList.food_category}</span><br>
+					                <span>${foodstoreList.food_address}</span>
+					            </div>
+					        </div>
+					    </div>
+					</div>
+				</c:forEach>
+			</div>
 				
-				<div class="row">
+				<%-- <div class="row">
 			    	<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
 			    		<div class="imgMainList">
 				    		<a href="">
@@ -392,222 +398,8 @@ $(document).ready(function(){
 				            </div>
 				        </div>
 				    </div>
-				</div>
+				</div> --%>
 				
-				<div class="row">
-			    	<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
-			    		<div class="imgMainList">
-				    		<a href="">
-				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/돌집식당.jpg" alt="..." />
-				        	</a>
-			        	</div>
-				        <div class="contentList" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding-left: 20px;">
-				            <div class="mb-3">
-				            	<h3 class="pt-3 title"><a href="#">돌집식당</a></h3>
-				            	<span>해녀가 바로 손질해주는 해산물 맛집</span>
-				            </div>
-				            <div class="pb-3">
-				                <span style="color:#b5aec4;">한식</span><br>
-				                <span>제주시 우도면</span>
-				            </div>
-				        </div>
-				    </div>
-				</div>
-
-				<div class="row">
-			    	<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
-			    		<div class="imgMainList">
-				    		<a href="">
-				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/대윤흑돼지 서귀포올레시장점.jpg" alt="..." />
-				        	</a>
-			        	</div>
-				        <div class="contentList" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding-left: 20px;">
-				            <div class="mb-3">
-				            	<h3 class="pt-3 title"><a href="#">대윤흑돼지 서귀포올레시장점</a></h3>
-				            	<span>해녀가 바로 손질해주는 해산물 맛집</span>
-				            </div>
-				            <div class="pb-3">
-				                <span style="color:#b5aec4;">한식</span><br>
-				                <span>제주시 우도면</span>
-				            </div>
-				        </div>
-				    </div>
-				</div>
-				
-				<div class="row">
-			    	<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
-			    		<div class="imgMainList">
-				    		<a href="">
-				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/제주 판타스틱버거.jpg" alt="..." />
-				        	</a>
-			        	</div>
-				        <div class="contentList" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding-left: 20px;">
-				            <div class="mb-3">
-				            	<h3 class="pt-3 title"><a href="#">제주 판타스틱버거</a></h3>
-				            	<span>해녀가 바로 손질해주는 해산물 맛집</span>
-				            </div>
-				            <div class="pb-3">
-				                <span style="color:#b5aec4;">한식</span><br>
-				                <span>제주시 우도면</span>
-				            </div>
-				        </div>
-				    </div>
-				</div>
-				
-				<div class="row">
-			    	<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
-			    		<div class="imgMainList">
-				    		<a href="">
-				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/동백키친.jpg" alt="..." />
-				        	</a>
-			        	</div>
-				        <div class="contentList" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding-left: 20px;">
-				            <div class="mb-3">
-				            	<h3 class="pt-3 title"><a href="#">동백키친</a></h3>
-				            	<span>해녀가 바로 손질해주는 해산물 맛집</span>
-				            </div>
-				            <div class="pb-3">
-				                <span style="color:#b5aec4;">한식</span><br>
-				                <span>제주시 우도면</span>
-				            </div>
-				        </div>
-				    </div>
-				</div>
-				
-				<div class="row">
-			    	<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
-			    		<div class="imgMainList">
-				    		<a href="">
-				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/젠하이드어웨이 제주점.jpg" alt="..." />
-				        	</a>
-			        	</div>
-				        <div class="contentList" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding-left: 20px;">
-				            <div class="mb-3">
-				            	<h3 class="pt-3 title"><a href="#">젠하이드어웨이 제주점</a></h3>
-				            	<span>해녀가 바로 손질해주는 해산물 맛집</span>
-				            </div>
-				            <div class="pb-3">
-				                <span style="color:#b5aec4;">한식</span><br>
-				                <span>제주시 우도면</span>
-				            </div>
-				        </div>
-				    </div>
-				</div>
-				<div class="row">
-			    	<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
-			    		<div class="imgMainList">
-				    		<a href="">
-				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/영육일삼.jpg" alt="..." />
-				        	</a>
-			        	</div>
-				        <div class="contentList" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding-left: 20px;">
-				            <div class="mb-3">
-				            	<h3 class="pt-3 title"><a href="#">영육일삼</a></h3>
-				            	<span>해녀가 바로 손질해주는 해산물 맛집</span>
-				            </div>
-				            <div class="pb-3">
-				                <span style="color:#b5aec4;">한식</span><br>
-				                <span>제주시 우도면</span>
-				            </div>
-				        </div>
-				    </div>
-				</div>
-				<div class="row">
-			    	<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
-			    		<div class="imgMainList">
-				    		<a href="">
-				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/미도리제주.jpg" alt="..." />
-				        	</a>
-			        	</div>
-				        <div class="contentList" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding-left: 20px;">
-				            <div class="mb-3">
-				            	<h3 class="pt-3 title"><a href="#">미도리제주</a></h3>
-				            	<span>해녀가 바로 손질해주는 해산물 맛집</span>
-				            </div>
-				            <div class="pb-3">
-				                <span style="color:#b5aec4;">한식</span><br>
-				                <span>제주시 우도면</span>
-				            </div>
-				        </div>
-				    </div>
-				</div>
-				<div class="row">
-			    	<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
-			    		<div class="imgMainList">
-				    		<a href="">
-				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/구르메스시 오마카세.jpg" alt="..." />
-				        	</a>
-			        	</div>
-				        <div class="contentList" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding-left: 20px;">
-				            <div class="mb-3">
-				            	<h3 class="pt-3 title"><a href="#">구르메스시 오마카세</a></h3>
-				            	<span>해녀가 바로 손질해주는 해산물 맛집</span>
-				            </div>
-				            <div class="pb-3">
-				                <span style="color:#b5aec4;">한식</span><br>
-				                <span>제주시 우도면</span>
-				            </div>
-				        </div>
-				    </div>
-				</div>
-				<div class="row">
-			    	<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
-			    		<div class="imgMainList">
-				    		<a href="">
-				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/강정중국집.jpg" alt="..." />
-				        	</a>
-			        	</div>
-				        <div class="contentList" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding-left: 20px;">
-				            <div class="mb-3">
-				            	<h3 class="pt-3 title"><a href="#">강정중국집</a></h3>
-				            	<span>해녀가 바로 손질해주는 해산물 맛집</span>
-				            </div>
-				            <div class="pb-3">
-				                <span style="color:#b5aec4;">한식</span><br>
-				                <span>제주시 우도면</span>
-				            </div>
-				        </div>
-				    </div>
-				</div>
-				<div class="row">
-			    	<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
-			    		<div class="imgMainList">
-				    		<a href="">
-				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/연태만.jpg" alt="..." />
-				        	</a>
-			        	</div>
-				        <div class="contentList" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding-left: 20px;">
-				            <div class="mb-3">
-				            	<h3 class="pt-3 title"><a href="#">연태만</a></h3>
-				            	<span>해녀가 바로 손질해주는 해산물 맛집</span>
-				            </div>
-				            <div class="pb-3">
-				                <span style="color:#b5aec4;">한식</span><br>
-				                <span>제주시 우도면</span>
-				            </div>
-				        </div>
-				    </div>
-				</div>
-				<div class="row">
-			    	<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
-			    		<div class="imgMainList">
-				    		<a href="">
-				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/서울앵무새 제주.jpg" alt="..." />
-				        	</a>
-			        	</div>
-				        <div class="contentList" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding-left: 20px;">
-				            <div class="mb-3">
-				            	<h3 class="pt-3 title"><a href="#">서울앵무새 제주</a></h3>
-				            	<span>해녀가 바로 손질해주는 해산물 맛집</span>
-				            </div>
-				            <div class="pb-3">
-				                <span style="color:#b5aec4;">한식</span><br>
-				                <span>제주시 우도면</span>
-				            </div>
-				        </div>
-				    </div>
-				</div>
-			</div>
 			
 			<!-- 맛집 추천 -->
 			<div class="foodRecommendList col-md-4">
