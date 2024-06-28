@@ -7,4 +7,12 @@
 메퍼가 바뀌면 무조건  WAS를 껐다 켜야한다!!!!!!!!! -->
 <mapper namespace="yj_trip">
 
+	<select id="viewFoodStoreList" resultType="com.spring.app.trip.domain.FoodStoreVO">
+		select food_main_img
+		from tbl_food_store
+	</select>
+
+
+
+
 </mapper>
