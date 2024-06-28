@@ -3,17 +3,16 @@ package com.spring.app.trip.domain;
 // == 숙소 VO == //
 public class LodgingVO {
 
-	
-	private String lodging_code;				// 숙소일련번호
-	private String fk_local_code;			  	// 지역코드
-	private String fk_lodging_category_code;	// 숙소카테고리일련번호
-	private String fk_companyid;				// 업체아이디
-	private String lodging_name;				// 숙소이름
-	private String lodging_tell;				// 숙소연락처
-	private String lodging_content;				// 숙소설명
-	private String lodging_address;				// 상세주소
-	private String main_img;					// 대표이미지
-	private String review_division;				// 리뷰용구분컬럼(default) A
+	private String lodging_code;		// 숙소일련번호
+	private String fk_local_code;		// 지역코드
+	private String lodging_category;	// 숙소카테고리
+	private String fk_companyid;		// 업체아이디
+	private String lodging_name;		// 숙소이름
+	private String lodging_tell;		// 숙소연락처
+	private String lodging_content;		// 숙소설명
+	private String lodging_address;		// 상세주소
+	private String main_img;			// 대표이미지
+	private String review_division;		// 리뷰용구분컬럼(default) A
 	
 	
     //////////////////////////////////////////////////////////////////
@@ -35,14 +34,15 @@ public class LodgingVO {
 		this.fk_local_code = fk_local_code;
 	}
 	
-	public String getFk_lodging_category_code() {
-		return fk_lodging_category_code;
+
+	public String getLodging_category() {
+		return lodging_category;
 	}
-	
-	public void setFk_lodging_category_code(String fk_lodging_category_code) {
-		this.fk_lodging_category_code = fk_lodging_category_code;
+
+	public void setLodging_category(String lodging_category) {
+		this.lodging_category = lodging_category;
 	}
-	
+
 	public String getFk_companyid() {
 		return fk_companyid;
 	}

@@ -235,7 +235,7 @@ $(document).ready(function(){
 
     <div class="container">
     
-    	<!-- Jeju Drean 로고 -->
+    	<!-- Jeju Dream 로고 -->
 		<div class="col-12 text-center">
 		    <h2>
 		    	<img src="<%= ctxPath %>/resources/images/foodStore/logo.jpg" style="width: 5%;"/> 
@@ -347,7 +347,6 @@ $(document).ready(function(){
 	            </div>
 	        </div>
       	</div>
-            
             
         <!---------------------------------------------------------------------------------------------->
         <!-- 리스트 시작 -->
@@ -608,10 +607,6 @@ $(document).ready(function(){
 				        </div>
 				    </div>
 				</div>
-				
-				
-				
-				
 			</div>
 			
 			<!-- 맛집 추천 -->
@@ -652,25 +647,34 @@ $(document).ready(function(){
 			
         </div>
         <!---------------------------------------------------------------------------------------------->
-                
-                
-                <div class="pagination-area">
-                    <nav aria-label="#">
-                        <ul class="pagination pagination-sm justify-content-center">
-                            <li class="page-item active">
-                                <a class="page-link" href="#">1 <span class="sr-only">(current)</span></a>
-                            </li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">Next <i class="fa fa-angle-double-right" aria-hidden="true"></i></a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-		<!-- 	</div>
-		</div>-->
+        
+        <!-- 페이징 임의로 넣어둠 -->        
+        <div class="pagination-area">
+            <nav aria-label="#">
+                <ul class="pagination pagination-sm justify-content-center">
+                    <li class="page-item active">
+                        <a class="page-link" href="#">1 <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">Next <i class="fa fa-angle-double-right" aria-hidden="true"></i></a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        
 	</div> 
+ 
+ 
+ 	<form name="foodStoreFrm">
+ 		<input type="text" name="foodName" />
+ 		<input type="text" name="content" />
+ 		<input type="text" name="category" />
+ 		<input type="text" name="address" />
+ 	</form>
+ 
+ 
  
 </body>
 </html>
