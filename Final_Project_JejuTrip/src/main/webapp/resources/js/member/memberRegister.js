@@ -275,11 +275,7 @@ function goRegister(ctxPath) {
             return;
         }
 
-        // const frm = document.registerFrm;
-        // frm.action = "";
-        // frm.method = "post";
-        // // frm.submit();
-
+        
         let queryString = $("form[name='registerFrm']").serialize();
         
         const email = $("input#email_id").val() + "@" + email_dropdown;
