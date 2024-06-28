@@ -33,7 +33,7 @@ public class Dy_TripController {
 	}
 	
 	
-	// 회원가입 처리하기
+	// 일반 회원가입 처리하기
 	@ResponseBody
 	@PostMapping("memberRegisterEnd.trip")
 	public String memberRegisterEnd(MemberVO mvo) {
