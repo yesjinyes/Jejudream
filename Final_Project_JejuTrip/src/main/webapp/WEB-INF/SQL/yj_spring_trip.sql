@@ -104,3 +104,6 @@ commit;
 
 
 
+drop sequence seq_lodging_category;
+
+

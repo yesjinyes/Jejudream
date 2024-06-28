@@ -11,19 +11,7 @@ create user final_orauser2 identified by gclass default tablespace users;
 grant connect, resource, create view, unlimited tablespace to final_orauser2;
 -- Grant을(를) 성공했습니다.
 
-
-
-
-
-/* 숙소카테고리 */
-CREATE TABLE tbl_lodging_category (
-	lodging_category_code VARCHAR2(20) NOT NULL, /* 숙소카테고리일련번호 */
-	lodging_category_name VARCHAR2(50), /* 숙소카테고리명칭 펜션 호텔 */
-    CONSTRAINT PK_tbl_lodging_category	PRIMARY KEY (lodging_category_code)
-);
--- Table TBL_LODGING_CATEGORY이(가) 생성되었습니다.
-
-
+---------------------------------------------------------------------------------------
 
 /* 지역 */
 CREATE TABLE tbl_local (
@@ -33,15 +21,6 @@ CREATE TABLE tbl_local (
     CONSTRAINT PK_tbl_local	PRIMARY KEY (local_code)
 );
 -- Table TBL_LOCAL이(가) 생성되었습니다.
-
-
-/* 즐길거리 카테고리 */
-CREATE TABLE tbl_play_category (
-	play_category_code VARCHAR2(20) NOT NULL, /* 즐길거리카테고리일련번호 */
-	play_category_name VARCHAR2(20), /* 즐길거리카테고리명칭 */
-    CONSTRAINT PK_tbl_play_category PRIMARY KEY (play_category_code)
-);
--- Table TBL_PLAY_CATEGORY이(가) 생성되었습니다.
 
 
 /* 회원 */
@@ -65,7 +44,6 @@ CREATE TABLE tbl_member (
     CONSTRAINT UK_tbl_member_mobile UNIQUE (mobile)
 );
 -- Table TBL_MEMBER이(가) 생성되었습니다.
-
 
 
 /* 업체 */
@@ -95,15 +73,6 @@ CREATE TABLE tbl_convenient  (
 -- Table TBL_CONVENIENT이(가) 생성되었습니다.
 
 
-/* 맛집카테고리 */
-CREATE TABLE tbl_food_category (
-	food_category_code VARCHAR2(20) NOT NULL, /* 맛집카테고리 일련번호 */
-	food_category_name VARCHAR2(20), /* 맛집카테고리명칭 */
-    CONSTRAINT PK_tbl_food_category_code PRIMARY KEY (food_category_code)
-);
--- Table TBL_FOOD_CATEGORY이(가) 생성되었습니다.
-
-
 /* 리뷰테이블 */
 CREATE TABLE tbl_review (
 	review_code VARCHAR2(20) NOT NULL, /* 리뷰일련번호 */
@@ -118,14 +87,11 @@ CREATE TABLE tbl_review (
 -- Table TBL_REVIEW이(가) 생성되었습니다.
 
 
-
--- 맛집 테이블 컬럼 추가해야되서 삭제후 재생성 
-
 /* 맛집 */
 CREATE TABLE tbl_food_store (
 	food_store_code VARCHAR2(20) NOT NULL, /* 맛집일련번호 */
-	fk_food_category_code VARCHAR2(20) NOT NULL, /* 맛집카테고리 일련번호 */
 	fk_local_code VARCHAR2(20) NOT NULL, /* 지역코드 */
+    food_category VARCHAR2(20) NOT NULL, /* 맛집카테고리 */
     food_name VARCHAR2(20) NOT NULL, /* 맛집식당이름 */
     food_content VARCHAR2(200), /* 맛집간단정보 */
     food_businesshours VARCHAR2(100), /* 영업시간 */
@@ -134,8 +100,7 @@ CREATE TABLE tbl_food_store (
 	food_main_img VARCHAR2(100), /* 대표이미지 */
 	review_division VARCHAR2(10) default 'B', /* 리뷰용구분컬럼(default) B */
     CONSTRAINT PK_tbl_food_store PRIMARY KEY (food_store_code),
-    CONSTRAINT FK_tbl_local_code FOREIGN KEY (fk_local_code) REFERENCES tbl_local (local_code) on delete cascade,
-	CONSTRAINT FK_tbl_food_category_code FOREIGN KEY (fk_food_category_code) REFERENCES tbl_food_category (food_category_code)  on delete cascade	
+    CONSTRAINT FK_tbl_local_code FOREIGN KEY (fk_local_code) REFERENCES tbl_local (local_code) on delete cascade
 );
 -- Table TBL_FOOD_STORE이(가) 생성되었습니다.
 
@@ -144,7 +109,7 @@ CREATE TABLE tbl_food_store (
 CREATE TABLE tbl_lodging(
 	lodging_code VARCHAR2(20) NOT NULL, /* 숙소일련번호 */
 	fk_local_code VARCHAR2(20) NOT NULL, /* 지역코드 */
-	fk_lodging_category_code VARCHAR2(20) NOT NULL, /* 숙소카테고리일련번호 */
+	lodging_category VARCHAR2(20) NOT NULL, /* 숙소카테고리 */
 	fk_companyid VARCHAR2(20) NOT NULL, /* 업체아이디 */
 	lodging_name VARCHAR2(50) NOT NULL, /* 숙소이름 */
 	lodging_tell VARCHAR2(20), /* 숙소연락처 */
@@ -154,7 +119,6 @@ CREATE TABLE tbl_lodging(
 	review_division VARCHAR2(10) default 'A', /* 리뷰용구분컬럼(default) A */
     CONSTRAINT PK_tbl_lodging PRIMARY KEY (lodging_code),
     CONSTRAINT FK_tbl_local_tbl_lodging FOREIGN KEY (fk_local_code) REFERENCES tbl_local (local_code) on delete cascade,
-    CONSTRAINT FK_tbl_lodging_category_code FOREIGN KEY (fk_lodging_category_code) REFERENCES tbl_lodging_category (lodging_category_code) on delete cascade,
     CONSTRAINT FK_tbl_company_fk_companyid FOREIGN KEY (fk_companyid) REFERENCES tbl_company (companyid) on delete cascade
 );
 -- Table TBL_LODGING이(가) 생성되었습니다.
@@ -171,14 +135,11 @@ CREATE TABLE tbl_lodging_convenient  (
 -- Table TBL_LODGING_CONVENIENT이(가) 생성되었습니다.
 
 
-
-
--- 즐길거리테이블 컬럼추가를 위해 삭제후 재생성
 /* 즐길거리 */
 CREATE TABLE tbl_play (
 	play_code VARCHAR2(20) NOT NULL, /* 즐길거리일련번호 */
-	fk_play_category_code VARCHAR2(20) NOT NULL, /* 즐길거리카테고리일련번호 */
 	fk_local_code VARCHAR2(20) NOT NULL, /* 지역코드 */
+    play_category VARCHAR2(20) NOT NULL, /* 즐길거리카테고리 */
     play_name VARCHAR2(20) NOT NULL, /* 즐길거리 명칭 */
     play_content VARCHAR2(100), /* 즐길거리 짧은상세정보 */
     play_mobile VARCHAR2(100), /* 즐길거리 연락처 */
@@ -187,12 +148,9 @@ CREATE TABLE tbl_play (
 	play_main_img VARCHAR2(100), /* 대표이미지 */
 	review_division VARCHAR2(10) default 'C', /* 리뷰용구분컬럼(default) C */
     CONSTRAINT PK_tbl_play 	PRIMARY KEY (play_code),
-    CONSTRAINT FK_tbl_play_local_code FOREIGN KEY (fk_local_code) REFERENCES tbl_local (local_code) on delete cascade,
-    CONSTRAINT FK_tbl_play_category_code FOREIGN KEY (fk_play_category_code) REFERENCES tbl_play_category (play_category_code) on delete cascade
+    CONSTRAINT FK_tbl_play_local_code FOREIGN KEY (fk_local_code) REFERENCES tbl_local (local_code) on delete cascade
 );
 -- Table TBL_PLAY이(가) 생성되었습니다.
-
-
 
 
 /* 숙소객실 */
@@ -212,7 +170,6 @@ CREATE TABLE tbl_room_detail (
 -- Table TBL_ROOM_DETAIL이(가) 생성되었습니다.
 
 
-
 /* 예약 */
 CREATE TABLE tbl_reservation (
 	reservation_code VARCHAR2(20) NOT NULL, /* 예약일련번호 */
@@ -227,7 +184,6 @@ CREATE TABLE tbl_reservation (
     CONSTRAINT FK_tbl_member_fk_userid FOREIGN KEY (fk_userid)	REFERENCES tbl_member (userid) on delete cascade
 );
 -- Table TBL_RESERVATION이(가) 생성되었습니다.
-
 
 
 /* 맛집추가이미지 */
@@ -380,15 +336,6 @@ commit;
 select * from tbl_local;
 
 
--- 맛집 카테고리 시퀀스 생성
-create sequence seq_food_category
-start with 1
-increment by 1
-nomaxvalue
-nominvalue
-nocycle
-nocache;
-
 select * from tbl_food_category;
 -- 맛집 카테고리 insert
 insert into tbl_food_category (food_category_code, food_category_name) values (seq_food_category.nextval, '한식');
@@ -400,50 +347,6 @@ insert into tbl_food_category (food_category_code, food_category_name) values (s
 
 commit;
 -- 커밋 완료.
-
-
--- 즐길거리 카테고리 시퀀스 생성
-create sequence seq_play_category
-start with 1
-increment by 1
-nomaxvalue
-nominvalue
-nocycle
-nocache;
-
-select * from tbl_play_category;
--- 즐길거리 카테고리 insert
-insert into tbl_play_category (play_category_code, play_category_name) values (seq_play_category.nextval, '관광지');
-insert into tbl_play_category (play_category_code, play_category_name) values (seq_play_category.nextval, '전시회');
-insert into tbl_play_category (play_category_code, play_category_name) values (seq_play_category.nextval, '체험');
-insert into tbl_play_category (play_category_code, play_category_name) values (seq_play_category.nextval, '기타');
-
-commit;
--- 커밋 완료.
-
-
-
--- 숙소 카테고리 시퀀스 생성
-create sequence seq_lodging_category
-start with 1
-increment by 1
-nomaxvalue
-nominvalue
-nocycle
-nocache;
-
-select *
-from tbl_lodging_category;
-
-insert into tbl_lodging_category (lodging_category_code, lodging_category_name) values (seq_lodging_category.nextval, '호텔');
-insert into tbl_lodging_category (lodging_category_code, lodging_category_name) values (seq_lodging_category.nextval, '펜션');
-insert into tbl_lodging_category (lodging_category_code, lodging_category_name) values (seq_lodging_category.nextval, '리조트');
-insert into tbl_lodging_category (lodging_category_code, lodging_category_name) values (seq_lodging_category.nextval, '게스트하우스');
-insert into tbl_lodging_category (lodging_category_code, lodging_category_name) values (seq_lodging_category.nextval, '기타');
-
-commit;
--- 커밋 완료.
-
 
 
 -- 편의시설 카테고리 시퀀스 생성
