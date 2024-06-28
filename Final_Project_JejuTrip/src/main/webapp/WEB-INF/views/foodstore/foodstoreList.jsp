@@ -358,12 +358,12 @@ $(document).ready(function(){
 			    	<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
 			    		<div class="imgMainList">
 				    		<a href="">
-				            	<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodStore/imgMain/물꼬해녀의집.jpg" alt="..." />
+				            	<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/물꼬해녀의집.jpg" alt="..." />
 				        	</a>
 			        	</div>
 				        <div class="contentList">
 				            <div class="mb-3">
-				            	<h3 class="pt-3 title"><a href="#">${requestScope.foodStoreList.food_name}</a></h3>
+				            	<h3 class="pt-3 title"><a href="#">물꼬해녀의집</a></h3>
 				            	<span>해녀가 바로 손질해주는 해산물 맛집</span>
 				            </div>
 				            <div class="pb-3">
@@ -378,7 +378,7 @@ $(document).ready(function(){
 			    	<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
 			    		<div class="imgMainList">
 				    		<a href="">
-				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodStore/imgMain/성산일출봉 아시횟집.jpg" alt="..." />
+				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/성산일출봉 아시횟집.jpg" alt="..." />
 				        	</a>
 			        	</div>
 				        <div class="contentList" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding-left: 20px;">
@@ -398,7 +398,7 @@ $(document).ready(function(){
 			    	<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
 			    		<div class="imgMainList">
 				    		<a href="">
-				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodStore/imgMain/돌집식당.jpg" alt="..." />
+				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/돌집식당.jpg" alt="..." />
 				        	</a>
 			        	</div>
 				        <div class="contentList" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding-left: 20px;">
@@ -418,7 +418,7 @@ $(document).ready(function(){
 			    	<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
 			    		<div class="imgMainList">
 				    		<a href="">
-				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodStore/imgMain/대윤흑돼지 서귀포올레시장점.jpg" alt="..." />
+				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/대윤흑돼지 서귀포올레시장점.jpg" alt="..." />
 				        	</a>
 			        	</div>
 				        <div class="contentList" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding-left: 20px;">
@@ -438,7 +438,7 @@ $(document).ready(function(){
 			    	<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
 			    		<div class="imgMainList">
 				    		<a href="">
-				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodStore/imgMain/제주 판타스틱버거.jpg" alt="..." />
+				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/제주 판타스틱버거.jpg" alt="..." />
 				        	</a>
 			        	</div>
 				        <div class="contentList" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding-left: 20px;">
@@ -458,7 +458,7 @@ $(document).ready(function(){
 			    	<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
 			    		<div class="imgMainList">
 				    		<a href="">
-				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodStore/imgMain/동백키친.jpg" alt="..." />
+				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/동백키친.jpg" alt="..." />
 				        	</a>
 			        	</div>
 				        <div class="contentList" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding-left: 20px;">
@@ -478,7 +478,7 @@ $(document).ready(function(){
 			    	<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
 			    		<div class="imgMainList">
 				    		<a href="">
-				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodStore/imgMain/젠하이드어웨이 제주점.jpg" alt="..." />
+				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/젠하이드어웨이 제주점.jpg" alt="..." />
 				        	</a>
 			        	</div>
 				        <div class="contentList" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding-left: 20px;">
@@ -497,7 +497,7 @@ $(document).ready(function(){
 			    	<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
 			    		<div class="imgMainList">
 				    		<a href="">
-				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodStore/imgMain/영육일삼.jpg" alt="..." />
+				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/영육일삼.jpg" alt="..." />
 				        	</a>
 			        	</div>
 				        <div class="contentList" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding-left: 20px;">
@@ -516,7 +516,7 @@ $(document).ready(function(){
 			    	<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
 			    		<div class="imgMainList">
 				    		<a href="">
-				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodStore/imgMain/미도리제주.jpg" alt="..." />
+				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/미도리제주.jpg" alt="..." />
 				        	</a>
 			        	</div>
 				        <div class="contentList" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding-left: 20px;">
@@ -535,7 +535,7 @@ $(document).ready(function(){
 			    	<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
 			    		<div class="imgMainList">
 				    		<a href="">
-				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodStore/imgMain/구르메스시 오마카세.jpg" alt="..." />
+				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/구르메스시 오마카세.jpg" alt="..." />
 				        	</a>
 			        	</div>
 				        <div class="contentList" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding-left: 20px;">
@@ -554,7 +554,7 @@ $(document).ready(function(){
 			    	<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
 			    		<div class="imgMainList">
 				    		<a href="">
-				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodStore/imgMain/강정중국집.jpg" alt="..." />
+				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/강정중국집.jpg" alt="..." />
 				        	</a>
 			        	</div>
 				        <div class="contentList" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding-left: 20px;">
@@ -573,7 +573,7 @@ $(document).ready(function(){
 			    	<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
 			    		<div class="imgMainList">
 				    		<a href="">
-				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodStore/imgMain/연태만.jpg" alt="..." />
+				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/연태만.jpg" alt="..." />
 				        	</a>
 			        	</div>
 				        <div class="contentList" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding-left: 20px;">
@@ -592,7 +592,7 @@ $(document).ready(function(){
 			    	<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
 			    		<div class="imgMainList">
 				    		<a href="">
-				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodStore/imgMain/서울앵무새 제주.jpg" alt="..." />
+				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodsdtore/imgMain/서울앵무새 제주.jpg" alt="..." />
 				        	</a>
 			        	</div>
 				        <div class="contentList" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding-left: 20px;">
@@ -665,14 +665,7 @@ $(document).ready(function(){
         </div>
         
 	</div> 
- 
- 
- 	<form name="foodStoreFrm">
- 		<input type="text" name="foodName" />
- 		<input type="text" name="content" />
- 		<input type="text" name="category" />
- 		<input type="text" name="address" />
- 	</form>
+
  
  
  

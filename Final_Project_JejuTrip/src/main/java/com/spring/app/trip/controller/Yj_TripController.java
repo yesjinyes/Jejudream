@@ -39,8 +39,8 @@ public class Yj_TripController {
 	
 	
 	// === 맛집 리스트 페이지 보이기 === //
-	@GetMapping("/foodStoreList.trip")
-	public ModelAndView foodStoreList(ModelAndView mav) {
+	@GetMapping("/foodstoreList.trip")
+	public ModelAndView foodstoreList(ModelAndView mav) {
 		
 		List<FoodstoreVO> foodstoreList = service.viewFoodstoreList();
 		
