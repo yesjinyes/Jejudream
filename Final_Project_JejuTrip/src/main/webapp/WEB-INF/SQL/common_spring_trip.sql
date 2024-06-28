@@ -343,6 +343,38 @@ insert into tbl_local (local_code, local_division, local_main_category) values (
 insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '서귀포시 성산읍','서귀포시 동부');
 
 
+------------------------- 도로명주소로 인하여 지역테이블 삭제후 재생성 ---------------------------------
+
+
+-- 제주시 서부 데이터
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '제주시 애월읍','제주시 서부');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '제주시 한림읍','제주시 서부');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '제주시 한경면','제주시 서부');
+
+-- 제주시 시내권 데이터
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '제주시 동','제주시 시내권');
+
+
+-- 제주시 동부 데이터
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '제주시 구좌읍','제주시 동부');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '제주시 조천읍','제주시 동부');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '제주시 우도면','제주시 동부');
+
+
+-- 서귀포시 동부 데이터
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '서귀포시 대정읍','서귀포시 서부');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '서귀포시 안덕면','서귀포시 서부');
+
+
+-- 서귀포시 시내권(중문 포함) 데이터
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '서귀포시 동','서귀포시 시내권');
+
+
+-- 서귀포시 동부 데이터
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '서귀포시 남원읍','서귀포시 동부');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '서귀포시 표선면','서귀포시 동부');
+insert into tbl_local (local_code, local_division, local_main_category) values (seq_local.nextval, '서귀포시 성산읍','서귀포시 동부');
+
 commit;
 -- 커밋 완료.
 select * from tbl_local;
@@ -452,4 +484,6 @@ CREATE TABLE tbl_add_img (
 	add_img <지정 되지 않음>, /* 추가이미지파일 */
 	review_division <지정 되지 않음> /* 구분컬럼 */
 );
+
+
 
