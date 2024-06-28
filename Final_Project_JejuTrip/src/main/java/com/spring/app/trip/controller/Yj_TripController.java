@@ -42,14 +42,14 @@ public class Yj_TripController {
 	@GetMapping("/foodStoreList.trip")
 	public ModelAndView foodStoreList(ModelAndView mav) {
 		
-		List<FoodstoreVO> foodStoreList = service.viewFoodStoreList();
+		List<FoodstoreVO> foodstoreList = service.viewFoodstoreList();
 		
-		mav.addObject("foodStoreList", foodStoreList);
+		mav.addObject("foodstoreList", foodstoreList);
 		
-		mav.setViewName("foodStore/foodStoreList");
+		mav.setViewName("foodstore/foodstoreList");
 		
 		return mav;
-		// /WEB-INF/views/foodStore/foodStoreList.jsp 파일 생성
+		// /WEB-INF/views/foodstore/foodstoreList.jsp 파일 생성
 	}
 	
 	

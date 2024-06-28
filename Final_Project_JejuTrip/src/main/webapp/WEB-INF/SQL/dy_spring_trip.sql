@@ -10,3 +10,10 @@ create user final_orauser2 identified by gclass default tablespace users;
 
 grant connect, resource, create view, unlimited tablespace to final_orauser2;
 -- Grant을(를) 성공했습니다.
+
+
+
+insert into tbl_member(userid, email, pw, user_name, mobile, address, detail_address, birthday, gender)
+values('admin', 'G3a1oS69mAbA7+x7+opiiA==', '9695b88a59a1610320897fa84cb7e144cc51f2984520efb77111d94b402a8382', '관리자', 'XvX9PItBFtYP5Fm1q/4T+g==', '서울 마포구 월드컵북로 21', '301호', '2000-01-01', '2');
+--    ('admin', 'admin@gmail.com', 'qwer1234$', '관리자', '01099999999', '', '', '', '')
+commit;

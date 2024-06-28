@@ -1,11 +1,62 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%
+	String ctxPath = request.getContextPath();
+%>
 
-<%-- ======= #27. tile1 중 footer 페이지 만들기  ======= --%>
+<style type="text/css">
 
-<div style="color: #999999; margin: auto; padding: 7px;">
-쌍용교육센터 | 강남 서울특별시 강남구 테혜란로 132(역삼동) 한독약품빌딩 8층 쌍용교육센터 | 강남 Tel 02)3482-4632-5 Fax 02)3482-4636<br>
-강북 서울특별시 마포구 월드컵북로 21 풍성빌딩 2,3,4층 쌍용강북교육센터 | 강북  Tel 02)336-8546-8 Fax 02)334-5405<br>
-사업자번호 : 214-85-29296 | 대표 : 노경한 | 개인정보처리관리책임자 : 장일규<br>       
-Copyright ⓒ 2012 Ssangyong institute of System Technology. All Right Reserved
+p#footer_title {
+	font-family: "Gugi", sans-serif;
+	font-weight: 400;
+	font-size: 36pt;
+	font-style: normal;
+}
+
+ul.footer-ul {
+	list-style: none;
+	padding: 0;
+}
+
+ul.footer-ul > li {
+	margin-right: 3%;
+}
+
+a:link,
+a:visited,
+a:hover {
+	color: #999999;
+	text-decoration: none;
+}
+
+</style>
+
+<div style="background-color: #383838; color: #999999;">
+	<div class="pt-5 pb-5 d-flex" style="width: 70%; margin: 0 auto;">
+	
+		<div class="d-inline-block">
+			<div>
+				<p id="footer_title" style="font-size: 1.2rem;">제주드림 Jeju Dream</p>
+				<img src="<%=ctxPath%>/resources/images/logo_circle.png" width="80">
+			</div>
+		</div>
+		
+		<div class="d-inline-block ml-auto" style="width: 70%;">
+			<div>
+				<ul class="footer-ul d-flex">
+					<li><a href="#">사이트 소개</a></li>
+					<li><a href="#">사업제휴</a></li>
+					<li><a href="#">개인정보취급방침</a></li>
+					<li><a href="#">이용약관</a></li>
+					<li><a href="#">수집거부</a></li>
+					<li><a href="#">고객센터</a></li>
+				</ul>
+				TEL : 02-123-4567&nbsp;&nbsp;|&nbsp;&nbsp;E-MAIL : jejudream@final.co.kr
+			</div>
+			<div style="margin-top: 4%; padding: 0; font-size: 0.8rem;">
+				Copyright © Jeju Dream Co. All Rights Reserved.
+			</div>
+		</div>
+		
+	</div>
 </div>     

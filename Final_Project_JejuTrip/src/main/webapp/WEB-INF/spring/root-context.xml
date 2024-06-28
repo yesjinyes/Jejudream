@@ -31,7 +31,7 @@
       <property name="mapperLocations" value="classpath*:com/spring/app/mapper/*.xml" />
     <property name="configLocation" value="classpath:com/spring/app/mybatisconfig/mybatis-config.xml" /> <!-- mybatis-config.xml에 대한 정보를 기술함 --> 
   <!--  또는 ,  id와 ref의 상관관계에대해서 복습해라-->
-       <!--    <property name="configLocation" value="classpath:mybatis/mybatis-config.xml" />   --> <!-- mybatis-config.xml에 대한 정보를 기술함 --> 
+         <!--  <property name="configLocation" value="classpath:mybatis/mybatis-config.xml" /> -->   <!-- mybatis-config.xml에 대한 정보를 기술함 --> 
       <property name="dataSource" ref="dataSource" />
    </bean>
    
@@ -40,7 +40,7 @@
    <bean id="sqlsession" class="org.mybatis.spring.SqlSessionTemplate"> 
       <constructor-arg index="0" ref="sqlSessionFactory" />
    </bean>
-   
+    
    
    <!-- ==== Mapper Interface 빈등록 하기 ==== 
         Mapper Interface(myBatis 3.0 이상 버전 부터 사용가능함)는 DAO클래스를 생략하고 mapper xml파일 과 DAO 인터페이스를 직접 연결해주는 방식이다. 

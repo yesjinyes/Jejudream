@@ -14,6 +14,18 @@ public class PlayVO {
 	private String play_main_img;		// 대표이미지
 	private String review_division;		// 리뷰용구분컬럼(default) C
 	
+//	-----------------------------------------------------------------------
+	
+	private Play_categoryVO playctgvo; 
+	
+	public Play_categoryVO getPlayctgvo() {
+		return playctgvo;
+	}
+	public void setPlayctgvo(Play_categoryVO playctgvo) {
+		this.playctgvo = playctgvo;
+	}
+	
+//	-----------------------------------------------------------------------
 	
 	//////////////////////////////////////////////////////////////////
 	// == Getter, Setter == //
@@ -73,7 +85,7 @@ public class PlayVO {
 	public void setPlay_businesshours(String play_businesshours) {
 		this.play_businesshours = play_businesshours;
 	}
-	
+
 	public String getPlay_address() {
 		return play_address;
 	}
@@ -98,6 +110,5 @@ public class PlayVO {
 		this.review_division = review_division;
 	}
 	
-
 	
 }

@@ -16,9 +16,9 @@ public class Yj_TripService_imple implements Yj_TripService {
 	
 	// === 맛집 리스트 페이지 보이기 === //
 	@Override
-	public List<FoodstoreVO> viewFoodStoreList() {
-		List<FoodstoreVO> foodStoreList = dao.viewFoodStoreList();
-		return foodStoreList;
+	public List<FoodstoreVO> viewFoodstoreList() {
+		List<FoodstoreVO> foodstoreList = dao.viewFoodstoreList();
+		return foodstoreList;
 	}
 
 }
