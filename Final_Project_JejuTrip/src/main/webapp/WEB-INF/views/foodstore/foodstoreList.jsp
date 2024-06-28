@@ -592,7 +592,7 @@ $(document).ready(function(){
 			    	<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
 			    		<div class="imgMainList">
 				    		<a href="">
-				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodsdtore/imgMain/서울앵무새 제주.jpg" alt="..." />
+				    			<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/서울앵무새 제주.jpg" alt="..." />
 				        	</a>
 			        	</div>
 				        <div class="contentList" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding-left: 20px;">
