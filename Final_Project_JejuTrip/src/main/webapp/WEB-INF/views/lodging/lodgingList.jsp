@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
     String ctxPath = request.getContextPath();
     //    /JejuDream
@@ -345,14 +346,18 @@ $(document).ready(function(){
             		
                     <div class="sort-filter main" style="display: flex; justify-content:space-between; width:100%;">
                     	
-                        <div>
+                        <div> 
                                 <button type="button" onclick="" class="sort active" value="">추천순</button>
                            
                                 <button type="button" onclick="" class="sort" value="PRICE">낮은가격순</button>
                           
                                 <button type="button" onclick="" class="sort" value="PRICE_DESC">높은가격순</button>
                             
+                             
                                 <button type="button" onclick="" class="sort" value="NEW">최신등록순</button>
+                            
+                    	
+                    	
                          
                         </div>
                         
