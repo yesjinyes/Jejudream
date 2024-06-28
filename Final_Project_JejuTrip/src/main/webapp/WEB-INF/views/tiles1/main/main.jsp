@@ -4,33 +4,9 @@
     String ctxPath = request.getContextPath();
     //    /MyMVC
 %>
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-
-<%-- Required meta tags --%>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-<%-- Bootstrap CSS --%>
-<link rel="stylesheet" type="text/css" href="<%= ctxPath%>/resources/bootstrap-4.6.2-dist/css/bootstrap.min.css" > 
-
-<%-- Font Awesome 6 Icons --%>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
 <%-- 직접 만든 CSS --%>
 <link rel="stylesheet" type="text/css" href="<%= ctxPath%>/resources/css/main/main.css" />
-
-<%-- Optional JavaScript --%>
-<script type="text/javascript" src="<%= ctxPath%>/resources/js/jquery-3.7.1.min.js"></script>
-<script type="text/javascript" src="<%= ctxPath%>/resources/bootstrap-4.6.2-dist/js/bootstrap.bundle.min.js" ></script> 
-
-<%-- JQueryUI CSS 및 JS --%>
-<link rel="stylesheet" type="text/css" href="<%= ctxPath%>/resources/jquery-ui-1.13.1.custom/jquery-ui.min.css" />
-<script type="text/javascript" src="<%=ctxPath%>/resources/jquery-ui-1.13.1.custom/jquery-ui.min.js"></script>
-
 <script type="text/javascript">
 	$(document).ready(function(){
 		$("a.nav-link").bind("click",function(e){
@@ -40,18 +16,6 @@
 	})// end of $(document).ready(function(){
 </script>
 
-</head>
-<body>
-	<div class="main_header">
-		<div class="main_header_menu">
-			<img class="main_icon" src="<%=ctxPath%>/resources/images/main/main_icon.jpg"/>
-			<a href="#">숙소</a>
-			<a href="#">먹거리</a>
-			<a href="#">즐길거리</a>
-			<a href="<%=ctxPath%>/community_main.trip">커뮤니티</a>
-			<a class="login"href="<%=ctxPath%>/login.trip">로그인</a>
-		</div>
-	</div>
 	<div class="main_video_div">
 		<video class="main_video" autoplay muted loop>
 			<source src="<%= ctxPath %>/resources/images/main/main.mp4" type="video/mp4">
@@ -110,6 +74,3 @@
 		</div>
 	</div>
 	<!-- 호텔 컨텐츠 끝 -->
-
-</body>
-</html>

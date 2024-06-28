@@ -16,7 +16,7 @@ public class Ws_TripController {
 	@GetMapping("/main.trip") 
 	public ModelAndView readComment(ModelAndView mav) {
 		
-		mav.setViewName("main");
+		mav.setViewName("main/main.tiles1");
 		
 		return mav;
 	}

@@ -1,44 +1,6 @@
 @charset "UTF-8";
 
-/* === 메인페이지 헤더 및 영상 시작 === */
-div.main_header_menu{
-    border:solid 0px green;
-    height:100px;
-    background-color: white;
-}
-
-div.main_header > div.main_header_menu > img.main_icon{
-    display:inline-block;
-    width:80px;
-    margin-left: 80px;
-}
-
-body > div.main_header > div.main_header_menu > a {
-    display: inline-block;
-    border:solid 0px red;
-    color:black;
-    font-size: 18pt;
-    font-weight:bolder;
-    margin: 30px 5% 0 5%;
-    text-decoration: none;
-}
-
-body > div.main_header > div.main_header_menu > a:nth-child(2){
-    display:inline-block;
-    border:solid 0px red;
-    margin-left: 15%;
-    margin-top:30px;
-}
-
-body > div.main_header > div.main_header_menu > a:hover {
-    color:#ff5000;
-    transition:0.5s;
-}
-
-body > div.main_header > div.main_header_menu > a.login {
-    margin-left: 13%;
-    font-size: 14pt;
-}
+/* === 메인페이지영상 시작 === */
 
 div.main_video_div {
     height:600px;
@@ -50,7 +12,7 @@ div.main_video_div > video{
     position:relative;
     top: -220px;
 }
-/* === 메인페이지 헤더 및 영상 끝 === */
+/* === 메인페이지 영상 끝 === */
 
 /* === 메인페이지 여행정보 배너 시작 === */
 div.main_recommend > div.main_recommend_title { 
