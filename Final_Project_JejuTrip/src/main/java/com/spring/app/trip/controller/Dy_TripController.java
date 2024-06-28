@@ -1,9 +1,13 @@
 package com.spring.app.trip.controller;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.service.Dy_TripService;
 
 @Controller
@@ -19,6 +23,20 @@ public class Dy_TripController {
 		return "member/memberRegister.tiles1";
 		// /WEB-INF/views/tiles1/member/memberRegister.jsp
 	}
+	
+	// 회원가입 처리하기
+	@ResponseBody
+	@PostMapping("memberRegisterEnd.trip")
+	public String memberRegisterEnd(MemberVO mvo) {
+		
+		int n = service.memberRegister(mvo);
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("n", n);
+		
+		return jsonObj.toString();
+	}
+	
 	
 	
 	// 로그인 페이지 요청

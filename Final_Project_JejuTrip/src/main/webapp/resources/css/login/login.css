@@ -14,7 +14,7 @@ div.container {
 div.info {
     border: solid 0px red;
     width: 100%;
-    margin: 10% 5% 0 0;
+    margin: 5% 0;
 }
 
 div.info input {
@@ -39,7 +39,7 @@ button#loginBtn {
     color: white;
 }
 
-div.d-flex {
+div.idPwFind {
     color: #808080;
 }
 

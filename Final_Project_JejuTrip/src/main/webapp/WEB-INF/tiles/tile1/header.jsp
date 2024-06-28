@@ -52,14 +52,44 @@ ul.menu_bar > li {
 
 ul.menu_bar > li:hover {
 	font-weight: bold;
-	border-bottom: solid 3px #ff5000;
+}
+
+.menu_bar_line {
+    width: 0;
+    height: 3px;
+    background-color: #ff5000;
+    transition: width 0.3s ease-out;
+    margin: 0 auto;
 }
 
 a.menu_bar_a {
 	color: black !important;
 	font-size: 1.2rem;
 }
+
+li.user_menu:hover {
+	font-weight: bold;
+}
 </style>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    
+    // 초기 상태 설정
+    $("div.menu_bar_line").css("width", "0");
+    
+    $(document).on("mouseenter", "ul.menu_bar > li", function() {
+        var $line = $(this).find("div.menu_bar_line");
+        $line.css("width", "100%");
+    });
+    
+    $(document).on("mouseleave", "ul.menu_bar > li", function() {
+        var $line = $(this).find("div.menu_bar_line");
+        $line.css("width", "0");
+    });
+    
+});
+</script>
 
 <div style="background-color: #F5F5F5;">
 
@@ -107,15 +137,19 @@ a.menu_bar_a {
 				<ul class="menu_bar navbar-nav mt-2 mt-lg-0">
 			      <li class="nav-item">
 			        <a class="nav-link menu_bar_a" href="#">숙소</a>
+			        <div class="menu_bar_line"></div>
 			      </li>
 			      <li class="nav-item">
 			        <a class="nav-link menu_bar_a" href="#">맛집</a>
+			        <div class="menu_bar_line"></div>
 			      </li>
 			      <li class="nav-item">
 			        <a class="nav-link menu_bar_a" href="#">즐길거리</a>
+			        <div class="menu_bar_line"></div>
 			      </li>
 			      <li class="nav-item">
 			        <a class="nav-link menu_bar_a" href="#">커뮤니티</a>
+			        <div class="menu_bar_line"></div>
 			      </li>
 			    </ul>
 			    
@@ -126,13 +160,13 @@ a.menu_bar_a {
 				  </form>
 				
 				<ul class="navbar-nav my-2 my-lg-0">
-					<li class="nav-item mr-3">
+					<li class="user_menu nav-item mr-3">
 						<a class="nav-link text-center" href="#">
 							<i class="fa-solid fa-cart-shopping"></i>
 							<div>장바구니</div>
 						</a>
 					</li>
-					<li class="nav-item">
+					<li class="user_menu nav-item">
 						<a class="nav-link text-center" href="#">
 							<i class="fa-solid fa-user"></i>
 							<div>마이페이지</div>

@@ -138,6 +138,23 @@
         <h2 style="margin-top: 20%;" class="font-weight-bold">비밀번호 찾기</h2>
 
         <form name="pwdFindFrm">
+        
+            <div class="d-flex justify-content-center mt-5">
+               <div class="form-check form-check-inline">
+                 <input class="form-check-input" type="radio" name="memberType" id="inlineRadio1" value="member" checked>
+                 <label class="form-check-label" for="inlineRadio1">일반회원</label>
+               </div>
+               <div class="form-check form-check-inline pl-3">
+                 <input class="form-check-input" type="radio" name="memberType" id="inlineRadio2" value="company">
+                 <label class="form-check-label" for="inlineRadio2">업체회원</label>
+               </div>
+               <div class="form-check form-check-inline pl-3">
+                 <input class="form-check-input" type="radio" name="memberType" id="inlineRadio3" value="admin">
+                 <label class="form-check-label" for="inlineRadio3">관리자</label>
+               </div>
+            </div>
+        
+        
             <div class="info">
                 <input type="text" name="userid" id="userid" placeholder="아이디">
                 <input type="text" name="email" id="email" placeholder="이메일">

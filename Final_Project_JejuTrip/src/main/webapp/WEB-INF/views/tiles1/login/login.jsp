@@ -48,6 +48,22 @@
         <h5>로그인 후 다양한 서비스를 이용하실 수 있습니다.</h5>
 
         <form name="loginFrm">
+        
+            <div class="d-flex justify-content-center mt-5">
+               <div class="form-check form-check-inline">
+                 <input class="form-check-input" type="radio" name="memberType" id="inlineRadio1" value="member" checked>
+                 <label class="form-check-label" for="inlineRadio1">일반회원</label>
+               </div>
+               <div class="form-check form-check-inline pl-3">
+                 <input class="form-check-input" type="radio" name="memberType" id="inlineRadio2" value="company">
+                 <label class="form-check-label" for="inlineRadio2">업체회원</label>
+               </div>
+               <div class="form-check form-check-inline pl-3">
+                 <input class="form-check-input" type="radio" name="memberType" id="inlineRadio3" value="admin">
+                 <label class="form-check-label" for="inlineRadio3">관리자</label>
+               </div>
+            </div>
+        
             <div class="info">
                 <input type="text" name="userid" id="userid" placeholder="아이디">
                 <input type="password" name="pw" id="pw" placeholder="비밀번호">
@@ -61,14 +77,9 @@
                 <button type="button" class="btn" id="loginBtn" onclick="goLogin()">로그인</button>
             </div>
 
-            <div class="d-flex" style="margin-bottom: 20%;">
-                <div style="width: 70%;">
-                    <span id="idFind" style="margin-right: 5%;">아이디 찾기</span> | 
-                    <span id="pwFind" style="margin-left: 5%;">비밀번호 찾기</span>
-                </div>
-                <div style="width: 30%;">
-                    <span id="register" style="margin-left: 56%;">회원가입</span>
-                </div>
+            <div class="d-flex idPwFind" style="margin-bottom: 20%;">
+	            <span id="idFind" style="margin-right: 4%;">아이디 찾기</span> | 
+	            <span id="pwFind" style="margin-left: 4%;">비밀번호 찾기</span>
             </div>
         </form>
     </div>

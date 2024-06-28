@@ -54,7 +54,7 @@
 	            <span class="error"></span>
 	        </div>
 	        <div class="info_block mt-3 d-flex">
-	            <input type="text" class="datepicker" name="birthday" id="birthday">
+	            <input type="text" class="datepicker" name="birthday" id="birthday" placeholder="생년월일">
 	            <div id="gender_block">
 	                <label id="label_male">남자
 	                    <input type="radio" checked="checked" name="gender" value="1">
@@ -79,7 +79,7 @@
 	    </div>
 	
 	    <div style="text-align: center; margin-bottom: 13%;">
-	        <button type="button" class="btn" id="registerBtn" onclick="goRegister()">가입하기</button>
+	        <button type="button" class="btn" id="registerBtn" onclick="goRegister('<%=ctxPath%>')">가입하기</button>
 	    </div>
 	
 	</form>
