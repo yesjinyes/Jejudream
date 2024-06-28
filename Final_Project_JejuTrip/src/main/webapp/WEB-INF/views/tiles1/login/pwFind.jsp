@@ -129,7 +129,7 @@
     	}
     	
     	alert("인증이 완료되었습니다.\n비밀번호 변경 페이지로 이동합니다.");
-    	location.href = "<%=ctxPath%>/pwFindEnd.trip";
+    	location.href = "<%=ctxPath%>/login/pwFindEnd.trip";
     }
 </script>
 

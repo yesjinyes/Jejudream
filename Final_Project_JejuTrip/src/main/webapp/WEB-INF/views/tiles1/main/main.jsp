@@ -13,6 +13,7 @@
 			$("a.nav-link").css({"color":"#838383"});
 			$(e.target).css({"color":"#FF5000"})
 		})
+
 	})// end of $(document).ready(function(){
 </script>
 
@@ -74,3 +75,7 @@
 		</div>
 	</div>
 	<!-- 호텔 컨텐츠 끝 -->
+
+	<!-- 맛집 컨텐츠 시작 -->
+	
+	<!-- 맛집 컨텐츠 끝 -->
