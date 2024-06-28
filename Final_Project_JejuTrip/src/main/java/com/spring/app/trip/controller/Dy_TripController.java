@@ -76,7 +76,7 @@ public class Dy_TripController {
 //			mav = service.companyLoginEnd(paraMap, mav, request);
 			
 		} else {
-//			mav = service.loginEnd(paraMap, mav, request);
+			mav = service.loginEnd(paraMap, mav, request);
 		}
 		
 		return mav;
