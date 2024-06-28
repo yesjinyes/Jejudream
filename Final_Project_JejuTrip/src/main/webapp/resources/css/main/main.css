@@ -69,8 +69,7 @@ div.main_hotel {
     border:solid 0px red;
     width:70%;
     margin: auto;
-    margin-top: 80px;
-    margin-bottom: 80px;
+    margin-top: 40px;
 }
 
 div.main_hotel > div.jeju_hotel,
@@ -180,7 +179,3 @@ div.main_hotel > div div:hover {
     cursor: pointer;
 }
 /* === 메인페이지 호텔 컨텐츠 끝 === */
-
-/* === 메인페이지 맛집 컨텐츠 시작 ===*/
-
-/* === 메인페이지 맛집 컨텐츠 끝 === */

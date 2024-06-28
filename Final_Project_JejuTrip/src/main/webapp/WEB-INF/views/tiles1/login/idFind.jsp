@@ -75,7 +75,7 @@
            
         // '비밀번호 찾기' 버튼 클릭 시
         $(document).on("click", "button#pwFindBtn", function() {
-        	location.href = "<%=ctxPath%>/login/pwFind.trip";
+        	location.href = "<%=ctxPath%>/pwFind.trip";
         });
         
     });
@@ -104,8 +104,6 @@
         }
 
         /* 아이디 찾기 완료 시 화면 임시 구현 */
-        $("div.d-flex").hide();
-        
         let v_html = `<span id="idFindResult">김다영 님의 아이디</span>
                         <div class="mt-4 p-5" id="idFindDiv">
                         <span class="font-weight-bold" style="font-size: 16pt;">kimdy</span>
@@ -115,7 +113,7 @@
         v_html = `<button type="button" class="btn btn-success mr-2" id="loginBtn">로그인하러 가기</button>
                     <button type="button" class="btn btn-outline-success" id="pwFindBtn">비밀번호 찾기</button>`;
 
-        $("div#btnDiv").html(v_html);
+        $("div.mt-5").html(v_html);
     }
 </script>
 
@@ -145,7 +143,7 @@
                 <input type="text" name="email" id="email" placeholder="이메일">
             </div>
 
-            <div id="btnDiv" class="mt-5 text-center" style="margin-bottom: 20%;">
+            <div class="mt-5 text-center" style="margin-bottom: 20%;">
                 <button type="button" class="btn" id="idFindBtn" onclick="goIdFind()">아이디 찾기</button>
             </div>
         </form>
