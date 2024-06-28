@@ -68,18 +68,16 @@ public class Dy_TripController {
 		String clientip = request.getRemoteAddr();
 		
 		Map<String, String> paraMap = new HashMap<>();
-		paraMap.put("memberType", memberType);
 		paraMap.put("id", id);
 		paraMap.put("pw", Sha256.encrypt(pw));
 		paraMap.put("clientip", clientip);
 		
 		if("company".equals(memberType)) {
-//			mav = service.companyLoginEnd(paraMap, mav, request); 
+//			mav = service.companyLoginEnd(paraMap, mav, request);
 			
 		} else {
-//			mav = service.loginEnd(paraMap, mav, request); 
+//			mav = service.loginEnd(paraMap, mav, request);
 		}
-		
 		
 		return mav;
 	}
