@@ -177,7 +177,7 @@ $(function () {
 
         const email_id = $(e.target).val().trim();
 
-        const regExp_emailId = new RegExp(/^[a-z]{5,20}$/);
+        const regExp_emailId = new RegExp(/^(?=.*[A-Za-z])[A-Za-z0-9]{5,20}$/);
         const bool = regExp_emailId.test(email_id);
 
         if(email_id == "") {
@@ -189,7 +189,7 @@ $(function () {
         } else if(!bool) {
             $(e.target).addClass("input_error");
             $(e.target).parent().next().show();
-            $(e.target).parent().next().text("이메일 아이디는 5~20자 이내 영문으로만 입력해주세요.");
+            $(e.target).parent().next().text("이메일 아이디는 5~20자 이내의 영문, 숫자로만 입력해주세요.");
             checkEmailId = false;
 
         } else {
@@ -228,6 +228,11 @@ $(function () {
 
     });
 
+    // 주소 키보드 입력 막기
+    $("input#address").on("keypress keydown keyup", function(e) {
+        e.preventDefault();
+    });
+
 
     $("input#detail_address").keyup(function(e) {
         if(e.keyCode == 13) {
@@ -238,7 +243,7 @@ $(function () {
 });
 
 
-function goRegister() {
+function goRegister(ctxPath) {
 
     if(checkUserid && checkName && checkPw && checkPwCheck && checkEmailId && checkMobile) {
 
@@ -275,7 +280,7 @@ function goRegister() {
         // frm.method = "post";
         // // frm.submit();
 
-        const queryString = $("form[name='registerFrm']").serialize();
+        let queryString = $("form[name='registerFrm']").serialize();
         
         const email = $("input#email_id").val() + "@" + email_dropdown;
 
@@ -285,13 +290,21 @@ function goRegister() {
         }
         queryString += "email=" + encodeURIComponent(email);
 
+        // 회원가입 처리하기
         $.ajax({
-            url: "<%=ctxPath%>/memberRegister.trip",
+            url: ctxPath + "/memberRegisterEnd.trip",
             type: "post",
             data: queryString,
             dataType: "json",
             success: function(json) {
+                if(json.n == 1) {
+                    alert("회원가입이 성공되었습니다.");
+                    location.href = ctxPath + "/index.trip";
 
+                } else {
+                    alert("회원가입에 실패했습니다.");
+                    history.back();
+                }
             },
             error: function(request, status, error) {
                 alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
