@@ -384,7 +384,7 @@ $(document).ready(function(){
 				        <div class="contentList" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding-left: 20px;">
 				            <div class="mb-3">
 				            	<h3 class="pt-3 title"><a href="#">성산일출봉 아시횟집</a></h3>
-				            	<span>해녀가 바로 손질해주는 해산물 맛집</span>
+				            	<span>해녀가 바로 손질해주는 해산물 맛집</span> 
 				            </div>
 				            <div class="pb-3">
 				                <span style="color:#b5aec4;">한식</span><br>
