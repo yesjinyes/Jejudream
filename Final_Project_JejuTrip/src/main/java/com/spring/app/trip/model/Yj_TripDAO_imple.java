@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
-import com.spring.app.trip.domain.FoodStoreVO;
+import com.spring.app.trip.domain.FoodstoreVO;
 
 @Repository
 public class Yj_TripDAO_imple implements Yj_TripDAO {
@@ -19,8 +19,8 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 	
 	// === 맛집 리스트 페이지 보이기 === //
 	@Override
-	public List<FoodStoreVO> viewFoodStoreList() {
-		List<FoodStoreVO> foodStoreList = sqlsession.selectList("yj_trip.viewFoodStoreList");
+	public List<FoodstoreVO> viewFoodStoreList() {
+		List<FoodstoreVO> foodStoreList = sqlsession.selectList("yj_trip.viewFoodStoreList");
 		return foodStoreList;
 	}
 
