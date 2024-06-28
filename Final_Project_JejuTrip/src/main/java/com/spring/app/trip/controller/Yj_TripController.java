@@ -9,7 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.spring.app.trip.domain.FoodStoreVO;
+import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.service.Yj_TripService;
 
 @Controller
@@ -42,14 +42,14 @@ public class Yj_TripController {
 	@GetMapping("/foodStoreList.trip")
 	public ModelAndView foodStoreList(ModelAndView mav) {
 		
-		List<FoodStoreVO> foodStoreList = service.viewFoodStoreList();
+		List<FoodstoreVO> foodstoreList = service.viewFoodstoreList();
 		
-		mav.addObject("foodStoreList", foodStoreList);
+		mav.addObject("foodstoreList", foodstoreList);
 		
-		mav.setViewName("foodStore/foodStoreList");
+		mav.setViewName("foodstore/foodstoreList");
 		
 		return mav;
-		// /WEB-INF/views/foodStore/foodStoreList.jsp 파일 생성
+		// /WEB-INF/views/foodstore/foodstoreList.jsp 파일 생성
 	}
 	
 	

@@ -363,7 +363,7 @@ $(document).ready(function(){
 			        	</div>
 				        <div class="contentList">
 				            <div class="mb-3">
-				            	<h3 class="pt-3 title"><a href="#">물꼬해녀의집</a></h3>
+				            	<h3 class="pt-3 title"><a href="#">${requestScope.foodStoreList.food_name}</a></h3>
 				            	<span>해녀가 바로 손질해주는 해산물 맛집</span>
 				            </div>
 				            <div class="pb-3">

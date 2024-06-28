@@ -1,7 +1,7 @@
 package com.spring.app.trip.domain;
 
 // == 맛집 VO == //
-public class FoodStoreVO {
+public class FoodstoreVO {
 	
 	private String food_store_code;		// 맛집일련번호
 	private String fk_local_code;		// 지역코드
