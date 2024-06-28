@@ -11,61 +11,61 @@ create user final_orauser2 identified by gclass default tablespace users;
 grant connect, resource, create view, unlimited tablespace to final_orauser2;
 -- Grant을(를) 성공했습니다.
 
---------------------------------------------------------------------------------
-
-/* 업체 */
-CREATE TABLE tbl_company (
-	companyid VARCHAR2(20) NOT NULL, /* 업체아이디 */
-	company_name VARCHAR2(20), /* 업체명 */
-	pw VARCHAR2(200) NOT NULL, /* 비밀번호 */
-	email VARCHAR2(200) NOT NULL, /* 이메일 */
-	mobile VARCHAR2(200) NOT NULL, /* 연락처 */
-	registerday DATE DEFAULT sysdate, /* 가입일자 */
-	lastpwdchangedate DATE DEFAULT sysdate, /* 마지막암호변경일자 */
-	status NUMBER(1) DEFAULT 1 NOT NULL, /* 회원탈퇴유무 */
-	idle NUMBER(1) DEFAULT 0 NOT NULL, /* 휴면유무 */
-    CONSTRAINT PK_tbl_company_companyid PRIMARY KEY (companyid),
-    CONSTRAINT UK_tbl_company_email UNIQUE (email),
-    CONSTRAINT UK_tbl_company_mobile UNIQUE (mobile)
-);
+----------------------------------------------------------------------------
 
 
-
-/* 숙소 */
-CREATE TABLE tbl_lodging(
-	lodging_code VARCHAR2(20) NOT NULL, /* 숙소일련번호 */
+/* 맛집 */
+CREATE TABLE tbl_food_store (
+	food_store_code VARCHAR2(20) NOT NULL, /* 맛집일련번호 */
+	fk_food_category_code VARCHAR2(20) NOT NULL, /* 맛집카테고리 일련번호 */
 	fk_local_code VARCHAR2(20) NOT NULL, /* 지역코드 */
-	fk_lodging_category_code VARCHAR2(20) NOT NULL, /* 숙소카테고리일련번호 */
-	fk_companyid VARCHAR2(20) NOT NULL, /* 업체아이디 */
-	lodging_name VARCHAR2(50) NOT NULL, /* 숙소이름 */
-	lodging_tell VARCHAR2(20), /* 숙소연락처 */
-	lodging_content VARCHAR2(1000), /* 숙소설명 */
-	lodging_address VARCHAR2(200), /* 상세주소 */
-	main_img VARCHAR2(100), /* 대표이미지 */
-	review_division VARCHAR2(10) default 'A', /* 리뷰용구분컬럼(default) A */
-    CONSTRAINT PK_tbl_lodging PRIMARY KEY (lodging_code),
-    CONSTRAINT FK_tbl_local_tbl_lodging FOREIGN KEY (fk_local_code) REFERENCES tbl_local (local_code) on delete cascade,
-    CONSTRAINT FK_tbl_lodging_category_code FOREIGN KEY (fk_lodging_category_code) REFERENCES tbl_lodging_category (lodging_category_code) on delete cascade,
-    CONSTRAINT FK_tbl_company_fk_companyid FOREIGN KEY (fk_companyid) REFERENCES tbl_company (companyid) on delete cascade
+	food_address VARCHAR2(200), /* 상세주소 */
+	food_main_img VARCHAR2(100), /* 대표이미지 */
+	review_division VARCHAR2(10) default 'B', /* 리뷰용구분컬럼(default) B */
+    CONSTRAINT PK_tbl_food_store PRIMARY KEY (food_store_code),
+    CONSTRAINT FK_tbl_local_code FOREIGN KEY (fk_local_code) REFERENCES tbl_local (local_code) on delete cascade,
+	CONSTRAINT FK_tbl_food_category_code FOREIGN KEY (fk_food_category_code) REFERENCES tbl_food_category (food_category_code)  on delete cascade	
+);
+
+
+/* 맛집추가이미지 */
+CREATE TABLE tbl_food_add_img (
+	food_add_code VARCHAR2(20) NOT NULL, /* 맛집추가일련번호 */
+	fk_food_store_code VARCHAR2(20), /* 맛집일련번호 */
+	food_add_img VARCHAR2(100), /* 추가이미지파일 */
+    CONSTRAINT PK_tbl_food_add_img_code PRIMARY KEY (food_add_code),
+    CONSTRAINT FK_tbl_food_store_code FOREIGN KEY (fk_food_store_code) REFERENCES tbl_food_store (food_store_code) on delete cascade
+);
+
+
+/* 맛집카테고리 */
+CREATE TABLE tbl_food_category (
+	food_category_code VARCHAR2(20) NOT NULL, /* 맛집카테고리 일련번호 */
+	food_category_name VARCHAR2(20), /* 맛집카테고리명칭 */
+    CONSTRAINT PK_tbl_food_category_code PRIMARY KEY (food_category_code)
 );
 
 
 
-/* 객실상세 */
-CREATE TABLE tbl_room_detail (
-	room_detail_code VARCHAR2(20) NOT NULL, /* 숙소객실일련번호 */
-	fk_lodging_code VARCHAR2(20) NOT NULL, /* 숙소일련번호 */
-	room_name VARCHAR2(50) NOT NULL, /* 객실이름 */
-	price NUMBER(10) NOT NULL, /* 객실가격 */
-	check_in VARCHAR2(100) NOT NULL, /* 체크인시간 */
-	check_out VARCHAR2(100) NOT NULL, /* 체크아웃시간 */
-	room_stock NUMBER(1) NOT NULL, /* 객실수량 */
-	min_person NUMBER(2) default 2, /* 기존인원 */
-	max_person NUMBER(2) default 2, /* 최대인원 */
-    CONSTRAINT PK_tbl_room_detail_code PRIMARY KEY (room_detail_code),
-    CONSTRAINT FK_tbl_room_detail_fk_code FOREIGN KEY (fk_lodging_code) REFERENCES tbl_lodging (lodging_code) on delete cascade
-);
 
+
+-- 맛집 테이블
+select *
+from tbl_food_store;
+
+-- 즐길거리 테이블
+select *
+from tbl_play;
+
+desc tbl_play;
+
+-- 지역 테이블
+select *
+from tbl_local;
+
+
+
+insert into 
 
 
 
