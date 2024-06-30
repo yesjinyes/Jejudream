@@ -68,6 +68,7 @@ public class Dy_TripController {
 		String clientip = request.getRemoteAddr();
 		
 		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("memberType", memberType);
 		paraMap.put("id", id);
 		paraMap.put("pw", Sha256.encrypt(pw));
 		paraMap.put("clientip", clientip);

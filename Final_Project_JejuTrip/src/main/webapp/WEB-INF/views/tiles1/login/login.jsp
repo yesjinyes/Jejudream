@@ -18,9 +18,6 @@
     		location.href = "<%=ctxPath%>/pwFind.trip";
     	});
     	
-    	$("span#register").click(function() { // 일반 회원가입으로 임시 이동
-    		location.href = "<%=ctxPath%>/memberRegister.trip";
-    	});
     	
     });
 
@@ -39,6 +36,10 @@
             return;
         }
 
+        const frm = document.loginFrm;
+        frm.action = "<%=ctxPath%>/loginEnd.trip";
+        frm.method = "post";
+        frm.submit();
     }
 </script>
 
