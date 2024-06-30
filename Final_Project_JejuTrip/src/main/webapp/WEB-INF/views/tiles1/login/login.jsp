@@ -11,12 +11,13 @@
     $(document).ready(function() {
 
     	$("span#idFind").click(function() {
-    		location.href = "<%=ctxPath%>/login/idFind.trip";
+    		location.href = "<%=ctxPath%>/idFind.trip";
     	});
     	
     	$("span#pwFind").click(function() {
-    		location.href = "<%=ctxPath%>/login/pwFind.trip";
+    		location.href = "<%=ctxPath%>/pwFind.trip";
     	});
+    	
     	
     });
 
@@ -34,12 +35,11 @@
             alert("비밀번호를 입력해주세요!");
             return;
         }
-        
+
         const frm = document.loginFrm;
         frm.action = "<%=ctxPath%>/loginEnd.trip";
         frm.method = "post";
-//      frm.submit();
-
+        frm.submit();
     }
 </script>
 
@@ -52,15 +52,15 @@
         
             <div class="d-flex justify-content-center mt-5">
                <div class="form-check form-check-inline">
-                 <input class="form-check-input" type="radio" name="memberType" value="member" checked>
+                 <input class="form-check-input" type="radio" name="memberType" id="inlineRadio1" value="member" checked>
                  <label class="form-check-label" for="inlineRadio1">일반회원</label>
                </div>
                <div class="form-check form-check-inline pl-3">
-                 <input class="form-check-input" type="radio" name="memberType" value="company">
+                 <input class="form-check-input" type="radio" name="memberType" id="inlineRadio2" value="company">
                  <label class="form-check-label" for="inlineRadio2">업체회원</label>
                </div>
                <div class="form-check form-check-inline pl-3">
-                 <input class="form-check-input" type="radio" name="memberType" value="admin">
+                 <input class="form-check-input" type="radio" name="memberType" id="inlineRadio3" value="admin">
                  <label class="form-check-label" for="inlineRadio3">관리자</label>
                </div>
             </div>

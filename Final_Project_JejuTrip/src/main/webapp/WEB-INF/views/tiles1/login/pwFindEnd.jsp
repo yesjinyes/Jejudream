@@ -119,6 +119,9 @@
                 <input type="password" name="pwCheck" id="pwCheck" placeholder="비밀번호 재입력">
             </div>
             
+            <input type="hidden" name="userid" value="${requestScope.userid}">
+            <input type="hidden" name="email" value="${requestScope.email}">
+            
             <div class="mt-5" style="margin-bottom: 20%;">
                 <button type="button" class="btn" id="pwUpdateBtn" onclick="goPwUpdate()">변경하기</button>
             </div>

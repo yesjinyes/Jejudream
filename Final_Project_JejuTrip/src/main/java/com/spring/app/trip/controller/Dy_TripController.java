@@ -74,12 +74,11 @@ public class Dy_TripController {
 		paraMap.put("clientip", clientip);
 		
 		if("company".equals(memberType)) {
-//			mav = service.companyLoginEnd(paraMap, mav, request); 
+//			mav = service.companyLoginEnd(paraMap, mav, request);
 			
 		} else {
-//			mav = service.loginEnd(paraMap, mav, request); 
+			mav = service.loginEnd(paraMap, mav, request);
 		}
-		
 		
 		return mav;
 	}

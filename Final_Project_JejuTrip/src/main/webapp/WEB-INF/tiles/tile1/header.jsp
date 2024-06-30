@@ -99,18 +99,30 @@ $(document).ready(function() {
 			<div class="collapse navbar-collapse" id="inner_bar">
 				
 				<ul class="navbar-nav ml-auto my-2 my-lg-0" style="justify-content: ">
-					<li class="nav-item">
-						<a class="nav-link" href="<%=ctxPath%>/login.trip">로그인<span class="sr-only">(current)</span></a>
-					</li>
-					<li class="nav-item dropdown">
-						<a class="nav-link dropdown-toggle" href="#" id="registerDropdown" data-toggle="dropdown">
-							회원가입
-						</a>
-						<div class="dropdown-menu" aria-labelledby="registerDropdown" style="margin-right: 20%;">
-							<a class="dropdown-item" href="<%=ctxPath%>/memberRegister.trip">개인 회원가입</a>
-							<a class="dropdown-item" href="<%=ctxPath%>/companyRegister.trip">업체 회원가입</a>
-						</div>
-					</li>
+					<c:if test="${empty sessionScope.loginuser}">
+						<li class="nav-item">
+							<a class="nav-link" href="<%=ctxPath%>/login.trip">로그인<span class="sr-only">(current)</span></a>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" id="registerDropdown" data-toggle="dropdown">
+								회원가입
+							</a>
+							<div class="dropdown-menu" aria-labelledby="registerDropdown" style="margin-right: 20%;">
+								<a class="dropdown-item" href="<%=ctxPath%>/memberRegister.trip">개인 회원가입</a>
+								<a class="dropdown-item" href="<%=ctxPath%>/companyRegister.trip">업체 회원가입</a>
+							</div>
+						</li>
+					</c:if>
+					
+					<c:if test="${not empty sessionScope.loginuser}">
+						<li class="nav-item">
+							<a class="nav-link" href="#">${sessionScope.loginuser.user_name}님 로그인 중...</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="<%=ctxPath%>/logout.trip">로그아웃</a>
+						</li>
+					</c:if>
+					
 					<li class="nav-item">
 						<a class="nav-link" href="#">고객센터</a>
 					</li>
@@ -123,7 +135,7 @@ $(document).ready(function() {
 	<div style="width: 70%; margin: 0 auto;">
 		<nav class="navbar navbar-expand-lg navbar-light">
 			
-			<a class="navbar-brand mr-4" href="#" title="Jeju Dream">
+			<a class="navbar-brand mr-4" href="<%=ctxPath%>/main.trip" title="Jeju Dream">
 				<img src="<%=ctxPath%>/resources/images/logo.png" width="80">
 				<p id="header_title">제주드림</p>
 			</a>
