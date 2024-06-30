@@ -40,8 +40,8 @@ public class Dy_TripDAO_imple implements Dy_TripDAO {
 
 	// 회원의 idle 컬럼의 값을 1로 변경하기
 	@Override
-	public void updateIdle(String id) {
-		sqlsession.update("dy_trip.updateIdle", id);
+	public void updateIdle(Map<String, String> paraMap) {
+		sqlsession.update("dy_trip.updateIdle", paraMap);
 		
 	}
 

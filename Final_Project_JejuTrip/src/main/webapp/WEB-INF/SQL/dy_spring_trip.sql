@@ -37,22 +37,6 @@ CROSS JOIN
   where fk_userid = 'kimdy' ) H;
 
 
-SELECT userid, user_name, pwdchangegap,
-       NVL(lastlogingap, trunc(months_between(sysdate, registerday))) AS lastlogingap, 
-       idle, email, mobile, address, detail_address, birthday, gender
-FROM 
-( select userid, user_name,
-         trunc( months_between(sysdate, lastpwdchangedate) ) AS pwdchangegap,
-         registerday, idle, email, mobile, address, detail_address, birthday, gender
-  from tbl_member 
-  where status = 1 and userid = 'kimdy' and pw = '9695b88a59a1610320897fa84cb7e144cc51f2984520efb77111d94b402a8382'
-) M 
-CROSS JOIN 
-( select trunc( months_between(sysdate, max(logindate)) ) as lastlogingap 
-  from tbl_member_loginhistory 
-  where fk_userid = 'kimdy' ) H;
-
-
 
 desc tbl_member_loginhistory;
 

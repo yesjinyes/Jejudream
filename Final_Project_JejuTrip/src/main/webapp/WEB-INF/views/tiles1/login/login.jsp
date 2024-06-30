@@ -23,10 +23,10 @@
 
     function goLogin() {
 
-        const userid = $("input#userid").val().trim();
+        const id = $("input#id").val().trim();
         const pw = $("input#pw").val().trim();
 
-        if(userid == "") {
+        if(id == "") {
             alert("아이디를 입력해주세요!");
             return;
         }
@@ -66,7 +66,7 @@
             </div>
         
             <div class="info">
-                <input type="text" name="userid" id="userid" placeholder="아이디">
+                <input type="text" name="id" id="id" placeholder="아이디">
                 <input type="password" name="pw" id="pw" placeholder="비밀번호">
             </div>
             <div style="margin: 0 0 1% 2%;">

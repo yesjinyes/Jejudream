@@ -66,7 +66,7 @@ public class Dy_TripService_imple implements Dy_TripService {
 			loginuser.setIdle(1);
 			
 			// 회원의 idle 컬럼의 값을 1로 변경하기
-			dao.updateIdle(paraMap.get("id")); // 또는 loginuser.getUserid()
+			dao.updateIdle(paraMap);
 		}
 		
 		if(loginuser != null && loginuser.getIdle() == 0) {

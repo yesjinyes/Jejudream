@@ -34,7 +34,7 @@
 	
 	
 	<!-- 회원의 idle 컬럼의 값을 1로 변경하기 -->
-	<update id="updateIdle" parameterType="String">
+	<update id="updateIdle" parameterType="HashMap">
 		update tbl_${memberType} set idle = 1
 		where userid = #{id}
 	</update>
