@@ -52,7 +52,7 @@ public class Yj_TripController {
 		// /WEB-INF/views/foodStore/foodStoreList.jsp 파일 생성
 	}
 	
-	
+	// git test
 	
 	
 
