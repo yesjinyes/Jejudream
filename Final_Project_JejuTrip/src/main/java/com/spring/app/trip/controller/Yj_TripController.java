@@ -26,34 +26,21 @@ public class Yj_TripController {
 		return "community/communityMain"; 
 		// /WEB-INF/views/community/communityMain.jsp 파일 생성
 	}
-	
-/*	
-	// === 맛집 리스트 페이지 보이기 === //
-	@GetMapping("/foodStoreList.trip")
-	public String foodStoreList() {
-		
-		return "foodStore/foodStoreList";
-		// /WEB-INF/views/foodStore/foodStoreList.jsp 파일 생성
-	}
-*/	
-	
+
 	
 	// === 맛집 리스트 페이지 보이기 === //
-	@GetMapping("/foodStoreList.trip")
-	public ModelAndView foodStoreList(ModelAndView mav) {
+	@GetMapping("/foodstoreList.trip")
+	public ModelAndView foodstoreList(ModelAndView mav) {
 		
-		List<FoodstoreVO> foodStoreList = service.viewFoodStoreList();
+		List<FoodstoreVO> foodstoreList = service.viewFoodstoreList();
 		
-		mav.addObject("foodStoreList", foodStoreList);
+		mav.addObject("foodstoreList", foodstoreList);
 		
-		mav.setViewName("foodStore/foodStoreList");
+		mav.setViewName("foodstore/foodstoreList");
 		
 		return mav;
-		// /WEB-INF/views/foodStore/foodStoreList.jsp 파일 생성
+		// /WEB-INF/views/foodstore/foodstoreList.jsp 파일 생성
 	}
-	
-	
-	
 	
 
 }
