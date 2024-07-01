@@ -281,5 +281,25 @@ public class Dy_TripService_imple implements Dy_TripService {
 	}
 
 
+	// 아이디찾기 처리하기 (일반회원, 관리자)
+	@Override
+	public Map<String, String> memberIdFind(Map<String, String> paraMap) {
+		
+		Map<String, String> findInfo = dao.memberIdFind(paraMap);
+		
+		return findInfo;
+	}
+
+
+	// 아이디찾기 처리하기 (업체회원)
+	@Override
+	public Map<String, String> companyIdFind(Map<String, String> paraMap) {
+
+		Map<String, String> findInfo = dao.companyIdFind(paraMap);
+		
+		return findInfo;
+	}
+
+
 
 }

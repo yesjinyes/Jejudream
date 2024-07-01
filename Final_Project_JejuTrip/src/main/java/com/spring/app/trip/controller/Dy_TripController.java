@@ -1,5 +1,7 @@
 package com.spring.app.trip.controller;
 
+import java.io.UnsupportedEncodingException;
+import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +16,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.google.gson.JsonObject;
+import com.spring.app.trip.common.AES256;
 import com.spring.app.trip.common.Sha256;
 import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.service.Dy_TripService;
@@ -21,9 +25,11 @@ import com.spring.app.trip.service.Dy_TripService;
 @Controller
 public class Dy_TripController {
 	
-	@Autowired // Type에 따라 알아서 Bean 을 주입해준다.
+	@Autowired
 	private Dy_TripService service;
 	
+    @Autowired
+    private AES256 aES256;
 	
 	// 회원가입 페이지 요청
 	@GetMapping("memberRegister.trip")
@@ -122,6 +128,43 @@ public class Dy_TripController {
 		
 		return "login/idFind.tiles1";
 		// /WEB-INF/views/tiles1/login/idFind.jsp
+	}
+	
+	
+	// 아이디 찾기 처리하기
+	@ResponseBody
+	@PostMapping("/login/idFindEnd.trip")
+	public String idFindEnd(HttpServletRequest request) {
+		
+		String memberType = request.getParameter("memberType");
+		String name = request.getParameter("name");
+		String email = request.getParameter("email");
+		
+		Map<String, String> findInfo = new HashMap<>();
+
+		try {
+			email = aES256.encrypt(email);
+
+			Map<String, String> paraMap = new HashMap<>();
+			paraMap.put("name", name);
+			paraMap.put("email", email);
+			
+			
+			if("company".equals(memberType)) {
+				findInfo = service.companyIdFind(paraMap);
+				
+			} else {
+				findInfo = service.memberIdFind(paraMap);
+			}
+			
+		} catch (UnsupportedEncodingException | GeneralSecurityException e) {
+			e.printStackTrace();
+		}
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("findInfo", findInfo);
+		
+		return jsonObj.toString();
 	}
 	
 	

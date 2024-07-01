@@ -48,6 +48,7 @@ commit;
 
 
 
+-- 업체 로그인
 SELECT companyid, company_name, pwdchangegap,
        NVL(lastlogingap, trunc(months_between(sysdate, registerday))) AS lastlogingap, 
        idle, email, mobile
@@ -63,6 +64,19 @@ CROSS JOIN
   from tbl_company_loginhistory 
   where fk_companyid = 'naver' ) H;
 
+
+
+
+
+select userid, user_name
+from tbl_member
+where user_name = '엄정화' and email = 'yl0AhhmUdz58RxnXBNcWyQ==';
+
+
+
+select companyid, company_name
+from tbl_company
+where company_name = '네이버' and email = 'q8o3ujFmPcgaRxMme3F+XQ==';
 
 
 

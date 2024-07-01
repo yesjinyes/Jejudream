@@ -89,9 +89,38 @@
 	</update>
 	
 	
+	<!-- tbl_company_loginhistory 테이블에 로그인 기록 입력하기 -->
 	<insert id="insert_company_loginhistory" parameterType="HashMap">
 		insert into tbl_company_loginhistory (fk_companyid, logindate, clientip)
 		values(#{id}, default, #{clientip})
 	</insert>
+	
+	
+	<!-- 아이디찾기 처리하기 (일반회원, 관리자) -->
+	<resultMap type="HashMap" id="memberFindInfo">
+		<result property="userid" column="userid" javaType="String" />
+		<result property="user_name" column="user_name" javaType="String" />
+	</resultMap>
+	
+	
+	<select id="memberIdFind" parameterType="HashMap" resultMap="memberFindInfo">
+		select userid, user_name
+		from tbl_member
+		where user_name = #{name} and email = #{email}
+	</select>
+	
+	
+	<!-- 아이디찾기 처리하기 (업체회원) -->
+	<resultMap type="HashMap" id="companyFindInfo">
+		<result property="companyid" column="companyid" javaType="String" />
+		<result property="company_name" column="company_name" javaType="String" />
+	</resultMap>
+	
+	
+	<select id="companyIdFind" parameterType="HashMap" resultMap="companyFindInfo">
+		select companyid, company_name
+		from tbl_company
+		where company_name = #{name} and email = #{email}
+	</select>
 	
 </mapper>
