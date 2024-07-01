@@ -9,15 +9,38 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-
+    	
     	$("span#idFind").click(function() {
-    		location.href = "<%=ctxPath%>/idFind.trip";
+    		location.href = "<%=ctxPath%>/login/idFind.trip";
     	});
     	
     	$("span#pwFind").click(function() {
-    		location.href = "<%=ctxPath%>/pwFind.trip";
+    		location.href = "<%=ctxPath%>/login/pwFind.trip";
     	});
     	
+    	$("input#pw").keyup(function(e) {
+    		
+    		if(e.keyCode == 13) {
+    			goLogin();
+    		}
+    		
+    	});
+    	
+    	
+		// === 로그인을 하지 않은 상태일 때 
+		//     로컬스토리지(localStorage)에 저장된 key가 'saveid' 인 id 값을 불러와서 
+		//     input 태그 id 에 넣어주기 ===
+    	if(${empty sessionScope.loginuser && empty sessionScope.loginCompanyuser}) {
+    		
+    		const memberType = localStorage.getItem('memberType');
+    		const loginId = localStorage.getItem('saveid');
+			
+			if(loginId != null) {
+				$("input:radio[name='memberType'][value='" + memberType + "']").prop("checked", true);
+				$("input#id").val(loginId);
+				$("input:checkbox[id='saveid']").prop("checked", true);
+			}
+    	}
     	
     });
 
@@ -35,7 +58,20 @@
             alert("비밀번호를 입력해주세요!");
             return;
         }
+        
+        
+        // 아이디 저장 체크 시
+        if($("input:checkbox[id='saveid']").prop("checked")) {
+        	
+            localStorage.setItem('saveid', $("input#id").val());
+            localStorage.setItem('memberType', $("input:radio[name='memberType']:checked").val());
+            
+        } else {
+            localStorage.removeItem('saveid');
+            localStorage.removeItem('memberType');
+        }
 
+        
         const frm = document.loginFrm;
         frm.action = "<%=ctxPath%>/loginEnd.trip";
         frm.method = "post";
@@ -59,10 +95,12 @@
                  <input class="form-check-input" type="radio" name="memberType" id="inlineRadio2" value="company">
                  <label class="form-check-label" for="inlineRadio2">업체회원</label>
                </div>
+               <%--
                <div class="form-check form-check-inline pl-3">
-                 <input class="form-check-input" type="radio" name="memberType" id="inlineRadio3" value="admin">
+                 <input class="form-check-input" type="radio" name="memberType" id="inlineRadio3" value="member">
                  <label class="form-check-label" for="inlineRadio3">관리자</label>
                </div>
+               --%>
             </div>
         
             <div class="info">

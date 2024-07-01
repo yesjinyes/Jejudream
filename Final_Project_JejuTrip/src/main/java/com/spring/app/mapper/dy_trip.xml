@@ -14,6 +14,22 @@
 	</insert>
 	
 	
+	<!-- 일반회원 아이디 중복확인 -->
+	<select id="useridDuplicateCheck" parameterType="String" resultType="String">
+		select userid
+		from tbl_member
+		where userid = #{userid}
+	</select>
+	
+	
+	<!-- 일반회원 이메일 중복확인 -->
+	<select id="userEmailDuplicateCheck" parameterType="String" resultType="String">
+		select email
+		from tbl_member
+		where email = #{email}
+	</select>
+	
+	
 	<!-- 로그인 처리하기 (일반회원, 관리자) -->
 	<select id="getLoginMember" parameterType="HashMap" resultType="com.spring.app.trip.domain.MemberVO">
 		SELECT userid, user_name, pwdchangegap,
@@ -33,16 +49,48 @@
 	</select>
 	
 	
-	<!-- 회원의 idle 컬럼의 값을 1로 변경하기 -->
-	<update id="updateIdle" parameterType="HashMap">
-		update tbl_${memberType} set idle = 1
+	<!-- tbl_member 테이블의 idle 컬럼의 값을 1로 변경하기 -->
+	<update id="updateMemberIdle" parameterType="HashMap">
+		update tbl_member set idle = 1
 		where userid = #{id}
 	</update>
 	
 	
-	<!-- 로그인 기록 테이블에 기록 입력하기 -->
-	<insert id="insert_loginhistory" parameterType="HashMap">
-		insert into tbl_${memberType}_loginhistory (fk_userid, logindate, clientip)
+	<!-- tbl_member_loginhistory 테이블에 로그인 기록 입력하기 -->
+	<insert id="insert_member_loginhistory" parameterType="HashMap">
+		insert into tbl_member_loginhistory (fk_userid, logindate, clientip)
+		values(#{id}, default, #{clientip})
+	</insert>
+	
+	
+	<!-- 로그인 처리하기(업체회원) -->
+	<select id="getLoginCompanyMember" parameterType="HashMap" resultType="com.spring.app.trip.domain.CompanyVO">
+		SELECT companyid, company_name, pwdchangegap,
+		       NVL(lastlogingap, trunc(months_between(sysdate, registerday))) AS lastlogingap, 
+		       idle, email, mobile
+		FROM 
+		( select companyid, company_name,
+		         trunc( months_between(sysdate, lastpwdchangedate) ) AS pwdchangegap,
+		         registerday, idle, email, mobile
+		  from tbl_company
+		  where status = 1 and companyid = #{id} and pw = #{pw}
+		) M 
+		CROSS JOIN 
+		( select trunc( months_between(sysdate, max(logindate)) ) as lastlogingap 
+		  from tbl_company_loginhistory 
+		  where fk_companyid = #{id} ) H
+	</select>
+	
+	
+	<!-- tbl_company 테이블의 idle 컬럼의 값을 1로 변경하기 -->
+	<update id="updateCompanyIdle" parameterType="HashMap">
+		update tbl_company set idle = 1
+		where companyid = #{id}
+	</update>
+	
+	
+	<insert id="insert_company_loginhistory" parameterType="HashMap">
+		insert into tbl_company_loginhistory (fk_companyid, logindate, clientip)
 		values(#{id}, default, #{clientip})
 	</insert>
 	

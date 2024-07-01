@@ -47,6 +47,13 @@
 	<%-- === ajax로 파일을 업로드 할때 가장 널리 사용하는 방법 : ajaxForm === --%> 
 	<script type="text/javascript" src="<%= ctxPath%>/resources/js/jquery.form.min.js"></script> 
 
+	<style type="text/css">
+	body {
+		font-family: "Noto Sans KR", sans-serif;
+		font-style: normal;
+	}
+	</style>
+	
 </head>
 <body>
    <div id="mycontainer">

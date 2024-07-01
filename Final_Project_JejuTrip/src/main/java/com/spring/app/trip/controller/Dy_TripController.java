@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +48,38 @@ public class Dy_TripController {
 	}
 	
 	
+	// 일반회원 아이디 중복확인
+	@ResponseBody
+	@PostMapping("useridDuplicateCheck.trip")
+	public String useridDuplicateCheck(HttpServletRequest request) {
+		
+		String userid = request.getParameter("userid");
+		
+		boolean isExist = service.useridDuplicateCheck(userid);
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("isExist", isExist);
+		
+		return jsonObj.toString();
+	}
+	
+	
+	// 일반회원 이메일 중복확인
+	@ResponseBody
+	@PostMapping("userEmailDuplicateCheck.trip")
+	public String userEmailDuplicateCheck(HttpServletRequest request) {
+
+		String email = request.getParameter("email");
+		
+		boolean isExist = service.userEmailDuplicateCheck(email);
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("isExist", isExist);
+		
+		return jsonObj.toString();
+	}
+	
+	
 	// 로그인 페이지 요청
 	@GetMapping("login.trip")
 	public String login() {
@@ -68,13 +101,12 @@ public class Dy_TripController {
 		String clientip = request.getRemoteAddr();
 		
 		Map<String, String> paraMap = new HashMap<>();
-		paraMap.put("memberType", memberType);
 		paraMap.put("id", id);
 		paraMap.put("pw", Sha256.encrypt(pw));
 		paraMap.put("clientip", clientip);
 		
 		if("company".equals(memberType)) {
-//			mav = service.companyLoginEnd(paraMap, mav, request);
+			mav = service.companyLoginEnd(paraMap, mav, request);
 			
 		} else {
 			mav = service.loginEnd(paraMap, mav, request);
@@ -116,5 +148,18 @@ public class Dy_TripController {
 		
 		return "company/companyRegister.tiles1";
 		// /WEB-INF/views/tiles1/company/companyRegister.jsp
+	}
+	
+	
+	// 로그아웃 처리하기
+	@GetMapping("logout.trip")
+	public ModelAndView logout(ModelAndView mav, HttpServletRequest request) {
+
+		HttpSession session = request.getSession();
+		session.invalidate();
+		
+		mav.setViewName("redirect:/index.trip");
+		
+		return mav;
 	}
 }

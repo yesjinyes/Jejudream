@@ -12,8 +12,16 @@ public interface Dy_TripService {
 
 	// 회원가입 처리하기
 	int memberRegister(MemberVO mvo);
+	
+	// 일반회원 아이디 중복확인
+	boolean useridDuplicateCheck(String userid);
+	
+	// 일반회원 이메일 중복확인
+	boolean userEmailDuplicateCheck(String email);
 
 	// 로그인 처리하기 (일반회원, 관리자)
 	ModelAndView loginEnd(Map<String, String> paraMap, ModelAndView mav, HttpServletRequest request);
 
+	// 로그인 처리하기 (업체회원)
+	ModelAndView companyLoginEnd(Map<String, String> paraMap, ModelAndView mav, HttpServletRequest request);
 }

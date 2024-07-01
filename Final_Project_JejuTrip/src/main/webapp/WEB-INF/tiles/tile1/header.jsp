@@ -99,7 +99,7 @@ $(document).ready(function() {
 			<div class="collapse navbar-collapse" id="inner_bar">
 				
 				<ul class="navbar-nav ml-auto my-2 my-lg-0" style="justify-content: ">
-					<c:if test="${empty sessionScope.loginuser}">
+					<c:if test="${empty sessionScope.loginuser && empty sessionScope.loginCompanyuser}">
 						<li class="nav-item">
 							<a class="nav-link" href="<%=ctxPath%>/login.trip">로그인<span class="sr-only">(current)</span></a>
 						</li>
@@ -114,10 +114,17 @@ $(document).ready(function() {
 						</li>
 					</c:if>
 					
-					<c:if test="${not empty sessionScope.loginuser}">
-						<li class="nav-item">
-							<a class="nav-link" href="#">${sessionScope.loginuser.user_name}님 로그인 중...</a>
-						</li>
+					<c:if test="${not empty sessionScope.loginuser || not empty sessionScope.loginCompanyuser}">
+						<c:if test="${not empty sessionScope.loginuser}">
+							<li class="nav-item">
+								<a class="nav-link" href="#">${sessionScope.loginuser.user_name}님 로그인 중...</a>
+							</li>
+						</c:if>
+						<c:if test="${not empty sessionScope.loginCompanyuser}">
+							<li class="nav-item">
+								<a class="nav-link" href="#">${sessionScope.loginCompanyuser.company_name} 업체 로그인 중...</a>
+							</li>
+						</c:if>
 						<li class="nav-item">
 							<a class="nav-link" href="<%=ctxPath%>/logout.trip">로그아웃</a>
 						</li>

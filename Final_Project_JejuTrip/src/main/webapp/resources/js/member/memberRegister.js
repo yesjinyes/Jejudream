@@ -81,13 +81,33 @@ $(function () {
             $(e.target).next().show();
             $(e.target).next().text("아이디는 5~20자 이내의 영문, 숫자로만 입력해주세요.");
             checkUserid = false;
-        }
-        // else if(아이디 중복확인 로직 추가하기) {}
-        
-        else {
-            $(e.target).removeClass("input_error");
-            $(e.target).next().hide();
-            checkUserid = true;
+
+        } else {
+
+            // 아이디 중복 확인
+            $.ajax({
+                url: "useridDuplicateCheck.trip",
+                type: "post",
+                data: {"userid":$(e.target).val()},
+                dataType: "json",
+                success: function(json) {
+                    if(json.isExist) {
+                        $(e.target).addClass("input_error");
+                        $(e.target).next().show();
+                        $(e.target).next().text("중복된 아이디입니다. 다시 입력해주세요.");
+                        checkUserid = false;
+                        
+                    } else {
+                        $(e.target).removeClass("input_error");
+                        $(e.target).next().hide();
+                        checkUserid = true;
+                    }
+                },
+                error: function(request, status, error) {
+                    alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+                }
+            });
+
         }
     });
 
@@ -193,12 +213,60 @@ $(function () {
             checkEmailId = false;
 
         } else {
-            $(e.target).removeClass("input_error");
-            $(e.target).parent().next().hide();
-            checkEmailId = true;
+
+            $.ajax({
+                url: "userEmailDuplicateCheck.trip",
+                type: "post",
+                data: {"email":$(e.target).val() + "@" + $(e.target).next().next().val()},
+                dataType: "json",
+                success: function(json) {
+                    if(json.isExist) {
+                        $(e.target).addClass("input_error");
+                        $(e.target).parent().next().show();
+                        $(e.target).parent().next().text("중복된 이메일입니다. 다시 입력해주세요.");
+                        checkEmailId = false;
+                        
+                    } else {
+                        $(e.target).removeClass("input_error");
+                        $(e.target).parent().next().hide();
+                        checkEmailId = true;
+                    }
+                },
+                error: function(request, status, error) {
+                    alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+                }
+            });
         }
 
     });
+
+    $("select#email_dropdown").change(function(e) {
+
+        $.ajax({
+            url: "userEmailDuplicateCheck.trip",
+            type: "post",
+            data: {"email":$(e.target).prev().prev().val() + "@" + $(e.target).val()},
+            dataType: "json",
+            success: function(json) {
+                if(json.isExist) {
+                    $(e.target).prev().prev().addClass("input_error");
+                    $(e.target).parent().next().show();
+                    $(e.target).parent().next().text("중복된 이메일입니다. 다시 입력해주세요.");
+                    checkEmailId = false;
+                    
+                } else {
+                    $(e.target).prev().prev().removeClass("input_error");
+                    $(e.target).parent().next().hide();
+                    checkEmailId = true;
+                }
+            },
+            error: function(request, status, error) {
+                alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+            }
+        });
+
+    });
+
 
     // ===== 휴대폰 유효성 검사 =====
     $("input#mobile").blur((e) => {
