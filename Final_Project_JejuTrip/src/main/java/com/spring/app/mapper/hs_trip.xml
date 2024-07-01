@@ -7,29 +7,20 @@
 메퍼가 바뀌면 무조건  WAS를 껐다 켜야한다!!!!!!!!! -->
 <mapper namespace="hs_trip">
 	
-<resultMap id="playResultMap" type="com.spring.app.trip.domain.PlayVO">
-    <id property="play_code" column="play_code"/>
-    <result property="fk_local_code" column="fk_local_code"/>
-    <result property="play_name" column="play_name"/>
-    <result property="play_content" column="play_content"/>
-    <result property="play_mobile" column="play_mobile"/>
-    <result property="play_businesshours" column="play_businesshours"/>
-    <result property="play_address" column="play_address"/>
-    <result property="play_main_img" column="play_main_img"/>
-    <result property="review_division" column="review_division"/>
-    
-    <association property="playctgvo" javaType="com.spring.app.trip.domain.Play_categoryVO">
-	     <result property="play_category_code" column="play_category_code"/>
-	     <result property="play_category_name" column="play_category_name"/>
-    </association>
-    
-</resultMap>	
-<select id="playList" resultMap="playResultMap">
-	 SELECT play_code,c.play_category_name as play_category_name ,fk_local_code,play_name,play_content,
+
+<select id="playList" resultType="com.spring.app.trip.domain.PlayVO">
+	 SELECT play_code,play_category ,local_status,play_name,play_content,
        		play_mobile,play_businesshours,play_address,play_main_img,review_division
-	 FROM tbl_play p JOIN tbl_play_category c 
-	 ON p.fk_play_category_code = c.play_category_code
+	 FROM tbl_play
+	
 </select>
+
+<!-- <select id="getPlayListByCategory" parameterType="String" resultType="com.spring.app.trip.domain.PlayVO">
+        SELECT play_code,play_category ,local_status,play_name,play_content,
+       		play_mobile,play_businesshours,play_address,play_main_img,review_division
+	 	FROM tbl_play
+        WHERE play_category = #{category}
+</select> -->
 
 
 </mapper>

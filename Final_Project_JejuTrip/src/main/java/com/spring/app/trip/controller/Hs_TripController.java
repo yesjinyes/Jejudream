@@ -1,5 +1,6 @@
 package com.spring.app.trip.controller;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -7,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.app.trip.domain.PlayVO;
@@ -57,16 +59,20 @@ public class Hs_TripController {
 			// /WEB-INF/views/mypage/support.jsp 파일 생성
 		}
 		
-		@GetMapping("playMain.trip")
+		@ResponseBody
+		@GetMapping(value = "playMain.trip")
 		public ModelAndView play_main(ModelAndView mav, HttpServletRequest request) {
-			List<PlayVO> playList = service.playList();
-			mav.addObject("playList", playList);
 			
+			
+			List<PlayVO> playList = service.playList();
+			
+			mav.addObject("playList", playList);
 			mav.setViewName("play/playMain.tiles1");
 			
 			return mav; 
 			// /WEB-INF/views/tiles1/play/play_main.jsp 파일 생성
+			
+			
 		}
-
 
 }

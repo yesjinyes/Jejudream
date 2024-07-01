@@ -273,7 +273,8 @@
   bottom: -.75rem;
 }
 
-
+.list-group-item  {cursor: pointer; }
+   .moveColor {color: #660029; font-weight: bold; background-color: #ffffe6;}
 
 
 /*-----------------------------------------------------------------------------------------  */
@@ -283,12 +284,24 @@
 <script type="text/javascript">
 $(document).ready(function(){
  
+	$(".list-group-item").hover(function(e){
+        $(e.target).addClass("moveColor");
+          }, 
+          function(e){
+           $(e.target).removeClass("moveColor");  
+          });	
 	
-	
+	 $('.list-group-item').on('click', function() {
+         var inputValue = $(this).find('input').val();
+        
+       
+ 		 console.log(inputValue);
+     });
 	
 	
 });//end of $(document).ready(function()	
 
+	
 </script>
 
 
@@ -301,36 +314,26 @@ $(document).ready(function(){
 
 <body>
 	<div class="container">
-		<%--  <div class="row">
-            <div class="col-12 text-center">
-                <h2>
-                    <a href="index.html">Jeju Dream</a>
-                    <img alt="..." src="<%=ctxPath%>/resources/images/play/rogo.png" style="width: 50px;">
-                </h2>
-            </div>
-        </div>
-         --%>
-        
         <div class="row">
             <div class="col-md-3" >
 				<ul class="list-group" style="border-radius: 20px;">
 				  	<li class="list-group-item d-flex justify-content-between align-items-center" style="margin-top: 230px;">
-					    <input type="hidden" id="total" />
+					    <input type="hidden" name="total" value="전체"/>
 					    <label for="total" style="font-weight: bold;">전체</label>
 					    <span class="badge badge-pill" style="background:#ff8000; color:#fff;">14</span>
 				  	</li>
 				  	<li class="list-group-item d-flex justify-content-between align-items-center" >
-					    <input type="hidden" id="tourism" />
+					    <input type="hidden" name="tourism" value="관광지" />
 					    <label for="tourism" style="font-weight: bold;">관광지</label>
 					    <span class="badge badge-pill" style="background:#ff8000; color:#fff;">14</span>
 				  	</li>
 				  	<li class="list-group-item d-flex justify-content-between align-items-center">
-					    <input type="hidden" id="showing" />
+					    <input type="hidden" name="showing" value="전시회"/>
 			            <label for="showing" style="font-weight: bold;">전시회</label>
 					    <span class="badge badge-pill" style="background:#ff8000; color:#fff;">2</span>
 				  	</li>
 				  	<li class="list-group-item d-flex justify-content-between align-items-center">
-					    <input type="hidden" id="experience" />
+					    <input type="hidden" name="experience" value="체험"/>
 			            <label for="experience" style="font-weight: bold;">체험</label>
 					    <span class="badge badge-pill" style="background:#ff8000; color:#fff;">1</span>
 				  	</li>
@@ -423,7 +426,7 @@ $(document).ready(function(){
 						          <div class="front" style="background-image: url(<%= ctxPath%>/resources/images/play/${playvo.play_main_img})">
 						            <div class="inner_front">
 						              <p style="font-size: 40px;">${playvo.play_name}</p>
-						              <span style=" color:#786b94;">${playvo.playctgvo.play_category_name}</span>
+						              <span style=" color:#786b94;">${playvo.play_category}</span>
 						            </div>
 						          
 						          </div>
