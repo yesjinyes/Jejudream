@@ -136,3 +136,12 @@ from tbl_food_store;
 
 select *
 from tbl_food_store;
+
+
+select food_store_code, food_name, food_category, local_status,  food_content
+     , substr(food_address, 0, instr(food_address, ' ', 1, 2)-1) AS food_address
+from tbl_food_store
+where food_category = '한식';
+
+
+

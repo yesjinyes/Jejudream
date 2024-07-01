@@ -21,4 +21,18 @@ public class Yj_TripService_imple implements Yj_TripService {
 		return foodstoreList;
 	}
 
+
+	
+	// === 카테고리 선택에 따른 Ajax === //
+	@Override
+	public List<FoodstoreVO> viewCheckCategory(String food_category) {
+		List<FoodstoreVO> foodstoreList = dao.viewCheckCategory(food_category);
+		return foodstoreList;
+	}
+
+//	@Override
+//	public List<FoodstoreVO> viewCheckCategory(String[] categoryArr) {
+//		List<FoodstoreVO> foodstoreList = dao.viewCheckCategory(categoryArr);
+//		return foodstoreList;
+//	}
 }

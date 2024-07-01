@@ -4,9 +4,13 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.app.trip.domain.FoodstoreVO;
@@ -41,6 +45,43 @@ public class Yj_TripController {
 		return mav;
 		// /WEB-INF/views/foodstore/foodstoreList.jsp 파일 생성
 	}
+	
+	
+	// === 선택한 카테고리 맛집 보이기 (Ajax 로 처리) === //
+	@ResponseBody
+	@GetMapping(value="/viewCheckCategory.trip", produces="text/plain;charset=UTF-8")
+	public String viewCheckCategory(HttpServletRequest request) {
+		
+//		String[] categoryArr = request.getParameterValues("categoryArr");
+//		System.out.println("categoryArr 확인 : " + categoryArr);
+		
+		String food_category = request.getParameter("food_category");
+		System.out.println("food_category 확인 : "+ food_category);
+		
+		List<FoodstoreVO> foodstoreList = service.viewCheckCategory(food_category);
+		
+		JSONArray jsonArr = new JSONArray();
+		
+		for(FoodstoreVO foodvo : foodstoreList) {
+			JSONObject jsonObj = new JSONObject();
+			jsonObj.put("food_store_code", foodvo.getFood_store_code());
+			jsonObj.put("food_main_img", foodvo.getFood_main_img());
+			jsonObj.put("food_name", foodvo.getFood_name());
+			jsonObj.put("food_content", foodvo.getFood_content());
+			jsonObj.put("food_category", foodvo.getFood_category());
+			jsonObj.put("food_address", foodvo.getFood_address());
+			
+			jsonArr.put(jsonObj);
+		}// end of for--------------------------
+		
+		return jsonArr.toString();
+	}
+	
+	
+
+	
+	
+	
 	
 
 }

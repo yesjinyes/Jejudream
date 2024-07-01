@@ -24,4 +24,23 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 		return foodstoreList;
 	}
 
+
+	
+	// === 카테고리 선택에 따른 Ajax === //
+	@Override
+	public List<FoodstoreVO> viewCheckCategory(String food_category) {
+		List<FoodstoreVO> foodstoreList = sqlsession.selectList("yj_trip.viewCheckCategory", food_category);
+		return foodstoreList;
+	}
+	
+	
+	
+//	@Override
+//	public List<FoodstoreVO> viewCheckCategory(String[] categoryArr) {
+//		List<FoodstoreVO> foodstoreList = sqlsession.selectList("yj_trip.viewCheckCategory", categoryArr);
+//		return foodstoreList;
+//	}
+
+	
+	
 }

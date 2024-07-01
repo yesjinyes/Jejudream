@@ -9,4 +9,8 @@ public interface Yj_TripDAO {
 	// === 맛집 리스트 페이지 보이기 === //
 	List<FoodstoreVO> viewFoodstoreList();
 
+	// === 카테고리 선택에 따른 Ajax === //
+	List<FoodstoreVO> viewCheckCategory(String food_category);
+	// List<FoodstoreVO> viewCheckCategory(String[] categoryArr);
+
 }
