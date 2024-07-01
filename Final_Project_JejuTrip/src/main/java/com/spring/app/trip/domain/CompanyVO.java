@@ -15,6 +15,11 @@ public class CompanyVO {
     private int idle;					// 휴면유무
     
     
+    // select 용
+	private int pwdchangegap; 
+	private int lastlogingap;
+	private boolean requirePwdChange = false;
+    
     //////////////////////////////////////////////////////////////////
     // == Getter, Setter == //
     
@@ -89,6 +94,31 @@ public class CompanyVO {
 	public void setIdle(int idle) {
 		this.idle = idle;
 	}
+
+	public int getPwdchangegap() {
+		return pwdchangegap;
+	}
+
+	public void setPwdchangegap(int pwdchangegap) {
+		this.pwdchangegap = pwdchangegap;
+	}
+
+	public int getLastlogingap() {
+		return lastlogingap;
+	}
+
+	public void setLastlogingap(int lastlogingap) {
+		this.lastlogingap = lastlogingap;
+	}
+
+	public boolean isRequirePwdChange() {
+		return requirePwdChange;
+	}
+
+	public void setRequirePwdChange(boolean requirePwdChange) {
+		this.requirePwdChange = requirePwdChange;
+	}
     
+	
 	
 }

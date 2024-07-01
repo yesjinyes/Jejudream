@@ -9,7 +9,7 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-
+    	
     	$("span#idFind").click(function() {
     		location.href = "<%=ctxPath%>/login/idFind.trip";
     	});
@@ -28,13 +28,15 @@
     	
     	
 		// === 로그인을 하지 않은 상태일 때 
-		//     로컬스토리지(localStorage)에 저장된 key가 'saveid' 인 userid 값을 불러와서 
-		//     input 태그 userid 에 넣어주기 ===
-    	if(${empty sessionScope.loginuser}) {
+		//     로컬스토리지(localStorage)에 저장된 key가 'saveid' 인 id 값을 불러와서 
+		//     input 태그 id 에 넣어주기 ===
+    	if(${empty sessionScope.loginuser && empty sessionScope.loginCompanyuser}) {
     		
+    		const memberType = localStorage.getItem('memberType');
     		const loginId = localStorage.getItem('saveid');
 			
 			if(loginId != null) {
+				$("input:radio[name='memberType'][value='" + memberType + "']").prop("checked", true);
 				$("input#id").val(loginId);
 				$("input:checkbox[id='saveid']").prop("checked", true);
 			}
@@ -62,10 +64,11 @@
         if($("input:checkbox[id='saveid']").prop("checked")) {
         	
             localStorage.setItem('saveid', $("input#id").val());
-                                //  key                value
+            localStorage.setItem('memberType', $("input:radio[name='memberType']:checked").val());
             
         } else {
             localStorage.removeItem('saveid');
+            localStorage.removeItem('memberType');
         }
 
         
