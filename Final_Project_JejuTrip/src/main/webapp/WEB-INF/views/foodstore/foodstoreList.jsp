@@ -29,7 +29,7 @@
 
 <style type="text/css">
 
-body {
+body { 
   font-family: 'Poppins', sans-serif;
 }
 /* 
