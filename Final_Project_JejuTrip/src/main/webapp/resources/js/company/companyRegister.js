@@ -16,7 +16,6 @@ $(function () {
 
         const regExp_companyid = new RegExp(/^(?=.*[A-Za-z])[A-Za-z0-9]{5,20}$/);
         const bool = regExp_companyid.test(companyid);
-
         if(companyid == "") {
             $(e.target).addClass("input_error");
             $(e.target).next().show();
@@ -32,9 +31,27 @@ $(function () {
         // else if(아이디 중복확인 로직 추가하기) {}
         
         else {
-            $(e.target).removeClass("input_error");
-            $(e.target).next().hide();
-            checkId = true;
+	        $.ajax({
+	            url: "companyIdCheck.trip",
+	            data: {"companyid":companyid},
+	            type: "post",
+	            dataType: "json",
+	            success: function(json) {
+	                if(json.n == 1) {
+	                    $(e.target).addClass("input_error");
+			            $(e.target).next().show();
+			            $(e.target).next().text("이미 존재하는 아이디 입니다.");
+			            checkId = false;
+	                } else {
+	                    $(e.target).removeClass("input_error");
+			            $(e.target).next().hide();
+			            checkId = true;
+	                }
+	            },
+	            error: function(request, status, error) {
+	                alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+	            }
+	        });
         }
     });
 
@@ -132,6 +149,28 @@ $(function () {
             checkEmail = false;
 
         } else {
+            $.ajax({
+	            url: "companyEmailCheck.trip",
+	            data: {"email":email},
+	            type: "post",
+	            dataType: "json",
+	            success: function(json) {
+	                if(json.n == 1) {
+	                    $(e.target).addClass("input_error");
+			            $(e.target).next().show();
+			            $(e.target).next().text("이미 존재하는 이메일 입니다.");
+			            checkId = false;
+	                } else {
+	                    $(e.target).removeClass("input_error");
+			            $(e.target).next().hide();
+			            checkId = true;
+	                }
+	            },
+	            error: function(request, status, error) {
+	                alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+	            }
+	        });
+            
             $(e.target).removeClass("input_error");
             $(e.target).next().hide();
             checkEmail = true;

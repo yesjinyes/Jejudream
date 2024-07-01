@@ -39,5 +39,26 @@ public class Ws_TripService_imple implements Ws_TripService {
 		int n = dao.companyRegister(cvo);
 		return n;
 	}// end of public int companyRegister(CompanyVO cvo) {
+	
+	// 가입하려는 아이디가 존재하는 아이디인지 체크하는 메소드
+	@Override
+	public int companyIdCheck(String companyid) {
+		int n = dao.companyIdCheck(companyid);
+		return n;
+	}// end of public int companyIdCheck(String companyid) {
+	
+	// 가입하려는 기업 이메일이 존재하는 이메일인지 사용가능한 이메일인지 확인하는 메소드
+	@Override
+	public int companyEmailCheck(String email) {
+		int n = 0;
+		try {
+			n = dao.companyEmailCheck(aES256.encrypt(email));
+			
+		} catch (UnsupportedEncodingException | GeneralSecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return n;
+	}// end of public int companyEmailCheck(String email) {
 
 }
