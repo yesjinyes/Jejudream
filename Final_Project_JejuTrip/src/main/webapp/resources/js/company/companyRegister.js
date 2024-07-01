@@ -231,7 +231,7 @@ function goRegister(ctxPath) {
             success: function(json) {
                 if(json.n == 1) {
                     alert("회원가입이 성공되었습니다.");
-                    location.href = ctxPath + "/index.trip";
+                    location.href = ctxPath + "/main.trip";
 
                 } else {
                     alert("회원가입에 실패했습니다.");
