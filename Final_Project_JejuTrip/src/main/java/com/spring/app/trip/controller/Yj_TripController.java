@@ -53,7 +53,7 @@ public class Yj_TripController {
 	}
 	
 	// git test
-	
+	// git branch 확인
 	
 
 }
