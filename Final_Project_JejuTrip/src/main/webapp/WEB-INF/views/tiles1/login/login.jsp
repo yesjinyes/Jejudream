@@ -11,13 +11,20 @@
     $(document).ready(function() {
 
     	$("span#idFind").click(function() {
-    		location.href = "<%=ctxPath%>/idFind.trip";
+    		location.href = "<%=ctxPath%>/login/idFind.trip";
     	});
     	
     	$("span#pwFind").click(function() {
-    		location.href = "<%=ctxPath%>/pwFind.trip";
+    		location.href = "<%=ctxPath%>/login/pwFind.trip";
     	});
     	
+    	$("input#pw").keyup(function(e) {
+    		
+    		if(e.keyCode == 13) {
+    			goLogin();
+    		}
+    		
+    	});
     	
     });
 
@@ -59,10 +66,12 @@
                  <input class="form-check-input" type="radio" name="memberType" id="inlineRadio2" value="company">
                  <label class="form-check-label" for="inlineRadio2">업체회원</label>
                </div>
+               <%--
                <div class="form-check form-check-inline pl-3">
-                 <input class="form-check-input" type="radio" name="memberType" id="inlineRadio3" value="admin">
+                 <input class="form-check-input" type="radio" name="memberType" id="inlineRadio3" value="member">
                  <label class="form-check-label" for="inlineRadio3">관리자</label>
                </div>
+               --%>
             </div>
         
             <div class="info">

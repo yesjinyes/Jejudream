@@ -14,6 +14,22 @@
 	</insert>
 	
 	
+	<!-- 일반회원 아이디 중복확인 -->
+	<select id="useridDuplicateCheck" parameterType="String" resultType="String">
+		select userid
+		from tbl_member
+		where userid = #{userid}
+	</select>
+	
+	
+	<!-- 일반회원 이메일 중복확인 -->
+	<select id="userEmailDuplicateCheck" parameterType="String" resultType="String">
+		select email
+		from tbl_member
+		where email = #{email}
+	</select>
+	
+	
 	<!-- 로그인 처리하기 (일반회원, 관리자) -->
 	<select id="getLoginMember" parameterType="HashMap" resultType="com.spring.app.trip.domain.MemberVO">
 		SELECT userid, user_name, pwdchangegap,

@@ -42,3 +42,17 @@ desc tbl_member_loginhistory;
 
 
 
+update tbl_member set lastpwdchangedate = '24/03/01'
+where userid = 'eomjh';
+commit;
+
+
+
+update tbl_member_loginhistory set 
+
+
+
+
+
+
+

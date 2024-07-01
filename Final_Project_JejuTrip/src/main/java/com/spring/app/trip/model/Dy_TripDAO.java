@@ -8,7 +8,13 @@ public interface Dy_TripDAO {
 
 	// 회원가입 처리하기
 	int memberRegister(MemberVO mvo);
+	
+	// 일반회원 아이디 중복확인
+	String useridDuplicateCheck(String userid);
 
+	// 일반회원 이메일 중복확인
+	String userEmailDuplicateCheck(String email);
+	
 	// 로그인 처리하기 (일반회원, 관리자)
 	MemberVO getLoginMember(Map<String, String> paraMap);
 
@@ -17,5 +23,5 @@ public interface Dy_TripDAO {
 
 	// 로그인 기록 테이블에 기록 입력하기
 	void insert_loginhistory(Map<String, String> paraMap);
-
+	
 }

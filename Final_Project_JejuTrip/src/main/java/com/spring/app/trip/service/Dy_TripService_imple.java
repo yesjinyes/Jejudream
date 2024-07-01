@@ -49,6 +49,45 @@ public class Dy_TripService_imple implements Dy_TripService {
 	}
 
 
+	// 일반회원 아이디 중복확인
+	@Override
+	public boolean useridDuplicateCheck(String userid) {
+		
+		boolean isExist = false;
+		
+		String exist_userid = dao.useridDuplicateCheck(userid);
+		
+		if(exist_userid != null) {
+			isExist = true;
+		}
+		
+		return isExist;
+	}
+
+	
+	// 일반회원 이메일 중복확인
+	@Override
+	public boolean userEmailDuplicateCheck(String email) {
+		
+		boolean isExist = false;
+		
+		try {
+			email = aES256.encrypt(email);
+			
+			String exist_email = dao.userEmailDuplicateCheck(email);
+			
+			if(exist_email != null) {
+				isExist = true;
+			}
+			
+		} catch (UnsupportedEncodingException | GeneralSecurityException e) {
+			e.printStackTrace();
+		}
+		
+		return isExist;
+	}
+
+
 	// 로그인 처리하기 (일반회원, 관리자)
 	@Override
 	public ModelAndView loginEnd(Map<String, String> paraMap, ModelAndView mav, HttpServletRequest request) {
@@ -144,5 +183,7 @@ public class Dy_TripService_imple implements Dy_TripService {
 		
 		return mav;
 	}
+
+
 
 }

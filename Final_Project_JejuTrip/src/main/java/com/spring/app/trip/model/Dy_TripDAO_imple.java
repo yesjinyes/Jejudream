@@ -27,7 +27,27 @@ public class Dy_TripDAO_imple implements Dy_TripDAO {
 		return n;
 	}
 
+	
+	// 일반회원 아이디 중복확인
+	@Override
+	public String useridDuplicateCheck(String userid) {
+		
+		String exist_userid = sqlsession.selectOne("dy_trip.useridDuplicateCheck", userid);
+		
+		return exist_userid;
+	}
+	
+	
+	// 일반회원 이메일 중복확인
+	@Override
+	public String userEmailDuplicateCheck(String email) {
+		
+		String exist_email = sqlsession.selectOne("dy_trip.userEmailDuplicateCheck", email);
+		
+		return exist_email;
+	}
 
+	
 	// 로그인 처리하기 (일반회원, 관리자)
 	@Override
 	public MemberVO getLoginMember(Map<String, String> paraMap) {
