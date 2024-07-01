@@ -135,7 +135,7 @@ $(document).ready(function() {
 	<div style="width: 70%; margin: 0 auto;">
 		<nav class="navbar navbar-expand-lg navbar-light">
 			
-			<a class="navbar-brand mr-4" href="<%=ctxPath%>/main.trip" title="Jeju Dream">
+			<a class="navbar-brand mr-4" href="<%=ctxPath%>/index.trip" title="Jeju Dream">
 				<img src="<%=ctxPath%>/resources/images/logo.png" width="80">
 				<p id="header_title">제주드림</p>
 			</a>

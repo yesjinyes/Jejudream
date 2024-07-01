@@ -7,4 +7,9 @@
 메퍼가 바뀌면 무조건  WAS를 껐다 켜야한다!!!!!!!!! -->
 <mapper namespace="ws_trip">
 
+	<insert id="companyRegister" parameterType="com.spring.app.trip.domain.CompanyVO">
+		insert into tbl_company (companyid, company_name, pw, email, mobile, registerday, lastpwdchangedate, status, idle) 
+		values (#{companyid},#{company_name},#{pw},#{email},#{mobile},default, default, default, default)
+	</insert>
+
 </mapper>

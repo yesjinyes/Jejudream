@@ -177,14 +177,32 @@ $(function () {
 });
 
 
-function goRegister() {
+function goRegister(ctxPath) {
 
     if(checkId && checkName && checkPw && checkPwCheck && checkEmail && checkMobile) {
+		
+		let queryString = $("form[name='registerFrm']").serialize();
+		
+        // 회원가입 처리하기
+        $.ajax({
+            url: ctxPath + "/companyRegisterEnd.trip",
+            type: "post",
+            data: queryString,
+            dataType: "json",
+            success: function(json) {
+                if(json.n == 1) {
+                    alert("회원가입이 성공되었습니다.");
+                    location.href = ctxPath + "/index.trip";
 
-        const frm = document.registerFrm;
-        frm.action = "";
-        frm.method = "post";
-        // frm.submit();
+                } else {
+                    alert("회원가입에 실패했습니다.");
+                    history.back();
+                }
+            },
+            error: function(request, status, error) {
+                alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+            }
+        });
 
     } else {
         alert("가입 정보를 모두 입력하세요.");
