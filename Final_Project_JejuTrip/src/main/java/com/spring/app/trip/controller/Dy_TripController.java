@@ -159,7 +159,7 @@ public class Dy_TripController {
 		HttpSession session = request.getSession();
 		session.invalidate();
 		
-		mav.setViewName("redirect:/main.trip");
+		mav.setViewName("redirect:/index.trip");
 		
 		return mav;
 	}

@@ -139,7 +139,7 @@ public class Dy_TripService_imple implements Dy_TripService {
 			if(loginuser.getIdle() == 1) { // 로그인 한 지 1년이 경과한 경우
 
 				String message = "로그인을 한 지 1년이 지나 휴면상태가 되었습니다.\\n관리자에게 문의 바랍니다.";
-				String loc = request.getContextPath() + "/main.trip";
+				String loc = request.getContextPath() + "/index.trip";
 				// 추후에 휴면 계정을 풀어주는 페이지로 이동하기
 				
 				mav.addObject("message", message);
@@ -156,7 +156,7 @@ public class Dy_TripService_imple implements Dy_TripService {
 				if(loginuser.isRequirePwdChange()) { // 암호를 마지막으로 변경한 날짜로부터 3개월 경과한 경우
 					
 					String message = "비밀번호를 변경하신지 3개월이 지났습니다.\\n암호를 변경하는 것을 추천합니다.";
-					String loc = request.getContextPath() + "/main.trip";
+					String loc = request.getContextPath() + "/index.trip";
 					// 추후에 비밀번호 변경 페이지로 이동하기
 
 					mav.addObject("message", message);
@@ -173,7 +173,7 @@ public class Dy_TripService_imple implements Dy_TripService {
 						session.removeAttribute("goBackURL");
 						
 					} else {
-						mav.setViewName("redirect:/main.trip"); // 시작 페이지로 이동
+						mav.setViewName("redirect:/index.trip"); // 시작 페이지로 이동
 					}
 				}
 			}
