@@ -14,7 +14,4 @@
 		from tbl_food_store
 	</select>
 
-
-
-
 </mapper>
