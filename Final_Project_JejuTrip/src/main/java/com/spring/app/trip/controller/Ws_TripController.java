@@ -1,5 +1,7 @@
 package com.spring.app.trip.controller;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,6 +27,35 @@ public class Ws_TripController {
 		return mav;
 	}
 	
+	// 가입하려는 기업 아이디가 존재하는 아이디인지 사용가능한 아이디인지 검사하는 메소드
+	@ResponseBody
+	@PostMapping("/companyIdCheck.trip")
+	public String companyIdCheck(HttpServletRequest request) {
+		String companyid = request.getParameter("companyid");
+		int n = service.companyIdCheck(companyid); // 가입하려는 아이디가 존재하는 아이디인지 체크하는 메소드 생성
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("n", n);
+		
+		return jsonObj.toString();
+		
+	}// end of public String companyRegisterEnd(CompanyVO cvo) {
+	
+	// 가입하려는 기업 이메일이 존재하는 이메일인지 사용가능한 이메일인지 확인하는 메소드
+	@ResponseBody
+	@PostMapping("companyEmailCheck.trip")
+	public String companyEmailCheck(HttpServletRequest request) {
+		String email = request.getParameter("email");
+		int n = service.companyEmailCheck(email); // 가입하려는 기업 이메일이 존재하는 이메일인지 사용가능한 이메일인지 확인하는 메소드
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("n", n);
+		
+		return jsonObj.toString();
+		
+	}// end of public String companyRegisterEnd(CompanyVO cvo) {
+	
+	
 	// 회사 회원가입을 위한 ajax 메소드 생성
 	@ResponseBody
 	@PostMapping("/companyRegisterEnd.trip")
@@ -37,5 +68,5 @@ public class Ws_TripController {
 		return jsonObj.toString();
 		
 	}
-
+	
 }

@@ -12,4 +12,15 @@
 		values (#{companyid},#{company_name},#{pw},#{email},#{mobile},default, default, default, default)
 	</insert>
 
+	<select id="companyIdCheck" parameterType="String" resultType="String">
+		select companyid
+		from tbl_company
+		where companyid = #{companyid}
+	</select>
+	
+	<select id="companyEmailCheck" parameterType="String" resultType="String">
+		select companyid
+		from tbl_company
+		where email = #{email}
+	</select>
 </mapper>

@@ -22,5 +22,29 @@ public class Ws_TripDAO_imple implements Ws_TripDAO {
 		int n = sqlsession.insert("ws_trip.companyRegister",cvo);
 		return n;
 	}// end of public int companyRegister(CompanyVO cvo) {
+	
+	// 가입하려는 아이디가 존재하는 아이디인지 체크하는 메소드
+	@Override
+	public int companyIdCheck(String companyid) {
+		String select_companyid = sqlsession.selectOne("ws_trip.companyIdCheck",companyid);
+		if(select_companyid != null) {
+			return 1;
+		}
+		else {
+			return 0;
+		}
+	}// end of public int companyIdCheck(String companyid) {
+	
+	// 가입하려는 기업 이메일이 존재하는 이메일인지 사용가능한 이메일인지 확인하는 메소드
+	@Override
+	public int companyEmailCheck(String email) {
+		String select_companyEmail = sqlsession.selectOne("ws_trip.companyEmailCheck",email);
+		if(select_companyEmail != null) {
+			return 1;
+		}
+		else {
+			return 0;
+		}
+	}// end of public int companyEmailCheck(String encrypt) {
 
 }
