@@ -10,3 +10,10 @@ create user final_orauser2 identified by gclass default tablespace users;
 
 grant connect, resource, create view, unlimited tablespace to final_orauser2;
 -- Grant을(를) 성공했습니다.
+
+select *
+from user_tables;
+
+
+insert into tbl_company (companyid, company_name, pw, email, mobile, registerday, lastpwdchangedate, status, idle) values ();
+
