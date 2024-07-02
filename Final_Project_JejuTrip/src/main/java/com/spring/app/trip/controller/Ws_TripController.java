@@ -1,6 +1,7 @@
 package com.spring.app.trip.controller;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ public class Ws_TripController {
 	@Autowired // Type에 따라 알아서 Bean 을 주입해준다.
 	private Ws_TripService service;
 	
-	@GetMapping("/index.trip") 
+	@GetMapping("/main.trip") 
 	public ModelAndView readComment(ModelAndView mav) {
 		
 		mav.setViewName("main/main.tiles1");
@@ -66,6 +67,29 @@ public class Ws_TripController {
 		JSONObject jsonObj = new JSONObject();
 		jsonObj.put("n", n);
 		return jsonObj.toString();
+		
+	}
+	
+	@GetMapping("/registerHotel.trip")
+	public ModelAndView registerHotel(ModelAndView mav, HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		CompanyVO loginCompanyuser = (CompanyVO)session.getAttribute("loginCompanyuser");
+		
+		if(loginCompanyuser != null && request.getParameter("companyid").equalsIgnoreCase(loginCompanyuser.getCompanyid())) {
+			// 로그인 한 회사가 자기 회사의 업체를 등록하는 경우
+			mav.setViewName("company/registerHotel.tiles1");
+		}
+		else {
+			String message = "업체 계정으로 로그인을 하지 않았거나 잘못된 로그인 정보입니다.";
+			String loc = "javascript:history.back()";
+
+			mav.addObject("message", message);
+			mav.addObject("loc", loc);
+			
+			mav.setViewName("msg");
+		}
+		
+		return mav;
 		
 	}
 	
