@@ -283,7 +283,13 @@
 
 <script type="text/javascript">
 $(document).ready(function(){
- 
+	
+    let start = 1;  // HIT상품 게시물을 더보기 위하여 "스크롤" 이벤트 대한 초기값 호출하기 
+    let lenHIT = 8; // HIT 상품 "스크롤"을 할 때 보여줄 상품의 개수(단위)크기 
+    let category = '전체';
+    
+    displayHIT(start,category); // 스크롤 초기값
+    
 	$(".list-group-item").hover(function(e){
         $(e.target).addClass("moveColor");
           }, 
@@ -292,25 +298,134 @@ $(document).ready(function(){
           });	
 	
 	 $('.list-group-item').on('click', function() {
-         var inputValue = $(this).find('input').val();
-        
-       
- 		 console.log(inputValue);
+         category = $(this).find('input').val();
+         start = 1; // 카테고리 변경 시, 시작 위치 초기화
+         $("div#categoryList").empty(); // 기존 콘텐츠 비우기
+         $("span#end").empty(); // 끝 메시지 비우기
+         $("span#countHIT").text("0"); // 카운트 초기화
+ 		 console.log(category);
+	 	 displayHIT(start,category);
      });
-	
-	
-});//end of $(document).ready(function()	
+    
+    
+    //===스크롤 이벤트 발생시키기 시작 ===//
+    $(window).scroll(function(){
 
-	
+        if($(window).scrollTop() == $(document).height() - $(window).height() ){
+        
+            // 만약에 위의 값대로 잘 안되면 아래의 것을 하도록 한다.     
+            // if( $(window).scrollTop() + 1 >= $(document).height() - $(window).height() ) {    
+        
+            //alert("기존 문서내용을 끝까지 봤습니다. 이제 새로운 내용을 읽어다가 보여드리겠습니다.")
+            if( $("span#totalHITCount").text() != $("span#countHIT").text() ){
+                start += lenHIT;
+                displayHIT(start,category);
+            }
+       
+        
+        if($(window).scrollTop() == 0){
+            //다시 처음부터 시작하도록 한다.
+            $("div#categoryList").empty();
+            $("span#end").empty();
+            $("span#countHIT").text("0");
+
+            start=1;
+            displayHIT(start,category);
+        }
+            }
+        
+      
+	});
+
+});//end of $(document).ready(function()	
+		
+let lenHIT = 8;		
+		
+function displayHIT(start,category){
+    $.ajax({
+
+        url: "<%= ctxPath%>/playMainJSON.trip",
+        //type:"get",
+        data:{
+              "start":start,   //"1"  "9"  "17"  "25"  "33"
+              "len":lenHIT ,
+              "category": category},  // 8    8    8     8     8
+        dataType:"json",  
+        success:function(json){
+        	console.log(JSON.stringify(json));
+        	let v_html = "";
+
+        	if(start == "1" && json.length == 0) {
+                v_html = "현재 카테고리 준비중 입니다...";
+                $("div#categoryList").html(v_html);
+            }
+
+            else if (json.length > 0) {
+            	
+            	$.each(json, function(index, item){
+	                console.log("~~~ 확인용 json => ", JSON.stringify(json));
+	                v_html += "    <div class='col-md-6' ontouchstart='this.classList.toggle(\"hover\");'>";
+	                v_html += "      <div class='container_card'>";
+	                v_html += "        <div class='front' style='background-image: url(<%= ctxPath %>/resources/images/play/" + item.play_main_img + ")'>";
+	                v_html += "          <div class='inner_front'>";
+	                v_html += "            <p style='font-size: 40px;'>" + item.play_name + "</p>";
+	                v_html += "            <span style=' color:#786b94;'>" + item.play_category + "</span>";
+	                v_html += "          </div>";
+	                v_html += "        </div>";
+	                v_html += "        <div class='back'>";
+	                v_html += "          <div class='inner_back'>";
+	                v_html += "            <div>";
+	                v_html += "              <span><img src='<%= ctxPath %>/resources/images/play/rogo.png' style='width: 30px;'> 행사정보</span><br>";
+	                v_html += "              <span class='inner_back_content'>" + item.play_content + "</span>";
+	                v_html += "            </div>";
+	                v_html += "            <br>";
+	                v_html += "            <div>";
+	                v_html += "              <span><img src='<%= ctxPath %>/resources/images/play/rogo.png' style='width: 30px;'> 운영시간 </span><br>";
+	                v_html += "              <span class='open_time'>" + item.play_businesshours + "</span>";
+	                v_html += "            </div>";
+	                v_html += "            <br>";
+	                v_html += "            <div>";
+	                v_html += "              <span><img src='<%= ctxPath %>/resources/images/play/rogo.png' style='width: 30px;'> 오시는길 </span><br>";
+	                v_html += "              <span class='adress'>" + item.play_address + "</span>";
+	                v_html += "            </div>";
+	                v_html += "          </div>";
+	                v_html += "        </div>";
+	                v_html += "      </div>";
+	                v_html += "  </div>";
+	                
+	            $("div#categoryList").html(v_html)
+                });
+
+                // span#countHIT 에 지금까지 출력된 상품의 개수를 누적해서 기록한다.
+                $("span#countHIT").text( Number($("span#countHIT").text()) + json.length);
+
+
+                 // 스크롤을 계속해서 클릭하여 countHIT 값과 totalHITCount 값이 일치하는 경우
+                 if( $("span#countHIT").text() == $("span#totalHITCount").text() ){
+                    $("span#end").html("더이상 조회할 제품이 없습니다.");
+                }
+                
+            }//end of else if (json.length > 0)
+
+        },
+        error: function(request, status, error){
+            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+         }     
+    });
+
+
+}
+
+function goTop(){
+    $(window).scrollTop(0);
+
+}
+
+
 </script>
 
 
 </head>
-
-
-
-
-
 
 <body>
 	<div class="container">
@@ -406,6 +521,9 @@ $(document).ready(function(){
                         <div>
 	                        <button type="button" onclick="" class="sort active" value="">추천순</button>
 	                        <button type="button" onclick="" class="sort" value="NEW">최신등록순</button>
+	                        <c:if test="${sessionScope.loginuser.userid == 'admin'}">
+                        		<button type="button" onclick="" class="sort" value="NEW">즐길거리 등록</button>
+                        	</c:if>
                         </div>
                         <div>
                             <input type="text" id="searchWord" class="" placeholder="검색 ">
@@ -414,77 +532,31 @@ $(document).ready(function(){
                     </div>
                 
             	</div>
+			   <!------카테고리 [ ajax ]---------------------------------------------------------------------------------------  -->
+				
+				<div class='wrapper'>
+					<div class='cols' id="categoryList"></div>
+				
+				
+					<div>
+				        <p class="text-center"><%--가운데정렬 --%>
+				            <span id="end" style="display:block; margin:20px; font-size: 14pt; font-weight: bold; color: red;"><%--더이상보여줄내용이없습니다 들어오는곳 --%></span> 
+				            <span id="totalHITCount">${requestScope.totalHITCount}</span> <%-- 히트상품 전체개수 DB에서 받아옴--%>   
+				            <span id="countHIT">0</span><%-- 더보기 버튼 누를때마다 8개씩 올라감 8->16->24 ... --%>
+				        </p>
+				    </div>	
+					<div style="display: flex;">
+					    <div style="margin: 20px 0 20px auto;">
+					    	<button class="btn btn-info" onclick="goTop()">맨위로가기</button>
+					    </div>
+				    </div>
+				</div>
+				
 			   <!---------------------------------------------------------------------------------------------  -->
-				<c:if test="${not empty requestScope.playList}">
-						<div class="wrapper">
-						  <div class="cols">
-							
-							<c:forEach var="playvo" items="${requestScope.playList}">
-						    
-						      <div class="col-md-6" ontouchstart="this.classList.toggle('hover');">
-						        <div class="container_card">
-						          <div class="front" style="background-image: url(<%= ctxPath%>/resources/images/play/${playvo.play_main_img})">
-						            <div class="inner_front">
-						              <p style="font-size: 40px;">${playvo.play_name}</p>
-						              <span style=" color:#786b94;">${playvo.play_category}</span>
-						            </div>
-						          
-						          </div>
-						          <div class="back">
-						            
-						            <div class="inner_back">
-						              <div>
-							              <span><img alt="..." src="<%=ctxPath%>/resources/images/play/rogo.png" style="width: 30px;"> 행사정보</span><br>
-							              <span class="inner_back_content">${playvo.play_content}</span>
-						              </div>
-						              <br>
-						              <div>
-							              <span><img alt="..." src="<%=ctxPath%>/resources/images/play/rogo.png" style="width: 30px;"> 운영시간 </span><br>
-							              <span class="open_time">${playvo.play_businesshours}</span>
-						              </div>
-						              <br>
-						              <div>
-							              <span><img alt="..." src="<%=ctxPath%>/resources/images/play/rogo.png" style="width: 30px;"> 오시는길 </span><br>
-							              <span class="adress">${playvo.play_address}</span>
-						              </div>
-						              
-						            </div>
-						            
-						          </div>
-						        </div>
-						      </div>
-						      
-			 				</c:forEach>
-			 						
-					      </div>
-					 </div>
-				</c:if>
-				<c:if test="${empty requestScope.playList}">
-					<span> 아직 올라온 글이 없습니다 .</span>
-				</c:if>
-
-			   <!---------------------------------------------------------------------------------------------  -->
-                <div class="pagination-area">
-                    <nav aria-label="#">
-                        <ul class="pagination pagination-sm justify-content-center">
-                            <li class="page-item active">
-                                <a class="page-link" href="#">1 <span class="sr-only">(current)</span></a>
-                            </li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">Next <i class="fa fa-angle-double-right" aria-hidden="true"></i></a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
+                
 			</div>
 		</div>
-        
-        
-        
-        
-		
+
 	</div><!--end of container  -->
 		
 </body>

@@ -6,21 +6,44 @@
 <!-- ==== #29. 루트 엘리먼트 & 네임스페이스 설정(네임스페이스명은 프로젝트 전체내에서 유일해야 한다!!!!!) ====  절대  ; 쓰지마라 !!!!!!!!!! 
 메퍼가 바뀌면 무조건  WAS를 껐다 켜야한다!!!!!!!!! -->
 <mapper namespace="hs_trip">
-	
 
-<select id="playList" resultType="com.spring.app.trip.domain.PlayVO">
+
+
+<select id="playList_1" resultType="com.spring.app.trip.domain.PlayVO">
 	 SELECT play_code,play_category ,local_status,play_name,play_content,
        		play_mobile,play_businesshours,play_address,play_main_img,review_division
 	 FROM tbl_play
 	
 </select>
 
-<!-- <select id="getPlayListByCategory" parameterType="String" resultType="com.spring.app.trip.domain.PlayVO">
-        SELECT play_code,play_category ,local_status,play_name,play_content,
+
+
+
+<select id="playList" parameterType="HashMap" resultType="com.spring.app.trip.domain.PlayVO">
+	 select play_code,play_category ,local_status,play_name,play_content,RNO
+       		play_mobile,play_businesshours,play_address,play_main_img,review_division
+	 from
+	 (
+	 SELECT play_code,play_category ,local_status,play_name,play_content,row_number() over(order by play_code desc) AS RNO,
+       		play_mobile,play_businesshours,play_address,play_main_img,review_division
+	 FROM tbl_play
+	 )
+	 WHERE RNO between #{start} and #{end}
+</select>
+<!-- 카테고리별 select용  -->
+<select id="getPlayListByCategory" parameterType="HashMap" resultType="com.spring.app.trip.domain.PlayVO">
+        select play_code,play_category ,local_status,play_name,play_content,RNO
+       		play_mobile,play_businesshours,play_address,play_main_img,review_division
+	 	from
+        (
+        SELECT play_code,play_category ,local_status,play_name,play_content,row_number() over(order by play_code desc) AS RNO,
        		play_mobile,play_businesshours,play_address,play_main_img,review_division
 	 	FROM tbl_play
-        WHERE play_category = #{category}
-</select> -->
+        )
+        WHERE play_category = #{category} and RNO between #{start} and #{end}
+</select> 
+
+
 
 
 </mapper>

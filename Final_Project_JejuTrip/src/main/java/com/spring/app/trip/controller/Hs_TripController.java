@@ -2,9 +2,12 @@ package com.spring.app.trip.controller;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -59,20 +62,65 @@ public class Hs_TripController {
 			// /WEB-INF/views/mypage/support.jsp 파일 생성
 		}
 		
-		@ResponseBody
-		@GetMapping(value = "playMain.trip")
+		
+		
+		@GetMapping(value = "playMain.trip", produces = "text/plain;charset=UTF-8")
 		public ModelAndView play_main(ModelAndView mav, HttpServletRequest request) {
-			
-			
 			List<PlayVO> playList = service.playList();
 			
 			mav.addObject("playList", playList);
 			mav.setViewName("play/playMain.tiles1");
 			
-			return mav; 
-			// /WEB-INF/views/tiles1/play/play_main.jsp 파일 생성
+			return mav;
+		}
+		
+		//카테고리별로 데이터 가져오기 JSON
+		@ResponseBody
+		@GetMapping(value = "playMainJSON.trip", produces = "text/plain;charset=UTF-8")
+		public String play_mainJSON( HttpServletRequest request) {
+			
+			//--------------스크롤 페이징----------------------//
+			String start = request.getParameter("start");
+		    String len = request.getParameter("len");
+		    String end = String.valueOf(Integer.parseInt(start) + Integer.parseInt(len) - 1); // 1 + 8 = 9 - 1 = 8
+		    //--------------스크롤 페이징----------------------//
+
+		    String category = request.getParameter("category");
+		    System.out.println(category);
+		    
+		    Map<String, String> paraMap = new HashMap<>();
+		    paraMap.put("start", start); // "1"  "9"  "17"  "25"  "33"
+		    paraMap.put("end", end); // end => start + len - 1; 
+		    paraMap.put("category", category); 
+		    
+			List<PlayVO> playList;
+			
+			if (category == null || category.equals("전체")) {
+	            playList = service.playList(paraMap); // 모든 항목 가져오기
+	        } else {
+	            playList = service.getPlayListByCategory(paraMap); // 카테고리에 따른 항목 가져오기
+	        }
 			
 			
+			JSONArray jsonArr = new JSONArray();
+			if(playList != null) {
+				for(PlayVO playvo : playList) {
+					JSONObject jsonObj = new JSONObject(); //{}
+					jsonObj.put("play_category",playvo.getPlay_category()); 
+					jsonObj.put("play_name",playvo.getPlay_name() );
+					jsonObj.put("play_content",playvo.getPlay_content() ); 
+					jsonObj.put("play_mobile",playvo.getPlay_mobile() ); 
+					jsonObj.put("play_businesshours",playvo.getPlay_businesshours() ); 
+					jsonObj.put("play_address",playvo.getPlay_address() ); 
+					jsonObj.put("play_main_img",playvo.getPlay_main_img() ); 
+					
+		
+					jsonArr.put(jsonObj);
+				}
+				//System.out.println("json" + jsonArr);
+			}
+			return jsonArr.toString();
+		 
 		}
 
 }
