@@ -281,5 +281,59 @@ public class Dy_TripService_imple implements Dy_TripService {
 	}
 
 
+	// 아이디찾기 처리하기 (일반회원, 관리자)
+	@Override
+	public Map<String, String> memberIdFind(Map<String, String> paraMap) {
+		
+		Map<String, String> findInfo = dao.memberIdFind(paraMap);
+		
+		return findInfo;
+	}
+
+
+	// 아이디찾기 처리하기 (업체회원)
+	@Override
+	public Map<String, String> companyIdFind(Map<String, String> paraMap) {
+
+		Map<String, String> findInfo = dao.companyIdFind(paraMap);
+		
+		return findInfo;
+	}
+
+
+	// 비밀번호찾기 시 사용자가 존재하는지 확인하기
+	@Override
+	public boolean isUserExist(Map<String, String> paraMap) {
+		
+		boolean isUserExist = false;
+		
+		try {
+			String email = aES256.encrypt(paraMap.get("email"));
+			paraMap.put("email", email);
+
+			String user = dao.pwFind(paraMap);
+			
+			if(user != null) {
+				isUserExist = true;
+			}
+			
+		} catch (UnsupportedEncodingException | GeneralSecurityException e) {
+			e.printStackTrace();
+		}
+		
+		return isUserExist;
+	}
+
+
+	// 비밀번호찾기 - 비밀번호 변경
+	@Override
+	public int pwUpdate(Map<String, String> paraMap) {
+		
+		int result = dao.pwUpdate(paraMap);
+		
+		return result;
+	}
+
+
 
 }

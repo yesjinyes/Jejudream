@@ -23,4 +23,9 @@
 		from tbl_company
 		where email = #{email}
 	</select>
+	
+	<insert id="registerHotelEnd" parameterType="com.spring.app.trip.domain.LodgingVO">
+		insert into tbl_lodging (lodging_code , local_status, lodging_category, fk_companyid, lodging_name, lodging_tell, lodging_content, lodging_address, main_img, filename, orgfilename, filesize)
+                   	   	  values(seq_common.nextval,#{local_status},#{lodging_category},#{fk_companyid},#{lodging_name},#{lodging_tell},#{lodging_content},#{lodging_address},#{fileName},#{fileName},#{orgFilename},#{fileSize})
+	</insert>
 </mapper>
