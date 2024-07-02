@@ -426,7 +426,12 @@
           <version>1.18.24</version>
           <scope>provided</scope>
       </dependency>
-      	
+      
+      <dependency>
+	    <groupId>org.seleniumhq.selenium</groupId>
+	    <artifactId>selenium-java</artifactId>
+	    <version>4.21.0</version>
+	  </dependency>	
 		        
 	</dependencies>
     <build>

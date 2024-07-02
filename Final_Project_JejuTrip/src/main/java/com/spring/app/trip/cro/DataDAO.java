@@ -1,19 +1,21 @@
 package com.spring.app.trip.cro;
 import java.util.*;
+
+import com.spring.app.trip.domain.LodgingVO;
+import com.spring.app.trip.domain.RoomDetailVO;
+
 import java.sql.*;
 public class DataDAO {
-	
-	/*
    private Connection conn;
    private PreparedStatement ps;
-   private final String URL="jdbc:oracle:thin:@localhost:1521:XE";
+   private final String URL="jdbc:oracle:thin:@211.238.142.186:1521:XE";
    private static DataDAO dao;
    // 드라이버 등록 
    public DataDAO()
    {
 	   try
 	   {
-		   Class.forName("com.mysql.cj.jdbc.Driver");
+		   Class.forName("com.jdbc.driver.OracleDriver");
 	   }catch(Exception ex){}
    }
    // 연결 
@@ -21,7 +23,7 @@ public class DataDAO {
    {
 	   try
 	   {
-		   conn=DriverManager.getConnection(URL,"hr","happy");
+		   conn=DriverManager.getConnection(URL,"final_orauser2","gclass");
 	   }catch(Exception ex) {}
    }
    public void disConnection()
@@ -41,32 +43,141 @@ public class DataDAO {
 	   return dao;
    }
    // 데이터 수집 => insert
-   */
-   /*
+   
+   
    // 카테고리 저장 
-   public void foodCategoryInsert(FoodCategoryVO vo)
-   {
-	   try
-	   {
-		   getConnection();
-		   String sql="INSERT INTO project_food_category VALUES("
-				     +"?,?,?,?,?)";
-		   ps=conn.prepareStatement(sql);
-		   ps.setInt(1, vo.getCno());
-		   ps.setString(2, vo.getTitle());
-		   ps.setString(3, vo.getSubject());
-		   ps.setString(4, vo.getPoster());
-		   ps.setString(5, vo.getLink());
-		   ps.executeUpdate();
-	   }catch(Exception ex)
-	   {
-		   ex.printStackTrace();
+   public int lodging_insert(LodgingVO lvo){
+	   
+	   int n = 0;
+	   
+	   if(lvo.getLodging_content().length() > 1000) {
+		   
+		   
+		   lvo.setLodging_content("내용이 너무길어요");
+		   
 	   }
-	   finally
-	   {
+	   
+	   try {
+		   
+		   getConnection();
+		   
+		   String sql = " INSERT INTO tbl_lodging (LODGING_CODE, LODGING_NAME, LODGING_TELL, LODGING_CONTENT, LODGING_ADDRESS, MAIN_IMG) "
+		   		+ " values (?, ?, ?, ?, ?, ?) ";
+		   
+		   ps = conn.prepareStatement(sql);
+		   
+		   ps.setString(1, lvo.getLodging_code());
+		   ps.setString(2, lvo.getLodging_name());
+		   ps.setString(3, lvo.getLodging_tell());
+		   ps.setString(4, lvo.getLodging_content());
+		   ps.setString(5, lvo.getLodging_address());
+		   ps.setString(6, lvo.getMain_img());
+		   
+		   n = ps.executeUpdate();
+		   
+		   System.out.println(n);
+		   
+	   }catch(Exception ex) {
+		   ex.printStackTrace();
+	   }finally{
 		   disConnection();
 	   }
+	   
+	   return n;
    }
+   
+   
+	// 숙소일련번호 채번해오기
+	public String select_num() {
+	    String result = "";
+	    ResultSet rs = null; // ResultSet 선언
+	
+	    try {
+	        getConnection();
+	
+	        String sql = "SELECT seq_common.nextval AS num FROM dual";
+	
+	        ps = conn.prepareStatement(sql);
+	
+	        rs = ps.executeQuery(); // 쿼리 실행 후 ResultSet 가져오기
+	
+	        if (rs.next()) { // ResultSet에서 데이터 가져오기 전에 이동
+	            result = rs.getString("num"); // "num" 컬럼명으로 데이터 가져오기
+	        }
+	
+	    } catch (Exception ex) {
+	        ex.printStackTrace();
+	    } finally {
+	        try {
+	            if (rs != null) rs.close(); // ResultSet 닫기
+	            if (ps != null) ps.close(); // PreparedStatement 닫기
+	            if (conn != null) conn.close(); // Connection 닫기
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
+	
+	    return result;
+	}
+   
+   
+   
+   public void room_detailinsert(RoomDetailVO rvo) {
+	   
+	   int n = 0;
+	   
+	   if(rvo.getRoom_name().length() > 200 ) {
+		   
+	   }
+	   else if(rvo.getRoom_img().length() > 100){
+		   
+		   
+		   
+	   }
+	   
+	   try {
+		   
+		   getConnection();
+		   
+		   String sql = " INSERT INTO tbl_room_detail (ROOM_DETAIL_CODE, FK_LODGING_CODE, ROOM_NAME, PRICE, CHECK_IN, CHECK_OUT, MIN_PERSON, MAX_PERSON, ROOM_IMG ) "
+		   		+ " values (seq_room.nextval, ?, ?, ?, ?, ?, ?, ?, ?) ";
+		   
+		   ps = conn.prepareStatement(sql);
+		   
+		   ps.setString(1, rvo.getFk_lodging_code());
+		   ps.setString(2, rvo.getRoom_name());
+		   ps.setInt(3, Integer.parseInt(rvo.getPrice()));
+		   ps.setString(4, rvo.getCheck_in());
+		   ps.setString(5, rvo.getCheck_out());
+		   ps.setInt(6, rvo.getMin_person());
+		   ps.setInt(7, rvo.getMin_person());
+		   ps.setString(8, rvo.getRoom_img());
+		   
+		   n = ps.executeUpdate();
+		   
+		   if(n==1) {
+			   
+			   System.out.println("객실 insert 성공");
+		   }
+		   else {
+			   System.out.println("객실 insert 실패");
+		   }
+		   
+	   }catch(Exception ex) {
+		   ex.printStackTrace();
+	   }finally{
+		   try {
+	            if (ps != null) ps.close(); // PreparedStatement 닫기
+	            if (conn != null) conn.close(); // Connection 닫기
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	   }
+
+	
+   }
+   
+   /*
    // 카테고리별 맛집 저장
    public void foodHouseInsert(FoodHouseVO vo)
    {

@@ -11,7 +11,7 @@ create user final_orauser2 identified by gclass default tablespace users;
 grant connect, resource, create view, unlimited tablespace to final_orauser2;
 -- Grant을(를) 성공했습니다.
 select play_code, fk_play_category_code, fk_local_code
-from tbl_play
+from tbl_play;
 
 
 /* 업체 */
@@ -156,3 +156,94 @@ alter table tbl_play modify play_name varchar2(100);
     
     select * from tbl_company;
     commit;
+    
+    
+    /* 회원 로그인기록 테이블 */
+    CREATE TABLE tbl_member_loginhistory (
+	fk_userid VARCHAR2(20) NOT NULL, /* 아이디 */
+	logindate DATE default sysdate NOT NULL, /* 로그인시각 */
+	clientip VARCHAR2(20) NOT NULL, /* 접속ip주소 */
+    CONSTRAINT FK_tbl_member_history FOREIGN KEY (fk_userid) REFERENCES tbl_member (userid)
+    );
+    -- Table TBL_MEMBER_LOGINHISTORY이(가) 생성되었습니다.
+    
+    /* 업체 로그인기록 테이블 */
+    CREATE TABLE tbl_company_loginhistory (
+	fk_companyid VARCHAR2(20) NOT NULL, /* 아이디 */
+	logindate DATE default sysdate NOT NULL, /* 로그인시각 */
+	clientip VARCHAR2(20) NOT NULL, /* 접속ip주소 */
+    CONSTRAINT FK_tbl_company_history FOREIGN KEY (fk_companyid) REFERENCES tbl_company (companyid)
+    );
+    -- Table TBL_COMPANY_LOGINHISTORY이(가) 생성되었습니다.
+    desc tbl_lodging;
+    select * from user_constraints where TABLE_NAME = 'TBL_FOOD_STORE';
+    
+    ALTER TABLE tbl_food_store RENAME COLUMN fk_local_code TO local_status;
+    ALTER TABLE tbl_play RENAME COLUMN fk_local_code TO local_status;
+    
+    
+    
+    
+    ALTER TABLE tbl_lodging
+MODIFY (LODGING_CATEGORY DEFAULT '호텔');
+    
+    alter table tbl_lodging RENAME COLUMN FK_LOCAL_CODE to local_status;
+    select * from tbl_food_store;
+    -- 숙소테이블 임시로 제약조건 제거
+    ALTER TABLE TBL_FOOD_STORE
+    DROP CONSTRAINT FK_TBL_FOOD_LOCAL_CODE;
+    
+    ALTER TABLE tbl_lodging
+    DROP CONSTRAINT FK_TBL_COMPANY_FK_COMPANYID;
+    
+    ALTER TABLE tbl_lodging
+    MODIFY (fk_local_code VARCHAR2(20) NULL,
+            fk_companyid VARCHAR2(20) NULL);
+            
+            
+    -- 다시 추가하기
+    ALTER TABLE tbl_lodging
+ADD CONSTRAINT FK_TBL_LODGING_LOCAL FOREIGN KEY (fk_local_code)
+REFERENCES tbl_local (local_code) ON DELETE CASCADE;
+
+
+
+ALTER TABLE tbl_lodging
+ADD CONSTRAINT FK_tbl_company_fk_companyid FOREIGN KEY (fk_companyid)
+REFERENCES tbl_company (companyid) ON DELETE CASCADE;
+
+
+    desc tbl_lodging;
+    desc tbl_room_detail;
+    ALTER TABLE tbl_lodging MODIFY LODGING_CONTENT VARCHAR2(2000);
+    ALTER TABLE tbl_room_detail MODIFY room_name VARCHAR2(200);
+    select * from tbl_lodging;
+    select * from tbl_room_detail;
+    
+    delete from tbl_lodging where lodging_code not in(5006);
+    delete from tbl_room_detail;
+    commit;
+    
+    desc tbl_play;
+    local_status '제주시 서부'
+    
+    select * from tbl_lodging where lodging_code not in (5006);
+    select distinct fk_lodging_code from tbl_room_detail;
+    desc tbl_room_detail;
+    select seq_common.nextval
+    from dual
+    
+    alter table 
+    ALTER TABLE tbl_room_detail ADD room_img VARCHAR(200);
+    
+    create sequence seq_room
+    start with 1
+    increment by 1
+    nomaxvalue
+    nominvalue
+    nocycle
+    nocache;
+ 
+    
+    
+    

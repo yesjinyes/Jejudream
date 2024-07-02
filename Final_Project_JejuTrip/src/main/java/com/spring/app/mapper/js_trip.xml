@@ -7,9 +7,10 @@
 메퍼가 바뀌면 무조건  WAS를 껐다 켜야한다!!!!!!!!! -->
 <mapper namespace="js_trip">
 
-	<select id="playList" resultType="com.spring.app.trip.domain.PlayVO">
-	  select play_code, fk_local_code
-	  from tbl_play
+	<select id="lodgingList" resultType="com.spring.app.trip.domain.LodgingVO">
+	  
+	  select LODGING_NAME, LODGING_ADDRESS, LODGING_CODE, LOCAL_STATUS, MAIN_IMG, REVIEW_DIVISION
+	  from tbl_lodging
 	</select>
-
+ 
 </mapper>
