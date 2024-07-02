@@ -6,9 +6,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.PlayVO;
 import com.spring.app.trip.service.Js_TripService;
 
@@ -26,17 +28,17 @@ public class Js_TripController {
 	}
 	*/
 	
-	@RequestMapping(value = "/lodging/lodgingList.trip")
-    public ModelAndView play_main(ModelAndView mav) {
+	@GetMapping("/lodging/lodgingList.trip")
+    public ModelAndView lodgingList(ModelAndView mav) {
        
-		List<PlayVO> playList = service.playList();
+		List<LodgingVO> lodgingList = service.lodgingList();
 		
-        mav.addObject("playList", playList);
+        mav.addObject("lodgingList", lodgingList);
               
-        mav.setViewName("/lodging/lodgingList");
+        mav.setViewName("lodging/lodgingList.tiles1");
        
         return mav; 
-       // /WEB-INF/views/play/play_main.jsp 파일 생성
+       
     }
 	
 	

@@ -4,7 +4,7 @@ package com.spring.app.trip.domain;
 public class LodgingVO {
 
 	private String lodging_code;		// 숙소일련번호
-	private String fk_local_code;		// 지역코드
+	private String local_status;		// 지역구분
 	private String lodging_category;	// 숙소카테고리
 	private String fk_companyid;		// 업체아이디
 	private String lodging_name;		// 숙소이름
@@ -26,14 +26,13 @@ public class LodgingVO {
 		this.lodging_code = lodging_code;
 	}
 	
-	public String getFk_local_code() {
-		return fk_local_code;
+	public String getLocal_status() {
+		return local_status;
 	}
-	
-	public void setFk_local_code(String fk_local_code) {
-		this.fk_local_code = fk_local_code;
+
+	public void setLocal_status(String local_status) {
+		this.local_status = local_status;
 	}
-	
 
 	public String getLodging_category() {
 		return lodging_category;
