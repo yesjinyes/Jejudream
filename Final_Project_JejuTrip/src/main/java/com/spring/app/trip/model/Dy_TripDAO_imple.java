@@ -100,6 +100,60 @@ public class Dy_TripDAO_imple implements Dy_TripDAO {
 		
 		sqlsession.insert("dy_trip.insert_company_loginhistory", paraMap);
 	}
+
+
+	// 아이디찾기 처리하기 (일반회원, 관리자)
+	@Override
+	public Map<String, String> memberIdFind(Map<String, String> paraMap) {
+		
+		Map<String, String> findInfo = sqlsession.selectOne("dy_trip.memberIdFind", paraMap);
+		
+		return findInfo;
+	}
+
+
+	// 아이디찾기 처리하기 (업체회원)
+	@Override
+	public Map<String, String> companyIdFind(Map<String, String> paraMap) {
+
+		Map<String, String> findInfo = sqlsession.selectOne("dy_trip.companyIdFind", paraMap);
+		
+		return findInfo;
+	}
+
+
+	// 비밀번호찾기 시 사용자가 존재하는지 확인하기
+	@Override
+	public String pwFind(Map<String, String> paraMap) {
+		
+		String user = "";
+		
+		if("company".equals(paraMap.get("memberType"))) {
+			user = sqlsession.selectOne("dy_trip.companyPwFind", paraMap);
+			
+		} else {
+			user = sqlsession.selectOne("dy_trip.memberPwFind", paraMap);
+		}
+		
+		return user;
+	}
+
+
+	// 비밀번호찾기 - 비밀번호 변경
+	@Override
+	public int pwUpdate(Map<String, String> paraMap) {
+		
+		int result = 0;
+		
+		if("company".equals(paraMap.get("memberType"))) {
+			result = sqlsession.update("dy_trip.companyPwUpdate", paraMap);
+			
+		} else {
+			result = sqlsession.update("dy_trip.memberPwUpdate", paraMap);
+		}
+		
+		return result;
+	}
 	
 
 }

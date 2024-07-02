@@ -89,6 +89,11 @@
             $("input#pwCheck").val("");
             $("input#pwCheck").focus();
         }
+        
+        const frm = document.pwFindEndFrm;
+        frm.method = "post";
+        frm.submit();
+        
     }
 </script>
 
@@ -98,7 +103,7 @@
         <h5>비밀번호 변경</h5>
 
         <form name="pwFindEndFrm">
-        
+        <%--
             <div class="d-flex justify-content-center mt-5">
                <div class="form-check form-check-inline">
                  <input class="form-check-input" type="radio" name="memberType" id="inlineRadio1" value="member" checked>
@@ -108,19 +113,15 @@
                  <input class="form-check-input" type="radio" name="memberType" id="inlineRadio2" value="company">
                  <label class="form-check-label" for="inlineRadio2">업체회원</label>
                </div>
-               <div class="form-check form-check-inline pl-3">
-                 <input class="form-check-input" type="radio" name="memberType" id="inlineRadio3" value="admin">
-                 <label class="form-check-label" for="inlineRadio3">관리자</label>
-               </div>
             </div>
-        
-            <div class="info">
+        --%>
+            <div class="info mt-5">
                 <input type="password" name="pw" id="pw" placeholder="비밀번호">
                 <input type="password" name="pwCheck" id="pwCheck" placeholder="비밀번호 재입력">
             </div>
             
-            <input type="hidden" name="userid" value="${requestScope.userid}">
-            <input type="hidden" name="email" value="${requestScope.email}">
+            <input type="hidden" name="memberType" value="${requestScope.memberType}">
+            <input type="hidden" name="id" value="${requestScope.id}">
             
             <div class="mt-5" style="margin-bottom: 20%;">
                 <button type="button" class="btn" id="pwUpdateBtn" onclick="goPwUpdate()">변경하기</button>
