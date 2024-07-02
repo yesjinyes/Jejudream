@@ -1,16 +1,23 @@
 package com.spring.app.trip.model;
 
 import java.util.List;
+import java.util.Map;
 
 import com.spring.app.trip.domain.FoodstoreVO;
 
 public interface Yj_TripDAO {
 
-	// === 맛집 리스트 페이지 보이기 === //
+	// == 맛집 리스트 페이지 보이기 == //
 	List<FoodstoreVO> viewFoodstoreList();
 
-	// === 카테고리 선택에 따른 Ajax === //
-	List<FoodstoreVO> viewCheckCategory(String food_category);
+	// == 맛집 랜덤 추천 == //
+	List<FoodstoreVO> randomRecommend(Map<String, String> paraMap);
+
+
+	// == 카테고리 선택에 따른 Ajax == //
+	//List<FoodstoreVO> viewCheckCategory(String food_category);
 	// List<FoodstoreVO> viewCheckCategory(String[] categoryArr);
 
-}
+
+
+} 

@@ -259,10 +259,9 @@ button#btnSearch {
       	<div class="row mt-5">
 	       <div class="sort-filter main" style="display: flex; justify-content: space-between; width: 100%">
 	            <div style="width: 50%;">
-					<button type="button" onclick="" class="sort active" value="">추천순</button>
-					<button type="button" onclick="" class="sort" value="PRICE">낮은가격순</button>
-					<button type="button" onclick="" class="sort" value="PRICE_DESC">높은가격순</button>
-					<button type="button" onclick="" class="sort" value="NEW">최신등록순</button>
+					<button type="button" onclick="" class="sort active" value="">인기순</button>
+					<button type="button" onclick="" class="sort" value="PRICE">오름차순</button>
+					<button type="button" onclick="" class="sort" value="PRICE">내림차순</button>
 	            </div>
 	            <div style="">
 	                <input type="text" id="searchWord" class="" placeholder="맛집 이름으로 검색">
@@ -273,11 +272,12 @@ button#btnSearch {
             
         <!---------------------------------------------------------------------------------------------->
         <!-- 리스트 시작 -->
-		<div class="row mt-3">
-			<form name="foodstoreFrm">
+		<form name="foodstoreFrm">
+			<div class="row mt-3">
+			
 				<!-- 맛집 리스트 -->
 				<div class="col-md-8" id="foodstoreList"> 
-					<c:forEach var="foodstoreList" items="${requestScope.foodstoreList}">	
+					<c:forEach var="foodstoreList" items="${requestScope.foodstoreList}" varStatus="status">	
 						<div class="row">
 					    	<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
 					    		<div class="imgMainList">
@@ -287,12 +287,13 @@ button#btnSearch {
 					        	</div>
 						        <div class="contentList">
 						            <div class="mb-3">
+						            	<%-- <input type="text" name="food_store_code" value="${foodstoreList.food_store_code}"/> --%>
 						            	<h3 class="pt-3 title"><a href="#">${foodstoreList.food_name}</a></h3>
 						            	<span>${foodstoreList.food_content}</span>
 						            </div>
 						            <div class="pb-3">
 						                <span style="color:#b5aec4;">${foodstoreList.food_category}</span><br>
-						                <input type="text" name="food_category" value="${foodstoreList.food_category}"/>
+						                <%-- <input type="text" name="foodCategoryEach" value="${foodstoreList.food_category}"/> --%>
 						                <span>${foodstoreList.food_address}</span>
 						            </div>
 						        </div>
@@ -306,41 +307,24 @@ button#btnSearch {
 					<div class="border rounded" style="margin-right: -5%;">
 						<div class="m-4"> 
 							<h4 class="mb-4">추천맛집</h4>
-							
-							<div class="border rounded p-3">
-								<a href="#">
-						            <img class="imgRecommend" src="<%= ctxPath %>/resources/images/lodginglist/비자림미담독채펜션_thum.jpg" alt="..." />
-						        </a>
-						        <div class="mt-2" id="foodRecommend_1">
-						        	<a href="" class="foodRecommend">맛집추천게시물1</a>
-						        </div>
-					      	</div>
-					      	
-					      	
-					      	<div class="border rounded p-3 mt-2">
-									<a href="#">
-							        	<img class="imgRecommend" src="<%= ctxPath %>/resources/images/lodginglist/비자림미담독채펜션_thum.jpg" alt="..." />
-							        </a>
-							        <div class="mt-2" id="foodRecommend_2">
-							        	<a href="" class="foodRecommend">맛집추천게시물2</a>
-							        </div>
-					      	</div>
-					      	
-					      	<div class="border rounded p-3 mt-2">
-								<a href="#">
-						            <img class="imgRecommend" src="<%= ctxPath %>/resources/images/lodginglist/비자림미담독채펜션_thum.jpg" alt="..." />
-						        </a>
-						        <div class="mt-2">
-						        	<a href="" class="foodRecommend">맛집추천게시물2</a>
-						        </div>
-					      	</div>
-							
+							<c:forEach var="randomRecommend" items="${requestScope.randomRecommend}" varStatus="status">	
+								<c:if test="${status.index < 3}">
+									<div class="border rounded p-3 mb-3">
+										<a href="#">
+								            <img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/${randomRecommend.food_main_img}" alt="..." />
+								        </a>
+								        <div class="mt-2" id="foodRecommend_1">
+								        	<a href="" class="foodRecommend" id="recommend1">${randomRecommend.food_name}</a>
+								        </div>
+							      	</div>
+						      	</c:if>
+							</c:forEach>
 						</div>
 					</div>
 				</div>
 				
-			</form>
-        </div>
+        	</div>
+		</form>
         <!---------------------------------------------------------------------------------------------->
         
         <!-- 페이징 임의로 넣어둠 -->        
@@ -361,16 +345,6 @@ button#btnSearch {
         
 	</div> 
 
- 
- 
-<%-- <form name="foodstoreFrm">
-	<input type="text" name="food_name" />
-	<input type="text" name="food_category" value="${requestScope. }" />
-	
 
-</form>
-  --%>
- 
- 
 </body>
 </html>

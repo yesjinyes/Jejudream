@@ -144,4 +144,34 @@ from tbl_food_store
 where food_category = '한식';
 
 
+select food_store_code, food_name, food_category, local_status,  food_content
+     , substr(food_address, 0, instr(food_address, ' ', 1, 2)-1) AS food_address
+from tbl_food_store
+where food_category in ('한식', '양식');
+
+
+
+
+select * from (
+    select * from tbl_food_store order by DBMS_RANDOM.RANDOM
+)
+where rownum <= 5;
+
+
+select food_main_img, food_name
+		from (
+		    select food_main_img, food_name from tbl_food_store order by DBMS_RANDOM.RANDOM
+		)
+		where rownum <= 3;
+
+
+select *
+from tbl_food_store
+order by food_name asc;
+
+select *
+from tbl_food_store
+order by food_name desc;
+
+
 

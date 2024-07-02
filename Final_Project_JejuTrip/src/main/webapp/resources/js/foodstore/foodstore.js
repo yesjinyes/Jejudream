@@ -68,7 +68,7 @@ $(document).ready(function(){
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
     // == 맛집 카테고리 선택 == //
-    const categoryArr = []; // 선택한 카테고리를 담을 배열
+ /*   const categoryArr = []; // 선택한 카테고리를 담을 배열
 
     $("input:checkbox[name='food_category']").change(function(e){
         const category_name = $(e.target).val();
@@ -76,14 +76,10 @@ $(document).ready(function(){
 
         var is_checked = $(e.target).is(":checked");
         if(is_checked) {
-            // console.log("is_checked true확인 : " + is_checked);
-            
             categoryArr.push(category_name);
-            // console.log("배열에 추가되는지 확인 : " + categoryArr);
         }
 
         else {
-            // console.log("is_checked false확인 : " + is_checked);
             let value = category_name;
 
             // 체크박스 해제하면 배열에서 삭제하기
@@ -92,18 +88,21 @@ $(document).ready(function(){
                     categoryArr.splice(i, 1);
                 }
             }
-            // console.log("배열에서 삭제되는지 확인 : " + categoryArr);
         }
 
-        console.log(categoryArr); // ['japanese', 'western', 'korean' ...]
+        console.log(categoryArr.toString()); // japanese, western, korean ...
+        const categorystr = categoryArr.toString();
 
 
+        $("form[name='categoryFrm'] > input[name='food_category']").val(categorystr); // 선택한 카테고리 배열 폼으로 넘기기
+
+*/
 
 
         ///////////////////////////////////////////////////////////////////////////////
        
         //$("div#foodstoreList").hide();
-
+/*
         const queryString = $("form[name='foodstoreFrm']").serialize();
         
         $.ajax({
@@ -111,11 +110,11 @@ $(document).ready(function(){
             data:queryString,
             dataType:"json",
             success:function(json) {
-                // console.log("json 확인 : "+JSON.stringify(json))
+                 console.log("json 확인 : "+JSON.stringify(json))
 
+                
 
-
-            },
+            },// end of success------------------------------
             error: function(request, status, error){
                 alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
             }
@@ -124,8 +123,7 @@ $(document).ready(function(){
             
        
    
-    });// end of $("input:checkbox[name='category']").change(function(e){})-------------------------
+   // });// end of $("input:checkbox[name='category']").change(function(e){})-------------------------
  
-    
+    */
 });// end of $(document).ready(function(){})----------------------------------------------------
-
