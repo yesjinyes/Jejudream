@@ -155,7 +155,7 @@ where food_category in ('한식', '양식');
 select * from (
     select * from tbl_food_store order by DBMS_RANDOM.RANDOM
 )
-where rownum <= 5;
+where rownum <= 3;
 
 
 select food_main_img, food_name

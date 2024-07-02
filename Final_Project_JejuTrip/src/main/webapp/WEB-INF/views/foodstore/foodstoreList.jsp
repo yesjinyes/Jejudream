@@ -151,6 +151,26 @@ button#btnSearch {
 
 </style>
 
+<script type="text/javascript">
+	$(document).ready(function() {
+		
+		$("button#btnAsc").click(function() {
+	        // alert("버튼클릭");
+
+	        
+	    
+	        
+	       
+	    });
+		
+		
+		
+		
+		
+		
+	});// end of $(document).ready(function()})-------------------
+</script>
+
 
 <title>foodStore</title>
 </head>
@@ -259,9 +279,9 @@ button#btnSearch {
       	<div class="row mt-5">
 	       <div class="sort-filter main" style="display: flex; justify-content: space-between; width: 100%">
 	            <div style="width: 50%;">
-					<button type="button" onclick="" class="sort active" value="">인기순</button>
-					<button type="button" onclick="" class="sort" value="PRICE">오름차순</button>
-					<button type="button" onclick="" class="sort" value="PRICE">내림차순</button>
+					<button type="button" onclick="" class="sort active">인기순</button>
+					<button type="button" id="btnAsc" class="sort">오름차순</button>
+					<button type="button" id="btnDesc" class="sort">내림차순</button>
 	            </div>
 	            <div style="">
 	                <input type="text" id="searchWord" class="" placeholder="맛집 이름으로 검색">
