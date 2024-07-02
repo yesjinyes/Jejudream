@@ -75,29 +75,32 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-
-        /* 비밀번호 찾기 후 이메일 인증 화면 임시 구현 */
-        $("div#emailConfirm").hide();
-
+		
         $("input#email").keyup(function(e) {
             if(e.keyCode == 13) {
                 goPwFind();
             }
+        });
+        
+        $(document).on("keyup", "input:text[name='input_confirmCode']", function(e) {
+        	if(e.keyCode == 13) {
+        		goPwUpdate();
+        	}
         });
 
     });
 
     function goPwFind() {
 
-        const userid = $("input#userid").val().trim();
+        const id = $("input#id").val().trim();
         const email = $("input#email").val().trim();
 
-        if(userid == "") {
+        if(id == "") {
             alert("아이디를 입력해주세요!");
             return;
         }
 
-        if(userid.length < 5 || userid.length > 20) {
+        if(id.length < 5 || id.length > 20) {
             alert("아이디는 5~20자 이내로 입력해주세요!");
             return;
         }
@@ -116,8 +119,46 @@
             return;
         }
 
-        /* 비밀번호 찾기 후 이메일 인증 임시 구현 */
-        $("div#emailConfirm").show();
+        const queryString = $("form[name='pwdFindFrm']").serialize();
+        
+        $.ajax({
+        	url: "<%=ctxPath%>/login/pwFindJSON.trip",
+        	type: "post",
+        	data: queryString,
+        	dataType: "json",
+        	success: function(json) {
+        		
+        		if(json.isUserExist) {
+        			
+        			let v_html = ``;
+        			
+        			if(json.sendMailSuccess) {
+        				v_html += `<div class="text-center mb-3">
+		        	               	  <span><span class="font-weight-bold">\${json.email}</span> 으로 메일이 발송되었습니다.</span>
+		        		           </div>
+		        		           <div style="position: relative;">
+		        		              <input type="text" name="input_confirmCode" placeholder="인증번호 입력">
+		        		              <button type="button" class="btn btn-success" id="confirmBtn" onclick="goPwUpdate()">인증하기</button>
+		        		           </div>`;
+		        		
+        			} else {
+        				v_html += `<span style="color: red;">메일 발송에 실패했습니다.</span>`;
+        			}
+					
+        			$("div#emailConfirm").html(v_html);
+        		
+        		} else {
+        			alert("일치하는 사용자 정보가 없습니다.");
+        			$("input#id").val("").focus();
+        			$("input#email").val("");
+        			return;
+        		}
+        		
+        	},
+        	error: function(request, status, error) {
+                alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+            }
+        });
     }
     
     function goPwUpdate() {
@@ -127,9 +168,16 @@
     		alert("인증번호를 입력해주세요.");
     		return;
     	}
+
+		const frm = document.verifyCertificationFrm;
+		frm.userCertificationCode.value = input_confirmCode; // 입력받은 인증코드 넣기
+		frm.memberType.value = $("input:radio[name='memberType']:checked").val();
+		frm.id.value = $("input:text#id").val();
+		
+		frm.action = "<%=ctxPath%>/login/verifyCertification.trip";
+		frm.method = "post";
+		frm.submit();
     	
-    	alert("인증이 완료되었습니다.\n비밀번호 변경 페이지로 이동합니다.");
-    	location.href = "<%=ctxPath%>/pwFindEnd.trip";
     }
 </script>
 
@@ -148,15 +196,11 @@
                  <input class="form-check-input" type="radio" name="memberType" id="inlineRadio2" value="company">
                  <label class="form-check-label" for="inlineRadio2">업체회원</label>
                </div>
-               <div class="form-check form-check-inline pl-3">
-                 <input class="form-check-input" type="radio" name="memberType" id="inlineRadio3" value="admin">
-                 <label class="form-check-label" for="inlineRadio3">관리자</label>
-               </div>
             </div>
         
         
             <div class="info">
-                <input type="text" name="userid" id="userid" placeholder="아이디">
+                <input type="text" name="id" id="id" placeholder="아이디">
                 <input type="text" name="email" id="email" placeholder="이메일">
             </div>
 
@@ -166,14 +210,13 @@
         </form>
 
         <div id="emailConfirm" class="mt-5" style="margin-bottom: 20%;">
-            <div class="text-center mb-3">
-                <span><span class="font-weight-bold">kimdy@naver.com</span> 으로 메일이 발송되었습니다.</span>
-            </div>
-            <div style="position: relative;">
-                <input type="text" name="input_confirmCode" placeholder="인증번호 입력">
-                <button type="button" class="btn btn-success" id="confirmBtn" onclick="goPwUpdate()">인증하기</button>
-            </div>
         </div>
 
+		<%-- 인증하기 form --%>
+		<form name="verifyCertificationFrm">
+			<input type="hidden" name="userCertificationCode" />
+			<input type="hidden" name="memberType">
+			<input type="hidden" name="id" />
+		</form>
     </div>
 </div>

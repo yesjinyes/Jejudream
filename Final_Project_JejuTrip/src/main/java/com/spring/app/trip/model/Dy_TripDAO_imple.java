@@ -120,6 +120,40 @@ public class Dy_TripDAO_imple implements Dy_TripDAO {
 		
 		return findInfo;
 	}
+
+
+	// 비밀번호찾기 시 사용자가 존재하는지 확인하기
+	@Override
+	public String pwFind(Map<String, String> paraMap) {
+		
+		String user = "";
+		
+		if("company".equals(paraMap.get("memberType"))) {
+			user = sqlsession.selectOne("dy_trip.companyPwFind", paraMap);
+			
+		} else {
+			user = sqlsession.selectOne("dy_trip.memberPwFind", paraMap);
+		}
+		
+		return user;
+	}
+
+
+	// 비밀번호찾기 - 비밀번호 변경
+	@Override
+	public int pwUpdate(Map<String, String> paraMap) {
+		
+		int result = 0;
+		
+		if("company".equals(paraMap.get("memberType"))) {
+			result = sqlsession.update("dy_trip.companyPwUpdate", paraMap);
+			
+		} else {
+			result = sqlsession.update("dy_trip.memberPwUpdate", paraMap);
+		}
+		
+		return result;
+	}
 	
 
 }

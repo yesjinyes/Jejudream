@@ -80,6 +80,12 @@ where company_name = '네이버' and email = 'q8o3ujFmPcgaRxMme3F+XQ==';
 
 
 
+select userid
+from tbl_member
+where userid = 'kimdy' and email = 'iqOrelu2llBP6cnC6yu77REzaKuiYpaUDPuSnEzJZX4=';
+
+
+
 
 
 
