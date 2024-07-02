@@ -158,6 +158,9 @@ alter table tbl_play modify play_name varchar2(100);
     commit;
     
     
+    
+    
+    
     /* 회원 로그인기록 테이블 */
     CREATE TABLE tbl_member_loginhistory (
 	fk_userid VARCHAR2(20) NOT NULL, /* 아이디 */
@@ -243,7 +246,28 @@ REFERENCES tbl_company (companyid) ON DELETE CASCADE;
     nominvalue
     nocycle
     nocache;
- 
+    
+    
+    
+    alter table tbl_lodging
+    add fileName varchar2(255); -- WAS(톰캣)에 저장될 파일명(2024070109291535243254235235234.png)
+    -- Table TBL_LODGING이(가) 변경되었습니다.
+    alter table tbl_lodging
+    add orgFilename varchar2(255); -- 진짜 파일명(강아지.png)  // 사용자가 파일을 업로드 하거나 파일을 다운로드 할때 사용되어지는 파일명 
+    -- Table TBL_LODGING이(가) 변경되었습니다.
+    alter table tbl_lodging
+    add fileSize varchar2(255);  -- 파일크기
+    -- Table TBL_LODGING이(가) 변경되었습니다.
+    
+    alter table tbl_room_detail
+    add fileName varchar2(255); 
+    -- Table TBL_ROOM_DETAIL이(가) 변경되었습니다.
+    alter table tbl_room_detail
+    add orgFilename varchar2(255); 
+    -- Table TBL_ROOM_DETAIL이(가) 변경되었습니다.
+    alter table tbl_room_detail
+    add fileSize varchar2(255);  
+    -- Table TBL_ROOM_DETAIL이(가) 변경되었습니다.
     
     
     
