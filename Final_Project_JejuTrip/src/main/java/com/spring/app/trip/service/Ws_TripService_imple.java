@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.spring.app.trip.common.AES256;
 import com.spring.app.trip.common.Sha256;
 import com.spring.app.trip.domain.CompanyVO;
+import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.model.Ws_TripDAO;
 @Service
 public class Ws_TripService_imple implements Ws_TripService {
@@ -60,5 +61,12 @@ public class Ws_TripService_imple implements Ws_TripService {
 		}
 		return n;
 	}// end of public int companyEmailCheck(String email) {
+	
+	// === 데이터 베이스에 등록하려는 숙소 정보 insert 하기 === // 
+	@Override
+	public int registerHotelEnd(LodgingVO lodgingvo) {
+		int n = dao.registerHotelEnd(lodgingvo);
+		return n;
+	}// end of public int registerHotelEnd(LodgingVO lodgingvo) {
 
 }
