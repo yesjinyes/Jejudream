@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import com.spring.app.trip.domain.CompanyVO;
+import com.spring.app.trip.domain.LodgingVO;
 
 @Component
 @Repository
@@ -46,5 +47,12 @@ public class Ws_TripDAO_imple implements Ws_TripDAO {
 			return 0;
 		}
 	}// end of public int companyEmailCheck(String encrypt) {
+	
+	// === 데이터 베이스에 등록하려는 숙소 정보 insert 하기 === // 
+	@Override
+	public int registerHotelEnd(LodgingVO lodgingvo) {
+		int n = sqlsession.insert("ws_trip.registerHotelEnd",lodgingvo);
+		return n;
+	}// end of public int registerHotelEnd(LodgingVO lodgingvo) {
 
 }

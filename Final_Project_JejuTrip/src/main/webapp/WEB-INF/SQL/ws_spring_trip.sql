@@ -14,6 +14,8 @@ grant connect, resource, create view, unlimited tablespace to final_orauser2;
 select *
 from user_tables;
 
+select *
+from user_sequences;
 
-insert into tbl_company (companyid, company_name, pw, email, mobile, registerday, lastpwdchangedate, status, idle) values ();
-
+select *
+from tbl_lodging;
