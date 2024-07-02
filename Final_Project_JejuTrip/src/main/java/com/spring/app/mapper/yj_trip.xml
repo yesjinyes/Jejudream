@@ -7,11 +7,35 @@
 메퍼가 바뀌면 무조건  WAS를 껐다 켜야한다!!!!!!!!! -->
 <mapper namespace="yj_trip">
 
+	<!-- 맛집 리스트 띄우기 -->
 	<select id="viewFoodstoreList" resultType="com.spring.app.trip.domain.FoodstoreVO">
-		select food_store_code, food_category, fk_local_code, food_name, food_content, food_businesshours, food_mobile
+		select food_store_code, food_category, local_status, food_name, food_content, food_businesshours, food_mobile
 			 , substr(food_address, 0, instr(food_address, ' ', 1, 2)-1) AS food_address
 			 , food_main_img, review_division
 		from tbl_food_store
 	</select>
+	
+	<!-- 맛집 랜덤 추천 -->
+	<select id="randomRecommend" parameterType="HashMap" resultType="com.spring.app.trip.domain.FoodstoreVO">
+		<![CDATA[
+			select food_main_img, food_name
+			from (
+			    select food_main_img, food_name from tbl_food_store order by DBMS_RANDOM.RANDOM
+			)
+			where rownum <= 3
+		]]> 
+	</select>
+	
+
+
+	<!-- == 카테고리 선택에 따른 Ajax == -->
+<!--   	<select id="viewCheckCategory" parameterType="String" resultType="com.spring.app.trip.domain.FoodstoreVO">
+		select food_store_code, food_name, food_category, local_status,  food_content
+		     , substr(food_address, 0, instr(food_address, ' ', 1, 2)-1) AS food_address
+		from tbl_food_store
+		where food_category = #{food_category}
+	</select> -->
+	
+
 
 </mapper>
