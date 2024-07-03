@@ -175,3 +175,28 @@ order by food_name desc;
 
 
 
+
+
+select food_store_code, distinct food_category, local_status, food_name, food_content, food_businesshours, food_mobile
+     , substr(food_address, 0, instr(food_address, ' ', 1, 2)-1) AS food_address
+     , food_main_img, review_division 
+from tbl_food_store;
+
+
+
+select distinct food_category
+from tbl_food_store;
+
+
+select food_store_code, food_category, local_status, food_name, food_content, food_businesshours, food_mobile
+     , substr(food_address, 0, instr(food_address, ' ', 1, 2)-1) AS food_address
+     , food_main_img, review_division
+from tbl_food_store
+order by food_store_code;
+
+
+select distinct food_category
+from tbl_food_store
+
+
+

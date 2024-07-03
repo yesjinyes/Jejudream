@@ -16,14 +16,22 @@ public class Yj_TripService_imple implements Yj_TripService {
 	private Yj_TripDAO dao;
 
 	
+	// == 맛집 카테고리 가져오기 == //
+	@Override
+	public List<String> categoryList() {
+		List<String> categoryList = dao.categoryList();
+		return categoryList;
+	}
+	
+	
 	// == 맛집 리스트 페이지 보이기 == //
 	@Override
-	public List<FoodstoreVO> viewFoodstoreList() {
-		List<FoodstoreVO> foodstoreList = dao.viewFoodstoreList();
+	public List<FoodstoreVO> viewFoodstoreList(Map<String, Object> map) {
+		List<FoodstoreVO> foodstoreList = dao.viewFoodstoreList(map);
 		return foodstoreList;
 	}
-
-
+	
+	
 	// == 맛집 랜덤 추천 == //
 	@Override
 	public List<FoodstoreVO> randomRecommend(Map<String, String> paraMap) {
@@ -31,14 +39,7 @@ public class Yj_TripService_imple implements Yj_TripService {
 		return randomRecommend;
 	}
 
-	
 
-	// == 카테고리 선택에 따른 Ajax == //
-//	@Override
-//	public List<FoodstoreVO> viewCheckCategory(String food_category) {
-//		List<FoodstoreVO> foodstoreList = dao.viewCheckCategory(food_category);
-//		return foodstoreList;
-//	}
 
 
 

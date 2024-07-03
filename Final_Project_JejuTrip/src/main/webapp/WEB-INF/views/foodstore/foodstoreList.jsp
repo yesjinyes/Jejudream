@@ -55,7 +55,6 @@ body {
   text-decoration: none;
   transition-duration: 300ms;
   text-transform: capitalize;
-
 }
 
 .title a:hover {
@@ -63,28 +62,9 @@ body {
   text-decoration: none;
 }
 
-.slider-container {
-  width: 80%;
-  text-align: center;
-}
-
-.slider {
-  width: 100%;
-
-}
-
-.price-display {
-  font-size: 20px;
-
-}
-
 ul#food_category {
   display: flex;
   width: 40%;
-}
-
-.nav-item {
-  display: flex;
 }
 
 .foodRecommend,
@@ -117,6 +97,7 @@ ul#food_category {
   margin-right: 1%;
 }
 
+/* 버튼 */
 button.sort {
   border: #737373;
   border-radius: 5px;
@@ -134,7 +115,7 @@ button#btnSearch {
   border-radius: 5px;
 }
 
-
+/* 맛집추천 스크롤 고정  */
 @media all and (min-width: 1101px) {
     .foodRecommendList {
     position: -webkit-sticky;
@@ -144,29 +125,42 @@ button#btnSearch {
     }
 }
 
-.imgRecommend {
-   width: 100%;
-   height: 170px;
-}
-
 </style>
 
 <script type="text/javascript">
 	$(document).ready(function() {
 		
-		$("button#btnAsc").click(function() {
-	        // alert("버튼클릭");
+		// == 카테고리 체크박스 선택하기 == //
+		$("input:checkbox[name='food_category']").change(function(e){
+			const arr_category = [];
+			
+			// 체크된 카테고리만 배열에 담기 
+			$("input:checkbox[name='food_category']:checked").each(function(index, item) {
+				arr_category.push($(item).val());
+			});
 
-	        
-	    
-	        
-	       
-	    });
+			const str_category = arr_category.join();
+			
+			const frm = document.checkboxFrm;
+			frm.str_category.value = str_category; 
+			frm.submit();
+		});
 		
+		// == 카테고리 체크박스 유지시키기 == //
+		const str_category = "${requestScope.str_category}";
 		
-		
-		
-		
+		if(str_category != "") {
+			const arr_category = str_category.split(",");
+			
+			$("input:checkbox[name='food_category']").each(function(index, elmt) {
+				for(let i=0; i<arr_category.length; i++) {
+					if($(elmt).val() == arr_category[i]) {
+						$(elmt).prop("checked", true);
+						break;
+					}
+				}// end of for---------------------
+			});
+		}
 		
 	});// end of $(document).ready(function()})-------------------
 </script>
@@ -174,10 +168,10 @@ button#btnSearch {
 
 <title>foodStore</title>
 </head>
+
 <body>
 
     <div class="container">
-    
     	<!-- Jeju Dream 로고 -->
 		<div class="col-12 text-center">
 		    <h2>
@@ -186,94 +180,79 @@ button#btnSearch {
 		    </h2>
 		</div>
           
-        <!-- 맛집 검색 카테고리 -->
-    	<div class="row py-3 mt-5 border rounded">
-            <div class="row mt-2" style="width: 70%; margin-left: 4%;">
-    			<h5 class="mr-5">카테고리 검색</h5>
-                <div class="mr-4">
-                    <input type="checkbox" id="korean" name="food_category" value="korean"/>
-                    <label for="korean">한식</label>
-                </div>
-                <div class="mr-4">
-                    <input type="checkbox" id="japanese" name="food_category" value="japanese" />
-                    <label for="japanese">일식</label>
-                </div>
-                <div class="mr-4">
-                    <input type="checkbox" id="western" name="food_category" value="western" />
-                    <label for="western">양식</label>
-                </div>
-                <div class="mr-4">
-                    <input type="checkbox" id="chinese" name="food_category" value="chinese" />
-                    <label for="chinese">중식</label>
-                </div>
-                <div class="mr-4">
-                    <input type="checkbox" id="etc" name="food_category" value="etc" />
-                    <label for="etc">기타</label>
-                </div>
-                <div class="mr-4">
-                    <input type="checkbox" id="cafe" name="food_category" value="cafe" />
-                    <label for="cafe">카페</label>
-                </div>
-     		</div>
-    	</div>
-            
-        <!-- 검색 지역 선택 -->
-        <div class="row py-3 mt-1 border rounded">
-          	<div id="tabArea" class="tabArea1 text-center mt-2" style="display: flex; /*align-items: center;*/">
-	            <div class="areaMap" style="display: flex;">
-	            	<h5 class="mt-4" style="width: 20%; margin-left: 3%;">지역 선택</h5>
-	                <div class="areamap mx-2">
-	                    <img src="<%= ctxPath %>/resources/images/areamap_total.png" />
-	                    <div>
-	                        <input id="area01" type="checkbox" class="are_map" value="">
-	                        <br><label for="area01" class="label_chk">전체</label>
+        <form name="checkboxFrm">
+	        <!-- 맛집 검색 카테고리 -->
+	    	<div class="row py-3 mt-5 border rounded">
+	            <div class="row mt-2" style="width: 70%; margin-left: 4%;">
+	    			<h5 class="mr-5">카테고리 검색</h5>
+    				<c:forEach var="categoryList" items="${requestScope.categoryList}" varStatus="status">
+    					<div class="mr-4">
+	    					<input type="checkbox" id="${status.index}" name="food_category" value="${categoryList}"/>
+		                    <label for="${status.index}">${categoryList}</label>
 	                    </div>
-	                </div>
-	                <div class="areamap mx-2">
-	                    <img src="<%= ctxPath %>/resources/images/areamap_city.png" />
-	                    <div>
-	                        <input name="area" id="area02" type="checkbox" class="are_map" value="JE">
-	                        <label for="area02" class="label_chk">제주 시내권</label>
-	                    </div>
-	                </div>
-	                <div class="areamap mx-2">
-	                    <img src="<%= ctxPath %>/resources/images/areamap_jeju_east.png" />
-	                    <div>
-	                        <input name="area" id="area03" type="checkbox" class="are_map" value="EA">
-	                        <label for="area03" class="label_chk">제주시 동부</label>
-	                    </div>
-	                </div>
-	                <div class="areamap mx-2">
-	                    <img src="<%= ctxPath %>/resources/images/areamap_jeju_west.png" />
-	                    <div>
-	                        <input name="area" id="area04" type="checkbox" class="are_map" value="WE">
-	                        <label for="area04" class="label_chk">제주시 서부</label>
-	                    </div>
-	                </div>
-	                <div class="areamap mx-2">
-	                    <img src="<%= ctxPath %>/resources/images/areamap_bt_city.png" />
-	                    <div>
-	                        <input name="area" id="area05" type="checkbox" class="are_map" value="SE">
-	                        <label for="area05" class="label_chk">중문/서귀포</label>
-	                    </div>
-	                </div>
-	                <div class="areamap mx-2">
-	                    <img src="<%= ctxPath %>/resources/images/areamap_bt_east.png" />
-	                    <div>
-	                        <input name="area" id="area06" type="checkbox" class="are_map" value="ES">
-	                        <label for="area06" class="label_chk">서귀포 동부</label>
-	                    </div>
-	                </div>
-	                <div class="areamap mx-2">
-	                    <img src="<%= ctxPath %>/resources/images/areamap_bt_west.png" />
-	                    <div>
-	                        <input name="area" id="area07" type="checkbox" class="are_map" value="WS">
-	                        <label for="area07" class="label_chk">서귀포 서부</label>
-	                    </div>
-	                </div>
-	            </div>
-	        </div>
-        </div>	
+    				</c:forEach>
+	        		<input type="hidden" name="str_category" />
+	     		</div>
+	    	</div>
+	            
+	        <!-- 검색 지역 선택 -->
+	        <div class="row py-3 mt-1 border rounded">
+	          	<div id="tabArea" class="tabArea1 text-center mt-2" style="display: flex; /*align-items: center;*/">
+		            <div class="areaMap" style="display: flex;">
+		            	<h5 class="mt-4" style="width: 20%; margin-left: 3%;">지역 선택</h5>
+		                <div class="areamap mx-2">
+		                    <img src="<%= ctxPath %>/resources/images/areamap_total.png" />
+		                    <div>
+		                        <input id="area01" type="checkbox" class="are_map" value="">
+		                        <br><label for="area01" class="label_chk">전체</label>
+		                    </div>
+		                </div>
+		                <div class="areamap mx-2">
+		                    <img src="<%= ctxPath %>/resources/images/areamap_city.png" />
+		                    <div>
+		                        <input name="area" id="area02" type="checkbox" class="are_map" value="JE">
+		                        <label for="area02" class="label_chk">제주 시내권</label>
+		                    </div>
+		                </div>
+		                <div class="areamap mx-2">
+		                    <img src="<%= ctxPath %>/resources/images/areamap_jeju_east.png" />
+		                    <div>
+		                        <input name="area" id="area03" type="checkbox" class="are_map" value="EA">
+		                        <label for="area03" class="label_chk">제주시 동부</label>
+		                    </div>
+		                </div>
+		                <div class="areamap mx-2">
+		                    <img src="<%= ctxPath %>/resources/images/areamap_jeju_west.png" />
+		                    <div>
+		                        <input name="area" id="area04" type="checkbox" class="are_map" value="WE">
+		                        <label for="area04" class="label_chk">제주시 서부</label>
+		                    </div>
+		                </div>
+		                <div class="areamap mx-2">
+		                    <img src="<%= ctxPath %>/resources/images/areamap_bt_city.png" />
+		                    <div>
+		                        <input name="area" id="area05" type="checkbox" class="are_map" value="SE">
+		                        <label for="area05" class="label_chk">중문/서귀포</label>
+		                    </div>
+		                </div>
+		                <div class="areamap mx-2">
+		                    <img src="<%= ctxPath %>/resources/images/areamap_bt_east.png" />
+		                    <div>
+		                        <input name="area" id="area06" type="checkbox" class="are_map" value="ES">
+		                        <label for="area06" class="label_chk">서귀포 동부</label>
+		                    </div>
+		                </div>
+		                <div class="areamap mx-2">
+		                    <img src="<%= ctxPath %>/resources/images/areamap_bt_west.png" />
+		                    <div>
+		                        <input name="area" id="area07" type="checkbox" class="are_map" value="WS">
+		                        <label for="area07" class="label_chk">서귀포 서부</label>
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
+	        </div>	
+	    </form>
         
         <!-- 정렬 조건 선택 -->
       	<div class="row mt-5">
@@ -307,13 +286,11 @@ button#btnSearch {
 					        	</div>
 						        <div class="contentList">
 						            <div class="mb-3">
-						            	<%-- <input type="text" name="food_store_code" value="${foodstoreList.food_store_code}"/> --%>
 						            	<h3 class="pt-3 title"><a href="#">${foodstoreList.food_name}</a></h3>
 						            	<span>${foodstoreList.food_content}</span>
 						            </div>
 						            <div class="pb-3">
 						                <span style="color:#b5aec4;">${foodstoreList.food_category}</span><br>
-						                <%-- <input type="text" name="foodCategoryEach" value="${foodstoreList.food_category}"/> --%>
 						                <span>${foodstoreList.food_address}</span>
 						            </div>
 						        </div>

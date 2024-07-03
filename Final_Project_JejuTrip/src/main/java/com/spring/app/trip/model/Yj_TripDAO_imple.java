@@ -18,10 +18,18 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 	private SqlSessionTemplate sqlsession;
 
 	
+	// == 맛집 카테고리 가져오기 == //
+	@Override
+	public List<String> categoryList() {
+		List<String> categoryList = sqlsession.selectList("yj_trip.categoryList");
+		return categoryList;
+	}
+	
+	
 	// == 맛집 리스트 페이지 보이기 == //
 	@Override
-	public List<FoodstoreVO> viewFoodstoreList() {
-		List<FoodstoreVO> foodstoreList = sqlsession.selectList("yj_trip.viewFoodstoreList");
+	public List<FoodstoreVO> viewFoodstoreList(Map<String, Object> map) {
+		List<FoodstoreVO> foodstoreList = sqlsession.selectList("yj_trip.viewFoodstoreList", map);
 		return foodstoreList;
 	}
 
@@ -32,18 +40,6 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 		List<FoodstoreVO> randomRecommend = sqlsession.selectList("yj_trip.randomRecommend", paraMap);
 		return randomRecommend;
 	}
-
-
-
-
-
-
-//	// == 카테고리 선택에 따른 Ajax == //
-//	@Override
-//	public List<FoodstoreVO> viewCheckCategory(String food_category) {
-//		List<FoodstoreVO> foodstoreList = sqlsession.selectList("yj_trip.viewCheckCategory", food_category);
-//		return foodstoreList;
-//	}
 
 
 	
