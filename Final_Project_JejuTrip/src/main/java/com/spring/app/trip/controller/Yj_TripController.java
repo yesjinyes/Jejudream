@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.app.trip.domain.FoodstoreVO;
@@ -30,24 +31,33 @@ public class Yj_TripController {
 	}
 
 	
-	// == 맛집 리스트 페이지 보이기 == //
+	// == 맛집 리스트 페이지 보이기  == //
 	@GetMapping("/foodstoreList.trip")
-	public ModelAndView foodstoreList(ModelAndView mav, HttpServletRequest request, FoodstoreVO foodstorevo) {
+	public ModelAndView foodstoreList(ModelAndView mav, HttpServletRequest request, FoodstoreVO foodstorevo,
+									  @RequestParam(defaultValue="") String str_category) {
 		
-		List<FoodstoreVO> foodstoreList = service.viewFoodstoreList();
+		List<String> categoryList = service.categoryList(); // 상단 카테고리 띄우기
 		
-		// 맛집 랜덤 추천
 		Map<String, String> paraMap = new HashMap<>();
 		paraMap.put("food_main_img", foodstorevo.getFood_main_img());
 		paraMap.put("food_name", foodstorevo.getFood_name());
 		
-		List<FoodstoreVO> randomRecommend = service.randomRecommend(paraMap);
+		Map<String, Object> map = new HashMap<>();
 		
-		mav.addObject("randomRecommend", randomRecommend);
+		if(!"".equals(str_category)) {
+			String[] arr_category = str_category.split("\\,");
+			map.put("arr_category", arr_category);
+			mav.addObject("str_category", str_category);
+		}
+			
+		List<FoodstoreVO> foodstoreList = service.viewFoodstoreList(map); // 맛집 리스트 띄우기
+		List<FoodstoreVO> randomRecommend = service.randomRecommend(paraMap); // 맛집 랜덤 추천
+	
+		mav.addObject("categoryList", categoryList); // 
 		mav.addObject("foodstoreList", foodstoreList);
+		mav.addObject("randomRecommend", randomRecommend);
 		
 		mav.setViewName("foodstore/foodstoreList");
-		// /WEB-INF/views/foodstore/foodstoreList.jsp 파일 생성
 		
 		return mav;
 	}

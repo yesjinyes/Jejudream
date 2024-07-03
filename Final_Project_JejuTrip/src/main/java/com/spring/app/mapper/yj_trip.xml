@@ -7,13 +7,43 @@
 메퍼가 바뀌면 무조건  WAS를 껐다 켜야한다!!!!!!!!! -->
 <mapper namespace="yj_trip">
 
-	<!-- 맛집 리스트 띄우기 -->
-	<select id="viewFoodstoreList" resultType="com.spring.app.trip.domain.FoodstoreVO">
-		select food_store_code, food_category, local_status, food_name, food_content, food_businesshours, food_mobile
-			 , substr(food_address, 0, instr(food_address, ' ', 1, 2)-1) AS food_address
-			 , food_main_img, review_division
+	<!-- 맛집 카테고리 띄우기 -->
+	<select id="categoryList" resultType="String">
+		select distinct food_category
 		from tbl_food_store
 	</select>
+
+
+	<!-- 맛집 리스트 띄우기 -->
+	<resultMap type="HashMap" id="categoryMap">
+		<result property="food_store_code" 		column="food_store_code" 	javaType="String" />	
+		<result property="local_status" 		column="local_status" 		javaType="String" />	
+		<result property="food_name" 			column="food_name" 			javaType="String" />	
+		<result property="food_content" 		column="food_content" 		javaType="String" />	
+		<result property="food_businesshours" 	column="food_businesshours" javaType="String" />	
+		<result property="food_mobile" 			column="food_mobile" 		javaType="String" />	
+		<result property="food_address" 		column="food_address" 		javaType="String" />	
+		<result property="food_main_img" 		column="food_main_img" 		javaType="String" />	
+		<result property="review_division" 		column="review_division" 	javaType="String" />	
+		<result property="food_category" 		column="food_category" 		javaType="String" />	
+	
+	</resultMap>
+	<select id="viewFoodstoreList" parameterType="HashMap" resultMap="categoryMap">
+		SELECT food_store_code, local_status, food_name, food_content, food_businesshours, food_mobile
+			 , substr(food_address, 0, instr(food_address, ' ', 1, 2)-1) AS food_address
+			 , food_main_img, review_division
+			 , food_category
+		FROM tbl_food_store
+		WHERE 1=1
+		<if test="arr_category != null">
+			AND food_category IN
+			<foreach collection="arr_category" index="i" open="(" separator="," close=")">
+				'${arr_category[i]}'
+			</foreach>
+		</if>
+		ORDER BY food_store_code
+	</select>
+	
 	
 	<!-- 맛집 랜덤 추천 -->
 	<select id="randomRecommend" parameterType="HashMap" resultType="com.spring.app.trip.domain.FoodstoreVO">
@@ -26,15 +56,6 @@
 		]]> 
 	</select>
 	
-
-
-	<!-- == 카테고리 선택에 따른 Ajax == -->
-<!--   	<select id="viewCheckCategory" parameterType="String" resultType="com.spring.app.trip.domain.FoodstoreVO">
-		select food_store_code, food_name, food_category, local_status,  food_content
-		     , substr(food_address, 0, instr(food_address, ' ', 1, 2)-1) AS food_address
-		from tbl_food_store
-		where food_category = #{food_category}
-	</select> -->
 	
 
 
