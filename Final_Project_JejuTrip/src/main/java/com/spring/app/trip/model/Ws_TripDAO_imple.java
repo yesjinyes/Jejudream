@@ -60,8 +60,8 @@ public class Ws_TripDAO_imple implements Ws_TripDAO {
 	
 	// 숙소 등록을 신청한 업체중 선택한 카테고리에 해당하는 모든 업체들 불러오기
 	@Override
-	public List<LodgingVO> select_lodgingvo(String choice_status) {
-		List<LodgingVO> lodgingvoList = sqlsession.selectList("ws_trip.select_lodgingvo",choice_status);
+	public List<LodgingVO> select_lodgingvo(Map<String, String> paraMap) {
+		List<LodgingVO> lodgingvoList = sqlsession.selectList("ws_trip.select_lodgingvo",paraMap);
 		return lodgingvoList;
 	}// end of public LodgingVO select_all_lodgingvo() {
 	
@@ -71,5 +71,12 @@ public class Ws_TripDAO_imple implements Ws_TripDAO {
 		int n = sqlsession.update("ws_trip.screeningRegisterEnd",paraMap);
 		return n;
 	}
+	
+	// 총 게시물 건수(totalCount)
+	@Override
+	public int getTotalCount(String choice_status) {
+		int total_count = sqlsession.selectOne("ws_trip.getTotalCount",choice_status);
+		return total_count;
+	}// end of public int getTotalCount(String choice_status) {
 
 }
