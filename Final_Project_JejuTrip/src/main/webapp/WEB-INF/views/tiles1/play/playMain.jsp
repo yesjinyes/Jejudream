@@ -290,6 +290,7 @@ $(document).ready(function(){
     
     displayHIT(start,category); // 스크롤 초기값
     
+
 	$(".list-group-item").hover(function(e){
         $(e.target).addClass("moveColor");
           }, 
@@ -300,7 +301,6 @@ $(document).ready(function(){
 	 $('.list-group-item').on('click', function() {
          category = $(this).find('input').val();
          start = 1; // 카테고리 변경 시, 시작 위치 초기화
-         
          $("div#categoryList").empty(); // 기존 콘텐츠 비우기
          $("span#end").empty(); // 끝 메시지 비우기
          $("span#countHIT").text("0"); // 카운트 초기화
@@ -340,27 +340,31 @@ $(document).ready(function(){
 
     });
     
- 	// 지역구분 체크박스
+ 	
+    // 지역구분 체크박스
     const localAllCheckbox = $('input#all_local');
     const localCheckboxes = $('input[name="local_status"]').not('#all_local');
 	
-    
+     
     // 전체 체크박스를 체크하면 나머지 체크박스를 해제
     localAllCheckbox.change(function () {
         if (localAllCheckbox.is(':checked')) {
            localCheckboxes.prop('checked', false);
+         
         }
     });
-
+    console.log("localAllCheckbox",localAllCheckbox);
+    
     // 나머지 체크박스를 체크하면 전체 체크박스의 상태를 업데이트
     localCheckboxes.change(function () {
         const allChecked = localCheckboxes.length === localCheckboxes.filter(':checked').length;
         localAllCheckbox.prop('checked', allChecked);
         if (allChecked) {
            localCheckboxes.prop('checked', false);
+          
         }
     });
-    
+
 
     
 });//end of $(document).ready(function()	
@@ -369,7 +373,7 @@ let lenHIT = 8;
 		
 function displayHIT(start,category){
 	
-	
+    
     $.ajax({
 
         url: "<%= ctxPath%>/playMainJSON.trip",
@@ -377,7 +381,7 @@ function displayHIT(start,category){
         data:{"start":start,   //"1"  "9"  "17"  "25"  "33"
               "len":lenHIT ,
               "category": category
-              },  // 8    8    8     8     8
+             },
         dataType:"json",  
         success:function(json){
         	//console.log(JSON.stringify(json));
@@ -457,7 +461,7 @@ function goTop(){
 
 <body>
 	<div class="container">
-	<form name="searchFrm">
+	
         <div class="row">
             <div class="col-md-3" >
 				<ul class="list-group" style="border-radius: 20px;">
@@ -485,6 +489,7 @@ function goTop(){
             </div>
             
             <div class="col-md-9 py-3">
+            <form name="searchFrm">
             	<div class="row py-3">
             		<div id="tabArea" class="tabArea1 text-center" style="display: flex; border: solid 0px black; align-items: center;">
                      <div class="tabTitle pr-3" style="align-self: center; width:15%;">
@@ -522,7 +527,7 @@ function goTop(){
                          <div class="areamap mx-2" style="width: 15%;">
                              <img src="<%= ctxPath %>/resources/images/areamap_bt_city.png" />
                              <div>
-                                 <input name="local_status" id="area05" type="checkbox" class="are_map" value="SE">
+                                 <input name="local_status" id="area05" type="checkbox" class="are_map" value="서귀포시 시내">
                                  <label for="area05" class="label_chk">서귀포시 시내</label>
                              </div>
                          </div>
@@ -543,7 +548,7 @@ function goTop(){
                      </div>
                  </div>
             	</div>
-            		
+            	</form>	
             	<div class="row" >
             		
                     <div class="sort-filter main" style="display: flex; justify-content:space-between; width: 98%; margin-bottom: 20px;">
@@ -583,7 +588,7 @@ function goTop(){
                 
 			</div>
 		</div>
-		</form>
+		
 	</div><!--end of container  -->
 		
 </body>

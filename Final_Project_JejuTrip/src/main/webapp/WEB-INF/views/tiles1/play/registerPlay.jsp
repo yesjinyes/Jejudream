@@ -5,11 +5,11 @@
 <script type="text/javascript">
 
 
-	let checkLodging_name = false;
-	let checkLodging_tell = false;
-	let checkLodging_address = false;
-	let checkLodging_content = false;
-	
+	let checkPlay_name = false;
+	let checkPlay_tell = false;
+	let checkPlay_address = false;
+	let checkPlay_content = false;
+	let checkPlay_businesshours = false;
 	$(document).ready(function(){
 		$("span.error").hide();
 	    
@@ -27,7 +27,7 @@
 	                    addr = data.jibunAddress;
 	                }
 
-	                document.getElementById("address").value = addr;
+	                document.getElementById("play_address").value = addr;
 	                document.getElementById("detail_address").focus();
 	            }
 	        }).open();
@@ -43,12 +43,12 @@
 	            $(e.target).addClass("input_error");
 	            $(e.target).next().show();
 	            $(e.target).next().text("즐길거리 명을 입력해주세요.");
-	            checkLodging_name = false;
+	            checkPlay_name = false;
 	        } 
 			else {
 	            $(e.target).removeClass("input_error");
 	            $(e.target).next().hide();
-	            checkLodging_name = true;
+	            checkPlay_name = true;
 	        }
 	    });
 
@@ -57,21 +57,41 @@
 
 			const play_mobile = $(e.target).val().trim();
 
-			
 			if(play_mobile == "") {
 				$(e.target).addClass("input_error");
 				$(e.target).next().show();
 				$(e.target).next().text("업체 연락처를 입력해주세요.");
-				checkLodging_tell = false;
+				checkPlay_tell = false;
 
 			} else {
 				$(e.target).removeClass("input_error");
 				$(e.target).next().hide();
-				checkLodging_tell = true;
+				checkPlay_tell = true;
 			}
 
 		});
+	
+	    // ===== 영업시간 유효성 검사 =====
+	    $("input#play_businesshours").blur((e) => {
 
+	        const play_businesshours = $(e.target).val().trim();
+
+	        if(play_businesshours == "") {
+	            $(e.target).addClass("input_error");
+	            $(e.target).next().show();
+	            $(e.target).next().text("영업시간을 입력해주세요.");
+	            checkPlay_businesshours = false;
+
+	        } 
+			else {
+	            $(e.target).removeClass("input_error");
+	            $(e.target).next().hide();
+	            checkPlay_businesshours = true;
+	        }
+	    });
+	    
+	    
+	    
 	    // ===== 상세주소 유효성 검사 =====
 	    $("input#play_address").blur((e) => {
 
@@ -81,17 +101,18 @@
 	            $(e.target).addClass("input_error");
 	            $(e.target).next().show();
 	            $(e.target).next().text("상세주소를 입력해주세요.");
-	            checkLodging_address = false;
+	            checkPlay_address = false;
 
 	        } 
 			else {
 	            $(e.target).removeClass("input_error");
 	            $(e.target).next().hide();
-	            checkLodging_address = true;
+	            checkPlay_address = true;
 	        }
 	    });
 
-		// ===== 숙소설명 유효성 검사 =====
+	    
+		// ===== 즐길거리설명 유효성 검사 =====
 	    $("textarea#play_content").blur((e) => {
 
 			const play_content = $(e.target).val().trim();
@@ -100,32 +121,35 @@
 				$(e.target).addClass("input_error");
 				$(e.target).next().show();
 				$(e.target).next().text("즐길거리 설명을 입력해주세요.");
-				checkLodging_content = false;
+				checkPlay_content = false;
 
 			} 
 			else {
 				$(e.target).removeClass("input_error");
 				$(e.target).next().hide();
-				checkLodging_content = true;
+				checkPlay_content = true;
 			}
 		});
 
-	    /* $("input#mobile").keyup(function(e) {
+	    /* $("input#play_mobile").keyup(function(e) {
 	        if(e.keyCode == 13) {
-	            goRegister();
+	        	goRegisterPlay();
 	        }
-	    }); */
+	    });  */
 	}); // end of $(document).ready(function(){
 		
 	function goRegisterPlay(ctxPath) {
 
-	    if(checkLodging_name && checkLodging_tell && checkLodging_address && checkLodging_content) {
+	    if(checkPlay_name && checkPlay_tell && checkPlay_address && checkPlay_content) {
+			
+			
 			
 			const play_category = $("select[name='play_category']").val();
 			if(play_category=="즐길거리 구분"){
 				alert("즐길거리 구분을 선택하세요.");
 	        	return;
 			}
+			
 
 			const local_status = $("select[name='local_status']").val();
 			if(local_status=="지역구분"){
@@ -178,6 +202,10 @@
 					<option>체험</option>
 					<option>기타</option>
 				</select>
+                <span class="error"></span>
+            </div>
+            <div class="info_block mt-3">
+                <input type="text" name="play_businesshours" id="play_businesshours" placeholder="영업시간 00:00- 00:00" maxlength="20">
                 <span class="error"></span>
             </div>
             <div class="info_block mt-3">

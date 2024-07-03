@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -209,9 +210,9 @@ public class Hs_TripController {
 		
 		//-------------------------------------------------------------------------------//
 		
-		
+		//즐길거리 페이지
 		@GetMapping(value = "playMain.trip", produces = "text/plain;charset=UTF-8")
-		public ModelAndView play_main(ModelAndView mav, HttpServletRequest request) {
+		public ModelAndView play_main(ModelAndView mav) {
 			List<PlayVO> playList = service.playList();
 			
 			mav.addObject("playList", playList);
@@ -220,24 +221,30 @@ public class Hs_TripController {
 			return mav;
 		}
 		
+		
+		
 		//카테고리별로 데이터 가져오기 JSON
 		@ResponseBody
 		@GetMapping(value = "playMainJSON.trip", produces = "text/plain;charset=UTF-8")
 		public String play_mainJSON( HttpServletRequest request) {
 			
 			//--------------스크롤 페이징----------------------//
+			
 			String start = request.getParameter("start");
 		    String len = request.getParameter("len");
 		    String end = String.valueOf(Integer.parseInt(start) + Integer.parseInt(len) - 1); // 1 + 8 = 9 - 1 = 8
+		    
 		    //--------------스크롤 페이징----------------------//
 
 		    String category = request.getParameter("category");
+		  
 		    System.out.println(category);
 		    
 		    Map<String, String> paraMap = new HashMap<>();
 		    paraMap.put("start", start); // "1"  "9"  "17"  "25"  "33"
 		    paraMap.put("end", end); // end => start + len - 1; 
 		    paraMap.put("category", category); 
+		    
 		    
 			List<PlayVO> playList;
 			

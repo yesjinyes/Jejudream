@@ -24,24 +24,32 @@
        		play_mobile,play_businesshours,play_address,play_main_img,review_division ,orgFilename
 	 from
 	 (
-	 SELECT play_code,play_category ,local_status,play_name,play_content,row_number() over(order by play_code) AS RNO,
+	 SELECT play_code,play_category ,local_status,play_name,play_content,rownum AS RNO,
        		play_mobile,play_businesshours,play_address,play_main_img,review_division ,orgFilename
 	 FROM tbl_play
 	 )
 	 WHERE RNO between #{start} and #{end}
 </select>
+
+
 <!-- 카테고리별 select용  -->
 <select id="getPlayListByCategory" parameterType="HashMap" resultType="com.spring.app.trip.domain.PlayVO">
-        select play_code,play_category ,local_status,play_name,play_content,RNO
-       		play_mobile,play_businesshours,play_address,play_main_img,review_division ,orgFilename
-	 	from
-        (
-        SELECT play_code,play_category ,local_status,play_name,play_content,row_number() over(order by play_code) AS RNO,
-       		play_mobile,play_businesshours,play_address,play_main_img,review_division ,orgFilename
-	 	FROM tbl_play
-        )
-        WHERE play_category = #{category} and RNO between #{start} and #{end}
-</select> 
+    select play_code, play_category, local_status, play_name, play_content, RNO,
+           play_mobile, play_businesshours, play_address, play_main_img, review_division, orgFilename
+    from (
+        select play_code, play_category, local_status, play_name, play_content, rownum as RNO,
+               play_mobile, play_businesshours, play_address, play_main_img, review_division, orgFilename
+        from tbl_play
+        where play_category = #{category}
+        <if test="localStatusList != null and localStatusList.size() > 0">
+            and local_status in
+            <foreach item="status" collection="localStatusList" open="(" separator="," close=")">
+                #{status}
+            </foreach>
+        </if>
+    )
+    where RNO between #{start} and #{end}
+</select>
 
 
 <insert id="registerPlayEnd" parameterType="com.spring.app.trip.domain.PlayVO">
