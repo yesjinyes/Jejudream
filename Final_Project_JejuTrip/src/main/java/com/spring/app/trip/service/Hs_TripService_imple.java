@@ -2,6 +2,7 @@ package com.spring.app.trip.service;
 
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,5 +22,22 @@ public class Hs_TripService_imple implements Hs_TripService {
 		List<PlayVO> playList = dao.playList();
 		return playList;
 	}
+	
+	
+	@Override
+	public List<PlayVO> playList(Map<String, String> paraMap) {
+		List<PlayVO> playList = dao.playList(paraMap);
+		return playList;
+	}
+
+
+	@Override
+	public List<PlayVO> getPlayListByCategory(Map<String, String> paraMap) {
+		List<PlayVO> platList = dao.getPlayListByCategory(paraMap);
+		return platList;
+	}
+
+
+	
 
 }

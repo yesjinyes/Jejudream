@@ -4,7 +4,7 @@ package com.spring.app.trip.domain;
 public class PlayVO {
 
 	private String play_code;			// 즐길거리일련번호
-	private String fk_local_code;		// 지역코드
+	private String local_status;		// 지역코드
 	private String play_category;		// 즐길거리카테고리
 	private String play_name;			// 즐길거리 명칭
 	private String play_content;		// 즐길거리 짧은상세정보
@@ -15,7 +15,7 @@ public class PlayVO {
 	private String review_division;		// 리뷰용구분컬럼(default) C
 	
 //	-----------------------------------------------------------------------
-	
+	/*
 	private Play_categoryVO playctgvo; 
 	
 	public Play_categoryVO getPlayctgvo() {
@@ -24,6 +24,7 @@ public class PlayVO {
 	public void setPlayctgvo(Play_categoryVO playctgvo) {
 		this.playctgvo = playctgvo;
 	}
+	*/
 	
 //	-----------------------------------------------------------------------
 	
@@ -38,13 +39,6 @@ public class PlayVO {
 		this.play_code = play_code;
 	}
 	
-	public String getFk_local_code() {
-		return fk_local_code;
-	}
-	
-	public void setFk_local_code(String fk_local_code) {
-		this.fk_local_code = fk_local_code;
-	}
 	
 	public String getPlay_category() {
 		return play_category;
@@ -108,6 +102,14 @@ public class PlayVO {
 	
 	public void setReview_division(String review_division) {
 		this.review_division = review_division;
+	}
+
+	public String getLocal_status() {
+		return local_status;
+	}
+
+	public void setLocal_status(String local_status) {
+		this.local_status = local_status;
 	}
 	
 	

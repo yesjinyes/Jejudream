@@ -13,7 +13,7 @@ public class RoomDetailVO {
 	private int room_stock;				// 객실수량
 	private int min_person;				// 기존인원
 	private int max_person;				// 최대인원
-	
+	private String room_img;			// 객실 이미지
 	
     //////////////////////////////////////////////////////////////////
     // == Getter, Setter == //
@@ -71,6 +71,12 @@ public class RoomDetailVO {
 	}
 	public void setMax_person(int max_person) {
 		this.max_person = max_person;
+	}
+	public String getRoom_img() {
+		return room_img;
+	}
+	public void setRoom_img(String room_img) {
+		this.room_img = room_img;
 	}
 
 	

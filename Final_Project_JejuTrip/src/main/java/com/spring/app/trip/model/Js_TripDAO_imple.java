@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
+import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.PlayVO;
 
 @Component
@@ -19,11 +20,10 @@ public class Js_TripDAO_imple implements Js_TripDAO {
 	private SqlSessionTemplate sqlsession;
 
 	@Override
-	public List<PlayVO> playList() {
+	public List<LodgingVO> lodgingList() {
 		
-		List<PlayVO> playList = sqlsession.selectList("js_trip.playList");
-		
-		return playList;
+		List<LodgingVO> lodgingList = sqlsession.selectList("js_trip.lodgingList");
+		return lodgingList;
 	}
 
 }

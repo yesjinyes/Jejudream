@@ -11,7 +11,7 @@ create user final_orauser2 identified by gclass default tablespace users;
 grant connect, resource, create view, unlimited tablespace to final_orauser2;
 -- Grant을(를) 성공했습니다.
 select play_code, fk_play_category_code, fk_local_code
-from tbl_play
+from tbl_play;
 
 
 /* 업체 */
@@ -156,3 +156,159 @@ alter table tbl_play modify play_name varchar2(100);
     
     select * from tbl_company;
     commit;
+    
+    
+    
+    
+    
+    /* 회원 로그인기록 테이블 */
+    CREATE TABLE tbl_member_loginhistory (
+	fk_userid VARCHAR2(20) NOT NULL, /* 아이디 */
+	logindate DATE default sysdate NOT NULL, /* 로그인시각 */
+	clientip VARCHAR2(20) NOT NULL, /* 접속ip주소 */
+    CONSTRAINT FK_tbl_member_history FOREIGN KEY (fk_userid) REFERENCES tbl_member (userid)
+    );
+    -- Table TBL_MEMBER_LOGINHISTORY이(가) 생성되었습니다.
+    
+    /* 업체 로그인기록 테이블 */
+    CREATE TABLE tbl_company_loginhistory (
+	fk_companyid VARCHAR2(20) NOT NULL, /* 아이디 */
+	logindate DATE default sysdate NOT NULL, /* 로그인시각 */
+	clientip VARCHAR2(20) NOT NULL, /* 접속ip주소 */
+    CONSTRAINT FK_tbl_company_history FOREIGN KEY (fk_companyid) REFERENCES tbl_company (companyid)
+    );
+    -- Table TBL_COMPANY_LOGINHISTORY이(가) 생성되었습니다.
+    desc tbl_lodging;
+    select * from user_constraints where TABLE_NAME = 'TBL_FOOD_STORE';
+    
+    ALTER TABLE tbl_food_store RENAME COLUMN fk_local_code TO local_status;
+    ALTER TABLE tbl_play RENAME COLUMN fk_local_code TO local_status;
+    
+    
+    
+    
+    ALTER TABLE tbl_lodging
+MODIFY (LODGING_CATEGORY DEFAULT '호텔');
+    
+    alter table tbl_lodging RENAME COLUMN FK_LOCAL_CODE to local_status;
+    select * from tbl_food_store;
+    -- 숙소테이블 임시로 제약조건 제거
+    ALTER TABLE TBL_FOOD_STORE
+    DROP CONSTRAINT FK_TBL_FOOD_LOCAL_CODE;
+    
+    ALTER TABLE tbl_lodging
+    DROP CONSTRAINT FK_TBL_COMPANY_FK_COMPANYID;
+    
+    ALTER TABLE tbl_lodging
+    MODIFY (fk_local_code VARCHAR2(20) NULL,
+            fk_companyid VARCHAR2(20) NULL);
+            
+            
+    -- 다시 추가하기
+    ALTER TABLE tbl_lodging
+ADD CONSTRAINT FK_TBL_LODGING_LOCAL FOREIGN KEY (fk_local_code)
+REFERENCES tbl_local (local_code) ON DELETE CASCADE;
+
+
+
+ALTER TABLE tbl_lodging
+ADD CONSTRAINT FK_tbl_company_fk_companyid FOREIGN KEY (fk_companyid)
+REFERENCES tbl_company (companyid) ON DELETE CASCADE;
+
+
+    desc tbl_lodging;
+    desc tbl_room_detail;
+    ALTER TABLE tbl_lodging MODIFY LODGING_CONTENT VARCHAR2(2000);
+    ALTER TABLE tbl_room_detail MODIFY room_name VARCHAR2(200);
+    select * from tbl_lodging;
+    select * from tbl_room_detail;
+    
+    delete from tbl_lodging where lodging_code not in(5006);
+    delete from tbl_room_detail;
+    commit;
+    
+    desc tbl_play;
+    local_status '제주시 서부'
+    
+    select * from tbl_lodging where lodging_code not in (5006);
+    select distinct fk_lodging_code from tbl_room_detail;
+    desc tbl_room_detail;
+    select seq_common.nextval
+    from dual
+    
+    alter table 
+    ALTER TABLE tbl_room_detail ADD room_img VARCHAR(200);
+    
+    create sequence seq_room
+    start with 1
+    increment by 1
+    nomaxvalue
+    nominvalue
+    nocycle
+    nocache;
+    
+    
+    
+    alter table tbl_lodging
+    add fileName varchar2(255); -- WAS(톰캣)에 저장될 파일명(2024070109291535243254235235234.png)
+    -- Table TBL_LODGING이(가) 변경되었습니다.
+    alter table tbl_lodging
+    add orgFilename varchar2(255); -- 진짜 파일명(강아지.png)  // 사용자가 파일을 업로드 하거나 파일을 다운로드 할때 사용되어지는 파일명 
+    -- Table TBL_LODGING이(가) 변경되었습니다.
+    alter table tbl_lodging
+    add fileSize varchar2(255);  -- 파일크기
+    -- Table TBL_LODGING이(가) 변경되었습니다.
+    
+    alter table tbl_lodging
+    add status number(1) default 0;
+    
+    alter table tbl_room_detail
+    add fileName varchar2(255); 
+    -- Table TBL_ROOM_DETAIL이(가) 변경되었습니다.
+    alter table tbl_room_detail
+    add orgFilename varchar2(255); 
+    -- Table TBL_ROOM_DETAIL이(가) 변경되었습니다.
+    alter table tbl_room_detail
+    add fileSize varchar2(255);  
+    -- Table TBL_ROOM_DETAIL이(가) 변경되었습니다.
+    
+    
+    select * from tbl_lodging order by local_status;
+    select * from tbl_room_detail;
+    
+    -- 제주 시내, 제주시 서부, 제주시 동부, 	서귀포시, 서귀포 동부, 	서귀포 서부
+    
+    
+    update tbl_lodging set local_status = '제주시 서부' where lodging_code in (select lodging_code from tbl_lodging where lodging_address like '%' || '애월읍' || '%');
+    update tbl_lodging set local_status = '제주시 서부' where lodging_code in (select lodging_code from tbl_lodging where lodging_address like '%' || '한림읍' || '%');
+    update tbl_lodging set local_status = '제주시 서부' where lodging_code in (select lodging_code from tbl_lodging where lodging_address like '%' || '한경면' || '%');
+    
+    update tbl_lodging set local_status = '제주시 서부' where lodging_code in (select lodging_code from tbl_lodging where lodging_address like '%' || '제주시' || '%' and lodging_address not like '%' || '한경면' || '%' ;
+    
+    update tbl_lodging set local_status = '제주시 동부' where lodging_code in (select lodging_code from tbl_lodging where lodging_address like '%' || '조천읍' || '%');
+    update tbl_lodging set local_status = '제주시 동부' where lodging_code in (select lodging_code from tbl_lodging where lodging_address like '%' || '구좌읍' || '%');
+    update tbl_lodging set local_status = '제주시 동부' where lodging_code in (select lodging_code from tbl_lodging where lodging_address like '%' || '우도면' || '%');
+    
+    update tbl_lodging set local_status = '서귀포시 서부' where lodging_code in (select lodging_code from tbl_lodging where lodging_address like '%' || '안덕면' || '%');
+    update tbl_lodging set local_status = '서귀포시 서부' where lodging_code in (select lodging_code from tbl_lodging where lodging_address like '%' || '대정읍' || '%');
+    
+    update tbl_lodging set local_status = '서귀포시 동부' where lodging_code in (select lodging_code from tbl_lodging where lodging_address like '%' || '남원읍' || '%');
+    update tbl_lodging set local_status = '서귀포시 동부' where lodging_code in (select lodging_code from tbl_lodging where lodging_address like '%' || '표선면' || '%');
+    update tbl_lodging set local_status = '서귀포시 동부' where lodging_code in (select lodging_code from tbl_lodging where lodging_address like '%' || '성산읍' || '%');
+    
+    update tbl_lodging set local_status = '제주시 시내' where lodging_code in (select lodging_code from tbl_lodging where lodging_address like '%' || '제주시' || '%' and local_status is null);
+    update tbl_lodging set local_status = '서귀포시 시내' where lodging_code in (select lodging_code from tbl_lodging where lodging_address like '%' || '서귀포시' || '%' and local_status is null);
+    
+    commit;
+    
+    select * from tbl_lodging order by local_status;
+    update tbl_lodging set lodging_category = '펜션' where lodging_code in (select lodging_code from tbl_lodging where lodging_name like '%' || '펜션' || '%');
+    update tbl_lodging set lodging_category = '리조트' where lodging_code in (select lodging_code from tbl_lodging where lodging_name like '%' || '리조트' || '%');
+    
+    
+    select lodging_name, price, local_status
+    from tbl_lodging L
+    join tbl_room_detail R
+    on L.lodging_code = R.fk_lodging_code
+    group by lodging_name;
+    

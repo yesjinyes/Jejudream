@@ -1,6 +1,9 @@
 package com.spring.app.trip.controller;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -18,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.spring.app.trip.common.FileManager;
 import com.spring.app.trip.domain.CompanyVO;
 import com.spring.app.trip.domain.LodgingVO;
+import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.service.Ws_TripService;
 
 @Controller
@@ -126,8 +130,8 @@ public class Ws_TripController {
 			// System.out.println("~~~ 확인용 webapp 의 절대경로 => " + root); 
 			// ~~~ 확인용 webapp 의 절대경로 => C:\NCS\workspace_spring_framework\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\board\
 			
-			String path = root + "resources"+File.separator+"files";     
-	        // System.out.println(path);
+			String path = root + "resources"+File.separator+"images"+File.pathSeparator+"lodginglist";     
+	        System.out.println(path);
 	        /* File.separator 는 운영체제에서 사용하는 폴더와 파일의 구분자이다.
 	                            운영체제가 Windows 이라면 File.separator 는  "\" 이고,
 	                            운영체제가 UNIX, Linux, 매킨토시(맥) 이라면  File.separator 는 "/" 이다. 
@@ -222,4 +226,66 @@ public class Ws_TripController {
 		
 	}
 	
+	@GetMapping("/screeningRegister.trip")
+	public ModelAndView screeningRegister(ModelAndView mav, HttpServletRequest request) {
+		
+		
+		
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
+		
+		if(loginuser != null && loginuser.getUserid().equals("admin")) {
+			// 관리자가 등록 심사를 할 경우 
+			mav.setViewName("admin/screeningRegister.tiles1");
+			
+			String choice_status = request.getParameter("choice_status");
+			if(choice_status == null || choice_status.equals("전체")) {
+				choice_status = "";
+			}
+			
+			List<LodgingVO> lodgingvoList = service.select_lodgingvo(choice_status);// 숙소 등록을 신청한 업체중 심사중인 모든 업체들 불러오기
+			mav.addObject("lodgingvoList",lodgingvoList);
+			
+			
+			mav.addObject("choice_status",choice_status);
+			
+		}
+		else {
+			// 관리자가 아닌 계정이 들어올 경우
+			String message = "잘못된 접근입니다.";
+			String loc = "javascript:history.back()";
+
+			mav.addObject("message", message);
+			mav.addObject("loc", loc);
+			
+			mav.setViewName("msg");
+		}
+		
+		return mav;
+		
+	}
+	
+	
+	@ResponseBody
+	@PostMapping("/screeningRegisterEnd.trip")
+	public String screeningRegisterEnd(HttpServletRequest request) {
+		 
+		String lodging_code = request.getParameter("lodging_code");
+		String status = request.getParameter("status");
+		String feedback_msg = request.getParameter("feedback_msg");
+		
+		Map<String,String> paraMap = new HashMap<>();
+		paraMap.put("lodging_code",lodging_code);
+		paraMap.put("status",status);
+		paraMap.put("feedback_msg",feedback_msg);
+		
+		int n = service.screeningRegisterEnd(paraMap); // 관리자가 숙소 등록 요청에 답한대로 DB를 업데이트 시켜준다.
+		
+		JSONObject jsonObj = new JSONObject();
+		
+		jsonObj.put("n", n);
+		
+		return jsonObj.toString();
+		
+	}
 }
