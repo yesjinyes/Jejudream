@@ -63,6 +63,7 @@ list-style: none;
 </style>
 
 <script type="text/javascript">
+
 $(document).ready(function(){
 	
 	const today = new Date();
@@ -134,23 +135,186 @@ $(document).ready(function(){
     }); // end of $('input#datepicker').bind("change", (e)=> {})
     
     
-    
-   
-   
+    // 폼 안의 모든 input 요소에 change 이벤트 리스너 추가
+    $('#filterForm input').on('change', function() {
+    	
+    	
+    	const arr_deptId = [];
+    	
+        fetchFilteredData();
+    });
+    /*
+    // 검색 버튼 클릭 시 데이터 가져오기
+    $('#searchButton').on('click', function() {
+        fetchFilteredData();
+    });
+	*/
 	
-})
+	
+	// 숙소구분 체크박스 
+    const allCheckbox = document.getElementById('all_lod');
+    const checkboxes = document.querySelectorAll('input[name="lodging_category"]:not(#all_lod)');
+
+    // 전체 체크박스를 체크하면 나머지 체크박스를 해제
+    allCheckbox.addEventListener('change', function () {
+        if (allCheckbox.checked) {
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+        }
+    });
+
+    // 나머지 체크박스를 체크하면 전체 체크박스의 상태를 업데이트
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function () {
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            allCheckbox.checked = allChecked;
+            if (allChecked) {
+                checkboxes.forEach(cb => {
+                    cb.checked = false;
+                });
+            }
+        });
+    });
+    
+    
+ 	// 숙소구분 체크박스
+    const categoryAllCheckbox = $('#all_lod');
+    const categoryCheckboxes = $('input[name="lodging_category"]').not('#all_lod');
+
+    // 전체 체크박스를 체크하면 나머지 체크박스를 해제
+    categoryAllCheckbox.change(function () {
+        if (categoryAllCheckbox.is(':checked')) {
+            categoryCheckboxes.prop('checked', false);
+        }
+    });
+
+    // 나머지 체크박스를 체크하면 전체 체크박스의 상태를 업데이트
+    categoryCheckboxes.change(function () {
+    	
+        const allChecked = categoryCheckboxes.length === categoryCheckboxes.filter(':checked').length;
+        
+        categoryAllCheckbox.prop('checked', allChecked);
+        
+        if(allChecked) {
+        	categoryCheckboxes.prop('checked', false);
+        }
+    });
+
+    // 편의시설 체크박스
+    const conAllCheckbox = $('#all_con');
+    const conCheckboxes = $('input[name="convenient"]').not('#all_con');
+
+    // 전체 체크박스를 체크하면 나머지 체크박스를 해제
+    conAllCheckbox.change(function () {
+        if (conAllCheckbox.is(':checked')) {
+            conCheckboxes.prop('checked', false);
+        }
+    });
+
+    // 나머지 체크박스를 체크하면 전체 체크박스의 상태를 업데이트
+    conCheckboxes.change(function () {
+        const allChecked = conCheckboxes.length === conCheckboxes.filter(':checked').length;
+        conAllCheckbox.prop('checked', allChecked);
+        if (allChecked) {
+            conCheckboxes.prop('checked', false);
+        }
+    });
+    
+ 	// 지역구분 체크박스
+    const localAllCheckbox = $('input#all_local');
+    const localCheckboxes = $('input[name="local_status"]').not('#all_local');
+
+    // 전체 체크박스를 체크하면 나머지 체크박스를 해제
+    localAllCheckbox.change(function () {
+        if (localAllCheckbox.is(':checked')) {
+        	localCheckboxes.prop('checked', false);
+        }
+    });
+
+    // 나머지 체크박스를 체크하면 전체 체크박스의 상태를 업데이트
+    localCheckboxes.change(function () {
+        const allChecked = localCheckboxes.length === localCheckboxes.filter(':checked').length;
+        localAllCheckbox.prop('checked', allChecked);
+        if (allChecked) {
+        	localCheckboxes.prop('checked', false);
+        }
+    });
+    
+    fetchFilteredData();
+    
+	
+}); // end of $(document).ready(function(){})
+
+	function fetchFilteredData() {
+	    // FormData 객체 생성
+	    const formData = $('#filterForm').serialize();
+	
+	    // AJAX 요청 보내기
+	    $.ajax({
+	        url: 'updateLodgingList.trip',
+	        type: 'get',
+	        data: formData,
+	        success: function(json) {
+	        	
+	        	let v_html = ``;
+	        	const jsonData = JSON.parse(json);
+	            
+	        	$.each(jsonData, function(index, item){
+	        		
+	        		v_html += `<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
+								  <div style="width: 30%;">
+	                    			 <a href="#">
+	                        		 	<img src="<%=ctxPath%>/resources/images/lodginglist/\${item.main_img}" style="width: 100%; height: auto;">
+	                    			 </a>
+	                			  </div>
+	                			  <div style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding-left: 20px;">
+									 <h3 class="pt-3 title"><a href="#">\${item.lodging_name}</a></h3>
+									 <div class="pb-3">
+	                        			<span style="color:#b5aec4;">\${item.lodging_category}</span><br>
+	                        			<span>\${item.local_status}</span><br>
+	                        			<span>\${item.lodging_address}</span>
+	                    			 </div>
+	                			  </div>
+	                			  <div style="border-left: solid 2px #ffdccc; height:75%; align-self:center; margin-right: 1%;"></div>
+									 <div class="px-3" style="align-self: flex-end;">
+									 	<span style="color:#b5aec4;">1박 기준</span>
+	                    				<h4 class="pb-2" style="text-decoration: line-through;">250,000원</h4>
+	                    			    <span>42%</span><h4 class="pb-2" style="color: #ffdccc;">220,000원</h4>
+	                				 </div>
+	            				   </div>`;
+	        		
+	        	}); // end of $.each
+	        	
+	        	$('div#result_list').html(v_html);
+	        	
+	        },
+	        error: function(request, status, error){
+		        alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+	        }
+	        
+	    }); // end of $.ajax({})
+	    
+	    
+	}// end of function fetchFilteredData() {}
+	
+	
+
+	
 
 </script>
 
 
     <div class="container">
        
-    
+    <form id="filterForm">
         <div class="row">
+         	
             <div class="col-md-3">
+           	 
             	<div class="tab_check" style="display: flex;">
 			    	<div class="date_wrap mt-3">
-			    		${requestScope.playlist.play_code}
+			    		
 			    		<h3>숙소 체크인</h3>
 				        <div class="date_checkin" >
 				            <label>체크인</label>
@@ -187,62 +351,70 @@ $(document).ready(function(){
             
                 
                 <ul class="nav flex-column">
-                    <li class="nav-item">
+                    <li class="nav-item lod">
                         <h4 class="py-3">숙소구분</h4>
                         <div>
-                            <input type="checkbox" id="pension" />
+                            <input type="checkbox" name="lodging_category" id="all_lod" />
+                            <label for="all_lod">전체</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" name="lodging_category" id="pension" />
                             <label for="pension">펜션</label>
                         </div>
                         <div>
-                            <input type="checkbox" id="guesthouse" />
+                            <input type="checkbox" name="lodging_category" id="guesthouse" />
                             <label for="guesthouse">게스트하우스</label>
                         </div>
                         <div>
-                            <input type="checkbox" id="hotel" />
+                            <input type="checkbox" name="lodging_category" id="hotel" />
                             <label for="hotel">호텔</label>
                         </div>
                         <div>
-                            <input type="checkbox" id="resort" />
+                            <input type="checkbox" name="lodging_category" id="resort" />
                             <label for="resort">리조트</label>
                         </div>
                     </li>
                     
-                    <li class="nav-item">
+                    <li class="nav-item convenient">
                         <h4 class="py-3">편의시설</h4>
                         <div>
-                            <input type="checkbox" id="pool" />
+                            <input type="checkbox" name="convenient" id="all_con" />
+                            <label for="all_con">전체</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" name="convenient" id="pool" />
                             <label for="pool">수영장</label>
                         </div>
                         <div>
-                            <input type="checkbox" id="bbq" />
+                            <input type="checkbox" name="convenient" id="bbq" />
                             <label for="bbq">바비큐</label>
                         </div>
                         <div>
-                            <input type="checkbox" id="free_breakfast" />
+                            <input type="checkbox" name="convenient" id="free_breakfast" />
                             <label for="free_breakfast">조식무료</label>
                         </div>
                         <div>
-                            <input type="checkbox" id="breakfast" />
+                            <input type="checkbox" name="convenient" id="breakfast" />
                             <label for="breakfast">조식운영</label>
                         </div>
                         <div>
-                            <input type="checkbox" id="pet" />
+                            <input type="checkbox" name="convenient" id="pet" />
                             <label for="pet">애완동물</label>
                         </div>
                         <div>
-                            <input type="checkbox" id="store" />
+                            <input type="checkbox" name="convenient" id="store" />
                             <label for="store">매점</label>
                         </div>
                         <div>
-                            <input type="checkbox" id="spa" />
+                            <input type="checkbox" name="convenient" id="spa" />
                             <label for="spa">스파/사우나</label>
                         </div>
                         <div>
-                            <input type="checkbox" id="wifi" />
+                            <input type="checkbox" name="convenient" id="wifi" />
                             <label for="wifi">WIFI</label>
                         </div>
                         <div>
-                            <input type="checkbox" id="ev_charge" />
+                            <input type="checkbox" name="convenient" id="ev_charge" />
                             <label for="ev_charge">전기차충전소</label>
                         </div>
                     </li>
@@ -256,7 +428,7 @@ $(document).ready(function(){
                	 
             </div>
             <div class="col-md-9 py-3">
-            	<div class="row py-3">
+            	<div class="py-3">
             		<div id="tabArea" class="tabArea1 text-center" style="display: flex; border: solid 0px black; align-items: center;">
 			            <div class="tabTitle pr-3" style="align-self: center; width:15%;">
 			                <span>여행하실 곳을 <br> 선택해주세요.</span>
@@ -265,57 +437,57 @@ $(document).ready(function(){
 			                <div class="areamap mx-2" style="width: 15%;">
 			                    <img src="<%= ctxPath %>/resources/images/areamap_total.png" />
 			                    <div>
-			                        <input id="area01" type="checkbox" class="are_map" value="">
-			                        <br><label for="area01" class="label_chk">전체</label>
+			                        <input name="local_status" id="all_local" type="checkbox" class="are_map" value="">
+			                        <br><label for="all_local" class="label_chk">전체</label>
 			                    </div>
 			                </div>
 			                <div class="areamap mx-2" style="width: 15%;">
 			                    <img src="<%= ctxPath %>/resources/images/areamap_city.png" />
 			                    <div>
-			                        <input name="area" id="area02" type="checkbox" class="are_map" value="JE">
-			                        <label for="area02" class="label_chk">제주 시내권</label>
+			                        <input name="local_status" id="area02" type="checkbox" class="are_map" value="제주시 시내">
+			                        <label for="area02" class="label_chk">제주시 시내</label>
 			                    </div>
 			                </div>
 			                <div class="areamap mx-2" style="width: 15%;">
 			                    <img src="<%= ctxPath %>/resources/images/areamap_jeju_east.png" />
 			                    <div>
-			                        <input name="area" id="area03" type="checkbox" class="are_map" value="EA">
+			                        <input name="local_status" id="area03" type="checkbox" class="are_map" value="제주시 동부">
 			                        <label for="area03" class="label_chk">제주시 동부</label>
 			                    </div>
 			                </div>
 			                <div class="areamap mx-2" style="width: 15%;">
 			                    <img src="<%= ctxPath %>/resources/images/areamap_jeju_west.png" />
 			                    <div>
-			                        <input name="area" id="area04" type="checkbox" class="are_map" value="WE">
+			                        <input name="local_status" id="area04" type="checkbox" class="are_map" value="제주시 서부">
 			                        <label for="area04" class="label_chk">제주시 서부</label>
 			                    </div>
 			                </div>
 			                <div class="areamap mx-2" style="width: 15%;">
 			                    <img src="<%= ctxPath %>/resources/images/areamap_bt_city.png" />
 			                    <div>
-			                        <input name="area" id="area05" type="checkbox" class="are_map" value="SE">
-			                        <label for="area05" class="label_chk">중문/서귀포</label>
+			                        <input name="local_status" id="area05" type="checkbox" class="are_map" value="SE">
+			                        <label for="area05" class="label_chk">서귀포시 시내</label>
 			                    </div>
 			                </div>
 			                <div class="areamap mx-2" style="width: 15%;">
 			                    <img src="<%= ctxPath %>/resources/images/areamap_bt_east.png" />
 			                    <div>
-			                        <input name="area" id="area06" type="checkbox" class="are_map" value="ES">
-			                        <label for="area06" class="label_chk">서귀포 동부</label>
+			                        <input name="local_status" id="area06" type="checkbox" class="are_map" value="서귀포시 동부">
+			                        <label for="area06" class="label_chk">서귀포시 동부</label>
 			                    </div>
 			                </div>
 			                <div class="areamap mx-2" style="width: 15%;">
 			                    <img src="<%= ctxPath %>/resources/images/areamap_bt_west.png" />
 			                    <div>
-			                        <input name="area" id="area07" type="checkbox" class="are_map" value="WS">
-			                        <label for="area07" class="label_chk">서귀포 서부</label>
+			                        <input name="local_status" id="area07" type="checkbox" class="are_map" value="서귀포시 서부">
+			                        <label for="area07" class="label_chk">서귀포시 서부</label>
 			                    </div>
 			                </div>
 			            </div>
 			        </div>
             	</div>	
             	
-            	<div class="row">
+            	
             		
                     <div class="sort-filter main" style="display: flex; justify-content:space-between; width:100%;">
                     	
@@ -327,10 +499,7 @@ $(document).ready(function(){
                                 <button type="button" onclick="" class="sort" value="PRICE_DESC">높은가격순</button>
                              
                                 <button type="button" onclick="" class="sort" value="NEW">최신등록순</button>
-                            
-                    	
-                    	
-                         
+                             
                         </div>
                         
                         <div>
@@ -338,11 +507,14 @@ $(document).ready(function(){
                             <button type="button" title="검색">검색</button>
                         </div>
                     </div>
-                
-            	</div>
-            	<c:forEach var="lodgingList" items="${requestScope.lodgingList}">
+                    
+                    
+                    <div id="result_list">
+                    <!-- ajax 뿌릴곳 -->
+                    <%-- 
+                    <c:forEach var="lodgingList" items="${requestScope.lodgingList}">
             	
-            		<div class="row">
+            		
 			    <!-- Single Post -->
 			    	<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
 			    		<div style="width: 30%;">
@@ -367,15 +539,23 @@ $(document).ready(function(){
 			         </div>
 			    	</div>
 			   
-				</div>
+				
             	
             	
             	
             	</c:forEach>
+            	--%>
+            	</div>
+           		 </div>
+            </div>
+          </form>
+            	
+             
+            	
             	
 				
                     <!-- Single Post -->
-                 <div class="row">
+              
                  	<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
 						<div style="width: 30%;">
 							<a href="">
@@ -398,7 +578,7 @@ $(document).ready(function(){
 					       	<h4 class="pb-2" style="color: #ffdccc;">220,000원</h4>
 					    </div>
 					</div>
-                </div>
+               
                 <div class="pagination-area">
                     <nav aria-label="#">
                         <ul class="pagination pagination-sm justify-content-center">
@@ -413,9 +593,8 @@ $(document).ready(function(){
                         </ul>
                     </nav>
                 </div>
-			</div>
-		</div>
-	</div>
+		</div> 
+	
  
 </body>
 </html>

@@ -95,7 +95,7 @@ public class DataDAO {
 	    try {
 	        getConnection();
 	
-	        String sql = "SELECT seq_common.nextval AS num FROM dual";
+	        String sql = "SELECT seq_common.nextval AS num FROM dual ";
 	
 	        ps = conn.prepareStatement(sql);
 	
@@ -125,15 +125,6 @@ public class DataDAO {
    public void room_detailinsert(RoomDetailVO rvo) {
 	   
 	   int n = 0;
-	   
-	   if(rvo.getRoom_name().length() > 200 ) {
-		   
-	   }
-	   else if(rvo.getRoom_img().length() > 100){
-		   
-		   
-		   
-	   }
 	   
 	   try {
 		   
