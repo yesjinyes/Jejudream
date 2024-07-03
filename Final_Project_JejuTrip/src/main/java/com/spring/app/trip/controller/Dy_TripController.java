@@ -246,6 +246,7 @@ public class Dy_TripController {
 	}
 	
 	
+	// 비밀번호 찾기 - 이메일 인증
 	@PostMapping("login/verifyCertification.trip")
 	public ModelAndView verifyCertification(ModelAndView mav, HttpServletRequest request) {
 		
@@ -279,7 +280,7 @@ public class Dy_TripController {
 	}
 	
 	
-	// 비밀번호 찾기 후 비밀번호 변경
+	// 비밀번호 찾기 - 비밀번호 변경
 	@RequestMapping("login/pwFindEnd.trip")
 	public ModelAndView pwFindEnd(ModelAndView mav, HttpServletRequest request) {
 		
@@ -352,4 +353,12 @@ public class Dy_TripController {
 		
 		return mav;
 	}
+	
+	
+	@GetMapping("admin/foodstoreRegister.trip")
+	public String foodstoreRegister() {
+		
+		return "admin/foodstoreRegister.tiles1";
+	}
+	
 }
