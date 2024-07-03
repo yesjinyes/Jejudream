@@ -36,6 +36,14 @@ body {
     }
 }
 
+select {
+    width:10%;
+    margin-left: 65%;
+    margin-top: 30px;
+    border-radius: 8px;
+    border: solid 1px rgba(15, 19, 42, .1);
+}
+
 div.container {
     width: 45%;
     margin: 2% auto;
@@ -50,6 +58,10 @@ div.info {
     margin: 5% auto;
 }
 
+div.info_block {
+    margin:2% auto;
+}
+
 div.info_block > input:first-child {
     display: block;
     width: 100%;
@@ -60,4 +72,70 @@ div.info_block > input:first-child {
     border: solid 1px rgba(15, 19, 42, .1);
     padding: 0 0 0 15px;
     font-size: 16px;
+}
+
+div.info_block > h4 {
+    display:inline-block;
+    border:solid 0px red;
+    width:80%;
+}
+
+textarea{
+    width:100%;
+    border-radius: 8px;
+    border: solid 1px rgba(15, 19, 42, .1);
+    height:100px;
+    display:none;
+}
+
+input.agree{
+    border:solid 1px orange;
+    background-color: orange;
+    font-size:17pt;
+    color:white;
+    border-radius: 8px;
+    width:11%;
+    height:50px;
+    margin-left:75%;
+}
+
+input.disagree{
+    border:solid 1px rgb(182, 182, 182);
+    background-color: rgb(182, 182, 182);
+    font-size:17pt;
+    color:rgb(0, 0, 0);
+    border-radius: 8px;
+    width:11%;
+    height:50px;
+}
+
+input.change_disagree{
+    border:solid 1px rgb(252, 138, 138);
+    background-color:rgb(252, 138, 138);
+    font-size:17pt;
+    color:rgb(255, 255, 255);
+    border-radius: 8px;
+    width:11%;
+    height:50px;
+}
+
+input.agree:hover{
+    border:solid 1px orange;
+    background-color: rgb(255, 255, 255);
+    color:orange;
+    transition:0.3s;
+}
+
+input.disagree:hover{
+    border:solid 1px rgb(0, 0, 0);
+    background-color: rgb(255, 255, 255);
+    color:rgb(0, 0, 0);
+    transition:0.3s;
+}
+
+input.change_disagree:hover{
+    border:solid 1px rgb(252, 138, 138);
+    background-color:rgb(255, 255, 255);
+    color:rgb(252, 138, 138);
+    transition:0.3s;
 }

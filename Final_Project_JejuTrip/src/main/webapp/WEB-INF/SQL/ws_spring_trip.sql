@@ -19,8 +19,14 @@ from user_sequences;
 
 select *
 from tbl_lodging
-order by lodging_code desc;
+order by lodging_code asc;
 
-select lodging_code, local_status, lodging_category, fk_companyid, lodging_name, lodging_tell, lodging_content, lodging_address, main_img, filename, orgfilename, filesize, status
+select lodging_code, local_status, lodging_category, fk_companyid, lodging_name, lodging_tell, lodging_content, lodging_address, main_img, filename, orgfilename, filesize, status, feedback_msg
 from tbl_lodging
-where status = 0;
+order by lodging_code asc;
+
+update tbl_lodging set status = 2 , feedback_msg = '호텔 카테고리가 이상합니다.' where lodging_code = 5006;
+
+commit;
+
+

@@ -1,6 +1,7 @@
 package com.spring.app.trip.model;
 
 import java.util.List;
+import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,11 +58,18 @@ public class Ws_TripDAO_imple implements Ws_TripDAO {
 		return n;
 	}// end of public int registerHotelEnd(LodgingVO lodgingvo) {
 	
-	// 숙소 등록을 신청한 업체중 심사중인 모든 업체들 불러오기
+	// 숙소 등록을 신청한 업체중 선택한 카테고리에 해당하는 모든 업체들 불러오기
 	@Override
-	public List<LodgingVO> select_all_lodgingvo() {
-		List<LodgingVO> lodgingvoList = sqlsession.selectList("ws_trip.select_all_lodgingvo");
+	public List<LodgingVO> select_lodgingvo(String choice_status) {
+		List<LodgingVO> lodgingvoList = sqlsession.selectList("ws_trip.select_lodgingvo",choice_status);
 		return lodgingvoList;
 	}// end of public LodgingVO select_all_lodgingvo() {
+	
+	// 관리자가 숙소 등록 요청에 답한대로 DB를 업데이트 시켜준다.
+	@Override
+	public int screeningRegisterEnd(Map<String, String> paraMap) {
+		int n = sqlsession.update("ws_trip.screeningRegisterEnd",paraMap);
+		return n;
+	}
 
 }
