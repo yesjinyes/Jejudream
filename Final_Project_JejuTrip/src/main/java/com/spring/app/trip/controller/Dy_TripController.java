@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.json.JSONObject;
@@ -357,7 +358,7 @@ public class Dy_TripController {
 	
 	// 맛집 등록 페이지 요청
 	@GetMapping("admin/foodstoreRegister.trip")
-	public ModelAndView foodstoreRegister(ModelAndView mav, HttpServletRequest request) {
+	public ModelAndView requiredLogin_foodstoreRegister(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
 		
 		HttpSession session = request.getSession();
 		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
@@ -365,7 +366,7 @@ public class Dy_TripController {
 		if(loginuser != null && !"admin".equals(loginuser.getUserid())) {
 			
 			String message = "관리자만 접근 가능합니다.";
-			String loc = "redirect:/index.trip";
+			String loc = request.getContextPath() + "/index.trip";
 			
 			mav.addObject("message", message);
 			mav.addObject("loc", loc);
