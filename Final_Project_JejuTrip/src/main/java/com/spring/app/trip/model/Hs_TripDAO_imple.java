@@ -39,5 +39,11 @@ public class Hs_TripDAO_imple implements Hs_TripDAO {
 		return playList;
 	}
 
+	@Override
+	public int registerPlayEnd(PlayVO playvo) {
+		int n = sqlsession.insert("hs_trip.registerPlayEnd",playvo);
+		return n;
+	}
+
 
 }
