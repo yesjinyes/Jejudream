@@ -72,4 +72,13 @@ update tbl_play set play_category = '전시회' where play_code = '5005';
 update tbl_play set play_category = '전시회' where play_code = '5008';
 
 commit;
+
+
+insert into tbl_play ( play_code, play_category, local_status, play_name, play_content, play_mobile,play_businesshours, play_address, play_main_img,review_division )
+values (seq_common.nextval , '전시회',100,'아르떼뮤지엄' ,'모든 감각의 긴장을 잠시 내려놓고 아르떼 뮤지엄 제주가 선사하는 영원한 자연의 공간 속으로 입장해보세요.', 
+'1899-5008','10:00 - 18:00','제주 제주시 애월읍 어림비로 478' , '아르떼뮤지엄.jpg',default );
+
+
+
+
      

@@ -393,8 +393,8 @@ function displayHIT(start,category){
 	                v_html += "      </div>";
 	                v_html += "  </div>";
 	                
-	            $("div#categoryList").html(v_html)
                 });
+	            $("div#categoryList").append(v_html)
 
                 // span#countHIT 에 지금까지 출력된 상품의 개수를 누적해서 기록한다.
                 $("span#countHIT").text( Number($("span#countHIT").text()) + json.length);
