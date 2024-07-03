@@ -1,6 +1,7 @@
 package com.spring.app.trip.model;
 
 import java.util.List;
+import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +18,35 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 	private SqlSessionTemplate sqlsession;
 
 	
-	// === 맛집 리스트 페이지 보이기 === //
+	// == 맛집 리스트 페이지 보이기 == //
 	@Override
 	public List<FoodstoreVO> viewFoodstoreList() {
 		List<FoodstoreVO> foodstoreList = sqlsession.selectList("yj_trip.viewFoodstoreList");
 		return foodstoreList;
 	}
 
+
+	// == 맛집 랜덤 추천 == //
+	@Override
+	public List<FoodstoreVO> randomRecommend(Map<String, String> paraMap) {
+		List<FoodstoreVO> randomRecommend = sqlsession.selectList("yj_trip.randomRecommend", paraMap);
+		return randomRecommend;
+	}
+
+
+
+
+
+
+//	// == 카테고리 선택에 따른 Ajax == //
+//	@Override
+//	public List<FoodstoreVO> viewCheckCategory(String food_category) {
+//		List<FoodstoreVO> foodstoreList = sqlsession.selectList("yj_trip.viewCheckCategory", food_category);
+//		return foodstoreList;
+//	}
+
+
+	
+	
+	
 }
