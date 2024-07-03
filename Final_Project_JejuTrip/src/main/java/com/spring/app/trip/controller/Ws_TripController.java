@@ -243,10 +243,141 @@ public class Ws_TripController {
 				choice_status = "";
 			}
 			
-			List<LodgingVO> lodgingvoList = service.select_lodgingvo(choice_status);// 숙소 등록을 신청한 업체중 심사중인 모든 업체들 불러오기
+			String str_currentShowPageNo = request.getParameter("currentShowPageNo");
+			
+			// 먼저, 총 게시물 건수(totalCount)를 구해와야 한다.
+			// 총 게시물 건수(totalCount)는  검색조건이 있을 때와 없을때로 나뉘어진다.
+			int totalCount = 0;        // 총 게시물 건수
+			int sizePerPage = 3;      // 한 페이지당 보여줄 게시물 건수 
+			int currentShowPageNo = 0; // 현재 보여주는 페이지 번호로서, 초기치로는 1페이지로 설정함. 
+			int totalPage = 0;         // 총 페이지수(웹브라우저상에서 보여줄 총 페이지 개수, 페이지바) 
+			
+			// 총 게시물 건수(totalCount)
+			totalCount = service.getTotalCount(choice_status);
+			
+			// 만약에 총 게시물 건수(totalCount)가 124 개 이라면 총 페이지수(totalPage)는 13 페이지가 되어야 한다.
+			// 만약에 총 게시물 건수(totalCount)가 120 개 이라면 총 페이지수(totalPage)는 12 페이지가 되어야 한다.
+			totalPage = (int) Math.ceil((double)totalCount/sizePerPage);
+			
+			if(str_currentShowPageNo == null) {
+				// 게시판에 보여지는 초기화면
+				
+				currentShowPageNo = 1;
+			}
+			
+			else {
+				
+				try {
+					currentShowPageNo = Integer.parseInt(str_currentShowPageNo);
+					
+					if(currentShowPageNo < 1 || currentShowPageNo > totalPage) {
+						// get 방식이므로 사용자가 str_currentShowPageNo 에 입력한 값이 0 또는 음수를 입력하여 장난친 경우 
+						// get 방식이므로 사용자가 str_currentShowPageNo 에 입력한 값이 실제 데이터베이스에 존재하는 페이지수 보다 더 큰값을 입력하여 장난친 경우 
+						currentShowPageNo = 1;
+					}
+					
+				} catch (NumberFormatException e) {
+					// get 방식이므로 사용자가 str_currentShowPageNo 에 입력한 값이 숫자가 아닌 문자를 입력하여 장난친 경우 
+					currentShowPageNo = 1; 
+				}
+			}
+			
+			int startRno = ((currentShowPageNo - 1) * sizePerPage) + 1; // 시작 행번호 
+			int endRno = startRno + sizePerPage - 1; // 끝 행번호
+			
+			Map<String,String> paraMap = new HashMap<>();
+			
+			paraMap.put("startRno", String.valueOf(startRno));
+			paraMap.put("endRno", String.valueOf(endRno));
+			paraMap.put("choice_status",choice_status);
+			
+			List<LodgingVO> lodgingvoList = service.select_lodgingvo(paraMap);// 숙소 등록을 신청한 업체중 심사중인 모든 업체들 불러오기
+			
+			int blockSize = 10;
+			// blockSize 는 1개 블럭(토막)당 보여지는 페이지번호의 개수이다.
+			/*
+				             1  2  3  4  5  6  7  8  9 10 [다음][마지막]  -- 1개블럭
+				[맨처음][이전]  11 12 13 14 15 16 17 18 19 20 [다음][마지막]  -- 1개블럭
+				[맨처음][이전]  21 22 23
+			*/
+			
+			int loop = 1;
+			/*
+		    	loop는 1부터 증가하여 1개 블럭을 이루는 페이지번호의 개수[ 지금은 10개(== blockSize) ] 까지만 증가하는 용도이다.
+		    */
+			
+			int pageNo = ((currentShowPageNo - 1)/blockSize) * blockSize + 1;
+			// *** !! 공식이다. !! *** //
+			
+		/*
+		    1  2  3  4  5  6  7  8  9  10  -- 첫번째 블럭의 페이지번호 시작값(pageNo)은 1 이다.
+		    11 12 13 14 15 16 17 18 19 20  -- 두번째 블럭의 페이지번호 시작값(pageNo)은 11 이다.
+		    21 22 23 24 25 26 27 28 29 30  -- 세번째 블럭의 페이지번호 시작값(pageNo)은 21 이다.
+		    
+		    currentShowPageNo         pageNo
+		   ----------------------------------
+		         1                      1 = ((1 - 1)/10) * 10 + 1
+		         2                      1 = ((2 - 1)/10) * 10 + 1
+		         3                      1 = ((3 - 1)/10) * 10 + 1
+		         4                      1
+		         5                      1
+		         6                      1
+		         7                      1 
+		         8                      1
+		         9                      1
+		         10                     1 = ((10 - 1)/10) * 10 + 1
+		        
+		         11                    11 = ((11 - 1)/10) * 10 + 1
+		         12                    11 = ((12 - 1)/10) * 10 + 1
+		         13                    11 = ((13 - 1)/10) * 10 + 1
+		         14                    11
+		         15                    11
+		         16                    11
+		         17                    11
+		         18                    11 
+		         19                    11 
+		         20                    11 = ((20 - 1)/10) * 10 + 1
+		         
+		         21                    21 = ((21 - 1)/10) * 10 + 1
+		         22                    21 = ((22 - 1)/10) * 10 + 1
+		         23                    21 = ((23 - 1)/10) * 10 + 1
+		         ..                    ..
+		         29                    21
+		         30                    21 = ((30 - 1)/10) * 10 + 1
+		*/
+			
+			String pageBar = "<ul style='list-style:none;'>";
+			String url = "screeningRegister.trip";
+			
+			// === [맨처음][이전] 만들기 === //
+			if(pageNo != 1) {
+				pageBar += "<li class='fist_page'><a href='"+url+"?choice_status="+choice_status+"&currentShowPageNo=1'>맨처음</a></li>";
+				pageBar += "<li class='before_page'><a href='"+url+"?choice_status="+choice_status+"&currentShowPageNo="+(pageNo-1)+"'>이전</a></li>"; 
+			}
+			
+			while( !(loop > blockSize || pageNo > totalPage) ) {
+				
+				if(pageNo == currentShowPageNo) {
+					pageBar += "<li class='this_page_no'>"+pageNo+"</li>";
+				}
+				else {
+					pageBar += "<li class='choice_page_no'><a href='"+url+"?choice_status="+choice_status+"&currentShowPageNo="+pageNo+"'>"+pageNo+"</a></li>"; 
+				}
+				
+				loop++;
+				pageNo++;
+			}// end of while------------------------
+			
+			// === [다음][마지막] 만들기 === //
+			if(pageNo <= totalPage) {
+				pageBar += "<li class='next_page_no'><a href='"+url+"?choice_status="+choice_status+"&currentShowPageNo="+pageNo+"'>다음</a></li>";
+				pageBar += "<li class='last_page_no'><a href='"+url+"?choice_status="+choice_status+"&currentShowPageNo="+totalPage+"'>마지막</a></li>"; 
+			}
+			
+			pageBar += "</ul>";
+			
+			mav.addObject("pageBar", pageBar);
 			mav.addObject("lodgingvoList",lodgingvoList);
-			
-			
 			mav.addObject("choice_status",choice_status);
 			
 		}
@@ -269,7 +400,7 @@ public class Ws_TripController {
 	@ResponseBody
 	@PostMapping("/screeningRegisterEnd.trip")
 	public String screeningRegisterEnd(HttpServletRequest request) {
-		 
+		
 		String lodging_code = request.getParameter("lodging_code");
 		String status = request.getParameter("status");
 		String feedback_msg = request.getParameter("feedback_msg");

@@ -29,11 +29,23 @@
                    	   	  values(seq_common.nextval,#{local_status},#{lodging_category},#{fk_companyid},#{lodging_name},#{lodging_tell},#{lodging_content},#{lodging_address},#{fileName},#{fileName},#{orgFilename},#{fileSize})
 	</insert>
 	
-	<select id="select_lodgingvo" parameterType="String" resultType="com.spring.app.trip.domain.LodgingVO">
-		select lodging_code, local_status, lodging_category, fk_companyid, lodging_name, lodging_tell, lodging_content, lodging_address, main_img, filename, orgfilename, filesize, status
-		from tbl_lodging
-		<if test="choice_status != ''">where status = #{choice_status}</if>
-		order by lodging_code asc
+	<select id="select_lodgingvo" parameterType="HashMap" resultType="com.spring.app.trip.domain.LodgingVO">
+		
+		SELECT lodging_code, local_status, lodging_category, fk_companyid, lodging_name, lodging_tell, lodging_content, lodging_address, main_img, filename, orgfilename, filesize, status 
+		FROM 
+		(
+		    SELECT rownum AS RNO
+		         , lodging_code, local_status, lodging_category, fk_companyid, lodging_name, lodging_tell, lodging_content, lodging_address, main_img, filename, orgfilename, filesize, status, feedback_msg
+		    FROM
+		    (
+		        select lodging_code, local_status, lodging_category, fk_companyid, lodging_name, lodging_tell, lodging_content, lodging_address, main_img, filename, orgfilename, filesize, status, feedback_msg
+		        from tbl_lodging
+		        <if test="choice_status != ''">where status = #{choice_status}</if>
+		        order by lodging_code asc
+		    )V
+		) T
+		WHERE RNO between #{startRno} and #{endRno}
+		
 	</select>
 	
 	<update id="screeningRegisterEnd" parameterType="HashMap">
@@ -43,4 +55,11 @@
 		</if>
 		where lodging_code = #{lodging_code}
 	</update>
+	
+	<select id="getTotalCount" parameterType="String" resultType="Integer">
+		select count(*) as totalCount
+		from tbl_lodging
+		<if test="choice_status != ''">where status = #{choice_status}</if>
+	</select>
+	
 </mapper>

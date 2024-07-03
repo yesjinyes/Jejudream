@@ -117,7 +117,12 @@
 	                <div>숙소설명 : ${lodgingvo.lodging_content}</div>
 	            </div>
 				<div class="info_block">
-	                <img style="width:100%;" src="<%=ctxPath%>/resources/images/lodginglist/${lodgingvo.fileName}"/>
+	                <c:if test="${lodgingvo.fileName == null}">
+	                	<img style="width:100%;" src="<%=ctxPath%>/resources/images/lodginglist/${lodgingvo.main_img}"/>
+	                </c:if>
+	                <c:if test="${lodgingvo.fileName != null}">
+	                	<img style="width:100%;" src="<%=ctxPath%>/resources/images/lodginglist/${lodgingvo.fileName}"/>
+	                </c:if>
 	            </div>
                 <c:if test="${lodgingvo.status == 0}">
 	                <textarea name="disagree_text" placeholder="반려사유"></textarea>
@@ -130,4 +135,5 @@
 	        </div>
         </div>
 	</c:forEach>
+	<div class="pageBar">${requestScope.pageBar}</div>
 </c:if>
