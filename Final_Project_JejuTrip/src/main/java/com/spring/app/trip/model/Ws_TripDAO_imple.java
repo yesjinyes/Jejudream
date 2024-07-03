@@ -1,5 +1,7 @@
 package com.spring.app.trip.model;
 
+import java.util.List;
+
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -54,5 +56,12 @@ public class Ws_TripDAO_imple implements Ws_TripDAO {
 		int n = sqlsession.insert("ws_trip.registerHotelEnd",lodgingvo);
 		return n;
 	}// end of public int registerHotelEnd(LodgingVO lodgingvo) {
+	
+	// 숙소 등록을 신청한 업체중 심사중인 모든 업체들 불러오기
+	@Override
+	public List<LodgingVO> select_all_lodgingvo() {
+		List<LodgingVO> lodgingvoList = sqlsession.selectList("ws_trip.select_all_lodgingvo");
+		return lodgingvoList;
+	}// end of public LodgingVO select_all_lodgingvo() {
 
 }

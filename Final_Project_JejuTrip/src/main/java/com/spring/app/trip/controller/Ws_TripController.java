@@ -1,6 +1,7 @@
 package com.spring.app.trip.controller;
 
 import java.io.File;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -18,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.spring.app.trip.common.FileManager;
 import com.spring.app.trip.domain.CompanyVO;
 import com.spring.app.trip.domain.LodgingVO;
+import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.service.Ws_TripService;
 
 @Controller
@@ -211,6 +213,34 @@ public class Ws_TripController {
 		else {
 			String message = "숙소 등록 신청에 실패했습니다.";
 			String loc = "index.trip";
+
+			mav.addObject("message", message);
+			mav.addObject("loc", loc);
+			
+			mav.setViewName("msg");
+		}
+		
+		return mav;
+		
+	}
+	
+	@GetMapping("/screeningRegister.trip")
+	public ModelAndView screeningRegister(ModelAndView mav, HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
+		
+		if(loginuser != null && loginuser.getUserid().equals("admin")) {
+			// 관리자가 등록 심사를 할 경우 
+			mav.setViewName("admin/screeningRegister.tiles1");
+			
+			List<LodgingVO> lodgingvoList = service.select_all_lodgingvo();// 숙소 등록을 신청한 업체중 심사중인 모든 업체들 불러오기
+			mav.addObject("lodgingvoList",lodgingvoList);
+			
+		}
+		else {
+			// 관리자가 아닌 계정이 들어올 경우
+			String message = "잘못된 접근입니다.";
+			String loc = "javascript:history.back()";
 
 			mav.addObject("message", message);
 			mav.addObject("loc", loc);

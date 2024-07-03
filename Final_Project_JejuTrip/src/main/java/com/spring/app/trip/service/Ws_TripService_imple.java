@@ -3,6 +3,7 @@ package com.spring.app.trip.service;
 
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -68,5 +69,12 @@ public class Ws_TripService_imple implements Ws_TripService {
 		int n = dao.registerHotelEnd(lodgingvo);
 		return n;
 	}// end of public int registerHotelEnd(LodgingVO lodgingvo) {
+	
+	// 숙소 등록을 신청한 업체중 심사중인 모든 업체들 불러오기
+	@Override
+	public List<LodgingVO> select_all_lodgingvo() {
+		List<LodgingVO> lodgingvoList = dao.select_all_lodgingvo();
+		return lodgingvoList;
+	}// end of public LodgingVO select_all_lodgingvo() {
 
 }

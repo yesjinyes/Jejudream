@@ -179,6 +179,25 @@ $(document).ready(function() {
 				  </form>
 				
 				<ul class="navbar-nav my-2 my-lg-0">
+					
+					<c:if test="${not empty sessionScope.loginCompanyuser}">
+						<li class="user_menu nav-item mr-3">
+							<a class="nav-link text-center" href="<%=ctxPath%>/registerHotel.trip?companyid=${sessionScope.loginCompanyuser.companyid}">
+								<i class="fa-solid fa-check"></i>
+								<div>숙소등록</div>
+							</a>
+						</li>
+					</c:if>
+					
+					<c:if test="${sessionScope.loginuser.userid == 'admin'}">
+						<li class="user_menu nav-item mr-3">
+							<a class="nav-link text-center" href="<%=ctxPath%>/screeningRegister.trip">
+								<i class="fa-solid fa-check"></i>
+								<div>신청검토</div>
+							</a>
+						</li>
+					</c:if>
+					
 					<li class="user_menu nav-item mr-3">
 						<a class="nav-link text-center" href="#">
 							<i class="fa-solid fa-cart-shopping"></i>

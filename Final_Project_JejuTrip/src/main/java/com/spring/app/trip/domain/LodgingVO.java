@@ -14,6 +14,7 @@ public class LodgingVO {
 	private String lodging_content;		// 숙소설명
 	private String lodging_address;		// 상세주소
 	private String review_division;		// 리뷰용구분컬럼(default) A
+	private String status;				// 숙소 심사 상태 구분
 	
 	private MultipartFile attach;
 	/* form 태그에서 type="file" 인 파일을 받아서 저장되는 필드이다. 
@@ -135,6 +136,14 @@ public class LodgingVO {
 
 	public void setAttach(MultipartFile attach) {
 		this.attach = attach;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 	
 	

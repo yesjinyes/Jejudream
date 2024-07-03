@@ -28,4 +28,10 @@
 		insert into tbl_lodging (lodging_code , local_status, lodging_category, fk_companyid, lodging_name, lodging_tell, lodging_content, lodging_address, main_img, filename, orgfilename, filesize)
                    	   	  values(seq_common.nextval,#{local_status},#{lodging_category},#{fk_companyid},#{lodging_name},#{lodging_tell},#{lodging_content},#{lodging_address},#{fileName},#{fileName},#{orgFilename},#{fileSize})
 	</insert>
+	
+	<select id="select_all_lodgingvo" resultType="com.spring.app.trip.domain.LodgingVO">
+		select lodging_code, local_status, lodging_category, fk_companyid, lodging_name, lodging_tell, lodging_content, lodging_address, main_img, filename, orgfilename, filesize, status
+		from tbl_lodging
+		where status = 0
+	</select>
 </mapper>
