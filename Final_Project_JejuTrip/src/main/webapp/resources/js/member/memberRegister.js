@@ -297,7 +297,7 @@ $(function () {
     });
 
     // 주소 키보드 입력 막기
-    $("input#address").on("keypress keydown keyup", function(e) {
+    $("input#address").on("keypress", function(e) {
         e.preventDefault();
     });
 

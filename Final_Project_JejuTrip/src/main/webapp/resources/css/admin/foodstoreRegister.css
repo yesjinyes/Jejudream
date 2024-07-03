@@ -78,13 +78,14 @@ div.info_block > select {
 
 div.info_block > div.d-flex select {
     display: block;
-    width: 40%;
+    width: 45%;
     max-width: 680px;
     height: 50px;
     border-radius: 8px;
     border: solid 1px rgba(15, 19, 42, .1);
     padding: 0 0 0 15px;
     font-size: 1rem;
+    color:gray;
 }
 
 div.info_block > textarea {
@@ -98,6 +99,27 @@ div.info_block > textarea {
     padding: 0 0 0 15px;
     font-size: 16px;
     color:gray;
+}
+
+input#food_main_img {
+	width: 83.2%;
+    max-width: 680px;
+    height: 50px;
+    margin: 0 auto;
+	border-radius: 8px;
+    border: solid 1px rgba(15, 19, 42, .1);
+    padding: 1.5% 0 0 2%;
+    font-size: 16px;
+}
+
+div#fileDrop {
+	width: 83.2%;
+    height: 150px;
+	border-radius: 8px;
+    border: solid 1px rgba(15, 19, 42, .1);
+    padding: 1.5% 0 0 2%;
+    font-size: 16px;
+    color: gray;
 }
 
 span.error {

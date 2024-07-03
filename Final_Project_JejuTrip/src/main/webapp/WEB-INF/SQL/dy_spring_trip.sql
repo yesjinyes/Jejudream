@@ -86,6 +86,20 @@ where userid = 'kimdy' and email = 'iqOrelu2llBP6cnC6yu77REzaKuiYpaUDPuSnEzJZX4=
 
 
 
+-- 맛집 카테고리별 최신 1개씩 조회
+select food_category, food_name, food_content
+from
+(
+    select food_category, food_name, food_content
+         , row_number() over(partition by food_category order by food_store_code desc) as rno
+    from tbl_food_store
+)
+where rno = 1;
+
+
+
+
+
 
 
 
