@@ -4,7 +4,7 @@ package com.spring.app.trip.domain;
 public class FoodstoreVO {
 	
 	private String food_store_code;		// 맛집일련번호
-	private String fk_local_code;		// 지역코드
+	private String local_status;		// 지역구분
 	private String food_category;		// 맛집카테고리
 	private String food_name;			// 맛집식당이름
 	private String food_content;		// 맛집간단정보
@@ -26,14 +26,14 @@ public class FoodstoreVO {
 		this.food_store_code = food_store_code;
 	}
 	
-	public String getFk_local_code() {
-		return fk_local_code;
+	public String getLocal_status() {
+		return local_status;
 	}
-	
-	public void setFk_local_code(String fk_local_code) {
-		this.fk_local_code = fk_local_code;
+
+	public void setLocal_status(String local_status) {
+		this.local_status = local_status;
 	}
-	
+
 	public String getFood_category() {
 		return food_category;
 	}

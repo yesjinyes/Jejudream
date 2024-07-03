@@ -39,5 +39,11 @@ public interface Dy_TripDAO {
 
 	// 아이디찾기 처리하기 (업체회원)
 	Map<String, String> companyIdFind(Map<String, String> paraMap);
+
+	// 비밀번호찾기 시 사용자가 존재하는지 확인하기
+	String pwFind(Map<String, String> paraMap);
+
+	// 비밀번호찾기 - 비밀번호 변경
+	int pwUpdate(Map<String, String> paraMap);
 	
 }
