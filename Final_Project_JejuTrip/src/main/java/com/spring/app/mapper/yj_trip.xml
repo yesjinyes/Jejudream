@@ -7,10 +7,19 @@
 메퍼가 바뀌면 무조건  WAS를 껐다 켜야한다!!!!!!!!! -->
 <mapper namespace="yj_trip">
 
+
 	<!-- 맛집 카테고리 띄우기 -->
 	<select id="categoryList" resultType="String">
 		select distinct food_category
 		from tbl_food_store
+	</select>
+
+
+	<!-- 지역 선택  -->
+	<select id="areaList" resultType="String">
+		select distinct local_status
+		from tbl_food_store
+		order by local_status
 	</select>
 
 
@@ -26,7 +35,10 @@
 		<result property="food_main_img" 		column="food_main_img" 		javaType="String" />	
 		<result property="review_division" 		column="review_division" 	javaType="String" />	
 		<result property="food_category" 		column="food_category" 		javaType="String" />	
-	
+
+		<result property="food_category" 		column="food_category" 		javaType="String" />	
+		<result property="food_category" 		column="food_category" 		javaType="String" />	
+		<result property="food_category" 		column="food_category" 		javaType="String" />	
 	</resultMap>
 	<select id="viewFoodstoreList" parameterType="HashMap" resultMap="categoryMap">
 		SELECT food_store_code, local_status, food_name, food_content, food_businesshours, food_mobile
@@ -39,6 +51,12 @@
 			AND food_category IN
 			<foreach collection="arr_category" index="i" open="(" separator="," close=")">
 				'${arr_category[i]}'
+			</foreach>
+		</if>
+		<if test="arr_area != null">
+			AND local_status IN
+			<foreach collection="arr_area" index="i" open="(" separator="," close=")">
+				'${arr_area[i]}'
 			</foreach>
 		</if>
 		ORDER BY food_store_code

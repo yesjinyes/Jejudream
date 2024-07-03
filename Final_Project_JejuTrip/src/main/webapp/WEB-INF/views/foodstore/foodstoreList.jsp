@@ -23,18 +23,11 @@
 <script type="text/javascript" src="<%= ctxPath%>/resources/js/jquery-3.7.1.min.js"></script>
 <script type="text/javascript" src="<%= ctxPath%>/resources/bootstrap-4.6.2-dist/js/bootstrap.bundle.min.js" ></script>
 
-<%-- 직접 만든 JS --%>
-<script type="text/javascript" src="<%= ctxPath%>/resources/js/foodstore/foodstore.js" ></script>
-
 <%-- jQueryUI CSS 및 JS --%>
 <link rel="stylesheet" type="text/css" href="<%= ctxPath%>/resources/jquery-ui-1.13.1.custom/jquery-ui.min.css" />
 <script type="text/javascript" src="<%= ctxPath%>/resources/jquery-ui-1.13.1.custom/jquery-ui.min.js" ></script>
 
 <style type="text/css">
-
-body { 
-  font-family: 'Poppins', sans-serif;
-}
 
 .single-post {
   margin-bottom: 20px;
@@ -62,11 +55,6 @@ body {
   text-decoration: none;
 }
 
-ul#food_category {
-  display: flex;
-  width: 40%;
-}
-
 .foodRecommend,
 .foodRecommend:hover {
   text-decoration-line: none;
@@ -74,7 +62,7 @@ ul#food_category {
 }
 
 .areamap {
-  width: 15%;  
+  width: 18%;  
 }
 
 .imgMainList {
@@ -162,6 +150,51 @@ button#btnSearch {
 			});
 		}
 		
+		////////////////////////////////////////////////////////////////////////
+		
+		// == 지역 체크박스 선택하기 == //
+		$("input:checkbox[name='area']").change(function(e){
+			const arr_area = [];
+			
+			// 체크된 카테고리만 배열에 담기 
+			$("input:checkbox[name='area']:checked").each(function(index, item) {
+				arr_area.push($(item).val());
+			});
+
+			const str_area = arr_area.join();
+			
+			const frm = document.checkboxFrm;
+			frm.str_area.value = str_area; 
+			frm.submit();
+		});
+		
+		// == 지역 체크박스 유지시키기 == //
+		const str_area = "${requestScope.str_area}";
+		
+		if(str_area != "") {
+			const arr_area = str_area.split(",");
+			
+			$("input:checkbox[name='area']").each(function(index, elmt) {
+				for(let i=0; i<arr_area.length; i++) {
+					if($(elmt).val() == arr_area[i]) {
+						$(elmt).prop("checked", true);
+						break;
+					}
+				}// end of for---------------------
+			});
+		}
+		
+		////////////////////////////////////////////////////////////////////////
+
+		// == 오름차순 정렬 == //
+		$("button#btnAsc").click(function() {
+			
+			
+			
+			
+		});// end of $("button#btnAsc").click(function() {})-----------------
+		
+		
 	});// end of $(document).ready(function()})-------------------
 </script>
 
@@ -197,58 +230,20 @@ button#btnSearch {
 	            
 	        <!-- 검색 지역 선택 -->
 	        <div class="row py-3 mt-1 border rounded">
-	          	<div id="tabArea" class="tabArea1 text-center mt-2" style="display: flex; /*align-items: center;*/">
-		            <div class="areaMap" style="display: flex;">
+	          	<div id="tabArea" class="tabArea1 text-center mt-2" style="display: flex;">
+		            <div class="areaMap mr-5" style="display: flex;">
 		            	<h5 class="mt-4" style="width: 20%; margin-left: 3%;">지역 선택</h5>
-		                <div class="areamap mx-2">
-		                    <img src="<%= ctxPath %>/resources/images/areamap_total.png" />
-		                    <div>
-		                        <input id="area01" type="checkbox" class="are_map" value="">
-		                        <br><label for="area01" class="label_chk">전체</label>
-		                    </div>
-		                </div>
-		                <div class="areamap mx-2">
-		                    <img src="<%= ctxPath %>/resources/images/areamap_city.png" />
-		                    <div>
-		                        <input name="area" id="area02" type="checkbox" class="are_map" value="JE">
-		                        <label for="area02" class="label_chk">제주 시내권</label>
-		                    </div>
-		                </div>
-		                <div class="areamap mx-2">
-		                    <img src="<%= ctxPath %>/resources/images/areamap_jeju_east.png" />
-		                    <div>
-		                        <input name="area" id="area03" type="checkbox" class="are_map" value="EA">
-		                        <label for="area03" class="label_chk">제주시 동부</label>
-		                    </div>
-		                </div>
-		                <div class="areamap mx-2">
-		                    <img src="<%= ctxPath %>/resources/images/areamap_jeju_west.png" />
-		                    <div>
-		                        <input name="area" id="area04" type="checkbox" class="are_map" value="WE">
-		                        <label for="area04" class="label_chk">제주시 서부</label>
-		                    </div>
-		                </div>
-		                <div class="areamap mx-2">
-		                    <img src="<%= ctxPath %>/resources/images/areamap_bt_city.png" />
-		                    <div>
-		                        <input name="area" id="area05" type="checkbox" class="are_map" value="SE">
-		                        <label for="area05" class="label_chk">중문/서귀포</label>
-		                    </div>
-		                </div>
-		                <div class="areamap mx-2">
-		                    <img src="<%= ctxPath %>/resources/images/areamap_bt_east.png" />
-		                    <div>
-		                        <input name="area" id="area06" type="checkbox" class="are_map" value="ES">
-		                        <label for="area06" class="label_chk">서귀포 동부</label>
-		                    </div>
-		                </div>
-		                <div class="areamap mx-2">
-		                    <img src="<%= ctxPath %>/resources/images/areamap_bt_west.png" />
-		                    <div>
-		                        <input name="area" id="area07" type="checkbox" class="are_map" value="WS">
-		                        <label for="area07" class="label_chk">서귀포 서부</label>
-		                    </div>
-		                </div>
+		                
+		                <c:forEach var="areaList" items="${requestScope.areaList}" varStatus="status">
+			                <div class="areamap">
+			                    <div>
+			                        <input name="area" id="${status.index}" type="checkbox" class="are_map" value="${areaList}">
+				                    <img src="<%= ctxPath %>/resources/images/areamap_jeju_east.png" />
+			                        <label for="${status.index}" class="label_chk mt-2">${areaList}</label>
+			                    </div>
+			                </div>
+		                </c:forEach>
+		                <input type="hidden" name="str_area" />
 		            </div>
 		        </div>
 	        </div>	
@@ -258,7 +253,7 @@ button#btnSearch {
       	<div class="row mt-5">
 	       <div class="sort-filter main" style="display: flex; justify-content: space-between; width: 100%">
 	            <div style="width: 50%;">
-					<button type="button" onclick="" class="sort active">인기순</button>
+					<button type="button" id="btnLike" class="sort active">인기순</button>
 					<button type="button" id="btnAsc" class="sort">오름차순</button>
 					<button type="button" id="btnDesc" class="sort">내림차순</button>
 	            </div>
@@ -297,6 +292,7 @@ button#btnSearch {
 						    </div>
 						</div>
 					</c:forEach>
+					<input type="text" name="foodstoreList" value="${requestScope.foodstoreList}" />
 				</div>
 				
 				<!-- 맛집 랜덤 추천 -->

@@ -26,6 +26,14 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 	}
 	
 	
+	// == 지역 선택 == //
+	@Override
+	public List<String> areaList() {
+		List<String> areaList = sqlsession.selectList("yj_trip.areaList");
+		return areaList;
+	}
+	
+	
 	// == 맛집 리스트 페이지 보이기 == //
 	@Override
 	public List<FoodstoreVO> viewFoodstoreList(Map<String, Object> map) {
@@ -40,6 +48,9 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 		List<FoodstoreVO> randomRecommend = sqlsession.selectList("yj_trip.randomRecommend", paraMap);
 		return randomRecommend;
 	}
+
+
+	
 
 
 	

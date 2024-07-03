@@ -34,9 +34,11 @@ public class Yj_TripController {
 	// == 맛집 리스트 페이지 보이기  == //
 	@GetMapping("/foodstoreList.trip")
 	public ModelAndView foodstoreList(ModelAndView mav, HttpServletRequest request, FoodstoreVO foodstorevo,
-									  @RequestParam(defaultValue="") String str_category) {
+									  @RequestParam(defaultValue="") String str_category,
+									  @RequestParam(defaultValue="") String str_area) {
 		
-		List<String> categoryList = service.categoryList(); // 상단 카테고리 띄우기
+		List<String> categoryList = service.categoryList(); // 상단 맛집 카테고리
+		List<String> areaList = service.areaList(); // 지역 선택
 		
 		Map<String, String> paraMap = new HashMap<>();
 		paraMap.put("food_main_img", foodstorevo.getFood_main_img());
@@ -49,11 +51,19 @@ public class Yj_TripController {
 			map.put("arr_category", arr_category);
 			mav.addObject("str_category", str_category);
 		}
+		
+		if(!"".equals(str_area)) {
+			String[] arr_area = str_area.split("\\,");
+			map.put("arr_area", arr_area);
+			mav.addObject("str_area", str_area);
+		}
 			
-		List<FoodstoreVO> foodstoreList = service.viewFoodstoreList(map); // 맛집 리스트 띄우기
+		List<FoodstoreVO> foodstoreList = service.viewFoodstoreList(map); // 맛집 리스트
 		List<FoodstoreVO> randomRecommend = service.randomRecommend(paraMap); // 맛집 랜덤 추천
 	
-		mav.addObject("categoryList", categoryList); // 
+		mav.addObject("categoryList", categoryList);
+		mav.addObject("areaList", areaList);
+		
 		mav.addObject("foodstoreList", foodstoreList);
 		mav.addObject("randomRecommend", randomRecommend);
 		

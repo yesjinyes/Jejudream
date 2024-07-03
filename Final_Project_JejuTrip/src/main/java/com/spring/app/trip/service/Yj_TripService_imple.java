@@ -24,6 +24,14 @@ public class Yj_TripService_imple implements Yj_TripService {
 	}
 	
 	
+	// == 지역 선택 == //
+	@Override
+	public List<String> areaList() {
+		List<String> areaList = dao.areaList();
+		return areaList;
+	}
+
+	
 	// == 맛집 리스트 페이지 보이기 == //
 	@Override
 	public List<FoodstoreVO> viewFoodstoreList(Map<String, Object> map) {
@@ -38,6 +46,8 @@ public class Yj_TripService_imple implements Yj_TripService {
 		List<FoodstoreVO> randomRecommend = dao.randomRecommend(paraMap);
 		return randomRecommend;
 	}
+
+
 
 
 
