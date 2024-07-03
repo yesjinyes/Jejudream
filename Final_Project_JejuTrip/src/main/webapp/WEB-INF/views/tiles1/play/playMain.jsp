@@ -300,23 +300,27 @@ $(document).ready(function(){
 	 $('.list-group-item').on('click', function() {
          category = $(this).find('input').val();
          start = 1; // 카테고리 변경 시, 시작 위치 초기화
+         
          $("div#categoryList").empty(); // 기존 콘텐츠 비우기
          $("span#end").empty(); // 끝 메시지 비우기
          $("span#countHIT").text("0"); // 카운트 초기화
- 		 console.log(category);
-	 	 displayHIT(start,category);
+ 		 //console.log(category);
+	 	 
+         displayHIT(start,category);
      });
     
+	 $("input:text[name='searchWord']").bind("keydown", function(e){
+         if(e.keyCode == 13){ // 엔터
+        	 goSearch();
+    	}
+	});
+	 
     
     //===스크롤 이벤트 발생시키기 시작 ===//
     $(window).scroll(function(){
 
-        if($(window).scrollTop() == $(document).height() - $(window).height() ){
+    	if( $(window).scrollTop() + 1 >= $(document).height() - $(window).height() ) {
         
-            // 만약에 위의 값대로 잘 안되면 아래의 것을 하도록 한다.     
-            // if( $(window).scrollTop() + 1 >= $(document).height() - $(window).height() ) {    
-        
-            //alert("기존 문서내용을 끝까지 봤습니다. 이제 새로운 내용을 읽어다가 보여드리겠습니다.")
             if( $("span#totalHITCount").text() != $("span#countHIT").text() ){
                 start += lenHIT;
                 displayHIT(start,category);
@@ -333,26 +337,50 @@ $(document).ready(function(){
             displayHIT(start,category);
         }
             }
-        
-      
-	});
 
+    });
+    
+ 	// 지역구분 체크박스
+    const localAllCheckbox = $('input#all_local');
+    const localCheckboxes = $('input[name="local_status"]').not('#all_local');
+	
+    
+    // 전체 체크박스를 체크하면 나머지 체크박스를 해제
+    localAllCheckbox.change(function () {
+        if (localAllCheckbox.is(':checked')) {
+           localCheckboxes.prop('checked', false);
+        }
+    });
+
+    // 나머지 체크박스를 체크하면 전체 체크박스의 상태를 업데이트
+    localCheckboxes.change(function () {
+        const allChecked = localCheckboxes.length === localCheckboxes.filter(':checked').length;
+        localAllCheckbox.prop('checked', allChecked);
+        if (allChecked) {
+           localCheckboxes.prop('checked', false);
+        }
+    });
+    
+
+    
 });//end of $(document).ready(function()	
 		
 let lenHIT = 8;		
 		
 function displayHIT(start,category){
+	
+	
     $.ajax({
 
         url: "<%= ctxPath%>/playMainJSON.trip",
         //type:"get",
-        data:{
-              "start":start,   //"1"  "9"  "17"  "25"  "33"
+        data:{"start":start,   //"1"  "9"  "17"  "25"  "33"
               "len":lenHIT ,
-              "category": category},  // 8    8    8     8     8
+              "category": category
+              },  // 8    8    8     8     8
         dataType:"json",  
         success:function(json){
-        	console.log(JSON.stringify(json));
+        	//console.log(JSON.stringify(json));
         	let v_html = "";
 
         	if(start == "1" && json.length == 0) {
@@ -363,7 +391,7 @@ function displayHIT(start,category){
             else if (json.length > 0) {
             	
             	$.each(json, function(index, item){
-	                console.log("~~~ 확인용 json => ", JSON.stringify(json));
+	                //console.log("~~~ 확인용 json => ", JSON.stringify(json));
 	                v_html += "    <div class='col-md-6' ontouchstart='this.classList.toggle(\"hover\");'>";
 	                v_html += "      <div class='container_card'>";
 	                v_html += "        <div class='front' style='background-image: url(<%= ctxPath %>/resources/images/play/" + item.play_main_img + ")'>";
@@ -394,7 +422,7 @@ function displayHIT(start,category){
 	                v_html += "  </div>";
 	                
                 });
-	            $("div#categoryList").append(v_html)
+	            $("div#categoryList").append(v_html);
 
                 // span#countHIT 에 지금까지 출력된 상품의 개수를 누적해서 기록한다.
                 $("span#countHIT").text( Number($("span#countHIT").text()) + json.length);
@@ -429,6 +457,7 @@ function goTop(){
 
 <body>
 	<div class="container">
+	<form name="searchFrm">
         <div class="row">
             <div class="col-md-3" >
 				<ul class="list-group" style="border-radius: 20px;">
@@ -458,63 +487,63 @@ function goTop(){
             <div class="col-md-9 py-3">
             	<div class="row py-3">
             		<div id="tabArea" class="tabArea1 text-center" style="display: flex; border: solid 0px black; align-items: center;">
-			            <div class="tabTitle pr-3" style="align-self: center; width:15%;">
-			                <span>여행하실 곳을 <br> 선택해주세요.</span>
-			            </div>
-			            <div class="areaMap" style="display: flex;">
-			                <div class="areamap mx-2" style="width: 15%;">
-			                    <img src="<%= ctxPath %>/resources/images/areamap_total.png" />
-			                    <div>
-			                        <input id="area01" type="checkbox" class="are_map" value="">
-			                        <br><label for="area01" class="label_chk">전체</label>
-			                    </div>
-			                </div>
-			                <div class="areamap mx-2" style="width: 15%;">
-			                    <img src="<%= ctxPath %>/resources/images/areamap_city.png" />
-			                    <div>
-			                        <input name="area" id="area02" type="checkbox" class="are_map" value="JE">
-			                        <label for="area02" class="label_chk">제주 시내권</label>
-			                    </div>
-			                </div>
-			                <div class="areamap mx-2" style="width: 15%;">
-			                    <img src="<%= ctxPath %>/resources/images/areamap_jeju_east.png" />
-			                    <div>
-			                        <input name="area" id="area03" type="checkbox" class="are_map" value="EA">
-			                        <label for="area03" class="label_chk">제주시 동부</label>
-			                    </div>
-			                </div>
-			                <div class="areamap mx-2" style="width: 15%;">
-			                    <img src="<%= ctxPath %>/resources/images/areamap_jeju_west.png" />
-			                    <div>
-			                        <input name="area" id="area04" type="checkbox" class="are_map" value="WE">
-			                        <label for="area04" class="label_chk">제주시 서부</label>
-			                    </div>
-			                </div>
-			                <div class="areamap mx-2" style="width: 15%;">
-			                    <img src="<%= ctxPath %>/resources/images/areamap_bt_city.png" />
-			                    <div>
-			                        <input name="area" id="area05" type="checkbox" class="are_map" value="SE">
-			                        <label for="area05" class="label_chk">중문/서귀포</label>
-			                    </div>
-			                </div>
-			                <div class="areamap mx-2" style="width: 15%;">
-			                    <img src="<%= ctxPath %>/resources/images/areamap_bt_east.png" />
-			                    <div>
-			                        <input name="area" id="area06" type="checkbox" class="are_map" value="ES">
-			                        <label for="area06" class="label_chk">서귀포 동부</label>
-			                    </div>
-			                </div>
-			                <div class="areamap mx-2" style="width: 15%;">
-			                    <img src="<%= ctxPath %>/resources/images/areamap_bt_west.png" />
-			                    <div>
-			                        <input name="area" id="area07" type="checkbox" class="are_map" value="WS">
-			                        <label for="area07" class="label_chk">서귀포 서부</label>
-			                    </div>
-			                </div>
-			            </div>
-			        </div>
-            	</div>	
-            	
+                     <div class="tabTitle pr-3" style="align-self: center; width:15%;">
+                         <span>여행하실 곳을 <br> 선택해주세요.</span>
+                     </div>
+                     <div class="areaMap" style="display: flex;">
+                         <div class="areamap mx-2" style="width: 15%;">
+                             <img src="<%= ctxPath %>/resources/images/areamap_total.png" />
+                             <div>
+                                 <input name="local_status" id="all_local" type="checkbox" class="are_map" value="">
+                                 <br><label for="all_local" class="label_chk">전체</label>
+                             </div>
+                         </div>
+                         <div class="areamap mx-2" style="width: 15%;">
+                             <img src="<%= ctxPath %>/resources/images/areamap_city.png" />
+                             <div>
+                                 <input name="local_status" id="area02" type="checkbox" class="are_map" value="제주시 시내">
+                                 <label for="area02" class="label_chk">제주시 시내</label>
+                             </div>
+                         </div>
+                         <div class="areamap mx-2" style="width: 15%;">
+                             <img src="<%= ctxPath %>/resources/images/areamap_jeju_east.png" />
+                             <div>
+                                 <input name="local_status" id="area03" type="checkbox" class="are_map" value="제주시 동부">
+                                 <label for="area03" class="label_chk">제주시 동부</label>
+                             </div>
+                         </div>
+                         <div class="areamap mx-2" style="width: 15%;">
+                             <img src="<%= ctxPath %>/resources/images/areamap_jeju_west.png" />
+                             <div>
+                                 <input name="local_status" id="area04" type="checkbox" class="are_map" value="제주시 서부">
+                                 <label for="area04" class="label_chk">제주시 서부</label>
+                             </div>
+                         </div>
+                         <div class="areamap mx-2" style="width: 15%;">
+                             <img src="<%= ctxPath %>/resources/images/areamap_bt_city.png" />
+                             <div>
+                                 <input name="local_status" id="area05" type="checkbox" class="are_map" value="SE">
+                                 <label for="area05" class="label_chk">서귀포시 시내</label>
+                             </div>
+                         </div>
+                         <div class="areamap mx-2" style="width: 15%;">
+                             <img src="<%= ctxPath %>/resources/images/areamap_bt_east.png" />
+                             <div>
+                                 <input name="local_status" id="area06" type="checkbox" class="are_map" value="서귀포시 동부">
+                                 <label for="area06" class="label_chk">서귀포시 동부</label>
+                             </div>
+                         </div>
+                         <div class="areamap mx-2" style="width: 15%;">
+                             <img src="<%= ctxPath %>/resources/images/areamap_bt_west.png" />
+                             <div>
+                                 <input name="local_status" id="area07" type="checkbox" class="are_map" value="서귀포시 서부">
+                                 <label for="area07" class="label_chk">서귀포시 서부</label>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+            	</div>
+            		
             	<div class="row" >
             		
                     <div class="sort-filter main" style="display: flex; justify-content:space-between; width: 98%; margin-bottom: 20px;">
@@ -522,7 +551,7 @@ function goTop(){
 	                        <button type="button" onclick="" class="sort active" value="">추천순</button>
 	                        <button type="button" onclick="" class="sort" value="NEW">최신등록순</button>
 	                        <c:if test="${sessionScope.loginuser.userid == 'admin'}">
-                        		<button type="button" onclick="" class="sort" value="NEW">즐길거리 등록</button>
+                        		<button type="button" onclick="location.href='<%= ctxPath%>/registerPlay.trip'" class="sort" value="NEW">즐길거리 등록</button>
                         	</c:if>
                         </div>
                         <div>
@@ -536,9 +565,7 @@ function goTop(){
 				
 				<div class='wrapper'>
 					<div class='cols' id="categoryList"></div>
-				
-				
-					<div>
+				<div>
 				        <p class="text-center"><%--가운데정렬 --%>
 				            <span id="end" style="display:block; margin:20px; font-size: 14pt; font-weight: bold; color: red;"><%--더이상보여줄내용이없습니다 들어오는곳 --%></span> 
 				            <span id="totalHITCount">${requestScope.totalHITCount}</span> <%-- 히트상품 전체개수 DB에서 받아옴--%>   
@@ -556,7 +583,7 @@ function goTop(){
                 
 			</div>
 		</div>
-
+		</form>
 	</div><!--end of container  -->
 		
 </body>

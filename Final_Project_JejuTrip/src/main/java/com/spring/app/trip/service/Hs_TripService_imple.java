@@ -37,6 +37,13 @@ public class Hs_TripService_imple implements Hs_TripService {
 		return platList;
 	}
 
+	//즐길거리 등록 
+	@Override
+	public int registerPlayEnd(PlayVO playvo) {
+		int n = dao.registerPlayEnd(playvo);
+		return n;
+	}
+
 
 	
 

@@ -12,6 +12,8 @@ public interface Hs_TripService {
 	List<PlayVO> playList(Map<String, String> paraMap);
 	List<PlayVO> getPlayListByCategory(Map<String, String> paraMap);
 
+	int registerPlayEnd(PlayVO playvo);
+
 	
 
 }
