@@ -259,6 +259,9 @@ REFERENCES tbl_company (companyid) ON DELETE CASCADE;
     add fileSize varchar2(255);  -- 파일크기
     -- Table TBL_LODGING이(가) 변경되었습니다.
     
+    alter table tbl_lodging
+    add status number(1) default 0;
+    
     alter table tbl_room_detail
     add fileName varchar2(255); 
     -- Table TBL_ROOM_DETAIL이(가) 변경되었습니다.
@@ -270,4 +273,42 @@ REFERENCES tbl_company (companyid) ON DELETE CASCADE;
     -- Table TBL_ROOM_DETAIL이(가) 변경되었습니다.
     
     
+    select * from tbl_lodging order by local_status;
+    select * from tbl_room_detail;
+    
+    -- 제주 시내, 제주시 서부, 제주시 동부, 	서귀포시, 서귀포 동부, 	서귀포 서부
+    
+    
+    update tbl_lodging set local_status = '제주시 서부' where lodging_code in (select lodging_code from tbl_lodging where lodging_address like '%' || '애월읍' || '%');
+    update tbl_lodging set local_status = '제주시 서부' where lodging_code in (select lodging_code from tbl_lodging where lodging_address like '%' || '한림읍' || '%');
+    update tbl_lodging set local_status = '제주시 서부' where lodging_code in (select lodging_code from tbl_lodging where lodging_address like '%' || '한경면' || '%');
+    
+    update tbl_lodging set local_status = '제주시 서부' where lodging_code in (select lodging_code from tbl_lodging where lodging_address like '%' || '제주시' || '%' and lodging_address not like '%' || '한경면' || '%' ;
+    
+    update tbl_lodging set local_status = '제주시 동부' where lodging_code in (select lodging_code from tbl_lodging where lodging_address like '%' || '조천읍' || '%');
+    update tbl_lodging set local_status = '제주시 동부' where lodging_code in (select lodging_code from tbl_lodging where lodging_address like '%' || '구좌읍' || '%');
+    update tbl_lodging set local_status = '제주시 동부' where lodging_code in (select lodging_code from tbl_lodging where lodging_address like '%' || '우도면' || '%');
+    
+    update tbl_lodging set local_status = '서귀포시 서부' where lodging_code in (select lodging_code from tbl_lodging where lodging_address like '%' || '안덕면' || '%');
+    update tbl_lodging set local_status = '서귀포시 서부' where lodging_code in (select lodging_code from tbl_lodging where lodging_address like '%' || '대정읍' || '%');
+    
+    update tbl_lodging set local_status = '서귀포시 동부' where lodging_code in (select lodging_code from tbl_lodging where lodging_address like '%' || '남원읍' || '%');
+    update tbl_lodging set local_status = '서귀포시 동부' where lodging_code in (select lodging_code from tbl_lodging where lodging_address like '%' || '표선면' || '%');
+    update tbl_lodging set local_status = '서귀포시 동부' where lodging_code in (select lodging_code from tbl_lodging where lodging_address like '%' || '성산읍' || '%');
+    
+    update tbl_lodging set local_status = '제주시 시내' where lodging_code in (select lodging_code from tbl_lodging where lodging_address like '%' || '제주시' || '%' and local_status is null);
+    update tbl_lodging set local_status = '서귀포시 시내' where lodging_code in (select lodging_code from tbl_lodging where lodging_address like '%' || '서귀포시' || '%' and local_status is null);
+    
+    commit;
+    
+    select * from tbl_lodging order by local_status;
+    update tbl_lodging set lodging_category = '펜션' where lodging_code in (select lodging_code from tbl_lodging where lodging_name like '%' || '펜션' || '%');
+    update tbl_lodging set lodging_category = '리조트' where lodging_code in (select lodging_code from tbl_lodging where lodging_name like '%' || '리조트' || '%');
+    
+    
+    select lodging_name, price, local_status
+    from tbl_lodging L
+    join tbl_room_detail R
+    on L.lodging_code = R.fk_lodging_code
+    group by lodging_name;
     
