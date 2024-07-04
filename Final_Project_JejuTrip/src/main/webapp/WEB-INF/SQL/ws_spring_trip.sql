@@ -16,5 +16,10 @@ select convenient_code, convenient_name
 from tbl_convenient;
 
 select *
+from tbl_lodging_convenient
+where fk_lodging_code = 5339;
+
+select *
 from tbl_lodging
 order by lodging_code desc;
+

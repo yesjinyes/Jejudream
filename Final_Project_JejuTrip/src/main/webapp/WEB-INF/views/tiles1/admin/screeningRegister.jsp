@@ -113,6 +113,14 @@
 				<div class="info_block">
 	                <div>지역구분 : ${lodgingvo.local_status}</div>
 	            </div>
+	            <c:if test="${not empty requestScope.mapList}">
+	            	<div>편의시설</div>
+	            	<c:forEach var="map" items="${requestScope.mapList}" varStatus="status">
+	            		<c:if test="${map.lodging_code == lodgingvo.lodging_code}">
+	            			<div>&nbsp;-&nbsp;${map.convenient_name}</div>
+	            		</c:if>
+	            	</c:forEach>
+	            </c:if>
 				<div class="info_block">
 	                <div>숙소설명 : ${lodgingvo.lodging_content}</div>
 	            </div>

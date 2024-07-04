@@ -112,5 +112,12 @@ public class Ws_TripService_imple implements Ws_TripService {
 		dao.insert_convenient(paraMap);
 		
 	}
+	
+	// === 편의시설 정보를 가져와서 view 페이지에 표출시켜주기위한 List select
+	@Override
+	public List<Map<String, String>> select_convenient_list() {
+		List<Map<String,String>> mapList = dao.select_convenient_list();
+		return mapList;
+	}
 
 }

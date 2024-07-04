@@ -18,5 +18,6 @@ public interface Ws_TripDAO {
 	List<Map<String, String>> select_convenient();// 편의시설 체크박스를 만들기 위해 DB에 있는 편의시설 테이블에서 편의시설 종류를 select 해온다.
 	String getSeq();// insert 를 위해 seq 채번 해오기
 	void insert_convenient(Map<String, String> paraMap);// 숙소정보에 따른 편의시설 정보 insert 해주기
+	List<Map<String, String>> select_convenient_list();//편의시설 정보를 가져와서 view 페이지에 표출시켜주기위한 List select
 
 }

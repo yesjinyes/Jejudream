@@ -257,6 +257,11 @@ public class Ws_TripController {
 			// 관리자가 등록 심사를 할 경우 
 			mav.setViewName("admin/screeningRegister.tiles1");
 			
+			// === 편의시설 정보를 가져와서 view 페이지에 표출시켜주기위한 List select === //
+			List<Map<String,String>> mapList = service.select_convenient_list();
+			
+			mav.addObject("mapList",mapList);
+			
 			String choice_status = request.getParameter("choice_status");
 			if(choice_status == null || choice_status.equals("전체")) {
 				choice_status = "";
