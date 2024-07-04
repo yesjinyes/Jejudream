@@ -282,170 +282,180 @@
 
 
 <script type="text/javascript">
-$(document).ready(function(){
-	
-    let start = 1;  // HIT상품 게시물을 더보기 위하여 "스크롤" 이벤트 대한 초기값 호출하기 
-    let lenHIT = 8; // HIT 상품 "스크롤"을 할 때 보여줄 상품의 개수(단위)크기 
-    let category = '전체';
-    
-    displayHIT(start,category); // 스크롤 초기값
-    
+$(document).ready(function() {
 
-	$(".list-group-item").hover(function(e){
+    let start = 1;    // 게시물을 더보기 위하여 "스크롤" 이벤트 대한 초기값 호출하기
+    let lenHIT = 8;   // "스크롤"을 할 때 보여줄 상품의 개수(단위)크기
+    let category = '전체'; // 카테고리 초기값
+    let str_local = ''; // 지역구분 체크박스 초기값
+
+    displayHIT(start, category, str_local); // 스크롤 초기값
+
+    $(".list-group-item").hover(function(e) {
         $(e.target).addClass("moveColor");
-          }, 
-          function(e){
-           $(e.target).removeClass("moveColor");  
-          });	
-	
-	 $('.list-group-item').on('click', function() {
-         category = $(this).find('input').val();
-         start = 1; // 카테고리 변경 시, 시작 위치 초기화
-         $("div#categoryList").empty(); // 기존 콘텐츠 비우기
-         $("span#end").empty(); // 끝 메시지 비우기
-         $("span#countHIT").text("0"); // 카운트 초기화
- 		 //console.log(category);
-	 	 
-         displayHIT(start,category);
-     });
-    
-	 $("input:text[name='searchWord']").bind("keydown", function(e){
-         if(e.keyCode == 13){ // 엔터
-        	 goSearch();
-    	}
-	});
-	 
-    
-    //===스크롤 이벤트 발생시키기 시작 ===//
-    $(window).scroll(function(){
-
-    	if( $(window).scrollTop() + 1 >= $(document).height() - $(window).height() ) {
-        
-            if( $("span#totalHITCount").text() != $("span#countHIT").text() ){
-                start += lenHIT;
-                displayHIT(start,category);
-            }
-       
-        
-        if($(window).scrollTop() == 0){
-            //다시 처음부터 시작하도록 한다.
-            $("div#categoryList").empty();
-            $("span#end").empty();
-            $("span#countHIT").text("0");
-
-            start=1;
-            displayHIT(start,category);
-        }
-            }
-
+    }, function(e) {
+        $(e.target).removeClass("moveColor");
     });
-    
- 	
-    // 지역구분 체크박스
+
+    $('.list-group-item').on('click', function() {
+        category = $(this).find('input').val();
+        start = 1;                        // 카테고리 변경 시, 시작 위치 초기화
+        $("div#categoryList").empty();    // 기존 콘텐츠 비우기
+        $("span#end").empty();            // 끝 메시지 비우기
+        $("span#countHIT").text("0");     // 카운트 초기화
+
+        displayHIT(start, category, str_local);
+    });
+
+    $("input:text[name='searchWord']").bind("keydown", function(e) {
+        if(e.keyCode == 13){ // 엔터
+            goSearch();
+        }
+    });
+
+    // ===스크롤 이벤트 발생시키기 시작 === //
+    $(window).scroll(function() {
+        if($(window).scrollTop() + 1 >= $(document).height() - $(window).height()) {
+            if($("span#totalHITCount").text() != $("span#countHIT").text()) {
+                start += lenHIT;
+                displayHIT(start, category, str_local);
+            }
+
+            if($(window).scrollTop() == 0) {
+                // 다시 처음부터 시작하도록 한다.
+                $("div#categoryList").empty();
+                $("span#end").empty();
+                $("span#countHIT").text("0");
+
+                start = 1;
+                displayHIT(start, category, str_local);
+            }
+        }
+    });
+
+    // ================================ 지역구분 체크박스 ================================ //
     const localAllCheckbox = $('input#all_local');
     const localCheckboxes = $('input[name="local_status"]').not('#all_local');
-	
-     
-    // 전체 체크박스를 체크하면 나머지 체크박스를 해제
-    localAllCheckbox.change(function () {
-        if (localAllCheckbox.is(':checked')) {
-           localCheckboxes.prop('checked', false);
-         
-        }
-    });
-    console.log("localAllCheckbox",localAllCheckbox);
     
-    // 나머지 체크박스를 체크하면 전체 체크박스의 상태를 업데이트
-    localCheckboxes.change(function () {
+ // 나머지 체크박스를 체크하면 전체 체크박스의 상태를 업데이트
+    localCheckboxes.change(function() {
         const allChecked = localCheckboxes.length === localCheckboxes.filter(':checked').length;
         localAllCheckbox.prop('checked', allChecked);
-        if (allChecked) {
-           localCheckboxes.prop('checked', false);
-          
+        if(allChecked) {
+            localCheckboxes.prop('checked', false);
+            
         }
+        
     });
 
+    // 체크박스 선택시
+    $('input[name="local_status"]').on('click', function() {
+    	
+    	let arr_local = []; // 배열만듦
+        $("input:checkbox[name='local_status']:checked").each(function(index, elmt) {
+        	
+        	arr_local.push($(elmt).val()); // 체크가 되어진것만
+        	
+        });
+        if(localAllCheckbox.is(':checked')||localCheckboxes.length === localCheckboxes.filter(':checked').length){
+    		arr_local = [];
+    		console.log("확인용 arr_local: ", arr_local);
+    	}
+        	
+        str_local = arr_local.join();
+        console.log("확인용 : ", str_local);
 
-    
-});//end of $(document).ready(function()	
+        // 새로 체크박스를 선택했을 때 내용을 초기화하고 다시 로드
+        start = 1;                        // 시작 위치 초기화
+        $("div#categoryList").empty();    // 기존 콘텐츠 비우기
+        $("span#end").empty();            // 끝 메시지 비우기
+        $("span#countHIT").text("0");     // 카운트 초기화
+        
+        
+     // 전체 체크박스를 체크하면 나머지 체크박스를 해제
+        localAllCheckbox.change(function() {
+            if(localAllCheckbox.is(':checked')) {
+                localCheckboxes.prop('checked', false);
+                
+            }
+            str_local ='';
+        });
+
+        
+        displayHIT(start, category, str_local);
+    });
+
+    // ================================ 지역구분 체크박스 ================================ //
+ 
+}); // end of $(document).ready(function()
 		
-let lenHIT = 8;		
 		
-function displayHIT(start,category){
-	
-    
+		
+let lenHIT = 8;
+function displayHIT(start, category, str_local) {
     $.ajax({
+        url: "<%= ctxPath %>/playMainJSON.trip",
+        // type: "get",
+        data: {
+            "start": start,
+            "len": lenHIT,
+            "category": category,
+            "local_status": str_local // str_local 값을 추가
+        },
+        dataType: "json",
+        success: function(json) {
+            // console.log(JSON.stringify(json));
+            let v_html = "";
 
-        url: "<%= ctxPath%>/playMainJSON.trip",
-        //type:"get",
-        data:{"start":start,   //"1"  "9"  "17"  "25"  "33"
-              "len":lenHIT ,
-              "category": category
-             },
-        dataType:"json",  
-        success:function(json){
-        	//console.log(JSON.stringify(json));
-        	let v_html = "";
-
-        	if(start == "1" && json.length == 0) {
+            if(start == "1" && json.length == 0) {
                 v_html = "현재 카테고리 준비중 입니다...";
                 $("div#categoryList").html(v_html);
-            }
-
-            else if (json.length > 0) {
-            	
-            	$.each(json, function(index, item){
-	                //console.log("~~~ 확인용 json => ", JSON.stringify(json));
-	                v_html += "    <div class='col-md-6' ontouchstart='this.classList.toggle(\"hover\");'>";
-	                v_html += "      <div class='container_card'>";
-	                v_html += "        <div class='front' style='background-image: url(<%= ctxPath %>/resources/images/play/" + item.play_main_img + ")'>";
-	                v_html += "          <div class='inner_front'>";
-	                v_html += "            <p style='font-size: 40px;'>" + item.play_name + "</p>";
-	                v_html += "            <span style=' color:#786b94;'>" + item.play_category + "</span>";
-	                v_html += "          </div>";
-	                v_html += "        </div>";
-	                v_html += "        <div class='back'>";
-	                v_html += "          <div class='inner_back'>";
-	                v_html += "            <div>";
-	                v_html += "              <span><img src='<%= ctxPath %>/resources/images/play/rogo.png' style='width: 30px;'> 행사정보</span><br>";
-	                v_html += "              <span class='inner_back_content'>" + item.play_content + "</span>";
-	                v_html += "            </div>";
-	                v_html += "            <br>";
-	                v_html += "            <div>";
-	                v_html += "              <span><img src='<%= ctxPath %>/resources/images/play/rogo.png' style='width: 30px;'> 운영시간 </span><br>";
-	                v_html += "              <span class='open_time'>" + item.play_businesshours + "</span>";
-	                v_html += "            </div>";
-	                v_html += "            <br>";
-	                v_html += "            <div>";
-	                v_html += "              <span><img src='<%= ctxPath %>/resources/images/play/rogo.png' style='width: 30px;'> 오시는길 </span><br>";
-	                v_html += "              <span class='adress'>" + item.play_address + "</span>";
-	                v_html += "            </div>";
-	                v_html += "          </div>";
-	                v_html += "        </div>";
-	                v_html += "      </div>";
-	                v_html += "  </div>";
-	                
+            } else if(json.length > 0) {
+                $.each(json, function(index, item) {
+                    v_html += "    <div class='col-md-6' ontouchstart='this.classList.toggle(\"hover\");'>";
+                    v_html += "      <div class='container_card'>";
+                    v_html += "        <div class='front' style='background-image: url(<%= ctxPath %>/resources/images/play/" + item.play_main_img + ")'>";
+                    v_html += "          <div class='inner_front'>";
+                    v_html += "            <p style='font-size: 40px;'>" + item.play_name + "</p>";
+                    v_html += "            <span style=' color:#786b94;'>" + item.play_category + "</span>";
+                    v_html += "          </div>";
+                    v_html += "        </div>";
+                    v_html += "        <div class='back'>";
+                    v_html += "          <div class='inner_back'>";
+                    v_html += "            <div>";
+                    v_html += "              <span><img src='<%= ctxPath %>/resources/images/play/rogo.png' style='width: 30px;'> 행사정보</span><br>";
+                    v_html += "              <span class='inner_back_content'>" + item.play_content + "</span>";
+                    v_html += "            </div>";
+                    v_html += "            <br>";
+                    v_html += "            <div>";
+                    v_html += "              <span><img src='<%= ctxPath %>/resources/images/play/rogo.png' style='width: 30px;'> 운영시간 </span><br>";
+                    v_html += "              <span class='open_time'>" + item.play_businesshours + "</span>";
+                    v_html += "            </div>";
+                    v_html += "            <br>";
+                    v_html += "            <div>";
+                    v_html += "              <span><img src='<%= ctxPath %>/resources/images/play/rogo.png' style='width: 30px;'> 오시는길 </span><br>";
+                    v_html += "              <span class='adress'>" + item.play_address + "</span>";
+                    v_html += "            </div>";
+                    v_html += "          </div>";
+                    v_html += "        </div>";
+                    v_html += "      </div>";
+                    v_html += "  </div>";
                 });
-	            $("div#categoryList").append(v_html);
+                $("div#categoryList").append(v_html);
 
                 // span#countHIT 에 지금까지 출력된 상품의 개수를 누적해서 기록한다.
-                $("span#countHIT").text( Number($("span#countHIT").text()) + json.length);
+                $("span#countHIT").text(Number($("span#countHIT").text()) + json.length);
 
-
-                 // 스크롤을 계속해서 클릭하여 countHIT 값과 totalHITCount 값이 일치하는 경우
-                 if( $("span#countHIT").text() == $("span#totalHITCount").text() ){
+                // 스크롤을 계속해서 클릭하여 countHIT 값과 totalHITCount 값이 일치하는 경우
+                if($("span#countHIT").text() == $("span#totalHITCount").text()) {
                     $("span#end").html("더이상 조회할 제품이 없습니다.");
                 }
-                
-            }//end of else if (json.length > 0)
-
+            }
         },
-        error: function(request, status, error){
-            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
-         }     
+        error: function(request, status, error) {
+            alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+        }
     });
-
-
 }
 
 function goTop(){
@@ -489,7 +499,6 @@ function goTop(){
             </div>
             
             <div class="col-md-9 py-3">
-            <form name="searchFrm">
             	<div class="row py-3">
             		<div id="tabArea" class="tabArea1 text-center" style="display: flex; border: solid 0px black; align-items: center;">
                      <div class="tabTitle pr-3" style="align-self: center; width:15%;">
@@ -506,7 +515,7 @@ function goTop(){
                          <div class="areamap mx-2" style="width: 15%;">
                              <img src="<%= ctxPath %>/resources/images/areamap_city.png" />
                              <div>
-                                 <input name="local_status" id="area02" type="checkbox" class="are_map" value="제주시 시내">
+                                 <input name="local_status" id="area02" type="checkbox" class="are_map" value="제주 시내">
                                  <label for="area02" class="label_chk">제주시 시내</label>
                              </div>
                          </div>
@@ -548,7 +557,6 @@ function goTop(){
                      </div>
                  </div>
             	</div>
-            	</form>	
             	<div class="row" >
             		
                     <div class="sort-filter main" style="display: flex; justify-content:space-between; width: 98%; margin-bottom: 20px;">

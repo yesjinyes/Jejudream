@@ -9,8 +9,8 @@ public interface Hs_TripDAO {
 	//즐길거리 List
 	List<PlayVO> playList();
 
-	List<PlayVO> playList(Map<String, String> paraMap);
-	List<PlayVO> getPlayListByCategory(Map<String, String> paraMap);
+	List<PlayVO> playList(Map<String, Object> paraMap);
+	List<PlayVO> getPlayListByCategory(Map<String, Object> paraMap);
 
 	int registerPlayEnd(PlayVO playvo);
 

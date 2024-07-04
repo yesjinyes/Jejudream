@@ -51,9 +51,9 @@ public class Hs_TripController {
 		}
 		
 		
-		@GetMapping("edit_profile.trip")
+		@GetMapping("editProfile.trip")
 		public String edit_profile(HttpServletRequest request) {
-			return "mypage/edit_profile.tiles1"; 
+			return "mypage/editProfile.tiles1"; 
 			// /WEB-INF/views/mypage/edit_profile.jsp 파일 생성
 		}
 		
@@ -237,14 +237,21 @@ public class Hs_TripController {
 		    //--------------스크롤 페이징----------------------//
 
 		    String category = request.getParameter("category");
+		    String local_status = request.getParameter("local_status");
 		  
 		    System.out.println(category);
+		    System.out.println(local_status);
 		    
-		    Map<String, String> paraMap = new HashMap<>();
+		    Map<String, Object> paraMap = new HashMap<>();
 		    paraMap.put("start", start); // "1"  "9"  "17"  "25"  "33"
 		    paraMap.put("end", end); // end => start + len - 1; 
 		    paraMap.put("category", category); 
+		    paraMap.put("local_status", local_status); 
 		    
+		    if(!"".equals(local_status)) {
+				String[] arr_local_status = local_status.split("\\,"); // in 절을 사용하기 위해서는 배열로 만든 후 넘겨줘야한다
+				paraMap.put("arr_local_status",arr_local_status);
+			} 
 		    
 			List<PlayVO> playList;
 			
