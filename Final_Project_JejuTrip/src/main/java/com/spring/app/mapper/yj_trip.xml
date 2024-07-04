@@ -59,7 +59,15 @@
 				'${arr_area[i]}'
 			</foreach>
 		</if>
-		ORDER BY food_store_code
+		<if test="orderValue_asc != null">
+			ORDER BY ${orderType} ${orderValue_asc}
+		</if>
+		<if test="orderValue_desc != null">
+			ORDER BY ${orderType} ${orderValue_desc}
+		</if>
+		<if test="orderType == null">
+			ORDER BY food_store_code
+		</if>
 	</select>
 	
 	
