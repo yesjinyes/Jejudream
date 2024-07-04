@@ -1,5 +1,6 @@
 package com.spring.app.trip.model;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -78,5 +79,36 @@ public class Ws_TripDAO_imple implements Ws_TripDAO {
 		int total_count = sqlsession.selectOne("ws_trip.getTotalCount",choice_status);
 		return total_count;
 	}// end of public int getTotalCount(String choice_status) {
+	
+	// 편의시설 체크박스를 만들기 위해 DB에 있는 편의시설 테이블에서 편의시설 종류를 select 해온다.
+	@Override
+	public List<Map<String, String>> select_convenient() {
+		List<Map<String,String>> mapList = sqlsession.selectList("ws_trip.select_convenient");
+		return mapList;
+	}
+
+	// insert 하기위해 seq 채번해오기
+	@Override
+	public String getSeq() {
+		String seq = sqlsession.selectOne("ws_trip.getSeq");
+		return seq;
+	}
+	
+	// 숙소정보에 따른 편의시설 정보 insert 해주기
+	@Override
+	public void insert_convenient(Map<String, String> paraMap) {
+		String str_convenient = paraMap.get("str_convenient");
+		String[] arr_convenient = str_convenient.split(",");
+		String seq = paraMap.get("seq");
+		paraMap = new HashMap<>();
+		paraMap.put("seq",seq);
+		for(int i=0; i<arr_convenient.length; i++) {
+			
+			String convenient_code = arr_convenient[i];
+			paraMap.put("convenient_code", convenient_code);
+			sqlsession.insert("ws_trip.insert_convenient",paraMap);
+		}
+		
+	}
 
 }

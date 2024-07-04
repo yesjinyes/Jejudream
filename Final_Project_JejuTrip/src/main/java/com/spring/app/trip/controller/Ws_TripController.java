@@ -83,6 +83,7 @@ public class Ws_TripController {
 		
 	}
 	
+	// === 기업이 숙소 등록을 하기위한 웹 페이지로 이동 === // 
 	@GetMapping("/registerHotel.trip")
 	public ModelAndView registerHotel(ModelAndView mav, HttpServletRequest request) {
 		HttpSession session = request.getSession();
@@ -90,6 +91,10 @@ public class Ws_TripController {
 		
 		if(loginCompanyuser != null && request.getParameter("companyid").equalsIgnoreCase(loginCompanyuser.getCompanyid())) {
 			// 로그인 한 회사가 자기 회사의 업체를 등록하는 경우
+			
+			List<Map<String,String>> mapList = service.select_convenient();// 편의시설 체크박스를 만들기 위해 DB에 있는 편의시설 테이블에서 편의시설 종류를 select 해온다.
+			
+			mav.addObject("mapList",mapList); // select 해온 편의시설 목록을 view 페이지로 넘겨준다.
 			mav.setViewName("company/registerHotel.tiles1");
 		}
 		else {
@@ -106,9 +111,10 @@ public class Ws_TripController {
 		
 	}
 	
+	// === 기업이 숙소 등록을 신청했을때 해당 숙소정보를 DB에 insert === // 
 	@ResponseBody
 	@PostMapping("/registerHotelEnd.trip")
-	public ModelAndView registerHotelEnd(ModelAndView mav,LodgingVO lodgingvo, MultipartHttpServletRequest mrequest) {
+	public ModelAndView registerHotelEnd(ModelAndView mav,LodgingVO lodgingvo, MultipartHttpServletRequest mrequest, HttpServletRequest request) {
 		
 		// =========== !!! 첨부파일 업로드 시작 !!! ============ // 
 		MultipartFile attach = lodgingvo.getAttach();
@@ -130,7 +136,7 @@ public class Ws_TripController {
 			// System.out.println("~~~ 확인용 webapp 의 절대경로 => " + root); 
 			// ~~~ 확인용 webapp 의 절대경로 => C:\NCS\workspace_spring_framework\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\board\
 			
-			String path = root + "resources"+File.separator+"images"+File.pathSeparator+"lodginglist";     
+			String path = root + "resources"+File.separator+"images"+File.separator+"lodginglist";     
 	        System.out.println(path);
 	        /* File.separator 는 운영체제에서 사용하는 폴더와 파일의 구분자이다.
 	                            운영체제가 Windows 이라면 File.separator 는  "\" 이고,
@@ -190,8 +196,10 @@ public class Ws_TripController {
 		}
 		// =========== !!! 첨부파일 업로드 끝 !!! ============ //;
 		
-		// === 데이터 베이스에 등록하려는 숙소 정보 insert 하기 === // 
+		// === insert를 위한 시퀀스 번호 채번해오기 === //
+		String seq = service.getSeq();
 		
+		// === 데이터 베이스에 등록하려는 숙소 정보 insert 하기 === // 
 		String address = mrequest.getParameter("address");
 		String detail_address = mrequest.getParameter("detail_address");
 		
@@ -200,10 +208,21 @@ public class Ws_TripController {
 		HttpSession session = mrequest.getSession();
 		CompanyVO loginuser = (CompanyVO)session.getAttribute("loginCompanyuser");
 		lodgingvo.setFk_companyid(loginuser.getCompanyid());
+		lodgingvo.setLodging_code(seq);
 		
 		int n = service.registerHotelEnd(lodgingvo);
 		
 		if(n == 1) {
+			
+			// === 숙소정보에 따른 편의시설 정보 insert 해주기 === //
+			String str_convenient = request.getParameter("str_convenient");
+			if(!str_convenient.equals("")) {
+				Map<String,String> paraMap = new HashMap<>();
+				paraMap.put("seq",seq);
+				paraMap.put("str_convenient",str_convenient);
+				service.insert_convenient(paraMap);
+			}
+			
 			String message = "숙소 등록 신청이 성공적으로 완료되었습니다.";
 			String loc = "index.trip";
 
@@ -226,9 +245,9 @@ public class Ws_TripController {
 		
 	}
 	
+	// === 관리자가 업체가 신청한 숙소 목록을 조회하고 승인 혹은 반려를 할 수 있는 처리 페이지로 이동 === //
 	@GetMapping("/screeningRegister.trip")
 	public ModelAndView screeningRegister(ModelAndView mav, HttpServletRequest request) {
-		
 		
 		
 		HttpSession session = request.getSession();
@@ -396,7 +415,7 @@ public class Ws_TripController {
 		
 	}
 	
-	
+	// === 관리자가 처리한 결과에 따라 DB에 있는 status 값이 변경되게 만들어준다. === // 
 	@ResponseBody
 	@PostMapping("/screeningRegisterEnd.trip")
 	public String screeningRegisterEnd(HttpServletRequest request) {

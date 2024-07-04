@@ -91,5 +91,26 @@ public class Ws_TripService_imple implements Ws_TripService {
 		int totalCount = dao.getTotalCount(choice_status);
 		return totalCount;
 	}// end of public int getTotalCount(String choice_status) {
+	
+	// 편의시설 체크박스를 만들기 위해 DB에 있는 편의시설 테이블에서 편의시설 종류를 select 해온다.
+	@Override
+	public List<Map<String, String>> select_convenient() {
+		List<Map<String,String>> mapList = dao.select_convenient();
+		return mapList;
+	}
+
+	// === insert 를 위해 seq 채번해오기 === // 
+	@Override
+	public String getSeq() {
+		String seq = dao.getSeq();
+		return seq;
+	}
+	
+	// 숙소정보에 따른 편의시설 정보 insert 해주기
+	@Override
+	public void insert_convenient(Map<String, String> paraMap) {
+		dao.insert_convenient(paraMap);
+		
+	}
 
 }
