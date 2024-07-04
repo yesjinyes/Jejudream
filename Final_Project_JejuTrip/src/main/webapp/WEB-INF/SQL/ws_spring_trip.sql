@@ -11,26 +11,11 @@ create user final_orauser2 identified by gclass default tablespace users;
 grant connect, resource, create view, unlimited tablespace to final_orauser2;
 -- Grant을(를) 성공했습니다.
 
-select *
-from user_tables;
+
+select convenient_code, convenient_name
+from tbl_convenient;
 
 select *
-from user_sequences;
-
-select *
-from tbl_lodging
-order by lodging_code asc;
-
-select lodging_code, local_status, lodging_category, fk_companyid, lodging_name, lodging_tell, lodging_content, lodging_address, main_img, filename, orgfilename, filesize, status, feedback_msg
-from tbl_lodging
-order by lodging_code asc;
+from tbl_lodging_convenient
 
 
-SELECT lodging_code, local_status, lodging_category, fk_companyid, lodging_name, lodging_tell, lodging_content, lodging_address, main_img, filename, orgfilename, filesize, status 
-FROM
-(
-    select rownum AS RNO, lodging_code, local_status, lodging_category, fk_companyid, lodging_name, lodging_tell, lodging_content, lodging_address, main_img, filename, orgfilename, filesize, status
-    from tbl_lodging
-    order by lodging_code asc
-)V
-WHERE RNO between 1 and 3

@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <% String ctxPath = request.getContextPath();%>
 <link rel="stylesheet" href="<%=ctxPath%>/resources/css/company/registerHotel.css"/>
 <script type="text/javascript">
@@ -139,16 +140,23 @@
 	        	return;
 			}
 
-			const main_img = $("input[name='main_img']").val();
+			const main_img = $("input[name='attach']").val();
 			if(main_img==""){
 				alert("대표 이미지를 첨부하세요.");
 	        	return;
 			}
 
 			let queryString = $("form[name='registerFrm']").serialize();
+			const convenient_arr = new Array();
 			
+			$("input[name='fk_convenient_code']:checked").each(function(index,item){
+				convenient_arr.push($(item).val());
+			});
+			const str_convenient = convenient_arr.join();
+
 	        // 숙소 등록 처리하기.
 	        const frm = document.registerFrm;
+			frm.str_convenient.value = str_convenient;
 		   	frm.method = "post";
 		   	frm.action = "<%= ctxPath%>/registerHotelEnd.trip";
 		   	frm.submit();
@@ -191,7 +199,7 @@
             <div class="info_block mt-3">
 				<select name="local_status">
 					<option selected>지역구분</option>
-					<option>제주 시내</option>
+					<option>제주시 시내</option>
 					<option>제주시 서부</option>
 					<option>제주시 동부</option>
 					<option>서귀포시</option>
@@ -211,6 +219,18 @@
 	            <input type="text" name="detail_address" id="detail_address" placeholder="상세주소">
 				<span class="error"></span>
 	        </div>
+	        <div class="mt-3 convenient">
+	        	편의시설
+	        </div>
+        	<c:forEach var="map" items="${requestScope.mapList}" varStatus="status">
+        		<c:if test="${status.index % 6 == 0}">
+        			<div></div>
+        		</c:if>
+        		<label class="checkbox_label" for="fk_convenient_code${status.index}">${map.convenient_name}
+        			<input type="checkbox" class="fk_convenient_code" name="fk_convenient_code" id="fk_convenient_code${status.index}" value="${map.convenient_code}"/>
+				</label>
+			</c:forEach>    
+			<input type="hidden" name="str_convenient"/>
             <div class="info_block mt-3">
                 <textarea name="lodging_content" id="lodging_content" placeholder="숙소 설명"></textarea>
                 <span class="error"></span>
