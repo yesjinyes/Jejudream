@@ -199,7 +199,7 @@
             <div class="info_block mt-3">
 				<select name="local_status">
 					<option selected>지역구분</option>
-					<option>제주 시내</option>
+					<option>제주시 시내</option>
 					<option>제주시 서부</option>
 					<option>제주시 동부</option>
 					<option>서귀포시</option>
