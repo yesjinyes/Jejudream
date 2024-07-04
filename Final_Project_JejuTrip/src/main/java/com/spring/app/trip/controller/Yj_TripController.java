@@ -30,7 +30,6 @@ public class Yj_TripController {
 	public String communityMain() {
 		
 		return "community/communityMain"; 
-		// /WEB-INF/views/community/communityMain.jsp 파일 생성
 	}
 
 	
@@ -79,7 +78,7 @@ public class Yj_TripController {
 		}
 		
 		
-		// 검색 처리 //
+		// 검색하기 //
 		String searchWord = request.getParameter("searchWord");
 		
 		if(searchWord == null) {
@@ -91,6 +90,9 @@ public class Yj_TripController {
 		}
 		map.put("searchWord", searchWord);
 		
+		
+		
+		//////////////////////////////////////////////////////////////////////////////
 		
 		List<FoodstoreVO> foodstoreList = service.viewFoodstoreList(map); // 맛집 리스트
 		List<FoodstoreVO> randomRecommend = service.randomRecommend(paraMap); // 맛집 랜덤 추천

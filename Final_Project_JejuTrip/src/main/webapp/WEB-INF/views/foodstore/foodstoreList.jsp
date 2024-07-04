@@ -125,12 +125,19 @@ button#btnSearch {
     }
 }
 
+span#data {
+	font-size: 17pt;
+	font-weight: bold;
+	margin-top: 10%;
+}
+
+
 </style>
 
 <script type="text/javascript">
 	$(document).ready(function() {
 		
-		// == 카테고리 체크박스 선택하기 == //
+		// == 카테고리 체크박스 선택 == //
 		$("input:checkbox[name='food_category']").change(function(e){
 			const arr_category = [];
 			
@@ -146,7 +153,7 @@ button#btnSearch {
 			frm.submit();
 		});
 		
-		// == 카테고리 체크박스 유지시키기 == //
+		// == 카테고리 체크박스 유지 == //
 		const str_category = "${requestScope.str_category}";
 		
 		if(str_category != "") {
@@ -164,7 +171,7 @@ button#btnSearch {
 		
 		////////////////////////////////////////////////////////////////////////
 		
-		// == 지역 체크박스 선택하기 == //
+		// == 지역 체크박스 선택 == //
 		$("input:checkbox[name='area']").change(function(e){
 			const arr_area = [];
 			
@@ -180,7 +187,7 @@ button#btnSearch {
 			frm.submit();
 		});
 		
-		// == 지역 체크박스 유지시키기 == //
+		// == 지역 체크박스 유지 == //
 		const str_area = "${requestScope.str_area}";
 		
 		if(str_area != "") {
@@ -216,13 +223,14 @@ button#btnSearch {
 		
 		////////////////////////////////////////////////////////////////////////
 	
+		// == 검색하기 == //
 		$("input:text[name='searchWord']").bind("keyup", function(e){
 			if(e.keyCode == 13) {
 				goSearch();
 			}
 		});
 	
-		// 검색시 검색조건 및 검색어 값 유지시키기
+		// 검색시 검색조건 및 검색어 값 유지
 		if(${not empty requestScope.map}) {
 			$("input[name='searchWord']").val("${requestScope.searchWord}");
 		}
@@ -230,12 +238,14 @@ button#btnSearch {
 		
 	});// end of $(document).ready(function()})-------------------
 		
-	// == 검색하기 == //
+	
 	function goSearch() {
 		const frm = document.searchFrm;
 		frm.submit();
 	}// end of function goSearch()--------------------
-		
+	
+	
+	// == '전체보기' 클릭 시 전체 리스트 보이기 == //
 	function viewAll() {
 		const frm = document.foodstoreFrm;
 		frm.submit();
@@ -362,31 +372,42 @@ button#btnSearch {
 			
 				<!-- 맛집 리스트 -->
 				<div class="col-md-8" id="foodstoreList"> 
-					<c:forEach var="foodstoreList" items="${requestScope.foodstoreList}" varStatus="status">	
-						<div class="row">
-					    	<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
-					    		<div class="imgMainList">
-						    		<a href="#">
-						            	<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/${foodstoreList.food_main_img}" alt="..." />
-						        	</a>
-					        	</div>
-						        <div class="contentList">
-						            <div class="mb-3">
-						            	<h3 class="pt-3 title"><a href="#">${foodstoreList.food_name}</a></h3>
-						            	<span>${foodstoreList.food_content}</span>
-						            </div>
-						            <div class="pb-3">
-						                <span style="color:#b5aec4;">${foodstoreList.food_category}</span><br>
-						                <span>${foodstoreList.food_address}</span>
-						            </div>
-						        </div>
-						    </div>
-						</div>
-					</c:forEach>
-					<!-- 오름차순, 내림차순 정렬을 위한 input 태그 -->
-					<input type="hidden" name="orderType">
-					<input type="hidden" name="orderValue_asc">
-					<input type="hidden" name="orderValue_desc">
+
+
+					<c:if test="${not empty requestScope.foodstoreList}">
+						<c:forEach var="foodstoreList" items="${requestScope.foodstoreList}" varStatus="status">	
+							<div class="row">
+						    	<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
+						    		<div class="imgMainList">
+							    		<a href="#">
+							            	<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/${foodstoreList.food_main_img}" alt="..." />
+							        	</a>
+						        	</div>
+							        <div class="contentList">
+							            <div class="mb-3">
+							            	<h3 class="pt-3 title"><a href="#">${foodstoreList.food_name}</a></h3>
+							            	<span>${foodstoreList.food_content}</span>
+							            </div>
+							            <div class="pb-3">
+							                <span style="color:#b5aec4;">${foodstoreList.food_category}</span><br>
+							                <span>${foodstoreList.food_address}</span>
+							            </div>
+							        </div>
+							    </div>
+							</div>
+						</c:forEach>
+						<!-- 오름차순, 내림차순 정렬을 위한 input 태그 -->
+						<input type="hidden" name="orderType">
+						<input type="hidden" name="orderValue_asc">
+						<input type="hidden" name="orderValue_desc">
+					</c:if>		
+					
+					<c:if test="${empty requestScope.foodstoreList}">
+						<hr style="margin-top: -0.1%;">
+						<span id="data">관련 데이터가 없습니다.</span>
+					</c:if>
+					
+					
 				</div>
 				
 				<!-- 맛집 랜덤 추천 -->
