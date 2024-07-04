@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.json.JSONObject;
@@ -443,4 +444,30 @@ public class Ws_TripController {
 		return jsonObj.toString();
 		
 	}
+	
+	
+	// === 관리자가 처리한 결과에 따라 DB에 있는 status 값이 변경되게 만들어준다. === // 
+	@GetMapping("/requiredLogin_goMypage.trip")
+	public ModelAndView requiredLogin_goMypage(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
+		
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
+		
+		if(loginuser != null && loginuser.getUserid().equals("admin")) {
+			// 로그인한 유저가 개인 유저이면서 그 아이디가 관리자 아이디라면
+			mav.setViewName("mypage/admin/mypageMain.tiles1");
+		}
+		else if(loginuser != null && !loginuser.getUserid().equals("admin")) {
+			// 로그인한 유저가 개인 유저이면서 그 아이디가 일반 회원의 아이디라면
+			mav.setViewName("mypage/member/mypageMain.tiles1");
+		}
+		else {
+			// 로그인한 유저가 기업 유저라면
+			mav.setViewName("mypage/company/mypageMain.tiles1");
+		}
+		
+		return mav;
+		
+	}
+	
 }

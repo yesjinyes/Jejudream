@@ -56,7 +56,10 @@ public class CommonAop {
 		
 		HttpSession session = request.getSession();
 		
-		if(session.getAttribute("loginuser") == null) {
+		if(session.getAttribute("loginuser") != null || session.getAttribute("loginCompanyuser") != null) {
+			
+		}
+		else {
 			String message = "로그인 후 이용 가능합니다.";
 			String loc = request.getContextPath() + "/login.trip";
 
