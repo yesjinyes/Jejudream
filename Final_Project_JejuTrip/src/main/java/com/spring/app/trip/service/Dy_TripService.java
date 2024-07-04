@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.web.servlet.ModelAndView;
 
+import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.MemberVO;
 
 public interface Dy_TripService {
@@ -36,4 +37,10 @@ public interface Dy_TripService {
 
 	// 비밀번호찾기 - 비밀번호 변경
 	int pwUpdate(Map<String, String> paraMap);
+
+	// 맛집등록 - 일련번호 채번해오기
+	String getCommonSeq();
+
+	// === 데이터베이스에 맛집 정보 insert 하기 ===
+	int foodstoreRegister(FoodstoreVO fvo);
 }

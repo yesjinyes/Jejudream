@@ -154,6 +154,16 @@ public class Dy_TripDAO_imple implements Dy_TripDAO {
 		
 		return result;
 	}
+
+
+	// 맛집등록 - 일련번호 채번해오기
+	@Override
+	public String getCommonSeq() {
+		
+		String food_store_code = sqlsession.selectOne("dy_trip.getCommonSeq");
+		
+		return food_store_code;
+	}
 	
 
 }

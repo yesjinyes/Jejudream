@@ -149,4 +149,11 @@
 		where companyid = #{id}
 	</update>
 	
+	
+	<!-- 맛집등록 - 일련번호 채번해오기 -->
+	<select id="getCommonSeq" resultType="String">
+		select select SEQ_COMMON.nextval AS food_store_code
+		from dual
+	</select>
+	
 </mapper>

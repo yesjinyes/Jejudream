@@ -1,7 +1,10 @@
 package com.spring.app.trip.controller;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
+import java.util.Calendar;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -9,6 +12,7 @@ import java.util.Random;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +21,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.app.trip.common.AES256;
+import com.spring.app.trip.common.FileManager;
 import com.spring.app.trip.common.GoogleMail;
 import com.spring.app.trip.common.Sha256;
+import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.service.Dy_TripService;
 
@@ -30,6 +38,9 @@ public class Dy_TripController {
 	
 	@Autowired
 	private Dy_TripService service;
+
+	@Autowired
+	private FileManager fileManager;
 	
     @Autowired
     private AES256 aES256;
@@ -182,7 +193,7 @@ public class Dy_TripController {
 	
 	// 비밀번호 찾기 처리
 	@ResponseBody
-	@PostMapping("login/pwFindJSON.trip")
+	@PostMapping(value="login/pwFindJSON.trip", produces="text/plain;charset=UTF-8")
 	public String pwFindJSON(HttpServletRequest request) {
 		
 		String memberType = request.getParameter("memberType");
@@ -384,14 +395,200 @@ public class Dy_TripController {
 	// 맛집 등록 처리하기
 	@ResponseBody
 	@PostMapping("admin/foodstoreRegisterEnd.trip")
-	public String foodstoreRegisterEnd() {
+	public String foodstoreRegisterEnd(FoodstoreVO fvo, MultipartHttpServletRequest mrequest) {
 		
+		String path = "";
+		
+		
+		// =========== !!! 대표이미지 첨부파일 업로드 시작 !!! ============ // 
+		MultipartFile attach = fvo.getAttach();
+	      
+		if( !attach.isEmpty() ) {
+			// attach(첨부파일)가 비어 있지 않으면(즉, 첨부파일이 있는 경우라면) 
+	        
+			// 1. 사용자가 보낸 첨부파일을 WAS(톰캣)의 특정 폴더에 저장해주어야 한다. 
+			HttpSession session = mrequest.getSession(); 
+			String root = session.getServletContext().getRealPath("/"); 
+			System.out.println("~~~ 확인용 webapp 의 절대경로 => " + root); 
+			
+			path = root + "resources" + File.separator + "images" + File.pathSeparator + "foodimg";     
+	        System.out.println(path);
+	        System.out.println("~~~ 확인용 path => " + path);
+	        
+	        
+	        // 2. 파일첨부를 위한 변수의 설정 및 값을 초기화 한 후 파일 올리기  
+	        String newFileName = "";
+	        // WAS(톰캣)의 디스크에 저장될 파일명 
+	         
+	        byte[] bytes = null;
+	        // 첨부파일의 내용물을 담는 것
+	        
+	        long fileSize = 0;
+	        // 첨부파일의 크기 
+	        
+	         
+	        try {
+	            bytes = attach.getBytes();
+	            // 첨부파일의 내용물을 읽어오는 것
+	            
+	            String originalFilename = attach.getOriginalFilename();
+	            
+	            System.out.println("~~~ 확인용 originalFilename => " + originalFilename); 
+	            
+	            newFileName = fileManager.doFileUpload(bytes, originalFilename, path); 
+	            // 첨부되어진 파일을 업로드 하는 것이다.
+	            
+	            //   System.out.println("~~~ 확인용 newFileName => " + newFileName); 
+	            // ~~~ 확인용 newFileName => 20231124113600755016855987700.pdf 
+	                     
+	            
+	            
+	            // 3. FoodstoreVO fvo 에 fileName 값과 orgFilename 값과 fileSize 값을 넣어주기  
+	            fvo.setFileName(newFileName);
+	            // WAS(톰캣)에 저장된 파일명(20231124113600755016855987700.pdf)
+	            
+	            fvo.setOrgFilename(fvo.getFood_name() + "_main.jpg");
+	            // 페이지에서 첨부된 파일(LG_싸이킹청소기_사용설명서.pdf)을 보여줄 때 사용.
+	            // 또한 사용자가 파일을 다운로드 할 때 사용되어지는 파일명으로 사용.
+	            
+	            fileSize = attach.getSize();  // 첨부파일의 크기(단위는 byte임) 
+	            fvo.setFileSize(String.valueOf(fileSize));
+	            
+	         } catch (Exception e) {
+	            e.printStackTrace();
+	         }   
+		}
+		// =========== !!! 대표이미지 첨부파일 업로드 끝 !!! ============ //
+		
+		
+		
+		
+		// ★★★★★ ##### 추가이미지 처리해주기 시작 ##### ★★★★★
+        String attachCount = mrequest.getParameter("attachCount");
+        // attachCount 가 추가이미지 파일의 개수이다.
+        
+        int n_attachCount = 0;
+        
+        if(attachCount != null) {
+        	n_attachCount = Integer.parseInt(attachCount); // 추가 이미지 파일 개수(int)
+        }
+        
+        String[] arr_attachFileName = new String[n_attachCount]; // 추가이미지 파일명들을 저장시키는 용도
+        int idx_attach = 0; // 배열 arr_attachFileName 인덱스
+        
+
+        Collection<Part> parts = mrequest.getParts(); // form태그에 있는 input 태그 포함 첨부파일 전부를 받아오는 것
+        											  // 태그에 name 값이 없어도 받아올 수 있다.
+        
+        for(Part part : parts) {
+        	
+        	if(part.getHeader("Content-Disposition").contains("filename=")) { // form 태그에서 전송되어온 것이 파일일 경우
+        		
+        		String fileName = extractFileName(part.getHeader("Content-Disposition")); // 파일명 구해오기
+        		
+        		if(part.getSize() > 0) {
+        			
+        			// 서버에 저장할 새로운 파일명을 만든다.
+                    // 서버에 저장할 새로운 파일명이 동일한 파일명이 되지 않고 고유한 파일명이 되도록 하기 위해
+                    // 현재의 년월일시분초에 현재 나노세컨즈nanoseconds 값을 결합하여 확장자를 붙여서 만든다.
+        			String newFilename = fileName.substring(0, fileName.lastIndexOf(".")); // 확장자를 뺀 파일명 알아오기
+        			
+        			newFilename += "_" + String.format("%1$tY%1$tm%1$td%1$tH%1$tM%1$tS", Calendar.getInstance()); // 년월일시분초
+        			newFilename += System.nanoTime(); // 나노초
+        			newFilename += fileName.substring(fileName.lastIndexOf(".")); // 확장자 붙이기
+        			
+        			// >>> 파일을 지정된 디스크 경로에 저장해준다. 이것이 바로 파일을 업로드 해주는 작업이다. <<<
+                    part.write(path + File.separator + newFilename);
+                    
+                    // >>> 임시저장된 파일 데이터를 제거해준다. <<<
+                    /* 즉,
+                    @MultipartConfig(location = "C:\\NCS\\workspace_jsp\\MyMVC\\images_temp_upload",
+           				 fileSizeThreshold = 1024) // 이 크기 값(1024 byte)을 넘지 않으면 업로드된 데이터를 메모리상에 가지고 있지만, 이 값을 넘는 경우 위의 location 으로 지정된 경로에 임시파일로 저장된다.  
+           										   // 메모리상에 저장된 파일 데이터는 언젠가 제거된다. 하지만 크기가 큰 파일을 메모리상에 올리게 되면 서버에 부하를 줄 수 있으므로 적당한 크기를 지정해주고, 그 크기 이상의 파일은 임시파일로 저장하는 것이 좋다.    
+           										   // 만약에 기재하지 않으면 기본값은 0 이다. 0 을 쓰면 무조건 임시디렉토리에 저장된다.
+           			와 같이 설정되었다면
+           			C:\\NCS\\workspace_jsp\\MyMVC\\images_temp_upload 폴더에 임시저장된 파일을 제거해야 한다.
+                    */
+                    part.delete();
+                    
+					if (part.getName().startsWith("attach")) {
+						arr_attachFileName[idx_attach++] = newFilename;
+					}
+					
+        		}
+        		
+        	} // end of if(part.getHeader("Content-Disposition").contains("filename=")) ---------------
+        	
+        } // end of for(Part part : parts) ---------------------------------
+        // ★★★★★ ##### 추가이미지 처리해주기 끝 ##### ★★★★★
+        
+        
+        
+        
+		// !!!! 크로스 사이트 스크립트 공격에 대응하는 안전한 코드(시큐어코드) 작성하기 !!!!
+		String food_content = fvo.getFood_content();
+		food_content = food_content.replaceAll("<", "&lt");
+		food_content = food_content.replaceAll(">", "&gt");
+
+        // 입력한 내용에서 엔터는 <br>로 변환하기
+		food_content = food_content.replaceAll("\r\n", "<br>");
+        
+		fvo.setFood_content(food_content);
+		
+		
+		
+		// 일련번호 채번 해오기
+		String food_store_code = service.getCommonSeq();
+		fvo.setFood_store_code(food_store_code);
 		
 		
 		JSONObject jsonObj = new JSONObject();
 		
+		// === 데이터베이스에 맛집 정보 insert 하기 ===
+		int n1 = service.foodstoreRegister(fvo);
+		
+		if(n1 == 1 && n_attachCount > 0) {
+			
+
+        	// int cnt = 0;
+			
+			/* for문 안에서
+        	
+			// int attach_insert_result = service.insert_foodstore_addImg(paraMap);
+			if(attach_insert_result == 1) {
+				cnt++;
+			}
+			
+			*/
+			
+			// if(cnt == n_attachCount) { // cnt가 추가이미지파일 개수와 같은지 (다 insert가 잘 되었는지)
+        	//	jsonObj.put("n", 1);
+			//
+        	// } else {
+			//	jsonObj.put("n", 0);
+			// }
+			
+		} else {
+			jsonObj.put("n", 0);
+		}
 		
 		return jsonObj.toString();
 	}
+	
+	// 파일명만 추출하는 메소드
+	private String extractFileName(String partHeader) {
+		for (String cd : partHeader.split("\\;")) {
+			
+			if (cd.trim().startsWith("filename")) {
+				String fileName = cd.substring(cd.indexOf("=") + 1).trim().replace("\"", "");
+				int index = fileName.lastIndexOf(File.separator);
+				
+				return fileName.substring(index + 1);
+			}
+		}
+		
+		return null;
+	} // end of private String extractFileName(String partHeader) -------------------
+	
 	
 }

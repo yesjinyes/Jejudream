@@ -1,3 +1,4 @@
+@charset "UTF-8";
 
 body {
     font-family: "Noto Sans KR", sans-serif;
@@ -7,6 +8,10 @@ body {
 @media screen and (min-width: 768px) and (max-width: 1024px) {
     div.container {
         width: 70vw !important;
+    }
+
+    #mycontent > div > form > div.info > div:nth-child(9) > label {
+        margin-right: 3% !important;
     }
 }
 
@@ -140,4 +145,27 @@ button#registerBtn {
     border-radius: 8px;
     background-color: #ff5000;
     color: white;
+}
+
+
+/* 추가이미지 CSS */
+span.delete {
+    color: red;
+    font-weight: bold;
+}
+
+span.delete:hover {
+    opacity: 0.6;
+}
+
+span.delete:hover {
+    cursor: pointer;
+}
+
+span.fileName {
+    color: black;
+}
+
+span.fileSize {
+    color: black;
 }

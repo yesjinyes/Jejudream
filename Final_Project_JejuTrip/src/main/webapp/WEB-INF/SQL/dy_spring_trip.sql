@@ -98,6 +98,11 @@ where rno = 1;
 
 
 
+select *
+from user_sequences;
+
+
+
 
 
 

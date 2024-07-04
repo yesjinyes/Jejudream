@@ -272,10 +272,10 @@ $(function() {
 	            */
 	           
 				html += 
-                   "<div class='fileList'>" +
-                       "<span class='delete'>&times;</span>" +
-                       "<span class='fileName'>" + fileName + "</span>" +
-                       "<span class='fileSize'>" + fileSize + " MB</span>" +
+                   "<div class='fileList d-flex justify-content-between'>" +
+                       "<span class='delete mr-2' title='삭제'>&times;</span>" +
+                       "<span class='fileName mr-auto'>" + fileName + "</span>" +
+                       "<span class='fileSize mr-2'>" + fileSize + " MB</span>" +
                        "<span class='clear'></span>" +
                    "</div>";
 				$(this).append(html);
@@ -396,7 +396,15 @@ function goRegister() {
 		var formData = new FormData($("form[name='registerFrm']").get(0));
         
 		const food_businesshours = $("select[name='starthours']").val() + "~" + $("select[name='endhours']").val();
-        const food_address = $("input#address").val() + " " + $("input#detail_address").val();
+        const food_address = "";
+        
+        if($("input#detail_address").val() != "") {
+        	
+        	food_address = $("input#address").val() + " " + $("input#detail_address").val();
+        	
+        } else {
+        	food_address = $("input#address").val();
+        }
         
 		formData.append("food_businesshours", food_businesshours);
 		formData.append("food_address", food_address);
@@ -457,7 +465,7 @@ function goRegister() {
             success: function(json) {
                 if(json.n == 1) {
                     alert("등록이 성공되었습니다.");
-                    location.href = ctxPath + "/index.trip";
+                    location.href = "<%=ctxPath%>/index.trip";
 
                 } else {
                     alert("등록에 실패했습니다.");
@@ -622,7 +630,7 @@ function goRegister() {
         </div>
 
         <div style="text-align: center; margin-bottom: 13%;">
-            <button type="button" class="btn" id="registerBtn" onclick="goRegister('<%=ctxPath%>')">등록하기</button>
+            <button type="button" class="btn" id="registerBtn" onclick="goRegister()">등록하기</button>
         </div>
 
     </form>

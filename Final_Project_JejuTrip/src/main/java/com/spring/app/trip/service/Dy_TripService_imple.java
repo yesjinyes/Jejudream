@@ -335,5 +335,15 @@ public class Dy_TripService_imple implements Dy_TripService {
 	}
 
 
+	// 맛집등록 - 일련번호 채번해오기
+	@Override
+	public String getCommonSeq() {
+		
+		String food_store_code = dao.getCommonSeq();
+		
+		return food_store_code;
+	}
+
+
 
 }

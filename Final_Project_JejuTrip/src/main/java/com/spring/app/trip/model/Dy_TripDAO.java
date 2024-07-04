@@ -45,5 +45,8 @@ public interface Dy_TripDAO {
 
 	// 비밀번호찾기 - 비밀번호 변경
 	int pwUpdate(Map<String, String> paraMap);
+
+	// 맛집등록 - 일련번호 채번해오기
+	String getCommonSeq();
 	
 }
