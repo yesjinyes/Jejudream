@@ -35,10 +35,6 @@
 		<result property="food_main_img" 		column="food_main_img" 		javaType="String" />	
 		<result property="review_division" 		column="review_division" 	javaType="String" />	
 		<result property="food_category" 		column="food_category" 		javaType="String" />	
-
-		<result property="food_category" 		column="food_category" 		javaType="String" />	
-		<result property="food_category" 		column="food_category" 		javaType="String" />	
-		<result property="food_category" 		column="food_category" 		javaType="String" />	
 	</resultMap>
 	<select id="viewFoodstoreList" parameterType="HashMap" resultMap="categoryMap">
 		SELECT food_store_code, local_status, food_name, food_content, food_businesshours, food_mobile
@@ -47,6 +43,9 @@
 			 , food_category
 		FROM tbl_food_store
 		WHERE 1=1
+		<if test="searchWord != ''">
+			and lower(food_name) like '%'||lower(#{searchWord})||'%'
+		</if>
 		<if test="arr_category != null">
 			AND food_category IN
 			<foreach collection="arr_category" index="i" open="(" separator="," close=")">
@@ -59,6 +58,7 @@
 				'${arr_area[i]}'
 			</foreach>
 		</if>
+		<!-- 오름차순, 내림차순 -->
 		<if test="orderValue_asc != null">
 			ORDER BY ${orderType} ${orderValue_asc}
 		</if>
@@ -82,7 +82,17 @@
 		]]> 
 	</select>
 	
-	
+	<!-- 검색어 입력시 자동글 완성하기  -->
+<!-- 	<select id="wordSearchShow" parameterType="String" resultType="String">
+		select food_name
+		from tbl_food_store
+		<if test="searchWord != ''">
+			where lower(food_name) like '%'||lower(#{searchWord})||'%'
+		</if>
+		<if test="searchType == 'food_name'">
+			order by food_store_code
+		</if>
+	</select> -->
 
 
 </mapper>

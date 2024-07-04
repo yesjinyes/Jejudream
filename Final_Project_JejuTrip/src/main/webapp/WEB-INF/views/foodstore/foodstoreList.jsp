@@ -98,6 +98,18 @@ button.sort:hover {
   background-color: #ffa880;
 }
 
+button#btnAll {
+  border: #737373;
+  border-radius: 5px;
+  padding: 0.8% 2%;
+  background-color: #e6e6e6;
+}
+
+button#btnAll:hover {
+  background-color: #b3b3b3;
+  font-weight: bold;  
+}
+
 button#btnSearch {
   border: gray;
   border-radius: 5px;
@@ -126,7 +138,7 @@ button#btnSearch {
 			$("input:checkbox[name='food_category']:checked").each(function(index, item) {
 				arr_category.push($(item).val());
 			});
-
+	
 			const str_category = arr_category.join();
 			
 			const frm = document.checkboxFrm;
@@ -160,7 +172,7 @@ button#btnSearch {
 			$("input:checkbox[name='area']:checked").each(function(index, item) {
 				arr_area.push($(item).val());
 			});
-
+	
 			const str_area = arr_area.join();
 			
 			const frm = document.checkboxFrm;
@@ -203,10 +215,32 @@ button#btnSearch {
 		});
 		
 		////////////////////////////////////////////////////////////////////////
-
 	
-
+		$("input:text[name='searchWord']").bind("keyup", function(e){
+			if(e.keyCode == 13) {
+				goSearch();
+			}
+		});
+	
+		// 검색시 검색조건 및 검색어 값 유지시키기
+		if(${not empty requestScope.map}) {
+			$("input[name='searchWord']").val("${requestScope.searchWord}");
+		}
+		
+		
 	});// end of $(document).ready(function()})-------------------
+		
+	// == 검색하기 == //
+	function goSearch() {
+		const frm = document.searchFrm;
+		frm.submit();
+	}// end of function goSearch()--------------------
+		
+	function viewAll() {
+		const frm = document.foodstoreFrm;
+		frm.submit();
+	}// end of function viewAll()-------------------
+	
 </script>
 
 
@@ -255,42 +289,42 @@ button#btnSearch {
 			                </div>
 		                </c:forEach> --%>
 		                
-		                <div class="areamap mx-2">
+		                <div class="areamap mx-1">
 		                    <div>
 		                        <input name="area" id="area02" type="checkbox" class="are_map" value="JE">
 		                    	<img src="<%= ctxPath %>/resources/images/areamap_city.png" />
 		                        <label for="area02" class="label_chk">제주 시내</label>
 		                    </div>
 		                </div>
-		                <div class="areamap mx-2">
+		                <div class="areamap mx-1">
 		                    <div>
 		                        <input name="area" id="area03" type="checkbox" class="are_map" value="EA">
 		                    	<img src="<%= ctxPath %>/resources/images/areamap_jeju_east.png" />
 		                        <label for="area03" class="label_chk">제주시 동부</label>
 		                    </div>
 		                </div>
-		                <div class="areamap mx-2">
+		                <div class="areamap mx-1">
 		                    <div>
 		                        <input name="area" id="area04" type="checkbox" class="are_map" value="WE">
 			                    <img src="<%= ctxPath %>/resources/images/areamap_jeju_west.png" />
 		                        <label for="area04" class="label_chk">제주시 서부</label>
 		                    </div>
 		                </div>
-		                <div class="areamap mx-2">
+		                <div class="areamap mx-1">
 		                    <div>
 		                        <input name="area" id="area05" type="checkbox" class="are_map" value="SE">
 			                    <img src="<%= ctxPath %>/resources/images/areamap_bt_city.png" />
 		                        <label for="area05" class="label_chk">서귀포 시내</label>
 		                    </div>
 		                </div>
-		                <div class="areamap mx-2">
+		                <div class="areamap mx-1">
 		                    <div>
 		                        <input name="area" id="area06" type="checkbox" class="are_map" value="ES">
 			                    <img src="<%= ctxPath %>/resources/images/areamap_bt_east.png" />
 		                        <label for="area06" class="label_chk">서귀포 동부</label>
 		                    </div>
 		                </div>
-		                <div class="areamap mx-2">
+		                <div class="areamap mx-1">
 		                    <div>
 		                        <input name="area" id="area07" type="checkbox" class="are_map" value="WS">
 			                    <img src="<%= ctxPath %>/resources/images/areamap_bt_west.png" />
@@ -307,17 +341,20 @@ button#btnSearch {
       	<div class="row mt-5">
 	       <div class="sort-filter main" style="display: flex; justify-content: space-between; width: 100%">
 	            <div style="width: 50%;">
-					<button type="button" id="btnLike" class="sort active">인기순</button>
+					<button type="button" id="btnAll" class="mr-4" onclick="viewAll()">전체보기</button>
+					<button type="button" id="btnLike" class="sort">인기순</button>
 					<button type="button" id="btnAsc" class="sort">오름차순</button>
 					<button type="button" id="btnDesc" class="sort">내림차순</button>
 	            </div>
-	            <div style="">
-	                <input type="text" id="searchWord" class="" placeholder="맛집 이름으로 검색">
-	                <button type="button" id="btnSearch" title="검색">검색</button>
-	            </div>
-	        </div>
-      	</div>
-            
+	            <form name="searchFrm">
+		            <div style="">
+		                <input type="text" name="searchWord" id="searchWord" class="" placeholder="맛집 이름으로 검색">
+		                <button type="button" id="btnSearch" title="검색" onclick="goSearch()">검색</button>
+		            </div>
+	            </form>
+	        
+            </div>
+        </div>
         <!---------------------------------------------------------------------------------------------->
         <!-- 리스트 시작 -->
 		<form name="foodstoreFrm">

@@ -50,6 +50,14 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 	}
 
 
+	// == 검색어 입력시 자동글 완성하기 == //
+//	@Override
+//	public List<String> wordSearchShow(String searchWord) {
+//		List<String> wordList = sqlsession.selectList("yj_trip.wordSearchShow", searchWord);
+//		return wordList;
+//	}
+
+
 	
 
 

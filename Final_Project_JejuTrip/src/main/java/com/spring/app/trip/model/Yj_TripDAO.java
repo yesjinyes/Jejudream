@@ -19,6 +19,9 @@ public interface Yj_TripDAO {
 	// == 맛집 랜덤 추천 == //
 	List<FoodstoreVO> randomRecommend(Map<String, String> paraMap);
 
+	// == 검색어 입력시 자동글 완성하기 == //
+	//List<String> wordSearchShow(String searchWord);
+
 
 	
 

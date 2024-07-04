@@ -36,7 +36,7 @@ public class Yj_TripController {
 	
 	// == 맛집 리스트 페이지 보이기  == //
 	@GetMapping("/foodstoreList.trip")
-	public ModelAndView foodstoreList(ModelAndView mav, FoodstoreVO foodstorevo,
+	public ModelAndView foodstoreList(ModelAndView mav, HttpServletRequest request, FoodstoreVO foodstorevo,
 									  @RequestParam(defaultValue="") String str_category,
 									  @RequestParam(defaultValue="") String str_area,
 									  @RequestParam(defaultValue="") String orderType, 
@@ -52,36 +52,50 @@ public class Yj_TripController {
 		
 		Map<String, Object> map = new HashMap<>();
 		
+		// 카테고리 체크박스 복수 선택 //
 		if(!"".equals(str_category)) {
 			String[] arr_category = str_category.split("\\,");
 			map.put("arr_category", arr_category);
 			mav.addObject("str_category", str_category);
 		}
 		
+		// 지역 체크박스 복수 선택 //
 		if(!"".equals(str_area)) {
 			String[] arr_area = str_area.split("\\,");
 			map.put("arr_area", arr_area);
 			mav.addObject("str_area", str_area);
 		}
 		
+		// 오름차순 정렬 //
 		if(!"".equals(orderValue_asc)) {
 			map.put("orderType", orderType);
 			map.put("orderValue_asc", orderValue_asc);
 		}
 		
+		// 내림차순 정렬 //
 		if(!"".equals(orderValue_desc)) {
 			map.put("orderType", orderType);
 			map.put("orderValue_desc", orderValue_desc);
 		}
 		
-			
+		
+		// 검색 처리 //
+		String searchWord = request.getParameter("searchWord");
+		
+		if(searchWord == null) {
+			searchWord = "";
+		}
+		
+		if(searchWord != null) {
+			searchWord = searchWord.trim();
+		}
+		map.put("searchWord", searchWord);
+		
+		
 		List<FoodstoreVO> foodstoreList = service.viewFoodstoreList(map); // 맛집 리스트
 		List<FoodstoreVO> randomRecommend = service.randomRecommend(paraMap); // 맛집 랜덤 추천
-	
-	
 		
-		
-		
+		mav.addObject("searchWord", searchWord);
 		mav.addObject("categoryList", categoryList);
 		mav.addObject("areaList", areaList);
 		
@@ -94,44 +108,28 @@ public class Yj_TripController {
 	}
 	
 	
-/* 
-	@ResponseBody
-	@GetMapping("/foodstoreListJSON.trip")
-	public String foodstoreListJSON(FoodstoreVO foodstorevo) {
+	// 검색어 입력시 자동글 완성하기
+/*	@ResponseBody
+	@GetMapping(value="/wordSearchShow.action", produces="text/plain;charset=UTF-8")
+	public String wordSearchShow(HttpServletRequest request) {
 		
-		Map<String, String> paraMap = new HashMap<>();
-		paraMap.put("food_main_img", foodstorevo.getFood_main_img());
-		paraMap.put("food_name", foodstorevo.getFood_name());
+		String searchWord = request.getParameter("searchWord");
 		
-		Map<String, Object> map = new HashMap<>();
+		List<String> wordList = service.wordSearchShow(searchWord);
 		
-		List<FoodstoreVO> foodstoreList = service.viewFoodstoreList(map); // 맛집 리스트
-	
 		JSONArray jsonArr = new JSONArray();
-		
-		for(FoodstoreVO store : foodstoreList) {
-			JSONObject jsonObj = new JSONObject();
-			jsonObj.put("food_store_code", store.getFood_store_code());
-			jsonObj.put("food_category", store.getFood_category());
-			jsonObj.put("food_name", store.getFood_name());
-			jsonObj.put("food_content", store.getFood_content());
-			jsonObj.put("food_main_img", store.getFood_main_img());
-			jsonObj.put("local_status", store.getLocal_status());
-			jsonObj.put("food_address", store.getFood_address());
-			
-			jsonArr.put(jsonObj);
-		}// end of for-------------
-		
-		System.out.println("!!확인용 jsonArr => " + jsonArr.toString());
-		
+
+		if(wordList != null) {
+			for(String word :wordList) {
+				JSONObject jsonObj = new JSONObject();
+				jsonObj.put("word", word);
+				jsonArr.put(jsonObj); //[{},{},..]
+			}// end of for--------
+		}
+
 		return jsonArr.toString();
 	}
-*/	
-	
-	
-	
-	
-	
+*/
 	
 	
 
