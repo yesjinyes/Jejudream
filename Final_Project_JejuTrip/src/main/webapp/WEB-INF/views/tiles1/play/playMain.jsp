@@ -283,13 +283,11 @@
 
 <script type="text/javascript">
 $(document).ready(function() {
-
     let start = 1;    // 게시물을 더보기 위하여 "스크롤" 이벤트 대한 초기값 호출하기
     let lenHIT = 8;   // "스크롤"을 할 때 보여줄 상품의 개수(단위)크기
     let category = '전체'; // 카테고리 초기값
-    let str_local = ''; // 지역구분 체크박스 초기값
 
-    displayHIT(start, category, str_local); // 스크롤 초기값
+    displayHIT(start, category); // 스크롤 초기값
 
     $(".list-group-item").hover(function(e) {
         $(e.target).addClass("moveColor");
@@ -304,7 +302,7 @@ $(document).ready(function() {
         $("span#end").empty();            // 끝 메시지 비우기
         $("span#countHIT").text("0");     // 카운트 초기화
 
-        displayHIT(start, category, str_local);
+        displayHIT(start, category);
     });
 
     $("input:text[name='searchWord']").bind("keydown", function(e) {
@@ -318,7 +316,7 @@ $(document).ready(function() {
         if($(window).scrollTop() + 1 >= $(document).height() - $(window).height()) {
             if($("span#totalHITCount").text() != $("span#countHIT").text()) {
                 start += lenHIT;
-                displayHIT(start, category, str_local);
+                displayHIT(start, category);
             }
 
             if($(window).scrollTop() == 0) {
@@ -328,86 +326,76 @@ $(document).ready(function() {
                 $("span#countHIT").text("0");
 
                 start = 1;
-                displayHIT(start, category, str_local);
+                displayHIT(start, category);
             }
         }
     });
+    // ===스크롤 이벤트 발생시키기 끝 === //
 
     // ================================ 지역구분 체크박스 ================================ //
     const localAllCheckbox = $('input#all_local');
     const localCheckboxes = $('input[name="local_status"]').not('#all_local');
-    
- // 나머지 체크박스를 체크하면 전체 체크박스의 상태를 업데이트
-    localCheckboxes.change(function() {
+
+    // 전체 체크박스를 체크하면 나머지 체크박스를 해제
+    localAllCheckbox.change(function() {
+        if(localAllCheckbox.is(':checked')) {
+            localCheckboxes.prop('checked', false);
+        }
+        updateHiddenInput();
+        displayHIT(start, category);
+    });
+
+    // 나머지 체크박스를 체크하면 전체 체크박스의 상태를 업데이트
+    localCheckboxes.change(function () {
         const allChecked = localCheckboxes.length === localCheckboxes.filter(':checked').length;
         localAllCheckbox.prop('checked', allChecked);
-        if(allChecked) {
+        if (allChecked) {
             localCheckboxes.prop('checked', false);
-            
         }
-        
+        updateHiddenInput();
+        displayHIT(start, category);
     });
-
-    // 체크박스 선택시
+    
     $('input[name="local_status"]').on('click', function() {
-    	
-    	let arr_local = []; // 배열만듦
-        $("input:checkbox[name='local_status']:checked").each(function(index, elmt) {
-        	
-        	arr_local.push($(elmt).val()); // 체크가 되어진것만
-        	
-        });
-        if(localAllCheckbox.is(':checked')||localCheckboxes.length === localCheckboxes.filter(':checked').length){
-    		arr_local = [];
-    		console.log("확인용 arr_local: ", arr_local);
-    	}
-        	
-        str_local = arr_local.join();
-        console.log("확인용 : ", str_local);
-
-        // 새로 체크박스를 선택했을 때 내용을 초기화하고 다시 로드
-        start = 1;                        // 시작 위치 초기화
-        $("div#categoryList").empty();    // 기존 콘텐츠 비우기
-        $("span#end").empty();            // 끝 메시지 비우기
-        $("span#countHIT").text("0");     // 카운트 초기화
-        
-        
-     // 전체 체크박스를 체크하면 나머지 체크박스를 해제
-        localAllCheckbox.change(function() {
-            if(localAllCheckbox.is(':checked')) {
-                localCheckboxes.prop('checked', false);
-                
-            }
-            str_local ='';
-        });
-
-        
-        displayHIT(start, category, str_local);
+        updateHiddenInput();
     });
-
+    
     // ================================ 지역구분 체크박스 ================================ //
- 
-}); // end of $(document).ready(function()
-		
-		
-		
+});
+
+function updateHiddenInput() {
+    const arr_local = [];
+    $("input:checkbox[name='local_status']:checked").each(function(index, elmt) {
+        arr_local.push($(elmt).val());
+    });
+    const str_local = arr_local.join();
+    console.log("str_local", str_local);
+
+    // input 태그에 값넣기
+    $('input[id="local_status_h"]').val(str_local);
+    console.log($('input[id="local_status_h"]').val()); // 설정된 값 확인용
+}
+
 let lenHIT = 8;
-function displayHIT(start, category, str_local) {
-    $.ajax({
+function displayHIT(start, category) {
+	
+	 const localString = $("input[id='local_status_h']").val();
+	 console.log("localString",localString);
+    
+	 $.ajax({
         url: "<%= ctxPath %>/playMainJSON.trip",
-        // type: "get",
         data: {
             "start": start,
             "len": lenHIT,
             "category": category,
-            "local_status": str_local // str_local 값을 추가
+            "localString": localString 
         },
+        type: "get",
         dataType: "json",
         success: function(json) {
-            // console.log(JSON.stringify(json));
             let v_html = "";
 
-            if(start == "1" && json.length == 0) {
+            if(start == 1 && json.length == 0) {
                 v_html = "현재 카테고리 준비중 입니다...";
                 $("div#categoryList").html(v_html);
             } else if(json.length > 0) {
@@ -458,9 +446,8 @@ function displayHIT(start, category, str_local) {
     });
 }
 
-function goTop(){
+function goTop() {
     $(window).scrollTop(0);
-
 }
 
 
@@ -470,134 +457,129 @@ function goTop(){
 </head>
 
 <body>
-	<div class="container">
 	
+    
+    <div class="container">
         <div class="row">
-            <div class="col-md-3" >
-				<ul class="list-group" style="border-radius: 20px;">
-				  	<li class="list-group-item d-flex justify-content-between align-items-center" style="margin-top: 230px;">
-					    <input type="hidden" name="total" value="전체"/>
-					    <label for="total" style="font-weight: bold;">전체</label>
-					    <span class="badge badge-pill" style="background:#ff8000; color:#fff;">14</span>
-				  	</li>
-				  	<li class="list-group-item d-flex justify-content-between align-items-center" >
-					    <input type="hidden" name="tourism" value="관광지" />
-					    <label for="tourism" style="font-weight: bold;">관광지</label>
-					    <span class="badge badge-pill" style="background:#ff8000; color:#fff;">14</span>
-				  	</li>
-				  	<li class="list-group-item d-flex justify-content-between align-items-center">
-					    <input type="hidden" name="showing" value="전시회"/>
-			            <label for="showing" style="font-weight: bold;">전시회</label>
-					    <span class="badge badge-pill" style="background:#ff8000; color:#fff;">2</span>
-				  	</li>
-				  	<li class="list-group-item d-flex justify-content-between align-items-center">
-					    <input type="hidden" name="experience" value="체험"/>
-			            <label for="experience" style="font-weight: bold;">체험</label>
-					    <span class="badge badge-pill" style="background:#ff8000; color:#fff;">1</span>
-				  	</li>
-				</ul>
+            <div class="col-md-3">
+                <ul class="list-group" style="border-radius: 20px;">
+                    <li class="list-group-item d-flex justify-content-between align-items-center" style="margin-top: 230px;">
+                        <input type="hidden" name="total" value="전체"/>
+                        <label for="total" style="font-weight: bold;">전체</label>
+                        <span class="badge badge-pill" style="background:#ff8000; color:#fff;">14</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <input type="hidden" name="tourism" value="관광지"/>
+                        <label for="tourism" style="font-weight: bold;">관광지</label>
+                        <span class="badge badge-pill" style="background:#ff8000; color:#fff;">14</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <input type="hidden" name="showing" value="전시회"/>
+                        <label for="showing" style="font-weight: bold;">전시회</label>
+                        <span class="badge badge-pill" style="background:#ff8000; color:#fff;">2</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <input type="hidden" name="experience" value="체험"/>
+                        <label for="experience" style="font-weight: bold;">체험</label>
+                        <span class="badge badge-pill" style="background:#ff8000; color:#fff;">1</span>
+                    </li>
+                </ul>
             </div>
             
             <div class="col-md-9 py-3">
-            	<div class="row py-3">
-            		<div id="tabArea" class="tabArea1 text-center" style="display: flex; border: solid 0px black; align-items: center;">
-                     <div class="tabTitle pr-3" style="align-self: center; width:15%;">
-                         <span>여행하실 곳을 <br> 선택해주세요.</span>
-                     </div>
-                     <div class="areaMap" style="display: flex;">
-                         <div class="areamap mx-2" style="width: 15%;">
-                             <img src="<%= ctxPath %>/resources/images/areamap_total.png" />
-                             <div>
-                                 <input name="local_status" id="all_local" type="checkbox" class="are_map" value="">
-                                 <br><label for="all_local" class="label_chk">전체</label>
-                             </div>
-                         </div>
-                         <div class="areamap mx-2" style="width: 15%;">
-                             <img src="<%= ctxPath %>/resources/images/areamap_city.png" />
-                             <div>
-                                 <input name="local_status" id="area02" type="checkbox" class="are_map" value="제주 시내">
-                                 <label for="area02" class="label_chk">제주시 시내</label>
-                             </div>
-                         </div>
-                         <div class="areamap mx-2" style="width: 15%;">
-                             <img src="<%= ctxPath %>/resources/images/areamap_jeju_east.png" />
-                             <div>
-                                 <input name="local_status" id="area03" type="checkbox" class="are_map" value="제주시 동부">
-                                 <label for="area03" class="label_chk">제주시 동부</label>
-                             </div>
-                         </div>
-                         <div class="areamap mx-2" style="width: 15%;">
-                             <img src="<%= ctxPath %>/resources/images/areamap_jeju_west.png" />
-                             <div>
-                                 <input name="local_status" id="area04" type="checkbox" class="are_map" value="제주시 서부">
-                                 <label for="area04" class="label_chk">제주시 서부</label>
-                             </div>
-                         </div>
-                         <div class="areamap mx-2" style="width: 15%;">
-                             <img src="<%= ctxPath %>/resources/images/areamap_bt_city.png" />
-                             <div>
-                                 <input name="local_status" id="area05" type="checkbox" class="are_map" value="서귀포시 시내">
-                                 <label for="area05" class="label_chk">서귀포시 시내</label>
-                             </div>
-                         </div>
-                         <div class="areamap mx-2" style="width: 15%;">
-                             <img src="<%= ctxPath %>/resources/images/areamap_bt_east.png" />
-                             <div>
-                                 <input name="local_status" id="area06" type="checkbox" class="are_map" value="서귀포시 동부">
-                                 <label for="area06" class="label_chk">서귀포시 동부</label>
-                             </div>
-                         </div>
-                         <div class="areamap mx-2" style="width: 15%;">
-                             <img src="<%= ctxPath %>/resources/images/areamap_bt_west.png" />
-                             <div>
-                                 <input name="local_status" id="area07" type="checkbox" class="are_map" value="서귀포시 서부">
-                                 <label for="area07" class="label_chk">서귀포시 서부</label>
-                             </div>
-                         </div>
-                     </div>
-                 </div>
-            	</div>
-            	<div class="row" >
-            		
+                <div class="row py-3">
+                    <div id="tabArea" class="tabArea1 text-center" style="display: flex; border: solid 0px black; align-items: center;">
+                        <div class="tabTitle pr-3" style="align-self: center; width:15%;">
+                            <span>여행하실 곳을 <br> 선택해주세요.</span>
+                        </div>
+                        <div class="areaMap" style="display: flex;">
+                            <div class="areamap mx-2" style="width: 15%;">
+                                <img src="<%= ctxPath %>/resources/images/areamap_total.png" />
+                                <div>
+                                    <input name="local_status" id="all_local" type="checkbox" class="are_map" value="">
+                                    <br><label for="all_local" class="label_chk">전체</label>
+                                </div>
+                            </div>
+                            <div class="areamap mx-2" style="width: 15%;">
+                                <img src="<%= ctxPath %>/resources/images/areamap_city.png" />
+                                <div>
+                                    <input name="local_status" id="area02" type="checkbox" class="are_map" value="제주 시내">
+                                    <label for="area02" class="label_chk">제주시 시내</label>
+                                </div>
+                            </div>
+                            <div class="areamap mx-2" style="width: 15%;">
+                                <img src="<%= ctxPath %>/resources/images/areamap_jeju_east.png" />
+                                <div>
+                                    <input name="local_status" id="area03" type="checkbox" class="are_map" value="제주시 동부">
+                                    <label for="area03" class="label_chk">제주시 동부</label>
+                                </div>
+                            </div>
+                            <div class="areamap mx-2" style="width: 15%;">
+                                <img src="<%= ctxPath %>/resources/images/areamap_jeju_west.png" />
+                                <div>
+                                    <input name="local_status" id="area04" type="checkbox" class="are_map" value="제주시 서부">
+                                    <label for="area04" class="label_chk">제주시 서부</label>
+                                </div>
+                            </div>
+                            <div class="areamap mx-2" style="width: 15%;">
+                                <img src="<%= ctxPath %>/resources/images/areamap_bt_city.png" />
+                                <div>
+                                    <input name="local_status" id="area05" type="checkbox" class="are_map" value="서귀포시 시내">
+                                    <label for="area05" class="label_chk">서귀포시 시내</label>
+                                </div>
+                            </div>
+                            <div class="areamap mx-2" style="width: 15%;">
+                                <img src="<%= ctxPath %>/resources/images/areamap_bt_east.png" />
+                                <div>
+                                    <input name="local_status" id="area06" type="checkbox" class="are_map" value="서귀포시 동부">
+                                    <label for="area06" class="label_chk">서귀포시 동부</label>
+                                </div>
+                            </div>
+                            <div class="areamap mx-2" style="width: 15%;">
+                                <img src="<%= ctxPath %>/resources/images/areamap_bt_west.png" />
+                                <div>
+                                    <input name="local_status" id="area07" type="checkbox" class="are_map" value="서귀포시 서부">
+                                    <label for="area07" class="label_chk">서귀포시 서부</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
                     <div class="sort-filter main" style="display: flex; justify-content:space-between; width: 98%; margin-bottom: 20px;">
                         <div>
-	                        <button type="button" onclick="" class="sort active" value="">추천순</button>
-	                        <button type="button" onclick="" class="sort" value="NEW">최신등록순</button>
-	                        <c:if test="${sessionScope.loginuser.userid == 'admin'}">
-                        		<button type="button" onclick="location.href='<%= ctxPath%>/registerPlay.trip'" class="sort" value="NEW">즐길거리 등록</button>
-                        	</c:if>
+                            <button type="button" onclick="" class="sort active" value="">추천순</button>
+                            <button type="button" onclick="" class="sort" value="NEW">최신등록순</button>
+                            <c:if test="${sessionScope.loginuser.userid == 'admin'}">
+                                <button type="button" onclick="location.href='<%= ctxPath%>/registerPlay.trip'" class="sort" value="NEW">즐길거리 등록</button>
+                            </c:if>
                         </div>
                         <div>
                             <input type="text" id="searchWord" class="" placeholder="검색 ">
                             <button type="button" title="검색">검색</button>
                         </div>
                     </div>
-                
-            	</div>
-			   <!------카테고리 [ ajax ]---------------------------------------------------------------------------------------  -->
-				
-				<div class='wrapper'>
-					<div class='cols' id="categoryList"></div>
-				<div>
-				        <p class="text-center"><%--가운데정렬 --%>
-				            <span id="end" style="display:block; margin:20px; font-size: 14pt; font-weight: bold; color: red;"><%--더이상보여줄내용이없습니다 들어오는곳 --%></span> 
-				            <span id="totalHITCount">${requestScope.totalHITCount}</span> <%-- 히트상품 전체개수 DB에서 받아옴--%>   
-				            <span id="countHIT">0</span><%-- 더보기 버튼 누를때마다 8개씩 올라감 8->16->24 ... --%>
-				        </p>
-				    </div>	
-					<div style="display: flex;">
-					    <div style="margin: 20px 0 20px auto;">
-					    	<button class="btn btn-info" onclick="goTop()">맨위로가기</button>
-					    </div>
-				    </div>
-				</div>
-				
-			   <!---------------------------------------------------------------------------------------------  -->
-                
-			</div>
-		</div>
-		
-	</div><!--end of container  -->
-		
+                </div>
+                <div class='wrapper'>
+                    <div class='cols' id="categoryList"></div>
+                    <div>
+                        <p class="text-center">
+                            <span id="end" style="display:block; margin:20px; font-size: 14pt; font-weight: bold; color: red;"></span>
+                            <span id="totalHITCount">${requestScope.totalHITCount}</span>
+                            <span id="countHIT">0</span>
+                        </p>
+                    </div>
+                    <div style="display: flex;">
+                        <div style="margin: 20px 0 20px auto;">
+                            <button class="btn btn-info" onclick="goTop()">맨위로가기</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+		 <form id="local_statusFrm" >
+	        <input type="hidden" name="local_status" id="local_status_h" />
+	    </form>	
+    </div>
 </body>
 </html>
