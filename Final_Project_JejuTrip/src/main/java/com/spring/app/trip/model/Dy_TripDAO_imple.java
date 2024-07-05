@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import com.spring.app.trip.domain.CompanyVO;
+import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.MemberVO;
 
 @Repository
@@ -163,6 +164,26 @@ public class Dy_TripDAO_imple implements Dy_TripDAO {
 		String food_store_code = sqlsession.selectOne("dy_trip.getCommonSeq");
 		
 		return food_store_code;
+	}
+
+
+	// === 데이터베이스에 맛집 정보 insert 하기 ===
+	@Override
+	public int foodstoreRegister(FoodstoreVO fvo) {
+		
+		int n = sqlsession.insert("dy_trip.foodstoreRegister", fvo);
+		
+		return n;
+	}
+
+
+	// tbl_food_add_img 테이블에 추가이미지 파일명 insert 하기
+	@Override
+	public int insert_food_add_img(Map<String, String> paraMap) {
+		
+		int n = sqlsession.insert("dy_trip.insert_food_add_img", paraMap);
+		
+		return n;
 	}
 	
 

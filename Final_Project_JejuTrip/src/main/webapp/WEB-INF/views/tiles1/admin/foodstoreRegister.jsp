@@ -13,6 +13,10 @@ let checkName = false;
 let checkMobile = false;
 let checkContent = false;
 
+let file_arr = []; // 첨부된 파일 정보를 담아둘 배열
+
+let total_fileSize = 0; // 첨부한 파일의 총량을 누적하는 용도
+
 $(function() {
 	
     $("span.error").hide();
@@ -192,7 +196,6 @@ $(function() {
     
     
 	<%-- === jQuery 를 사용하여 드래그앤드롭(DragAndDrop)을 통한 파일 업로드 시작 === --%>
-	let file_arr = []; // 첨부된 파일 정보를 담아둘 배열
 	
 	// == 파일 Drag & Drop 만들기 == //
 	$("div#fileDrop").on("dragenter", function(e) { /* "dragenter" 이벤트는 드롭대상인 박스 안에 Drag 한 파일이 최초로 들어왔을 때 */
@@ -311,7 +314,7 @@ $(function() {
 	});
 	<%-- === jQuery 를 사용하여 드래그앤드롭(DragAndDrop)을 통한 파일 업로드 끝 === --%>
     
-});
+}); // end of $(document).ready(function() {}) ------------------------------
 
 
 // ===== 영업시간 유효성 검사 함수 =====
@@ -396,7 +399,8 @@ function goRegister() {
 		var formData = new FormData($("form[name='registerFrm']").get(0));
         
 		const food_businesshours = $("select[name='starthours']").val() + "~" + $("select[name='endhours']").val();
-        const food_address = "";
+		
+        let food_address = "";
         
         if($("input#detail_address").val() != "") {
         	
@@ -422,14 +426,13 @@ function goRegister() {
 			
 			
 			////////////////////////////////////////
-                  // 첨부한 파일의 총량을 누적하는 용도 
-                  total_fileSize += sum_file_size;
-             	////////////////////////////////////////
-			
-             	
+            // 첨부한 파일의 총량을 누적하는 용도 
+            total_fileSize += sum_file_size;
+         	////////////////////////////////////////
+         		
 			if( sum_file_size >= 10*1024*1024 ) { // 첨부한 파일의 총합의 크기가 10MB 이상 이라면 
 				
-				alert("첨부한 추가이미지 파일의 총합의 크기가 10MB 이상이므로 등록이 불가합니다.");
+				alert("첨부한 추가 이미지 파일의 총합 크기가 10MB를 초과하여 등록할 수 없습니다.");
 				return; // 종료
 				
 			} else { // 첨부한 파일의 총합의 크기가 10MB 미만이라면, formData 속에 첨부파일 넣어주기
@@ -454,6 +457,8 @@ function goRegister() {
 		}
         ///////////////////// 등록 시 이미지 파일 처리 끝 ///////////////////////
         
+        
+        
         // 맛집 등록 처리하기
         $.ajax({
             url: "<%=ctxPath%>/admin/foodstoreRegisterEnd.trip",
@@ -463,7 +468,7 @@ function goRegister() {
             contentType: false,  // 파일 전송 시 설정 ★★★
             dataType: "json",
             success: function(json) {
-                if(json.n == 1) {
+                if(json.result == 1) {
                     alert("등록이 성공되었습니다.");
                     location.href = "<%=ctxPath%>/index.trip";
 
@@ -617,11 +622,11 @@ function goRegister() {
             </div>
             <div class="d-flex justify-content-between mt-3">
             	<label for="food_main_img" class="mt-3 mr-2">대표 이미지</label>
-                <input type="file" name="food_main_img" id="food_main_img" class="ml-4">
+                <input type="file" name="attach" id="food_main_img" class="ml-4">
                 <span class="error"></span>
             </div>
             <div class="d-flex justify-content-between mt-3">
-            	<label for="food_add_img" class="" style="margin-top: 10%;">추가 이미지</label>
+            	<label class="" style="margin-top: 10%;">추가 이미지</label>
 				<div id="fileDrop" class="fileDrop">
 					<span style="font-size: 10pt;">파일을 1개씩 마우스로 끌어 오세요</span>
 				</div>

@@ -3,6 +3,7 @@ package com.spring.app.trip.model;
 import java.util.Map;
 
 import com.spring.app.trip.domain.CompanyVO;
+import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.MemberVO;
 
 public interface Dy_TripDAO {
@@ -48,5 +49,11 @@ public interface Dy_TripDAO {
 
 	// 맛집등록 - 일련번호 채번해오기
 	String getCommonSeq();
+
+	// === 데이터베이스에 맛집 정보 insert 하기 ===
+	int foodstoreRegister(FoodstoreVO fvo);
+
+	// tbl_food_add_img 테이블에 추가이미지 파일명 insert 하기
+	int insert_food_add_img(Map<String, String> paraMap);
 	
 }

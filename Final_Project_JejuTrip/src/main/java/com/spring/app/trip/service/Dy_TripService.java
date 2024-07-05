@@ -43,4 +43,7 @@ public interface Dy_TripService {
 
 	// === 데이터베이스에 맛집 정보 insert 하기 ===
 	int foodstoreRegister(FoodstoreVO fvo);
+
+	// tbl_food_add_img 테이블에 추가이미지 파일명 insert 하기
+	int insert_food_add_img(Map<String, String> paraMap);
 }

@@ -152,8 +152,22 @@
 	
 	<!-- 맛집등록 - 일련번호 채번해오기 -->
 	<select id="getCommonSeq" resultType="String">
-		select select SEQ_COMMON.nextval AS food_store_code
+		select SEQ_COMMON.nextval AS food_store_code
 		from dual
 	</select>
+	
+	
+	<!-- === 데이터베이스에 맛집 정보 insert 하기 === -->
+	<insert id="foodstoreRegister" parameterType="FoodstoreVO">
+		insert into tbl_food_store(food_store_code, food_category, local_status, food_name, food_content, food_businesshours, food_mobile, food_address, food_main_img, filename, orgfilename, filesize)
+		values(#{food_store_code}, #{food_category}, #{local_status}, #{food_name}, #{food_content}, #{food_businesshours}, #{food_mobile}, #{food_address}, #{fileName}, #{fileName}, #{orgFilename}, #{fileSize})
+	</insert>
+	
+	
+	<!-- tbl_food_add_img 테이블에 추가이미지 파일명 insert 하기 -->
+	<insert id="insert_food_add_img" parameterType="HashMap">
+		insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img)
+		values(seq_foodaddimg.nextval, #{fk_food_store_code}, #{food_add_img})
+	</insert>
 	
 </mapper>

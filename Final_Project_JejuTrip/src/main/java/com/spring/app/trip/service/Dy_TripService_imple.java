@@ -14,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.spring.app.trip.common.AES256;
 import com.spring.app.trip.common.Sha256;
 import com.spring.app.trip.domain.CompanyVO;
+import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.model.Dy_TripDAO;
 
@@ -342,6 +343,26 @@ public class Dy_TripService_imple implements Dy_TripService {
 		String food_store_code = dao.getCommonSeq();
 		
 		return food_store_code;
+	}
+
+
+	// === 데이터베이스에 맛집 정보 insert 하기 ===
+	@Override
+	public int foodstoreRegister(FoodstoreVO fvo) {
+		
+		int n = dao.foodstoreRegister(fvo);
+		
+		return n;
+	}
+
+
+	// tbl_food_add_img 테이블에 추가이미지 파일명 insert 하기
+	@Override
+	public int insert_food_add_img(Map<String, String> paraMap) {
+		
+		int n = dao.insert_food_add_img(paraMap);
+		
+		return n;
 	}
 
 
