@@ -14,6 +14,8 @@ public interface Hs_TripService {
 
 	int registerPlayEnd(PlayVO playvo);
 
+	int getPlayTotalCount(Map<String, Object> paraMap);
+
 	
 
 }

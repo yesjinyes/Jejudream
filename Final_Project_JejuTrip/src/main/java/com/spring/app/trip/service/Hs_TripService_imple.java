@@ -45,6 +45,13 @@ public class Hs_TripService_imple implements Hs_TripService {
 	}
 
 
+	@Override
+	public int getPlayTotalCount(Map<String, Object> paraMap) {
+		int n = dao.getPlayTotalCount(paraMap);
+		return n;
+	}
+
+
 	
 
 }

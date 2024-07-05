@@ -282,12 +282,12 @@
 
 
 <script type="text/javascript">
-$(document).ready(function() {
-    let start = 1;    // 게시물을 더보기 위하여 "스크롤" 이벤트 대한 초기값 호출하기
-    let lenHIT = 8;   // "스크롤"을 할 때 보여줄 상품의 개수(단위)크기
-    let category = '전체'; // 카테고리 초기값
 
-    displayHIT(start, category); // 스크롤 초기값
+
+$(document).ready(function() {
+  
+	let currentShowPageNo = 1; // currentShowPageNo 초기값
+    contentPlay(currentShowPageNo); // 페이지 불러오는 함수
 
     $(".list-group-item").hover(function(e) {
         $(e.target).addClass("moveColor");
@@ -295,44 +295,18 @@ $(document).ready(function() {
         $(e.target).removeClass("moveColor");
     });
 
-    $('.list-group-item').on('click', function() {
-        category = $(this).find('input').val();
-        start = 1;                        // 카테고리 변경 시, 시작 위치 초기화
-        $("div#categoryList").empty();    // 기존 콘텐츠 비우기
-        $("span#end").empty();            // 끝 메시지 비우기
-        $("span#countHIT").text("0");     // 카운트 초기화
-
-        displayHIT(start, category);
-    });
-
-    $("input:text[name='searchWord']").bind("keydown", function(e) {
+    
+    
+    
+   /*  $("input:text[name='searchWord']").bind("keydown", function(e) {
         if(e.keyCode == 13){ // 엔터
             goSearch();
         }
-    });
+    }); */
 
-    // ===스크롤 이벤트 발생시키기 시작 === //
-    $(window).scroll(function() {
-        if($(window).scrollTop() + 1 >= $(document).height() - $(window).height()) {
-            if($("span#totalHITCount").text() != $("span#countHIT").text()) {
-                start += lenHIT;
-                displayHIT(start, category);
-            }
-
-            if($(window).scrollTop() == 0) {
-                // 다시 처음부터 시작하도록 한다.
-                $("div#categoryList").empty();
-                $("span#end").empty();
-                $("span#countHIT").text("0");
-
-                start = 1;
-                displayHIT(start, category);
-            }
-        }
-    });
-    // ===스크롤 이벤트 발생시키기 끝 === //
 
     // ================================ 지역구분 체크박스 ================================ //
+    
     const localAllCheckbox = $('input#all_local');
     const localCheckboxes = $('input[name="local_status"]').not('#all_local');
 
@@ -341,8 +315,6 @@ $(document).ready(function() {
         if(localAllCheckbox.is(':checked')) {
             localCheckboxes.prop('checked', false);
         }
-        updateHiddenInput();
-        displayHIT(start, category);
     });
 
     // 나머지 체크박스를 체크하면 전체 체크박스의 상태를 업데이트
@@ -352,54 +324,68 @@ $(document).ready(function() {
         if (allChecked) {
             localCheckboxes.prop('checked', false);
         }
-        updateHiddenInput();
-        displayHIT(start, category);
     });
     
-    $('input[name="local_status"]').on('click', function() {
-        updateHiddenInput();
+    //지역구분 체크박스를 클릭할때 이벤트
+    $('input[name="local_status"]').on('change', function() {
+    	const arr_local = [];
+        $("input:checkbox[name='local_status']:checked").each(function(index, elmt) {
+            arr_local.push($(elmt).val());
+        });
+        const str_local = arr_local.join();
+        console.log("str_local", str_local);
+
+        const frm = document.totalPlayFrm; // frm 으로 제일 아래에 있는 form 가져오고
+        frm.str_local.value = str_local;   // 그 form 안에 있는 str_local 에 str_local값을 넣는다
+        
+        contentPlay(1);
+       
     });
-    
     // ================================ 지역구분 체크박스 ================================ //
-});
-
-function updateHiddenInput() {
-    const arr_local = [];
-    $("input:checkbox[name='local_status']:checked").each(function(index, elmt) {
-        arr_local.push($(elmt).val());
-    });
-    const str_local = arr_local.join();
-    console.log("str_local", str_local);
-
-    // input 태그에 값넣기
-    $('input[id="local_status_h"]').val(str_local);
-    console.log($('input[id="local_status_h"]').val()); // 설정된 값 확인용
-}
-
-let lenHIT = 8;
-function displayHIT(start, category) {
-	
-	 const localString = $("input[id='local_status_h']").val();
-	 console.log("localString",localString);
     
-	 $.ajax({
+  //================================ 카테고리 클릭 이벤트용 시작 ================================//
+    $('.list-group-item').on('click', function() {
+        category = $(this).find('input').val();
+        const frm = document.totalPlayFrm;
+        frm.category.value = category;
+        
+        contentPlay(1);
+       /*  $("div#categoryList").empty(); // 기존 콘텐츠 비우기 */
+        
+    });
+
+    //================================ 카테고리 클릭 이벤트용 끝 ================================//
+    
+    
+    
+    
+    
+    
+    
+});//end of $(document).ready(function()-----------------------------
+
+
+
+//----------------------------------------------------------------------------//
+
+function contentPlay(currentShowPageNo) {
+	
+	
+	$("input:hidden[name='currentShowPageNo']").val(currentShowPageNo);
+    const formData = $("form[name='totalPlayFrm']").serialize(); //totalPlayFrm 폼에 담았던  데이터들을 전체 ~~ 
+    
+    
+    
+    $.ajax({
         url: "<%= ctxPath %>/playMainJSON.trip",
-        data: {
-            "start": start,
-            "len": lenHIT,
-            "category": category,
-            "localString": localString 
-        },
+        data: formData,
         type: "get",
         dataType: "json",
-        success: function(json) {
+        success: function (json) {
             let v_html = "";
 
-            if(start == 1 && json.length == 0) {
-                v_html = "현재 카테고리 준비중 입니다...";
-                $("div#categoryList").html(v_html);
-            } else if(json.length > 0) {
-                $.each(json, function(index, item) {
+            if (json.length > 0) {
+                $.each(json, function (index, item) {
                     v_html += "    <div class='col-md-6' ontouchstart='this.classList.toggle(\"hover\");'>";
                     v_html += "      <div class='container_card'>";
                     v_html += "        <div class='front' style='background-image: url(<%= ctxPath %>/resources/images/play/" + item.play_main_img + ")'>";
@@ -429,22 +415,71 @@ function displayHIT(start, category) {
                     v_html += "      </div>";
                     v_html += "  </div>";
                 });
-                $("div#categoryList").append(v_html);
-
-                // span#countHIT 에 지금까지 출력된 상품의 개수를 누적해서 기록한다.
-                $("span#countHIT").text(Number($("span#countHIT").text()) + json.length);
-
-                // 스크롤을 계속해서 클릭하여 countHIT 값과 totalHITCount 값이 일치하는 경우
-                if($("span#countHIT").text() == $("span#totalHITCount").text()) {
-                    $("span#end").html("더이상 조회할 제품이 없습니다.");
-                }
+                console.log("json[0].sizePerPage" , json[0].sizePerPage);
+	        	console.log("json[0].totalCount" , json[0].totalCount);
+	        	console.log("json[0].currentShowPageNo" , json[0].currentShowPageNo);
+                
+              /*  if( Number(currentShowPageNo) != 1){
+            	   currentShowPageNo =  Number(json[0].currentShowPageNo);
+	        	}  */                
+	            const totalPage = Math.ceil(json[0].totalCount / json[0].sizePerPage);
+	            PageBar(currentShowPageNo, totalPage);
+                
             }
+            else {
+                v_html += "현재 카테고리 준비중 입니다...";
+            }
+            $("div#categoryList").html(v_html);
         },
         error: function(request, status, error) {
             alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
         }
     });
+}//end of function contentPlay(category)--------------------------------
+
+//----------------------------------------------------------------------------//
+
+
+// 페이지바 함수
+function PageBar(currentShowPageNo,totalPage){
+	   
+    const blockSize = 10;
+	let loop = 1;
+	let pageNo = Math.floor((currentShowPageNo - 1)/blockSize) * blockSize + 1;
+	
+	let pageBar_HTML = "<ul style='list-style:none'>";
+	
+	// [맨처음] [이전] 만들기
+	if(pageNo != 1) {
+		pageBar_HTML += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='javascript:contentPlay(1)'>[맨처음]</a></li>";
+		pageBar_HTML += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='javascript:contentPlay("+(pageNo-1)+")'>[이전]</a></li>";
+	}
+	
+	while(!(loop>blockSize || pageNo > totalPage)) {
+		if(pageNo == currentShowPageNo) {
+			pageBar_HTML += "<li style='display:inline-block; width:30px; font-size:12pt; border:solid 1px gray; color:red; padding:2px 4px;'>"+pageNo+"</a></li>";
+		}
+		else {
+			pageBar_HTML += "<li style='display:inline-block; width:30px; font-size:12pt;'><a href='javascript:contentPlay("+pageNo+")'>"+pageNo+"</a></li>";
+		}
+		loop++;
+		pageNo++;
+	}//end of while
+	
+	// [다음] [마지막] 만들기
+	if(pageNo <= totalPage) {
+		pageBar_HTML += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='javascript:contentPlay("+(pageNo+1)+")'>[다음]</a></li>";
+		pageBar_HTML += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='javascript:contentPlay("+totalPage+")'>[마지막]</a></li>";
+	}
+	
+	
+	pageBar_HTML += "</ul>";
+	
+	// 156.댓글 페이지바 출력하기
+	$("div#pageBar").html(pageBar_HTML);
+	
 }
+
 
 function goTop() {
     $(window).scrollTop(0);
@@ -464,7 +499,7 @@ function goTop() {
             <div class="col-md-3">
                 <ul class="list-group" style="border-radius: 20px;">
                     <li class="list-group-item d-flex justify-content-between align-items-center" style="margin-top: 230px;">
-                        <input type="hidden" name="total" value="전체"/>
+                        <input type="hidden" name="total" value=""/>
                         <label for="total" style="font-weight: bold;">전체</label>
                         <span class="badge badge-pill" style="background:#ff8000; color:#fff;">14</span>
                     </li>
@@ -562,13 +597,12 @@ function goTop() {
                 </div>
                 <div class='wrapper'>
                     <div class='cols' id="categoryList"></div>
-                    <div>
-                        <p class="text-center">
-                            <span id="end" style="display:block; margin:20px; font-size: 14pt; font-weight: bold; color: red;"></span>
-                            <span id="totalHITCount">${requestScope.totalHITCount}</span>
-                            <span id="countHIT">0</span>
-                        </p>
-                    </div>
+                    
+                    <div style="display: flex; margin-bottom: 50px;">
+          				<div id="pageBar" style="margin: auto; text-align: center;"></div>
+       				</div>  
+       				
+       				  
                     <div style="display: flex;">
                         <div style="margin: 20px 0 20px auto;">
                             <button class="btn btn-info" onclick="goTop()">맨위로가기</button>
@@ -577,8 +611,10 @@ function goTop() {
                 </div>
             </div>
         </div>
-		 <form id="local_statusFrm" >
-	        <input type="hidden" name="local_status" id="local_status_h" />
+		 <form name="totalPlayFrm" >
+	        <input type="hidden" name="str_local" />  <!--지역구분  -->
+	        <input type="hidden" name="category"/>    <!--전체,관광지,체험,박물관 카테고리  -->
+	        <input type="hidden" name="currentShowPageNo"/>
 	    </form>	
     </div>
 </body>

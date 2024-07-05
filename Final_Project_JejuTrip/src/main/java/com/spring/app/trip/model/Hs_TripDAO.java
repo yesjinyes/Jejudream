@@ -14,6 +14,10 @@ public interface Hs_TripDAO {
 
 	int registerPlayEnd(PlayVO playvo);
 
+	int getPlayTotalCount(Map<String, Object> paraMap);
+
+	
+
 	
 
 }

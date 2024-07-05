@@ -45,5 +45,11 @@ public class Hs_TripDAO_imple implements Hs_TripDAO {
 		return n;
 	}
 
+	@Override
+	public int getPlayTotalCount(Map<String, Object> paraMap) {
+		int totalcount = sqlsession.selectOne("hs_trip.getPlayTotalCount",paraMap);
+		return totalcount;
+	}
+
 
 }
