@@ -29,7 +29,7 @@ public class Yj_TripController {
 	@GetMapping("/communityMain.trip")
 	public String communityMain() {
 		
-		return "community/communityMain"; 
+		return "community/communityMain.tiles1"; 
 	}
 
 	
@@ -104,9 +104,10 @@ public class Yj_TripController {
 		mav.addObject("foodstoreList", foodstoreList);
 		mav.addObject("randomRecommend", randomRecommend);
 		
-		mav.setViewName("foodstore/foodstoreList");
+		mav.setViewName("foodstore/foodstoreList.tiles1");
+	       
+        return mav;
 		
-		return mav;
 	}
 	
 	

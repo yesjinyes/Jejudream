@@ -203,6 +203,13 @@ span#data {
 			});
 		}
 		
+		// == 지역 이미지 체크박스 선택 == //
+		$("img.img_area").click(function(e)) {
+			$(e.target)checked = true;
+		}
+		
+		
+		
 		////////////////////////////////////////////////////////////////////////
 		
 		// == 오름차순 정렬 == //
@@ -301,43 +308,51 @@ span#data {
 		                
 		                <div class="areamap mx-1">
 		                    <div>
-		                        <input name="area" id="area02" type="checkbox" class="are_map" value="JE">
+		                        <input name="area" id="area01" type="checkbox" class="area_map" value="JE">
+		                    	<img src="<%= ctxPath %>/resources/images/areamap_total.png" />
+		                        <label for="area01" class="label_chk">전체</label>
+		                    </div>
+		                </div>
+		                
+		                <div class="areamap mx-1">
+		                    <div>
+		                        <input name="area" id="area02" type="checkbox" class="area_map" value="JE">
 		                    	<img src="<%= ctxPath %>/resources/images/areamap_city.png" />
 		                        <label for="area02" class="label_chk">제주 시내</label>
 		                    </div>
 		                </div>
 		                <div class="areamap mx-1">
 		                    <div>
-		                        <input name="area" id="area03" type="checkbox" class="are_map" value="EA">
-		                    	<img src="<%= ctxPath %>/resources/images/areamap_jeju_east.png" />
+		                        <input name="area" id="area03" type="checkbox" class="area_map" value="EA">
+		                    	<img class="img_area" src="<%= ctxPath %>/resources/images/areamap_jeju_east.png" />
 		                        <label for="area03" class="label_chk">제주시 동부</label>
 		                    </div>
 		                </div>
 		                <div class="areamap mx-1">
 		                    <div>
-		                        <input name="area" id="area04" type="checkbox" class="are_map" value="WE">
-			                    <img src="<%= ctxPath %>/resources/images/areamap_jeju_west.png" />
+		                        <input name="area" id="area04" type="checkbox" class="area_map" value="WE">
+			                    <img class="img_area" src="<%= ctxPath %>/resources/images/areamap_jeju_west.png" />
 		                        <label for="area04" class="label_chk">제주시 서부</label>
 		                    </div>
 		                </div>
 		                <div class="areamap mx-1">
 		                    <div>
-		                        <input name="area" id="area05" type="checkbox" class="are_map" value="SE">
-			                    <img src="<%= ctxPath %>/resources/images/areamap_bt_city.png" />
+		                        <input name="area" id="area05" type="checkbox" class="area_map" value="SE">
+			                    <img class="img_area" src="<%= ctxPath %>/resources/images/areamap_bt_city.png" />
 		                        <label for="area05" class="label_chk">서귀포 시내</label>
 		                    </div>
 		                </div>
 		                <div class="areamap mx-1">
 		                    <div>
-		                        <input name="area" id="area06" type="checkbox" class="are_map" value="ES">
-			                    <img src="<%= ctxPath %>/resources/images/areamap_bt_east.png" />
+		                        <input name="area" id="area06" type="checkbox" class="area_map" value="ES">
+			                    <img class="img_area" src="<%= ctxPath %>/resources/images/areamap_bt_east.png" />
 		                        <label for="area06" class="label_chk">서귀포 동부</label>
 		                    </div>
 		                </div>
 		                <div class="areamap mx-1">
 		                    <div>
-		                        <input name="area" id="area07" type="checkbox" class="are_map" value="WS">
-			                    <img src="<%= ctxPath %>/resources/images/areamap_bt_west.png" />
+		                        <input name="area" id="area07" type="checkbox" class="area_map" value="WS">
+			                    <img class="img_area" src="<%= ctxPath %>/resources/images/areamap_bt_west.png" />
 		                        <label for="area07" class="label_chk">서귀포 서부</label>
 		                    </div>
 		                </div>
