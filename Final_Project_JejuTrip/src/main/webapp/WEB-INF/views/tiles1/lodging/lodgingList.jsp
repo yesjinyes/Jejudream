@@ -379,8 +379,8 @@ $(document).ready(function(){
 		        	
 		        	const totalPage = Math.ceil( Number(jsonData[0].totalCount) / Number(jsonData[0].sizePerPage));
 		        	
-		        	console.log("totalPage ==> ", totalPage);
-		        	console.log("totalPage type==> ", typeof totalPage);
+		        	// console.log("totalPage ==> ", totalPage);
+		        	// console.log("totalPage type==> ", typeof totalPage);
 		        	
 		        	makePageBar(currentShowPageNo, totalPage);
 		        	

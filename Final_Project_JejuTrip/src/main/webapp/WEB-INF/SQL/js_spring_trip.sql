@@ -343,6 +343,7 @@ REFERENCES tbl_company (companyid) ON DELETE CASCADE;
     
     
     select * from tbl_lodging;
+    select * from tbl_
     
     
     
@@ -366,21 +367,16 @@ REFERENCES tbl_company (companyid) ON DELETE CASCADE;
           tbl_lodging_convenient V
           join tbl_convenient A
           on V.fk_convenient_code = A.convenient_code
-          where convenient_name in ('수영장','스파/사우나')
+          where convenient_name in ('주차장 보유', '편의점')
+          group by fk_lodging_code
           )C
           on L.lodging_code = C.fk_lodging_code
           where status = 1 
       )V
       where rno between 1 and 7; 
       
-      
-    5338
-5339
-5337
-5338
-5340
-5339
-    
+
+   
     select count(*)
     from tbl_lodging
     where status = 1 
@@ -390,21 +386,14 @@ REFERENCES tbl_company (companyid) ON DELETE CASCADE;
     
     select * from tbl_convenient; 
     
-    select amenities_name
-    from
-    tbl_stay_amenities V join tbl_amenities A
-    on V.fk_amenities_code = A.amenities_code
-    where fk_stay_code = 1002;
-    
+  
     select * from tbl_lodging_convenient;
     select * from tbl_convenient;
     
+    select * from tbl_lodging order by lodging_code asc;
+    주차장 보유  수영장  바비큐  조식운영  반려동물 허용  편의점 스파/사우나  WIFI  전기차충전소  레스토랑  피트니스센터
+    insert into tbl_lodging_convenient (fk_lodging_code, fk_convenient_code) values ('5157' , (select convenient_code from tbl_convenient where convenient_name = '주차장 보유') );
+    commit;
     
-    select distinct lodging_name
-    from tbl_lodging S join
-    tbl_lodging_convenient  V
-    on S.lodging_code = V.fk_lodging_code
-    join tbl_convenient A
-    on V.fk_convenient_code = A.convenient_code
-    where convenient_name in ('수영장','스파/사우나');
+   
     

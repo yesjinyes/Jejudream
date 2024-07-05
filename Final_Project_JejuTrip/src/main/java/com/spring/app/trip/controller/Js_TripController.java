@@ -52,13 +52,13 @@ public class Js_TripController {
 							  @RequestParam(defaultValue = "") String str_local,
 							  @RequestParam(defaultValue = "") String searchWord,
 							  @RequestParam(defaultValue = "") String currentShowPageNo) {
-       
+		/*
 		System.out.println("~~ 확인용 str_category " + str_category);
 		System.out.println("~~ 확인용 str_convenient " + str_convenient);
 		System.out.println("~~ 확인용 str_local " + str_local);
 		System.out.println("~~ 확인용 searchWord " + searchWord);
 		System.out.println("~~ 확인용 currentShowPageNo " + currentShowPageNo);
-		
+		*/
 		// 한 페이지당 보여줄 숙소 개수
 		int sizePerPage = 7;
 		
@@ -100,8 +100,6 @@ public class Js_TripController {
 			
 		}
 		
-		
-		
 		paraMap.put("str_convenient",str_convenient);
 		paraMap.put("str_local",str_local);
 		paraMap.put("currentShowPageNo",currentShowPageNo);
@@ -116,7 +114,7 @@ public class Js_TripController {
 		
 		JSONArray jsonArr = new JSONArray();
         
-		System.out.println("totalCount : " + totalCount);
+		// System.out.println("totalCount : " + totalCount);
 		
         if(lodgingList != null) {
         // select 되온게 null 이 아닐때 json에 넣어주기	
