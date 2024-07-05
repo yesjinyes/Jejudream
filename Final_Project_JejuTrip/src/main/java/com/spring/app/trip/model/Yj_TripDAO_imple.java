@@ -36,7 +36,7 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 */
 
 	
-	// == 맛집 리스트 페이지 보이기 == //
+	// == 맛집 메인 페이지 보이기 == //
 	@Override
 	public List<FoodstoreVO> viewFoodstoreList(Map<String, Object> map) {
 		List<FoodstoreVO> foodstoreList = sqlsession.selectList("yj_trip.viewFoodstoreList", map);

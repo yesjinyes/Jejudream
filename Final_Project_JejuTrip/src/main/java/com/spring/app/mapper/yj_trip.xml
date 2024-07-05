@@ -8,19 +8,19 @@
 <mapper namespace="yj_trip">
 
 
-	<!-- 맛집 카테고리 띄우기 -->
+	<!-- 맛집 카테고리 띄우기 
 	<select id="categoryList" resultType="String">
 		select distinct food_category
 		from tbl_food_store
 	</select>
 
 
-	<!-- 지역 선택  -->
+	 지역 선택  
 	<select id="areaList" resultType="String">
 		select distinct local_status
 		from tbl_food_store
 		order by local_status
-	</select>
+	</select>-->
 
 
 	<!-- 맛집 리스트 띄우기 -->
@@ -36,29 +36,31 @@
 		<result property="review_division" 		column="review_division" 	javaType="String" />	
 		<result property="food_category" 		column="food_category" 		javaType="String" />	
 	</resultMap>
-	<select id="viewFoodstoreList" parameterType="HashMap" resultMap="categoryMap">
+	<select id="viewFoodstoreList" parameterType="HashMap" resultType="com.spring.app.trip.domain.FoodstoreVO">
 		SELECT food_store_code, local_status, food_name, food_content, food_businesshours, food_mobile
 			 , substr(food_address, 0, instr(food_address, ' ', 1, 2)-1) AS food_address
 			 , food_main_img, review_division
 			 , food_category
 		FROM tbl_food_store
 		WHERE 1=1
-		<if test="searchWord != ''">
-			and lower(food_name) like '%'||lower(#{searchWord})||'%'
-		</if>
+		
+		<!-- 카테고리 체크박스 다중선택 -->
 		<if test="arr_category != null">
 			AND food_category IN
 			<foreach collection="arr_category" index="i" open="(" separator="," close=")">
 				'${arr_category[i]}'
 			</foreach>
 		</if>
+		
+		<!-- 지역 체크박스 다중선택 -->
 		<if test="arr_area != null">
 			AND local_status IN
 			<foreach collection="arr_area" index="i" open="(" separator="," close=")">
 				'${arr_area[i]}'
 			</foreach>
 		</if>
-		<!-- 오름차순, 내림차순 -->
+		
+		<!-- 오름차순, 내림차순 정렬 -->
 		<if test="orderValue_asc != null">
 			ORDER BY ${orderType} ${orderValue_asc}
 		</if>
@@ -67,6 +69,11 @@
 		</if>
 		<if test="orderType == null">
 			ORDER BY food_store_code
+		</if>
+		
+		<!-- 검색 -->
+		<if test="searchWord != ''">
+			and lower(food_name) like '%'||lower(#{searchWord})||'%'
 		</if>
 	</select>
 	
