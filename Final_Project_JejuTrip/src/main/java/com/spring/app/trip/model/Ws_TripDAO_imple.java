@@ -1,5 +1,6 @@
 package com.spring.app.trip.model;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -78,5 +79,64 @@ public class Ws_TripDAO_imple implements Ws_TripDAO {
 		int total_count = sqlsession.selectOne("ws_trip.getTotalCount",choice_status);
 		return total_count;
 	}// end of public int getTotalCount(String choice_status) {
+	
+	// 편의시설 체크박스를 만들기 위해 DB에 있는 편의시설 테이블에서 편의시설 종류를 select 해온다.
+	@Override
+	public List<Map<String, String>> select_convenient() {
+		List<Map<String,String>> mapList = sqlsession.selectList("ws_trip.select_convenient");
+		return mapList;
+	}
+
+	// insert 하기위해 seq 채번해오기
+	@Override
+	public String getSeq() {
+		String seq = sqlsession.selectOne("ws_trip.getSeq");
+		return seq;
+	}
+	
+	// 숙소정보에 따른 편의시설 정보 insert 해주기
+	@Override
+	public void insert_convenient(Map<String, String> paraMap) {
+		String str_convenient = paraMap.get("str_convenient");
+		String[] arr_convenient = str_convenient.split(",");
+		String seq = paraMap.get("seq");
+		paraMap = new HashMap<>();
+		paraMap.put("seq",seq);
+		for(int i=0; i<arr_convenient.length; i++) {
+			
+			String convenient_code = arr_convenient[i];
+			paraMap.put("convenient_code", convenient_code);
+			sqlsession.insert("ws_trip.insert_convenient",paraMap);
+		}
+		
+	}
+	
+	//편의시설 정보를 가져와서 view 페이지에 표출시켜주기위한 List select
+	@Override
+	public List<Map<String, String>> select_convenient_list() {
+		List<Map<String,String>> mapList = sqlsession.selectList("ws_trip.select_convenient_list");
+		return mapList;
+	}
+	
+	// 숙소 테이블에서 해당 업체의 신청건수, 승인건수, 반려 건수를 각각 알아온다.
+	@Override
+	public List<Map<String, String>> select_count_registerHotel(String companyid) {
+		List<Map<String,String>> mapList = sqlsession.selectList("ws_trip.select_count_registerHotel",companyid);
+		return mapList;
+	}
+	
+	// 로그인 한 기업의 신청 목록을 읽어와서 view 페이지에 목록으로 뿌려주기 위한 select
+	@Override
+	public List<LodgingVO> select_loginCompany_lodgingvo(String companyid) {
+		List<LodgingVO> lodgingvo = sqlsession.selectList("ws_trip.select_loginCompany_lodgingvo",companyid);
+		return lodgingvo;
+	}
+	
+	// 업체가 신청한 호텔에 대한 상세 정보를 보여주기위해 DB에서 읽어온다.
+	@Override
+	public LodgingVO selectRegisterHotelJSON(String lodging_code) {
+		LodgingVO lodgingvo = sqlsession.selectOne("ws_trip.selectRegisterHotelJSON", lodging_code);
+		return lodgingvo;
+	}
 
 }

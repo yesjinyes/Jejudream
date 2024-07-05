@@ -1,6 +1,7 @@
 package com.spring.app.trip.controller;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +22,6 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.app.trip.common.FileManager;
-import com.spring.app.trip.domain.CompanyVO;
-import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.domain.PlayVO;
 import com.spring.app.trip.service.Hs_TripService;
@@ -51,9 +50,9 @@ public class Hs_TripController {
 		}
 		
 		
-		@GetMapping("edit_profile.trip")
+		@GetMapping("editProfile.trip")
 		public String edit_profile(HttpServletRequest request) {
-			return "mypage/edit_profile.tiles1"; 
+			return "mypage/editProfile.tiles1"; 
 			// /WEB-INF/views/mypage/edit_profile.jsp 파일 생성
 		}
 		
@@ -225,8 +224,9 @@ public class Hs_TripController {
 		
 		//카테고리별로 데이터 가져오기 JSON
 		@ResponseBody
-		@GetMapping(value = "playMainJSON.trip", produces = "text/plain;charset=UTF-8")
-		public String play_mainJSON( HttpServletRequest request) {
+		@GetMapping(value = "/playMainJSON.trip",produces="text/plain;charset=UTF-8")
+		public String play_mainJSON( HttpServletRequest request,
+									@RequestParam(defaultValue="") String localString) {
 			
 			//--------------스크롤 페이징----------------------//
 			
@@ -237,14 +237,21 @@ public class Hs_TripController {
 		    //--------------스크롤 페이징----------------------//
 
 		    String category = request.getParameter("category");
-		  
-		    System.out.println(category);
+		    String local_status = localString;
 		    
-		    Map<String, String> paraMap = new HashMap<>();
+		    System.out.println(category);
+		    //System.out.println("local_status"+local_status);
+		    
+		    Map<String, Object> paraMap = new HashMap<>();
 		    paraMap.put("start", start); // "1"  "9"  "17"  "25"  "33"
 		    paraMap.put("end", end); // end => start + len - 1; 
 		    paraMap.put("category", category); 
 		    
+		    if(!"".equals(local_status)) {
+				String[] arr_local_status = local_status.trim().split("\\,"); // in 절을 사용하기 위해서는 배열로 만든 후 넘겨줘야한다
+				System.out.println("arr_local_status"+Arrays.toString(arr_local_status));
+				paraMap.put("arr_local_status",arr_local_status);
+			} 
 		    
 			List<PlayVO> playList;
 			

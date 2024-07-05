@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.json.JSONObject;
@@ -83,6 +84,7 @@ public class Ws_TripController {
 		
 	}
 	
+	// === 기업이 숙소 등록을 하기위한 웹 페이지로 이동 === // 
 	@GetMapping("/registerHotel.trip")
 	public ModelAndView registerHotel(ModelAndView mav, HttpServletRequest request) {
 		HttpSession session = request.getSession();
@@ -90,6 +92,10 @@ public class Ws_TripController {
 		
 		if(loginCompanyuser != null && request.getParameter("companyid").equalsIgnoreCase(loginCompanyuser.getCompanyid())) {
 			// 로그인 한 회사가 자기 회사의 업체를 등록하는 경우
+			
+			List<Map<String,String>> mapList = service.select_convenient();// 편의시설 체크박스를 만들기 위해 DB에 있는 편의시설 테이블에서 편의시설 종류를 select 해온다.
+			
+			mav.addObject("mapList",mapList); // select 해온 편의시설 목록을 view 페이지로 넘겨준다.
 			mav.setViewName("company/registerHotel.tiles1");
 		}
 		else {
@@ -106,9 +112,10 @@ public class Ws_TripController {
 		
 	}
 	
+	// === 기업이 숙소 등록을 신청했을때 해당 숙소정보를 DB에 insert === // 
 	@ResponseBody
 	@PostMapping("/registerHotelEnd.trip")
-	public ModelAndView registerHotelEnd(ModelAndView mav,LodgingVO lodgingvo, MultipartHttpServletRequest mrequest) {
+	public ModelAndView registerHotelEnd(ModelAndView mav,LodgingVO lodgingvo, MultipartHttpServletRequest mrequest, HttpServletRequest request) {
 		
 		// =========== !!! 첨부파일 업로드 시작 !!! ============ // 
 		MultipartFile attach = lodgingvo.getAttach();
@@ -130,7 +137,7 @@ public class Ws_TripController {
 			// System.out.println("~~~ 확인용 webapp 의 절대경로 => " + root); 
 			// ~~~ 확인용 webapp 의 절대경로 => C:\NCS\workspace_spring_framework\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\board\
 			
-			String path = root + "resources"+File.separator+"images"+File.pathSeparator+"lodginglist";     
+			String path = root + "resources"+File.separator+"images"+File.separator+"lodginglist";     
 	        System.out.println(path);
 	        /* File.separator 는 운영체제에서 사용하는 폴더와 파일의 구분자이다.
 	                            운영체제가 Windows 이라면 File.separator 는  "\" 이고,
@@ -190,8 +197,10 @@ public class Ws_TripController {
 		}
 		// =========== !!! 첨부파일 업로드 끝 !!! ============ //;
 		
-		// === 데이터 베이스에 등록하려는 숙소 정보 insert 하기 === // 
+		// === insert를 위한 시퀀스 번호 채번해오기 === //
+		String seq = service.getSeq();
 		
+		// === 데이터 베이스에 등록하려는 숙소 정보 insert 하기 === // 
 		String address = mrequest.getParameter("address");
 		String detail_address = mrequest.getParameter("detail_address");
 		
@@ -200,10 +209,21 @@ public class Ws_TripController {
 		HttpSession session = mrequest.getSession();
 		CompanyVO loginuser = (CompanyVO)session.getAttribute("loginCompanyuser");
 		lodgingvo.setFk_companyid(loginuser.getCompanyid());
+		lodgingvo.setLodging_code(seq);
 		
 		int n = service.registerHotelEnd(lodgingvo);
 		
 		if(n == 1) {
+			
+			// === 숙소정보에 따른 편의시설 정보 insert 해주기 === //
+			String str_convenient = request.getParameter("str_convenient");
+			if(!str_convenient.equals("")) {
+				Map<String,String> paraMap = new HashMap<>();
+				paraMap.put("seq",seq);
+				paraMap.put("str_convenient",str_convenient);
+				service.insert_convenient(paraMap);
+			}
+			
 			String message = "숙소 등록 신청이 성공적으로 완료되었습니다.";
 			String loc = "index.trip";
 
@@ -226,9 +246,9 @@ public class Ws_TripController {
 		
 	}
 	
+	// === 관리자가 업체가 신청한 숙소 목록을 조회하고 승인 혹은 반려를 할 수 있는 처리 페이지로 이동 === //
 	@GetMapping("/screeningRegister.trip")
 	public ModelAndView screeningRegister(ModelAndView mav, HttpServletRequest request) {
-		
 		
 		
 		HttpSession session = request.getSession();
@@ -237,6 +257,11 @@ public class Ws_TripController {
 		if(loginuser != null && loginuser.getUserid().equals("admin")) {
 			// 관리자가 등록 심사를 할 경우 
 			mav.setViewName("admin/screeningRegister.tiles1");
+			
+			// === 편의시설 정보를 가져와서 view 페이지에 표출시켜주기위한 List select === //
+			List<Map<String,String>> mapList = service.select_convenient_list();
+			
+			mav.addObject("mapList",mapList);
 			
 			String choice_status = request.getParameter("choice_status");
 			if(choice_status == null || choice_status.equals("전체")) {
@@ -396,7 +421,7 @@ public class Ws_TripController {
 		
 	}
 	
-	
+	// === 관리자가 처리한 결과에 따라 DB에 있는 status 값이 변경되게 만들어준다. === // 
 	@ResponseBody
 	@PostMapping("/screeningRegisterEnd.trip")
 	public String screeningRegisterEnd(HttpServletRequest request) {
@@ -419,4 +444,117 @@ public class Ws_TripController {
 		return jsonObj.toString();
 		
 	}
+	
+	
+	// === 관리자가 처리한 결과에 따라 DB에 있는 status 값이 변경되게 만들어준다. === // 
+	@GetMapping("/requiredLogin_goMypage.trip")
+	public ModelAndView requiredLogin_goMypage(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
+		
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
+		
+		if(loginuser != null && loginuser.getUserid().equals("admin")) {
+			// 로그인한 유저가 개인 유저이면서 그 아이디가 관리자 아이디라면
+			mav.setViewName("mypage/admin/mypageMain.tiles1");
+		}
+		else if(loginuser != null && !loginuser.getUserid().equals("admin")) {
+			// 로그인한 유저가 개인 유저이면서 그 아이디가 일반 회원의 아이디라면
+			mav.setViewName("mypage/member/mypageMain.tiles1");
+		}
+		else {
+			// 로그인한 유저가 기업 유저라면
+			mav.setViewName("mypage/company/mypageMain.tiles1");
+		}
+		
+		return mav;
+		
+	}
+	
+	// === 업체 계정으로 마이페이지에서 숙소등록신청현황버튼을 클릭했을 때 view 페이지로 연결시키기 === //
+	@GetMapping("/myRegisterHotel.trip")
+	public ModelAndView requiredLogin_myRegisterHotel(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
+		HttpSession session = request.getSession();
+		CompanyVO loginCompanyuser = (CompanyVO)session.getAttribute("loginCompanyuser");
+		
+		// 숙소 테이블에서 해당 업체의 신청건수, 승인건수, 반려 건수를 각각 알아온다.
+		List<Map<String,String>> mapList = service.select_count_registerHotel(loginCompanyuser.getCompanyid());
+		
+		boolean check_zero = false;
+		boolean check_one = false;
+		boolean check_two = false;
+		
+		for(Map<String,String> map : mapList) {
+			if(map.get("status").equals("0")) {
+				check_zero = true;
+			}
+			else if(map.get("status").equals("1")) {
+				check_one = true;
+			}
+			else if(map.get("status").equals("2")) {
+				check_two = true;
+			}
+		}
+		
+		if(!check_zero) {
+			Map<String,String> map = new HashMap<>();
+			map.put("status", "0");
+			map.put("count_status", "0");
+			mapList.add(map);
+		}
+		if(!check_one) {
+			Map<String,String> map = new HashMap<>();
+			map.put("status", "1");
+			map.put("count_status", "0");
+			mapList.add(map);
+		}
+		if(!check_two) {
+			Map<String,String> map = new HashMap<>();
+			map.put("status", "2");
+			map.put("count_status", "0");
+			mapList.add(map);
+		}
+		
+		int total_count = 0;
+		for(Map<String,String> map:mapList) {
+			total_count += Integer.parseInt(map.get("count_status"));
+		}
+		Map<String,String> map = new HashMap<>();
+		map.put("status", "4");
+		map.put("count_status",String.valueOf(total_count));
+		mapList.add(map);
+		
+		// 로그인 한 기업의 신청 목록을 읽어와서 view 페이지에 목록으로 뿌려주기 위한 select
+		List<LodgingVO> lodgingvoList = service.select_loginCompany_lodgingvo(loginCompanyuser.getCompanyid());
+		
+		mav.addObject("lodgingvoList",lodgingvoList);
+		mav.addObject("mapList",mapList);
+		mav.setViewName("mypage/company/myRegisterHotel.tiles1");
+		return mav;
+	}
+	
+	// === 업체가 신청한 호텔에 대한 상세 정보를 보여주기위해 DB에서 읽어온다. === // 
+	@ResponseBody
+	@PostMapping("/selectRegisterHotelJSON.trip")
+	public String selectRegisterHotelJSON(HttpServletRequest request) {
+		
+		String lodging_code = request.getParameter("lodging_code");
+		
+		
+		LodgingVO lodgingvo = service.selectRegisterHotelJSON(lodging_code); // 업체가 신청한 호텔에 대한 상세 정보를 보여주기위해 DB에서 읽어온다.
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("lodging_name", lodgingvo.getLodging_name());
+		jsonObj.put("lodging_category", lodgingvo.getLodging_category());
+		jsonObj.put("local_status", lodgingvo.getLocal_status());
+		jsonObj.put("lodging_tell", lodgingvo.getLodging_tell());
+		jsonObj.put("lodging_content", lodgingvo.getLodging_content());
+		jsonObj.put("lodging_address", lodgingvo.getLodging_address());
+		jsonObj.put("main_img", lodgingvo.getMain_img());
+		jsonObj.put("status", lodgingvo.getStatus());
+		jsonObj.put("feedback_msg", lodgingvo.getFeedback_msg());
+		
+		return jsonObj.toString();
+		
+	}
+	
 }

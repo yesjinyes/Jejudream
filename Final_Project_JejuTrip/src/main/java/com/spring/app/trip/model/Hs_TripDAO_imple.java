@@ -28,13 +28,13 @@ public class Hs_TripDAO_imple implements Hs_TripDAO {
 	}
 	
 	@Override
-	public List<PlayVO> playList(Map<String, String> paraMap) {
+	public List<PlayVO> playList(Map<String, Object> paraMap) {
 		List<PlayVO> playList = sqlsession.selectList("hs_trip.playList",paraMap);
 		return playList;
 	}
 
 	@Override
-	public List<PlayVO> getPlayListByCategory(Map<String, String> paraMap) {
+	public List<PlayVO> getPlayListByCategory(Map<String, Object> paraMap) {
 		List<PlayVO> playList = sqlsession.selectList("hs_trip.getPlayListByCategory",paraMap);
 		return playList;
 	}

@@ -18,13 +18,23 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 	private SqlSessionTemplate sqlsession;
 
 	
-	// == 맛집 카테고리 가져오기 == //
+/*	// == 맛집 카테고리 가져오기 == //
 	@Override
 	public List<String> categoryList() {
 		List<String> categoryList = sqlsession.selectList("yj_trip.categoryList");
 		return categoryList;
 	}
 	
+	
+	// == 지역 선택 == //
+	@Override
+	public List<String> areaList() {
+		List<String> areaList = sqlsession.selectList("yj_trip.areaList");
+		return areaList;
+	}
+
+*/
+
 	
 	// == 맛집 리스트 페이지 보이기 == //
 	@Override
@@ -40,6 +50,17 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 		List<FoodstoreVO> randomRecommend = sqlsession.selectList("yj_trip.randomRecommend", paraMap);
 		return randomRecommend;
 	}
+
+
+	// == 검색어 입력시 자동글 완성하기 == //
+//	@Override
+//	public List<String> wordSearchShow(String searchWord) {
+//		List<String> wordList = sqlsession.selectList("yj_trip.wordSearchShow", searchWord);
+//		return wordList;
+//	}
+
+
+	
 
 
 	

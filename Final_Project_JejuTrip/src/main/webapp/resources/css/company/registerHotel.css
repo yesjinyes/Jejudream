@@ -107,3 +107,15 @@ button#registerBtn {
     background-color: #ff5000;
     color: white;
 }
+
+div.convenient{
+    font-size: 17pt;
+    margin-bottom: 10px;
+    margin-left: 10px;
+    color:gray;
+}
+
+label{
+    margin-left: 10px;
+    color:gray;
+}

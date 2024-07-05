@@ -25,14 +25,14 @@ public class Hs_TripService_imple implements Hs_TripService {
 	
 	
 	@Override
-	public List<PlayVO> playList(Map<String, String> paraMap) {
+	public List<PlayVO> playList(Map<String, Object> paraMap) {
 		List<PlayVO> playList = dao.playList(paraMap);
 		return playList;
 	}
 
 
 	@Override
-	public List<PlayVO> getPlayListByCategory(Map<String, String> paraMap) {
+	public List<PlayVO> getPlayListByCategory(Map<String, Object> paraMap) {
 		List<PlayVO> platList = dao.getPlayListByCategory(paraMap);
 		return platList;
 	}

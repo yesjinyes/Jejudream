@@ -165,7 +165,7 @@ $(document).ready(function() {
 				
 				<ul class="menu_bar navbar-nav mt-2 mt-lg-0">
 			      <li class="nav-item">
-			        <a class="nav-link menu_bar_a" href="#">숙소</a>
+			        <a class="nav-link menu_bar_a" href="<%=ctxPath%>/lodgingList.trip">숙소</a>
 			        <div class="menu_bar_line"></div>
 			      </li>
 			      <li class="nav-item">
@@ -215,7 +215,7 @@ $(document).ready(function() {
 						</a>
 					</li>
 					<li class="user_menu nav-item">
-						<a class="nav-link text-center" href="#">
+						<a class="nav-link text-center" href="<%=ctxPath%>/requiredLogin_goMypage.trip">
 							<i class="fa-solid fa-user"></i>
 							<div>마이페이지</div>
 						</a>
