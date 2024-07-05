@@ -96,4 +96,31 @@
 		JOIN tbl_lodging D
 		ON D.lodging_code = fk_lodging_code
 	</select>
+	
+	<!-- 숙소 테이블에서 해당 업체의 신청건수, 승인건수, 반려 건수를 각각 알아온다. -->
+	<resultMap type="HashMap" id="count_registerHotel">
+		<result property="status" 		column="status" 		javaType="String" />
+		<result property="count_status" column="count_status" 	javaType="String" />
+	</resultMap>
+	
+	<select id="select_count_registerHotel" parameterType="String" resultMap="count_registerHotel">
+		select status as status, count(status) as count_status
+		from tbl_lodging
+		where fk_companyid = #{companyid}
+		group by status
+	</select>
+	
+	<select id="select_loginCompany_lodgingvo" parameterType="String" resultType="com.spring.app.trip.domain.LodgingVO">
+		select lodging_code, local_status, lodging_category, fk_companyid, lodging_name, lodging_tell, lodging_content, lodging_address, main_img, status, feedback_msg
+		from tbl_lodging
+		where fk_companyid = #{companyid}
+		order by lodging_code desc
+	</select>
+	
+	<!-- 업체가 신청한 호텔에 대한 상세 정보를 보여주기위해 DB에서 읽어온다. -->
+	<select id="selectRegisterHotelJSON" parameterType="String" resultType="com.spring.app.trip.domain.LodgingVO">
+		select lodging_name, lodging_category, local_status, lodging_tell, lodging_content, lodging_address, main_img, status, feedback_msg
+		from tbl_lodging
+		where lodging_code = #{lodging_code}
+	</select>
 </mapper>

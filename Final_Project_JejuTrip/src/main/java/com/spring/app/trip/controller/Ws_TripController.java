@@ -470,4 +470,91 @@ public class Ws_TripController {
 		
 	}
 	
+	// === 업체 계정으로 마이페이지에서 숙소등록신청현황버튼을 클릭했을 때 view 페이지로 연결시키기 === //
+	@GetMapping("/myRegisterHotel.trip")
+	public ModelAndView requiredLogin_myRegisterHotel(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
+		HttpSession session = request.getSession();
+		CompanyVO loginCompanyuser = (CompanyVO)session.getAttribute("loginCompanyuser");
+		
+		// 숙소 테이블에서 해당 업체의 신청건수, 승인건수, 반려 건수를 각각 알아온다.
+		List<Map<String,String>> mapList = service.select_count_registerHotel(loginCompanyuser.getCompanyid());
+		
+		boolean check_zero = false;
+		boolean check_one = false;
+		boolean check_two = false;
+		
+		for(Map<String,String> map : mapList) {
+			if(map.get("status").equals("0")) {
+				check_zero = true;
+			}
+			else if(map.get("status").equals("1")) {
+				check_one = true;
+			}
+			else if(map.get("status").equals("2")) {
+				check_two = true;
+			}
+		}
+		
+		if(!check_zero) {
+			Map<String,String> map = new HashMap<>();
+			map.put("status", "0");
+			map.put("count_status", "0");
+			mapList.add(map);
+		}
+		if(!check_one) {
+			Map<String,String> map = new HashMap<>();
+			map.put("status", "1");
+			map.put("count_status", "0");
+			mapList.add(map);
+		}
+		if(!check_two) {
+			Map<String,String> map = new HashMap<>();
+			map.put("status", "2");
+			map.put("count_status", "0");
+			mapList.add(map);
+		}
+		
+		int total_count = 0;
+		for(Map<String,String> map:mapList) {
+			total_count += Integer.parseInt(map.get("count_status"));
+		}
+		Map<String,String> map = new HashMap<>();
+		map.put("status", "4");
+		map.put("count_status",String.valueOf(total_count));
+		mapList.add(map);
+		
+		// 로그인 한 기업의 신청 목록을 읽어와서 view 페이지에 목록으로 뿌려주기 위한 select
+		List<LodgingVO> lodgingvoList = service.select_loginCompany_lodgingvo(loginCompanyuser.getCompanyid());
+		
+		mav.addObject("lodgingvoList",lodgingvoList);
+		mav.addObject("mapList",mapList);
+		mav.setViewName("mypage/company/myRegisterHotel.tiles1");
+		return mav;
+	}
+	
+	// === 업체가 신청한 호텔에 대한 상세 정보를 보여주기위해 DB에서 읽어온다. === // 
+	@ResponseBody
+	@PostMapping("/selectRegisterHotelJSON.trip")
+	public String selectRegisterHotelJSON(HttpServletRequest request) {
+		
+		String lodging_code = request.getParameter("lodging_code");
+		
+		
+		LodgingVO lodgingvo = service.selectRegisterHotelJSON(lodging_code); // 업체가 신청한 호텔에 대한 상세 정보를 보여주기위해 DB에서 읽어온다.
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("lodging_name", lodgingvo.getLodging_name());
+		jsonObj.put("lodging_category", lodgingvo.getLodging_category());
+		jsonObj.put("local_status", lodgingvo.getLocal_status());
+		jsonObj.put("lodging_tell", lodgingvo.getLodging_tell());
+		jsonObj.put("lodging_content", lodgingvo.getLodging_content());
+		jsonObj.put("lodging_address", lodgingvo.getLodging_address());
+		jsonObj.put("main_img", lodgingvo.getMain_img());
+		jsonObj.put("status", lodgingvo.getStatus());
+		jsonObj.put("feedback_msg", lodgingvo.getFeedback_msg());
+		
+		return jsonObj.toString();
+		
+	}
+	
 }
