@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.json.JSONObject;
@@ -355,10 +356,42 @@ public class Dy_TripController {
 	}
 	
 	
+	// 맛집 등록 페이지 요청
 	@GetMapping("admin/foodstoreRegister.trip")
-	public String foodstoreRegister() {
+	public ModelAndView requiredLogin_foodstoreRegister(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
 		
-		return "admin/foodstoreRegister.tiles1";
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
+		
+		if(loginuser != null && !"admin".equals(loginuser.getUserid())) {
+			
+			String message = "관리자만 접근 가능합니다.";
+			String loc = request.getContextPath() + "/index.trip";
+			
+			mav.addObject("message", message);
+			mav.addObject("loc", loc);
+			
+			mav.setViewName("msg");
+			
+		} else {
+			mav.setViewName("admin/foodstoreRegister.tiles1");
+		}
+		
+		return mav;
+	}
+	
+	
+	// 맛집 등록 처리하기
+	@ResponseBody
+	@PostMapping("admin/foodstoreRegisterEnd.trip")
+	public String foodstoreRegisterEnd() {
+		
+		
+		
+		JSONObject jsonObj = new JSONObject();
+		
+		
+		return jsonObj.toString();
 	}
 	
 }

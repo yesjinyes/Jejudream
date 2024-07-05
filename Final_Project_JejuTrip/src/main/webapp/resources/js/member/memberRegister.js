@@ -365,7 +365,6 @@ function goRegister(ctxPath) {
             data: queryString,
             dataType: "json",
             success: function(json) {
-            	alert(json.n);
                 if(json.n == 1) {
                     alert("회원가입이 성공되었습니다.");
                     location.href = ctxPath + "/index.trip";

@@ -26,7 +26,7 @@
 	
 	<insert id="registerHotelEnd" parameterType="com.spring.app.trip.domain.LodgingVO">
 		insert into tbl_lodging (lodging_code , local_status, lodging_category, fk_companyid, lodging_name, lodging_tell, lodging_content, lodging_address, main_img, filename, orgfilename, filesize)
-                   	   	  values(seq_common.nextval,#{local_status},#{lodging_category},#{fk_companyid},#{lodging_name},#{lodging_tell},#{lodging_content},#{lodging_address},#{fileName},#{fileName},#{orgFilename},#{fileSize})
+                   	   	  values(#{lodging_code},#{local_status},#{lodging_category},#{fk_companyid},#{lodging_name},#{lodging_tell},#{lodging_content},#{lodging_address},#{fileName},#{fileName},#{orgFilename},#{fileSize})
 	</insert>
 	
 	<select id="select_lodgingvo" parameterType="HashMap" resultType="com.spring.app.trip.domain.LodgingVO">
@@ -62,4 +62,38 @@
 		<if test="choice_status != ''">where status = #{choice_status}</if>
 	</select>
 	
+	<!-- 편의시설 체크박스를 만들기 위해 DB에 있는 편의시설 테이블에서 편의시설 종류를 select 해온다. -->
+	<resultMap type="HashMap" id="convenient_map">
+		<result property="convenient_code" 	column="convenient_code" 	javaType="String" />
+		<result property="convenient_name" 	column="convenient_name" 	javaType="String" />
+	</resultMap>
+	
+	<select id="select_convenient" resultMap="convenient_map">
+		select convenient_code, convenient_name
+		from tbl_convenient
+		order by convenient_code asc
+	</select>
+	
+	<select id="getSeq" resultType="String">
+		select seq_common.nextval AS seq 
+	    from dual
+	</select>
+	
+	<insert id="insert_convenient" parameterType="HashMap">
+		insert into tbl_lodging_convenient (fk_convenient_code, fk_lodging_code) values(#{convenient_code},#{seq})
+	</insert>
+	
+	<!-- 등록 신청한 호텔들의 편의시설 정보를 가져와서 view 페이지에 표출시켜주기위한 List select -->
+	<resultMap type="HashMap" id="convenient_lodging_map">
+		<result property="convenient_name" 	column="convenient_name" 	javaType="String" />
+		<result property="lodging_code" 	column="lodging_code" 	javaType="String" />
+	</resultMap>
+	
+	<select id="select_convenient_list" resultMap="convenient_lodging_map">
+		SELECT C.convenient_name, D.lodging_code
+		FROM tbl_lodging_convenient L JOIN tbl_convenient C
+		ON L.fk_convenient_code = C.convenient_code
+		JOIN tbl_lodging D
+		ON D.lodging_code = fk_lodging_code
+	</select>
 </mapper>
