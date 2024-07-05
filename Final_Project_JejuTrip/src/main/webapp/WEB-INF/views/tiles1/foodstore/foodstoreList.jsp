@@ -136,7 +136,8 @@ span#data {
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		
+
+/*
 		// == 카테고리 체크박스 선택 == //
 		$("input:checkbox[name='food_category']").change(function(e){
 			const arr_category = [];
@@ -202,13 +203,43 @@ span#data {
 				}// end of for---------------------
 			});
 		}
+*/		
 		
-		// == 지역 이미지 체크박스 선택 == //
-		$("img.img_area").click(function(e)) {
-			$(e.target)checked = true;
-		}
+		//== 카테고리 체크박스 선택 (Ajax 처리)== //
+		$("input:checkbox[name='food_category']").change(function(e){
+			const arr_category = [];
+			
+			// 체크된 카테고리만 배열에 담기 
+			$("input:checkbox[name='food_category']:checked").each(function(index, item) {
+				arr_category.push($(item).val());
+			});
+			console.log("~~확인용 arr_category => " +arr_category);
+	
+			const str_category = arr_category.join();
+			
+			const frm = document.foodstoreFrm;
+			frm.str_category.value = str_category;
+			frm.submit();
+		});
 		
 		
+		
+		//== 지역 체크박스 선택 (Ajax 처리)== //
+		$("input:checkbox[name='area']").change(function(e){
+			const arr_area = [];
+			
+			// 체크된 지역만 배열에 담기 
+			$("input:checkbox[name='area']:checked").each(function(index, item) {
+				arr_area.push($(item).val());
+			});
+			console.log("~~~확인용 arr_area => " + arr_area);
+		
+			const str_area = arr_area.join();
+			
+			const frm = document.foodstoreFrm;
+			frm.str_area.value = str_area;
+			frm.submit();
+		});
 		
 		////////////////////////////////////////////////////////////////////////
 		
@@ -244,7 +275,52 @@ span#data {
 		
 		
 	});// end of $(document).ready(function()})-------------------
+	
+	function goAjax() {
 		
+		$.ajax({
+			url:"foodstoreListJSON.trip",
+			data:{"str_category":str_category
+				"str_area":str_area},
+			dataType:"json",
+			success:function(json) {
+				console.log(JSON.stringify(json));
+				
+				
+				let v_html = ``;
+				
+				json.forEach(function(item, index, array) {
+					
+					v_html += `<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
+						    		<div class="imgMainList">
+						    		<a href="#">
+						            	<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/\${foodstoreList.food_main_img}" alt="..." />
+						        	</a>
+					        	</div>
+						        <div class="contentList">
+						            <div class="mb-3">
+						            	<h3 class="pt-3 title"><a href="#">\${foodstoreList.food_name}</a></h3>
+						            	<span>\${foodstoreList.food_content}</span>
+						            </div>
+						            <div class="pb-3">
+						                <span style="color:#b5aec4;">\${foodstoreList.food_category}</span><br>
+						                <span>\${foodstoreList.food_address}</span>
+						            </div>
+						        </div>
+						    </div>`;
+				});// end of json.forEach------------------------
+				
+				$("div#storeListAjax").html(v_html);
+				
+			},
+			error: function(request, status, error){
+            	alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+            }
+		});// end of $.ajax------------
+		
+		
+		
+	}
 	
 	function goSearch() {
 		const frm = document.searchFrm;
@@ -267,17 +343,10 @@ span#data {
 <body>
 
     <div class="container">
-    	<!-- Jeju Dream 로고 -->
-		<div class="col-12 text-center">
-		    <h2>
-		    	<img src="<%= ctxPath %>/resources/images/foodstore/logo.jpg" style="width: 5%;"/> 
-		        <a href="index.html">Jeju Dream</a>
-		    </h2>
-		</div>
-          
         <form name="checkboxFrm">
+        
 	        <!-- 맛집 검색 카테고리 -->
-	    	<div class="row py-3 mt-5 border rounded">
+<%-- 	    	<div class="row py-3 mt-5 border rounded">
 	            <div class="row mt-2" style="width: 70%; margin-left: 4%;">
 	    			<h5 class="mr-5">카테고리 검색</h5>
     				<c:forEach var="categoryList" items="${requestScope.categoryList}" varStatus="status">
@@ -288,7 +357,39 @@ span#data {
     				</c:forEach>
 	        		<input type="hidden" name="str_category" />
 	     		</div>
+	    	</div> --%>
+	    	
+	    	<div class="row py-3 mt-5 border rounded">
+	            <div class="row mt-2" style="width: 70%; margin-left: 4%;">
+	    			<h5 class="mr-5">카테고리 검색</h5>
+	                <div class="mr-4">
+	                    <input type="checkbox" id="korean" name="food_category" value="korean"/>
+	                    <label for="korean">한식</label>
+	                </div>
+	                <div class="mr-4">
+	                    <input type="checkbox" id="japanese" name="food_category" value="japanese" />
+	                    <label for="japanese">일식</label>
+	                </div>
+	                <div class="mr-4">
+	                    <input type="checkbox" id="western" name="food_category" value="western" />
+	                    <label for="western">양식</label>
+	                </div>
+	                <div class="mr-4">
+	                    <input type="checkbox" id="chinese" name="food_category" value="chinese" />
+	                    <label for="chinese">중식</label>
+	                </div>
+	                <div class="mr-4">
+	                    <input type="checkbox" id="etc" name="food_category" value="etc" />
+	                    <label for="etc">기타</label>
+	                </div>
+	                <div class="mr-4">
+	                    <input type="checkbox" id="cafe" name="food_category" value="cafe" />
+	                    <label for="cafe">카페</label>
+	                </div>
+		     		<input type="hidden" name="str_category" />
+	     		</div>
 	    	</div>
+	    	
 	            
 	        <!-- 검색 지역 선택 -->
 	        <div class="row py-3 mt-1 border rounded">
@@ -308,9 +409,9 @@ span#data {
 		                
 		                <div class="areamap mx-1">
 		                    <div>
-		                        <input name="area" id="area01" type="checkbox" class="area_map" value="JE">
-		                    	<img src="<%= ctxPath %>/resources/images/areamap_total.png" />
-		                        <label for="area01" class="label_chk">전체</label>
+		                        <input name="area" id="area01" type="checkbox" class="area_map" value="ALL">
+		                    	<img src="<%= ctxPath %>/resources/images/areamap_total.png" /><br>
+		                        <label for="area01" class="label_chk mt-2">전체</label>
 		                    </div>
 		                </div>
 		                
@@ -318,42 +419,42 @@ span#data {
 		                    <div>
 		                        <input name="area" id="area02" type="checkbox" class="area_map" value="JE">
 		                    	<img src="<%= ctxPath %>/resources/images/areamap_city.png" />
-		                        <label for="area02" class="label_chk">제주 시내</label>
+		                        <label for="area02" class="label_chk mt-2">제주 시내</label>
 		                    </div>
 		                </div>
 		                <div class="areamap mx-1">
 		                    <div>
-		                        <input name="area" id="area03" type="checkbox" class="area_map" value="EA">
+		                        <input name="area" id="area03" type="checkbox" class="area_map" value="JE_EA">
 		                    	<img class="img_area" src="<%= ctxPath %>/resources/images/areamap_jeju_east.png" />
-		                        <label for="area03" class="label_chk">제주시 동부</label>
+		                        <label for="area03" class="label_chk mt-2">제주시 동부</label>
 		                    </div>
 		                </div>
 		                <div class="areamap mx-1">
 		                    <div>
-		                        <input name="area" id="area04" type="checkbox" class="area_map" value="WE">
+		                        <input name="area" id="area04" type="checkbox" class="area_map" value="JE_WE">
 			                    <img class="img_area" src="<%= ctxPath %>/resources/images/areamap_jeju_west.png" />
-		                        <label for="area04" class="label_chk">제주시 서부</label>
+		                        <label for="area04" class="label_chk mt-2">제주시 서부</label>
 		                    </div>
 		                </div>
 		                <div class="areamap mx-1">
 		                    <div>
 		                        <input name="area" id="area05" type="checkbox" class="area_map" value="SE">
 			                    <img class="img_area" src="<%= ctxPath %>/resources/images/areamap_bt_city.png" />
-		                        <label for="area05" class="label_chk">서귀포 시내</label>
+		                        <label for="area05" class="label_chk mt-2">서귀포 시내</label>
 		                    </div>
 		                </div>
 		                <div class="areamap mx-1">
 		                    <div>
-		                        <input name="area" id="area06" type="checkbox" class="area_map" value="ES">
+		                        <input name="area" id="area06" type="checkbox" class="area_map" value="SE_EA">
 			                    <img class="img_area" src="<%= ctxPath %>/resources/images/areamap_bt_east.png" />
-		                        <label for="area06" class="label_chk">서귀포 동부</label>
+		                        <label for="area06" class="label_chk mt-2">서귀포 동부</label>
 		                    </div>
 		                </div>
 		                <div class="areamap mx-1">
 		                    <div>
-		                        <input name="area" id="area07" type="checkbox" class="area_map" value="WS">
+		                        <input name="area" id="area07" type="checkbox" class="area_map" value="SE_WE">
 			                    <img class="img_area" src="<%= ctxPath %>/resources/images/areamap_bt_west.png" />
-		                        <label for="area07" class="label_chk">서귀포 서부</label>
+		                        <label for="area07" class="label_chk mt-2">서귀포 서부</label>
 		                    </div>
 		                </div>
 		                <input type="hidden" name="str_area" />
@@ -391,7 +492,7 @@ span#data {
 
 					<c:if test="${not empty requestScope.foodstoreList}">
 						<c:forEach var="foodstoreList" items="${requestScope.foodstoreList}" varStatus="status">	
-							<div class="row">
+							<div class="row" id="storeListAjax">
 						    	<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
 						    		<div class="imgMainList">
 							    		<a href="#">

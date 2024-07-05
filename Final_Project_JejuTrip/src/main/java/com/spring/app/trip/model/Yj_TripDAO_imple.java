@@ -18,7 +18,7 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 	private SqlSessionTemplate sqlsession;
 
 	
-	// == 맛집 카테고리 가져오기 == //
+/*	// == 맛집 카테고리 가져오기 == //
 	@Override
 	public List<String> categoryList() {
 		List<String> categoryList = sqlsession.selectList("yj_trip.categoryList");
@@ -32,7 +32,9 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 		List<String> areaList = sqlsession.selectList("yj_trip.areaList");
 		return areaList;
 	}
-	
+
+*/
+
 	
 	// == 맛집 리스트 페이지 보이기 == //
 	@Override

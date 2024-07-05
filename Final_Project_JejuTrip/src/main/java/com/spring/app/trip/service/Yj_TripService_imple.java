@@ -15,14 +15,14 @@ public class Yj_TripService_imple implements Yj_TripService {
 	@Autowired
 	private Yj_TripDAO dao;
 
-	
+/*	
 	// == 맛집 카테고리 가져오기 == //
 	@Override
 	public List<String> categoryList() {
 		List<String> categoryList = dao.categoryList();
 		return categoryList;
 	}
-	
+
 	
 	// == 지역 선택 == //
 	@Override
@@ -30,7 +30,7 @@ public class Yj_TripService_imple implements Yj_TripService {
 		List<String> areaList = dao.areaList();
 		return areaList;
 	}
-
+*/
 	
 	// == 맛집 리스트 페이지 보이기 == //
 	@Override
