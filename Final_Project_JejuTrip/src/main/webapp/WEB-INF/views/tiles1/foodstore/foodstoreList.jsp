@@ -39,10 +39,12 @@
 .foodRecommend:hover {
   text-decoration-line: none;
   color: black;
+  font-size: 15pt;
 }
 
 .areamap {
-  width: 18%;  
+  border: solid 1px gray;
+  width: 60%;
 }
 
 .imgMainList {
@@ -117,25 +119,11 @@ span#data {
 <script type="text/javascript">
 	$(document).ready(function() {
 
+		// 전체 리스트 띄우기
 		goAjax();
-		
 
-/*		// == 카테고리 체크박스 유지 == //
-		const str_category = "${requestScope.str_category}";
-		    
-		if(str_category != "") {
-		   const arr_category = str_category.split(",");
-		   
-		   $("input:checkbox[name='food_category']").each(function(index, elmt) {
-		      for(let i=0; i<arr_category.length; i++) {
-		         if($(elmt).val() == arr_category[i]) {
-		            $(elmt).prop("checked", true);
-		            break;
-		         }
-		      }// end of for---------------------
-		   });
-		}
-*/
+		
+		///////////////////////////////////////////////////////////////////////////////////////////
 		
 		//== 카테고리 체크박스 선택 == //
 		$("input:checkbox[name='food_category']").change(function(e){
@@ -147,7 +135,7 @@ span#data {
 			});
 	
 			const str_category = arr_category.join();
-			console.log("~~확인용 str_category => " + str_category);
+			// console.log("~~확인용 str_category => " + str_category);
 			
 			const frm = document.dataFrm;
 			frm.str_category.value = str_category;
@@ -155,6 +143,26 @@ span#data {
 			goAjax();
 		});
 		
+		
+		//== 카테고리 체크박스 전체 선택 == //
+		$("input:checkbox[name='food_category_all']").change(function(e){
+			const arr_category = [];
+			
+			// 체크된 카테고리만 배열에 담기 
+			$("input:checkbox[name='food_category']:checked").each(function(index, item) {
+				arr_category.push($(item).val());
+			});
+	
+			const str_category = arr_category.join();
+			// console.log("~~확인용 str_category => " + str_category);
+			
+			const frm = document.dataFrm;
+			frm.str_category.value = str_category;
+
+			goAjax();
+		});
+		
+		////////////////////////////////////////////////////////////////////////
 		
 		//== 지역 체크박스 선택 == //
 		$("input:checkbox[name='area']").change(function(e){
@@ -166,7 +174,25 @@ span#data {
 			});
 		
 			const str_area = arr_area.join();
-			console.log("~~~확인용 str_area => " + str_area);
+			// console.log("~~~확인용 str_area => " + str_area);
+			
+			const frm = document.dataFrm;
+			frm.str_area.value = str_area;
+			
+			goAjax();
+		});
+		
+		//== 지역 체크박스 전체 선택 == //
+		$("input:checkbox[name='allArea']").change(function(e){
+			const arr_area = [];
+			
+			// 체크된 지역만 배열에 담기 
+			$("input:checkbox[name='area']:checked").each(function(index, item) {
+				arr_area.push($(item).val());
+			});
+		
+			const str_area = arr_area.join();
+			// console.log("~~~확인용 str_area => " + str_area);
 			
 			const frm = document.dataFrm;
 			frm.str_area.value = str_area;
@@ -179,23 +205,29 @@ span#data {
 		// == 오름차순 정렬 == //
 		$("button#btnAsc").click(function() {
 			const frm = document.dataFrm;
+			
 			frm.orderType.value = "food_name";
 			frm.orderValue_asc.value = "asc";
+			frm.orderValue_desc.value = "";
+			
 			goAjax();
 		});
 		
 		// == 내림차순 정렬 == //
 		$("button#btnDesc").click(function() {
 			const frm = document.dataFrm;
+			
 			frm.orderType.value = "food_name";
 			frm.orderValue_desc.value = "desc";
+			frm.orderValue_asc.value = "";
+			
 			goAjax();
 		});
 		
 		////////////////////////////////////////////////////////////////////////
 	
 		// == 검색하기 == //
-		$("input:text[name='searchWord']").bind("keyup", function(e){
+		$("input:text[name='searchbox']").bind("keyup", function(e){
 			if(e.keyCode == 13) {
 				goSearch();
 			}
@@ -209,14 +241,14 @@ span#data {
 	function goAjax() {
 		
 		// form 태그 불러오기
-		const form = $("form[name='checkboxFrm']").serialize();
+		const form = $("form[name='dataFrm']").serialize();
 		
 		$.ajax({
 			url:"foodstoreListJSON.trip",
 			data:form,
 			dataType:"json",
 			success:function(json) {
-				// console.log(JSON.stringify(json));
+				 console.log("json 확인" +JSON.stringify(json));
 				
 				let v_html = ``;
 				
@@ -244,9 +276,9 @@ span#data {
 					});// end of json.forEach------------------------
 					
 				}
-				else {
+			 	else {
 					v_html = "<span>관련 데이터가 없습니다.</span>";
-				}	
+				}	 
 			
 					
 				$("div#storeList").html(v_html);
@@ -261,121 +293,161 @@ span#data {
 	
 	// == 검색하기 == //
 	function goSearch() {
-		const searchWord = $("input:text[name='search'])").val();
+		const searchWord = $("input[name='searchbox']").val();
+		console.log("검색어 확인 : " +searchWord);
+		
 		const frm = document.dataFrm;
-		frm.searchWord.value = searchword;
+		frm.searchWord.value = searchWord;
+		
 		goAjax();
 	}// end of function goSearch()--------------------
 	
 	
 	// == '전체보기' 클릭 시 전체 리스트 보이기 == //
 	function viewAll() {
-		const frm = document.foodstoreFrm;
 		goAjax();
 	}// end of function viewAll()-------------------
+	
+	//////////////////////////////////////////////////////////////////////////////
+	
+	// == 카테고리 전체 체크 == //
+	function selectAllcategory(selectAllcategory) {
+		const checkboxes = document.getElementsByName("food_category");
+		 
+		checkboxes.forEach((checkbox) => {
+			checkbox.checked = selectAllcategory.checked;
+		})
+	}
+	
+	
+	// == 카테고리 한개라도 체크 해제 시 전체 체크 해제 == //
+	function selectCategory() {
+		
+		const checkboxes = document.querySelectorAll("input[name='food_category']"); // 모든 체크박스
+		const checked = document.querySelectorAll("input[name='food_category']:checked"); // 선택된 체크박스
+		const selectAllcategory = document.querySelector('input[name="food_category_all"]'); // '전체' 체크박스
+		
+		if(checkboxes.length === checked.length)  {
+			selectAllcategory.checked = true;
+		}
+		else {
+			selectAllcategory.checked = false;
+		}
+	}// end of function selectCategory()---------------------
+	
+	
+	// == 지역 전체 체크 == //
+	function selectAllarea(allArea) {
+		const checkboxes = document.getElementsByName("area");
+		 
+		checkboxes.forEach((checkbox) => {
+			checkbox.checked = allArea.checked;
+		})
+	}
+	
+	
+	// == 지역 한개라도 체크 해제 시 전체 체크 해제 == //
+	function selectArea() {
+		
+		const checkboxes = document.querySelectorAll("input[name='area']"); // 모든 체크박스
+		const checked = document.querySelectorAll("input[name='area']:checked"); // 선택된 체크박스
+		const selectAllarea = document.querySelector('input[name="allArea"]'); // '전체' 체크박스
+		
+		if(checkboxes.length === checked.length)  {
+			selectAllarea.checked = true;
+		}
+		else {
+			selectAllarea.checked = false;
+		}
+	}// end of function selectArea()---------------------
+	
+	
 	
 </script>
 
 
-<title>foodStore</title>
-</head>
-
-<body>
-
     <div class="container">
-
-        <!-- 맛집 검색 카테고리 -->
-    	<div class="row py-3 mt-5 border rounded">
-            <div class="row mt-2" style="width: 70%; margin-left: 4%;">
-    			<h5 class="mr-5">카테고리 검색</h5>
-                <div class="mr-4">
-                    <input type="checkbox" id="korean" name="food_category" value="korean"/>
-                    <label for="korean">한식</label>
-                </div>
-                <div class="mr-4">
-                    <input type="checkbox" id="japanese" name="food_category" value="japanese" />
-                    <label for="japanese">일식</label>
-                </div>
-                <div class="mr-4">
-                    <input type="checkbox" id="western" name="food_category" value="western" />
-                    <label for="western">양식</label>
-                </div>
-                <div class="mr-4">
-                    <input type="checkbox" id="chinese" name="food_category" value="chinese" />
-                    <label for="chinese">중식</label>
-                </div>
-                <div class="mr-4">
-                    <input type="checkbox" id="etc" name="food_category" value="etc" />
-                    <label for="etc">기타</label>
-                </div>
-                <div class="mr-4">
-                    <input type="checkbox" id="cafe" name="food_category" value="cafe" />
-                    <label for="cafe">카페</label>
-                </div>
-     		</div>
-    	</div>
+	        <!-- 맛집 검색 카테고리 -->
+	    	<div class="row py-3 mt-5 border rounded">
+	            <div class="row mt-2" style="width: 70%; margin-left: 4%;">
+	    			<h5 class="mr-5">카테고리 검색</h5>
+	    			<div class="mr-4">
+	                    <input type="checkbox" id="selectAllcategory" name="food_category_all" value="전체" onclick="selectAllcategory(this)"/>
+	                    <label for="selectAllcategory">전체</label>
+	                </div>
+	                <div class="mr-4">
+	                    <input type="checkbox" id="korean" name="food_category" value="한식" onclick="selectCategory()"/>
+	                    <label for="korean">한식</label>
+	                </div>
+	                <div class="mr-4">
+	                    <input type="checkbox" id="japanese" name="food_category" value="일식" onclick="selectCategory()"/>
+	                    <label for="japanese">일식</label>
+	                </div>
+	                <div class="mr-4">
+	                    <input type="checkbox" id="western" name="food_category" value="양식" onclick="selectCategory()"/>
+	                    <label for="western">양식</label>
+	                </div>
+	                <div class="mr-4">
+	                    <input type="checkbox" id="chinese" name="food_category" value="중식" onclick="selectCategory()"/>
+	                    <label for="chinese">중식</label>
+	                </div>
+	                <div class="mr-4">
+	                    <input type="checkbox" id="etc" name="food_category" value="기타" onclick="selectCategory()"/>
+	                    <label for="etc">기타</label>
+	                </div>
+	                <div class="mr-4">
+	                    <input type="checkbox" id="cafe" name="food_category" value="카페" onclick="selectCategory()"/>
+	                    <label for="cafe">카페</label>
+	                </div>
+	     		</div>
+	    	</div>
     	
             
-        <!-- 검색 지역 선택 -->
-        <div class="row py-3 mt-1 border rounded">
-          	<div id="tabArea" class="tabArea1 text-center mt-2" style="display: flex;">
-	            <div class="areaMap mr-5" style="display: flex;">
-	            	<h5 class="mt-4" style="width: 20%; margin-left: 3%;">지역 선택</h5>
-	                
-	                <div class="areamap mx-1">
-	                    <div>
-	                        <input name="area" id="area01" type="checkbox" class="area_map" value="ALL">
+	        <!-- 검색 지역 선택 -->
+	        <div class="row py-3 mt-1 border rounded">
+	          	<div id="tabArea" class="tabArea1 text-center mt-2" style="display: flex;">
+		            <h5 class="mt-4 mr-4" style="width: 20%; margin-left: 1%;">지역 선택</h5>
+		            <div class="areamapList border" style="display: flex;">
+		                
+		                <div class="areamap">
 	                    	<img src="<%= ctxPath %>/resources/images/areamap_total.png" /><br>
+	                        <input type="checkbox" id="area01" name="allArea" class="area_map" value="전체" onclick="selectAllarea(this)">
 	                        <label for="area01" class="label_chk mt-2">전체</label>
-	                    </div>
-	                </div>
-	                
-	                <div class="areamap mx-1">
-	                    <div>
-	                        <input name="area" id="area02" type="checkbox" class="area_map" value="JE">
-	                    	<img src="<%= ctxPath %>/resources/images/areamap_city.png" />
+		                </div>
+		                <div class="areamap">
+	                    	<img src="<%= ctxPath %>/resources/images/areamap_city.png" /><br>
+	                        <input type="checkbox" id="area02" name="area" class="area_map" value="제주 시내" onclick="selectArea()">
 	                        <label for="area02" class="label_chk mt-2">제주 시내</label>
-	                    </div>
-	                </div>
-	                <div class="areamap mx-1">
-	                    <div>
-	                        <input name="area" id="area03" type="checkbox" class="area_map" value="JE_EA">
-	                    	<img class="img_area" src="<%= ctxPath %>/resources/images/areamap_jeju_east.png" />
+		                </div>
+		                <div class="areamap">
+	                    	<img class="img_area" src="<%= ctxPath %>/resources/images/areamap_jeju_east.png" /><br>
+	                        <input type="checkbox" id="area03" name="area" class="area_map" value="제주시 동부" onclick="selectArea()">
 	                        <label for="area03" class="label_chk mt-2">제주시 동부</label>
-	                    </div>
-	                </div>
-	                <div class="areamap mx-1">
-	                    <div>
-	                        <input name="area" id="area04" type="checkbox" class="area_map" value="JE_WE">
-		                    <img class="img_area" src="<%= ctxPath %>/resources/images/areamap_jeju_west.png" />
+		                </div>
+		                <div class="areamap">
+		                    <img class="img_area" src="<%= ctxPath %>/resources/images/areamap_jeju_west.png" /><br>
+	                        <input type="checkbox" id="area04" name="area" class="area_map" value="제주시 서부" onclick="selectArea()">
 	                        <label for="area04" class="label_chk mt-2">제주시 서부</label>
-	                    </div>
-	                </div>
-	                <div class="areamap mx-1">
-	                    <div>
-	                        <input name="area" id="area05" type="checkbox" class="area_map" value="SE">
-		                    <img class="img_area" src="<%= ctxPath %>/resources/images/areamap_bt_city.png" />
+		                </div>
+		                <div class="areamap">
+		                    <img class="img_area" src="<%= ctxPath %>/resources/images/areamap_bt_city.png" /><br>
+	                        <input type="checkbox" id="area05" name="area" class="area_map" value="서귀포 시내" onclick="selectArea()">
 	                        <label for="area05" class="label_chk mt-2">서귀포 시내</label>
-	                    </div>
-	                </div>
-	                <div class="areamap mx-1">
-	                    <div>
-	                        <input name="area" id="area06" type="checkbox" class="area_map" value="SE_EA">
-		                    <img class="img_area" src="<%= ctxPath %>/resources/images/areamap_bt_east.png" />
-	                        <label for="area06" class="label_chk mt-2">서귀포 동부</label>
-	                    </div>
-	                </div>
-	                <div class="areamap mx-1">
-	                    <div>
-	                        <input name="area" id="area07" type="checkbox" class="area_map" value="SE_WE">
-		                    <img class="img_area" src="<%= ctxPath %>/resources/images/areamap_bt_west.png" />
-	                        <label for="area07" class="label_chk mt-2">서귀포 서부</label>
-	                    </div>
-	                </div>
-	                
-	            </div>
-	        </div>
-        </div>	
+		                </div>
+		                <div class="areamap">
+		                    <img class="img_area" src="<%= ctxPath %>/resources/images/areamap_bt_east.png" /><br>
+	                        <input type="checkbox" id="area06" name="area" class="area_map" value="서귀포시 동부" onclick="selectArea()">
+	                        <label for="area06" class="label_chk mt-2">서귀포시 동부</label>
+		                </div>
+		                <div class="areamap">
+		                    <img class="img_area" src="<%= ctxPath %>/resources/images/areamap_bt_west.png" /><br>
+	                        <input type="checkbox" id="area07" name="area" class="area_map" value="서귀포시 서부" onclick="selectArea()">
+	                        <label for="area07" class="label_chk mt-2">서귀포시 서부</label>
+		                </div>
+		                
+		            </div>
+		        </div>
+	        </div>	
         
         <!-- 정렬 조건 선택 -->
       	<div class="row mt-5">
@@ -387,7 +459,7 @@ span#data {
 					<button type="button" id="btnDesc" class="sort">내림차순</button>
 	            </div>
 	            <div style="">
-	                <input type="text" name="search" id="searchWord" class="" placeholder="맛집 이름으로 검색">
+	                <input type="text" name="searchbox" id="searchWord" class="" placeholder="맛집 이름으로 검색">
 	                <button type="button" id="btnSearch" title="검색" onclick="goSearch()">검색</button>
 	            </div>
             </div>
@@ -403,23 +475,6 @@ span#data {
 				<div class="col-md-8" id="foodstoreList"> 
 					<div class="row" id="storeList">
 						<c:forEach var="foodstoreList" items="${requestScope.foodstoreList}" varStatus="status">	
-						    	<%-- <div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
-						    		<div class="imgMainList">
-							    		<a href="#">
-							            	<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/${foodstoreList.food_main_img}" alt="..." />
-							        	</a>
-						        	</div>
-							        <div class="contentList">
-							            <div class="mb-3">
-							            	<h3 class="pt-3 title"><a href="#">${foodstoreList.food_name}</a></h3>
-							            	<span>${foodstoreList.food_content}</span>
-							            </div>
-							            <div class="pb-3">
-							                <span style="color:#b5aec4;">${foodstoreList.food_category}</span><br>
-							                <span>${foodstoreList.food_address}</span>
-							            </div>
-							        </div>
-							    </div> --%>
 						</c:forEach>
 					</div>
 				</div>
@@ -436,8 +491,9 @@ span#data {
 										<a href="#">
 								            <img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/${randomRecommend.food_main_img}" alt="..." />
 								        </a>
-								        <div class="mt-2" id="foodRecommend_1">
-								        	<a href="" class="foodRecommend" id="recommend1">${randomRecommend.food_name}</a>
+								        <div class="mt-2">
+								        	<a href="" class="foodRecommend mb-5" style="color: #1a1a1a;">${randomRecommend.food_name}</a><br>
+								        	<span style="color: #808080;">${randomRecommend.food_content}</span>
 								        </div>
 							      	</div>
 						      	</c:if>
@@ -474,17 +530,13 @@ span#data {
 		<input type="hidden" name="str_category" />
 		<input type="hidden" name="str_area" />
 		
-		<!-- 검색 -->
-		<input type="text" name="searchWord" />
+		<!-- 검색어 -->
+		<input type="hidden" name="searchWord" />
 	
 		<!-- 오름차순, 내림차순 정렬 -->
 		<input type="hidden" name="orderType">
-		<input type="hidden" name="orderValue_asc">
-		<input type="hidden" name="orderValue_desc">
+		<input type="text" name="orderValue_asc">
+		<input type="text" name="orderValue_desc">
 	</form>
 
 
-
-
-</body>
-</html>

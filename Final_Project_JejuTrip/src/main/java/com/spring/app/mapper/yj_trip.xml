@@ -81,9 +81,11 @@
 	<!-- 맛집 랜덤 추천 -->
 	<select id="randomRecommend" parameterType="HashMap" resultType="com.spring.app.trip.domain.FoodstoreVO">
 		<![CDATA[
-			select food_main_img, food_name
+			select food_main_img, food_name, food_content
 			from (
-			    select food_main_img, food_name from tbl_food_store order by DBMS_RANDOM.RANDOM
+			    select food_main_img, food_name, food_content
+			    from tbl_food_store
+			    order by DBMS_RANDOM.RANDOM
 			)
 			where rownum <= 3
 		]]> 
