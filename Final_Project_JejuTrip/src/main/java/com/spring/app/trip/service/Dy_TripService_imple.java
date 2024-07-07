@@ -140,8 +140,8 @@ public class Dy_TripService_imple implements Dy_TripService {
 			
 			if(loginuser.getIdle() == 1) { // 로그인 한 지 1년이 경과한 경우
 
-				String message = "로그인을 한 지 1년이 지나 휴면상태가 되었습니다.\\n관리자에게 문의 바랍니다.";
-				String loc = request.getContextPath() + "/index.trip";
+				String message = "장기 미접속으로 휴면 처리 되었습니다.\\n휴면 해제 페이지로 이동합니다.";
+				String loc = request.getContextPath() + "/login/idleUpdate.trip";
 				// 추후에 휴면 계정을 풀어주는 페이지로 이동하기
 				
 				mav.addObject("message", message);
@@ -302,7 +302,7 @@ public class Dy_TripService_imple implements Dy_TripService {
 	}
 
 
-	// 비밀번호찾기 시 사용자가 존재하는지 확인하기
+	// 사용자가 존재하는지 확인하기
 	@Override
 	public boolean isUserExist(Map<String, String> paraMap) {
 		
@@ -312,7 +312,7 @@ public class Dy_TripService_imple implements Dy_TripService {
 			String email = aES256.encrypt(paraMap.get("email"));
 			paraMap.put("email", email);
 
-			String user = dao.pwFind(paraMap);
+			String user = dao.isExist(paraMap);
 			
 			if(user != null) {
 				isUserExist = true;

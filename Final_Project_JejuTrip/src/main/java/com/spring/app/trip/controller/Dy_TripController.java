@@ -7,17 +7,14 @@ import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.Part;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -593,8 +590,132 @@ public class Dy_TripController {
 	} // end of public String foodstoreRegisterEnd(...) -----------------------------------
 	
 	
+	// 휴면 해제 페이지 요청
+	@GetMapping("login/idleUpdate.trip")
+	public String idleUpdate() {
+		
+		return "login/idleUpdate.tiles1";
+		// /WEB-INF/views/tiles1/login/idleUpdate.jsp
+	}
 	
 	
+	@ResponseBody
+	@PostMapping(value="login/emailCertifyJSON.trip", produces="text/plain;charset=UTF-8")
+	public String emailCertifyJSON(HttpServletRequest request) {
+		
+		String memberType = request.getParameter("memberType");
+		String id = request.getParameter("id");
+		String email = request.getParameter("email");
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("memberType", memberType);
+		paraMap.put("id", id);
+		paraMap.put("email", email);
+		
+		// 사용자가 존재하는지 확인하기
+		boolean isUserExist = service.isUserExist(paraMap);
+		
+		boolean sendMailSuccess = false; // 메일이 정상적으로 전송되었는지 유무를 알아오기 위한 용도
+		
+		if(isUserExist) { // 회원이 존재하는 경우
+
+			// 인증키를 랜덤하게 생성하도록 한다.
+			Random rnd = new Random();
+
+			String certification_code = "";
+			// 인증키는 영문 대문자 5글자로 생성
+
+			char randchar = ' ';
+			for (int i = 0; i < 5; i++) {
+			/*
+				min 부터 max 사이의 값으로 랜덤한 정수를 얻으려면
+				int rndnum = rnd.nextInt(max - min + 1) + min;
+				영문 대문자 'A' 부터 'Z' 까지 랜덤하게 1개를 만든다.
+			*/
+				randchar = (char) (rnd.nextInt('Z' - 'A' + 1) + 'A');
+				certification_code += randchar;
+				
+			} // end of for ---------------------
+
+			// 랜덤하게 생성한 인증코드(certification_code)를 비밀번호 찾기를 하고자 하는 사용자의 email 로 전송시킨다.
+			GoogleMail mail = new GoogleMail();
+			
+			try {
+				mail.sendCode_idleUpdate(email, certification_code);
+				sendMailSuccess = true;
+				
+				// 세션 불러오기
+				HttpSession session = request.getSession();
+				session.setAttribute("certification_code", certification_code);
+				
+			} catch (Exception e) {
+				// 메일 전송이 실패한 경우
+				e.printStackTrace();
+			}
+			
+		} // end of if(isUserExist) ---------------
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("isUserExist", isUserExist);
+		jsonObj.put("sendMailSuccess", sendMailSuccess);
+		jsonObj.put("id", id);
+		jsonObj.put("email", email);
+		
+		return jsonObj.toString();
+	}
 	
+	
+	// 휴면 해제 - 이메일 인증
+	@PostMapping("login/emailCertification.trip")
+	public ModelAndView emailCertification(ModelAndView mav, HttpServletRequest request) {
+		
+		String userCertificationCode = request.getParameter("userCertificationCode");
+		String memberType = request.getParameter("memberType");
+		String id = request.getParameter("id");
+		
+		HttpSession session = request.getSession();
+		String certification_code = (String)session.getAttribute("certification_code");
+		
+		String message = "";
+		String loc = "";
+		
+		if(certification_code.equals(userCertificationCode)) {
+			message = "인증이 완료되었습니다.\\n비밀번호 변경 페이지로 이동합니다.";
+			loc = request.getContextPath() + "/login/idleUpdateEnd.trip?memberType=" + memberType + "&id=" + id;
+			
+		} else {
+			message = "발급된 인증코드와 일치하지 않습니다.\\n인증 코드를 다시 발급받으세요!";
+			loc = request.getContextPath() + "/login/idleUpdate.trip";
+		}
+		
+		mav.addObject("message", message);
+		mav.addObject("loc", loc);
+		
+		mav.setViewName("msg");
+		
+		session.removeAttribute("certification_code");
+		
+		return mav;
+	}
+	
+	
+	@GetMapping("login/idleUpdateEnd.trip")
+	public String idleUpdateEnd() {
+		
+		return "login/idleUpdateEnd.tiles1";
+		// /WEB-INF/views/tiles1/login/idleUpdateEnd.jsp
+	}
+	
+	
+	@PostMapping("login/idleUpdateEndJSON.trip")
+	public String idleUpdateEndJSON() {
+		
+		// 기존 비밀번호랑 비교
+		
+		// 비밀번호 변경
+		
+		
+		return "";
+	}
 	
 }

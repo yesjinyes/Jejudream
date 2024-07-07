@@ -125,15 +125,15 @@ public class Dy_TripDAO_imple implements Dy_TripDAO {
 
 	// 비밀번호찾기 시 사용자가 존재하는지 확인하기
 	@Override
-	public String pwFind(Map<String, String> paraMap) {
+	public String isExist(Map<String, String> paraMap) {
 		
 		String user = "";
 		
 		if("company".equals(paraMap.get("memberType"))) {
-			user = sqlsession.selectOne("dy_trip.companyPwFind", paraMap);
+			user = sqlsession.selectOne("dy_trip.isCompanyExist", paraMap);
 			
 		} else {
-			user = sqlsession.selectOne("dy_trip.memberPwFind", paraMap);
+			user = sqlsession.selectOne("dy_trip.isMemberExist", paraMap);
 		}
 		
 		return user;

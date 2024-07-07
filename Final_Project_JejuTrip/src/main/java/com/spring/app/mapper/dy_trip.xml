@@ -122,15 +122,15 @@
 	</select>
 	
 	
-	<!-- 비밀번호 찾기 시 사용자가 존재하는지 확인하기 (일반회원, 관리자) -->
-	<select id="memberPwFind" parameterType="HashMap" resultType="String">
+	<!-- 사용자가 존재하는지 확인하기 (일반회원, 관리자) -->
+	<select id="isMemberExist" parameterType="HashMap" resultType="String">
 		select userid
 		from tbl_member
 		where userid = #{id} and email = #{email}
 	</select>
 	
-	<!-- 비밀번호 찾기 시 사용자가 존재하는지 확인하기 (업체회원) -->
-	<select id="companyPwFind" parameterType="HashMap" resultType="String">
+	<!-- 사용자가 존재하는지 확인하기 (업체회원) -->
+	<select id="isCompanyExist" parameterType="HashMap" resultType="String">
 		select companyid
 		from tbl_company
 		where companyid = #{id} and email = #{email}
