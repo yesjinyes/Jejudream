@@ -90,7 +90,7 @@ div#storedetail {
 }
 
 div#storedetail > ul li {
-  margin: 3% 0 3% -3%;
+  margin: 3% 0 3% -4%;
   font-size: 14pt;
   list-style: none;
   
@@ -102,9 +102,9 @@ li.info-detail {
 
 p.info-title {
   border: solid 0px blue;
-  font-weight: bold;
+  font-weight: 500;
   color: gray;
-  width: 11%;
+  width: 13%;
 }
 
 div.img-add {
