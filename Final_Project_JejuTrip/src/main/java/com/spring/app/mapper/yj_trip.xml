@@ -8,21 +8,6 @@
 <mapper namespace="yj_trip">
 
 
-	<!-- 맛집 카테고리 띄우기 
-	<select id="categoryList" resultType="String">
-		select distinct food_category
-		from tbl_food_store
-	</select>
-
-
-	 지역 선택  
-	<select id="areaList" resultType="String">
-		select distinct local_status
-		from tbl_food_store
-		order by local_status
-	</select>-->
-
-
 	<!-- 맛집 리스트 띄우기 -->
 	<resultMap type="HashMap" id="categoryMap">
 		<result property="food_store_code" 		column="food_store_code" 	javaType="String" />	
@@ -75,6 +60,33 @@
 		<if test="searchWord != ''">
 			and lower(food_name) like '%'||lower(#{searchWord})||'%'
 		</if>
+	</select>
+	
+	<!-- 맛집 총 개수 알아오기  -->
+	<select id="getTotalCount" parameterType="HashMap" resultType="int">
+		select count(*)
+		from tbl_food_store
+	</select>
+	
+	<!-- 맛집 상세 조회하기 -->
+	<select id="viewfoodstoreDetail" parameterType="String" resultType="com.spring.app.trip.domain.FoodstoreVO">
+		select food_store_code, local_status, food_name, food_category, food_content, food_address, food_businesshours, food_mobile
+			 , food_main_img, review_division
+		from tbl_food_store
+		where food_store_code = #{food_store_code}
+	</select>
+	
+	<!-- 맛집 상세 추가 이미지  -->
+	<resultMap type="HashMap" id="imgMap">
+		<result property="food_add_code" 		column="food_add_code" 		javaType="String" />	
+		<result property="fk_food_store_code" 	column="fk_food_store_code" javaType="String" />	
+		<result property="food_add_img" 		column="food_add_img" 		javaType="String" />	
+	</resultMap>
+	<select id="viewfoodaddImg" parameterType="String" resultMap="imgMap">
+		select food_add_code, fk_food_store_code, food_add_img
+		from tbl_food_add_img
+		where fk_food_store_code = #{food_store_code}
+		order by food_add_img
 	</select>
 	
 	

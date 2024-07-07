@@ -9,6 +9,7 @@
 
 <style type="text/css">
 
+
 .single-post {
   margin-bottom: 20px;
   border: 1px solid #ebebeb;
@@ -42,9 +43,23 @@
   font-size: 15pt;
 }
 
+.areamapList {
+  border: solid 0px black;
+  display: flex;
+  width: 85%; 
+  margin-right: 5%;
+}
+
+.select-area {
+  border: solid 0px black;
+  width: 10%;
+  margin-left: 2.7%;
+  margin-right: 3%;
+}
+
 .areamap {
-  border: solid 1px gray;
-  width: 60%;
+  border: solid 0px gray;
+  margin-right: 1%;
 }
 
 .imgMainList {
@@ -248,7 +263,7 @@ span#data {
 			data:form,
 			dataType:"json",
 			success:function(json) {
-				 console.log("json 확인" +JSON.stringify(json));
+				// console.log("json 확인" +JSON.stringify(json));
 				
 				let v_html = ``;
 				
@@ -258,13 +273,11 @@ span#data {
 						
 						v_html += `<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
 										<div class="imgMainList">
-								    		<a href="#">
-								            	<img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/\${item.food_main_img}" alt="..." />
-								        	</a>
+								            <img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/\${item.food_main_img}" onclick="goDetail(\${item.food_store_code})" style="cursor: pointer;" alt="..." />
 							        	</div>
 								        <div class="contentList">
 								            <div class="mb-3">
-								            	<h3 class="pt-3 title"><a href="#">\${item.food_name}</a></h3>
+								            	<h3 class="pt-3 title"><a href="foodstoreDetail.trip?food_store_code=\${item.food_store_code}">\${item.food_name}</a></h3>
 								            	<span>\${item.food_content}</span>
 								            </div>
 								            <div class="pb-3">
@@ -361,7 +374,14 @@ span#data {
 		}
 	}// end of function selectArea()---------------------
 	
-	
+	function goDetail(food_store_code) {
+		
+		const frm = document.goDetailFrm;
+		frm.food_store_code.value = food_store_code;
+		frm.action = "foodstoreDetail.trip"
+		frm.submit();
+		
+	}// end of function goDetail(food_store_code)-----------------------
 	
 </script>
 
@@ -372,31 +392,31 @@ span#data {
 	            <div class="row mt-2" style="width: 70%; margin-left: 4%;">
 	    			<h5 class="mr-5">카테고리 검색</h5>
 	    			<div class="mr-4">
-	                    <input type="checkbox" id="selectAllcategory" name="food_category_all" value="전체" onclick="selectAllcategory(this)"/>
+	                    <input type="checkbox" class="mr-1" id="selectAllcategory" name="food_category_all" value="전체" onclick="selectAllcategory(this)"/>
 	                    <label for="selectAllcategory">전체</label>
 	                </div>
 	                <div class="mr-4">
-	                    <input type="checkbox" id="korean" name="food_category" value="한식" onclick="selectCategory()"/>
+	                    <input type="checkbox" class="mr-1" id="korean" name="food_category" value="한식" onclick="selectCategory()"/>
 	                    <label for="korean">한식</label>
 	                </div>
 	                <div class="mr-4">
-	                    <input type="checkbox" id="japanese" name="food_category" value="일식" onclick="selectCategory()"/>
+	                    <input type="checkbox" class="mr-1" id="japanese" name="food_category" value="일식" onclick="selectCategory()"/>
 	                    <label for="japanese">일식</label>
 	                </div>
 	                <div class="mr-4">
-	                    <input type="checkbox" id="western" name="food_category" value="양식" onclick="selectCategory()"/>
+	                    <input type="checkbox" class="mr-1" id="western" name="food_category" value="양식" onclick="selectCategory()"/>
 	                    <label for="western">양식</label>
 	                </div>
 	                <div class="mr-4">
-	                    <input type="checkbox" id="chinese" name="food_category" value="중식" onclick="selectCategory()"/>
+	                    <input type="checkbox" class="mr-1" id="chinese" name="food_category" value="중식" onclick="selectCategory()"/>
 	                    <label for="chinese">중식</label>
 	                </div>
 	                <div class="mr-4">
-	                    <input type="checkbox" id="etc" name="food_category" value="기타" onclick="selectCategory()"/>
+	                    <input type="checkbox" class="mr-1" id="etc" name="food_category" value="기타" onclick="selectCategory()"/>
 	                    <label for="etc">기타</label>
 	                </div>
 	                <div class="mr-4">
-	                    <input type="checkbox" id="cafe" name="food_category" value="카페" onclick="selectCategory()"/>
+	                    <input type="checkbox" class="mr-1" id="cafe" name="food_category" value="카페" onclick="selectCategory()"/>
 	                    <label for="cafe">카페</label>
 	                </div>
 	     		</div>
@@ -405,43 +425,43 @@ span#data {
             
 	        <!-- 검색 지역 선택 -->
 	        <div class="row py-3 mt-1 border rounded">
-	          	<div id="tabArea" class="tabArea1 text-center mt-2" style="display: flex;">
-		            <h5 class="mt-4 mr-4" style="width: 20%; margin-left: 1%;">지역 선택</h5>
-		            <div class="areamapList border" style="display: flex;">
+	          	<div id="tabArea" class="tabArea1 text-center mt-2" style="display: flex; width: 100%;">
+		            <h5 class="select-area mt-4">지역 선택</h5>
+		            <div class="areamapList">
 		                
-		                <div class="areamap">
-	                    	<img src="<%= ctxPath %>/resources/images/areamap_total.png" /><br>
-	                        <input type="checkbox" id="area01" name="allArea" class="area_map" value="전체" onclick="selectAllarea(this)">
+		                <div class="areamap" style="width: 20%;">
+	                    	<img class="img_area mb-2" src="<%= ctxPath %>/resources/images/areamap_total.png" /><br>
+	                        <input type="checkbox" id="area01" name="allArea" class="area_map mr-1" value="전체" onclick="selectAllarea(this)">
 	                        <label for="area01" class="label_chk mt-2">전체</label>
 		                </div>
-		                <div class="areamap">
-	                    	<img src="<%= ctxPath %>/resources/images/areamap_city.png" /><br>
-	                        <input type="checkbox" id="area02" name="area" class="area_map" value="제주 시내" onclick="selectArea()">
+		                <div class="areamap" style="width:20%;">
+	                    	<img class="img_area mb-2" src="<%= ctxPath %>/resources/images/areamap_city.png" /><br>
+	                        <input type="checkbox" id="area02" name="area" class="area_map mr-1" value="제주 시내" onclick="selectArea()">
 	                        <label for="area02" class="label_chk mt-2">제주 시내</label>
 		                </div>
-		                <div class="areamap">
-	                    	<img class="img_area" src="<%= ctxPath %>/resources/images/areamap_jeju_east.png" /><br>
-	                        <input type="checkbox" id="area03" name="area" class="area_map" value="제주시 동부" onclick="selectArea()">
+		                <div class="areamap" style="width: 20%;">
+	                    	<img class="img_area mb-2" src="<%= ctxPath %>/resources/images/areamap_jeju_east.png" /><br>
+	                        <input type="checkbox" id="area03" name="area" class="area_map mr-1" value="제주시 동부" onclick="selectArea()">
 	                        <label for="area03" class="label_chk mt-2">제주시 동부</label>
 		                </div>
-		                <div class="areamap">
-		                    <img class="img_area" src="<%= ctxPath %>/resources/images/areamap_jeju_west.png" /><br>
-	                        <input type="checkbox" id="area04" name="area" class="area_map" value="제주시 서부" onclick="selectArea()">
+		                <div class="areamap" style="width: 20%;">
+		                    <img class="img_area mb-2" src="<%= ctxPath %>/resources/images/areamap_jeju_west.png" /><br>
+	                        <input type="checkbox" id="area04" name="area" class="area_map mr-1" value="제주시 서부" onclick="selectArea()">
 	                        <label for="area04" class="label_chk mt-2">제주시 서부</label>
 		                </div>
-		                <div class="areamap">
-		                    <img class="img_area" src="<%= ctxPath %>/resources/images/areamap_bt_city.png" /><br>
-	                        <input type="checkbox" id="area05" name="area" class="area_map" value="서귀포 시내" onclick="selectArea()">
+		                <div class="areamap" style="width: 20%;">
+		                    <img class="img_area mb-2" src="<%= ctxPath %>/resources/images/areamap_bt_city.png" /><br>
+	                        <input type="checkbox" id="area05" name="area" class="area_map mr-1" value="서귀포 시내" onclick="selectArea()">
 	                        <label for="area05" class="label_chk mt-2">서귀포 시내</label>
 		                </div>
-		                <div class="areamap">
-		                    <img class="img_area" src="<%= ctxPath %>/resources/images/areamap_bt_east.png" /><br>
-	                        <input type="checkbox" id="area06" name="area" class="area_map" value="서귀포시 동부" onclick="selectArea()">
+		                <div class="areamap" style="width: 20%;">
+		                    <img class="img_area mb-2" src="<%= ctxPath %>/resources/images/areamap_bt_east.png" /><br>
+	                        <input type="checkbox" id="area06" name="area" class="area_map mr-1" value="서귀포시 동부" onclick="selectArea()">
 	                        <label for="area06" class="label_chk mt-2">서귀포시 동부</label>
 		                </div>
-		                <div class="areamap">
-		                    <img class="img_area" src="<%= ctxPath %>/resources/images/areamap_bt_west.png" /><br>
-	                        <input type="checkbox" id="area07" name="area" class="area_map" value="서귀포시 서부" onclick="selectArea()">
+		                <div class="areamap" style="width: 20%;">
+		                    <img class="img_area mb-2" src="<%= ctxPath %>/resources/images/areamap_bt_west.png" /><br>
+	                        <input type="checkbox" id="area07" name="area" class="area_map mr-1" value="서귀포시 서부" onclick="selectArea()">
 	                        <label for="area07" class="label_chk mt-2">서귀포시 서부</label>
 		                </div>
 		                
@@ -508,7 +528,7 @@ span#data {
         <!---------------------------------------------------------------------------------------------->
         
         <!-- 페이징 임의로 넣어둠 -->        
-        <div class="pagination-area">
+        <!-- <div class="pagination-area">
             <nav aria-label="#">
                 <ul class="pagination pagination-sm justify-content-center">
                     <li class="page-item active">
@@ -521,22 +541,32 @@ span#data {
                     </li>
                 </ul>
             </nav>
-        </div>
+        </div> -->
+        
+        <!-- 페이지바  -->
+		<div align="center" style="border: solid 0px gray; width: 80%; margin: 30px auto;">
+			${requestScope.pageBar}
+		</div>
         
 	</div> 
 
+
 	<form name="dataFrm">
-		<!-- 카테고리, 지역 -->
+		<!-- 카테고리, 지역 체크박스 -->
 		<input type="hidden" name="str_category" />
 		<input type="hidden" name="str_area" />
 		
+		<!-- 오름차순, 내림차순 정렬 -->
+		<input type="hidden" name="orderType" />
+		<input type="hidden" name="orderValue_asc" />
+		<input type="hidden" name="orderValue_desc" />
+		
 		<!-- 검색어 -->
 		<input type="hidden" name="searchWord" />
+	</form>
 	
-		<!-- 오름차순, 내림차순 정렬 -->
-		<input type="hidden" name="orderType">
-		<input type="text" name="orderValue_asc">
-		<input type="text" name="orderValue_desc">
+	<form name="goDetailFrm">
+		<input type="text" name="food_store_code" />
 	</form>
 
 

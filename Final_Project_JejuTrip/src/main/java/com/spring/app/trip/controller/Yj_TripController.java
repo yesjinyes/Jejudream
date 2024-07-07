@@ -62,6 +62,8 @@ public class Yj_TripController {
 							    @RequestParam(defaultValue="") String orderValue_asc,
 							    @RequestParam(defaultValue="") String orderValue_desc) {
 		
+		List<FoodstoreVO> foodstoreList = null;
+		
 		Map<String, Object> map = new HashMap<>();
 		
 		// 카테고리 체크박스
@@ -100,12 +102,63 @@ public class Yj_TripController {
 		}
 		map.put("searchWord", searchWord);
 		
-		
+
 		//////////////////////////////////////////////////////////////////////////////
+		// == 페이징 처리 == //
+		String str_currentShowPageNo = request.getParameter("currentShowPageNo");
 		
-		List<FoodstoreVO> foodstoreList = service.viewFoodstoreList(map); // 맛집 리스트
+		int totalCount = 0;         // 총 게시물 건수
+		int sizePerPage = 4;       // 한 페이지에 보여줄 게시물 수
+		int currentShowPageNo = 0;  // 현재 보여주는 페이지 번호로서, 초기치로는 1페이지로 설정함. (지금은 0) 
+		int totalPage = 0;          // 총 페이지수(웹브라우저상에서 보여줄 총 페이지 개수, 페이지바) (게시글이 87개라면 9페이지)
+
+		totalCount = service.getTotalCount(map);
+		
+		// System.out.println("## 확인용 totalCount => " + totalCount); // 20
+		
+		totalPage = (int)Math.ceil((double)totalCount/sizePerPage);
+		
+		if(str_currentShowPageNo == null) { 
+			currentShowPageNo = 1;
+		}
+		else {
+			try {
+				currentShowPageNo = Integer.parseInt(str_currentShowPageNo);
+				
+				if(currentShowPageNo < 1 || currentShowPageNo > totalPage) {
+					currentShowPageNo = 1; // 1페이지를 보여준다.
+				}
+			} catch (NumberFormatException e) {
+				currentShowPageNo = 1;
+			}
+		}// end of if(str_currentShowPageNo == null)~else----------------
+		
+		int startRno = ((currentShowPageNo - 1) * sizePerPage) + 1; // 시작 행번호 
+        int endRno = startRno + sizePerPage - 1; // 끝 행번호
+        
+        map.put("startRno", String.valueOf(startRno));
+        map.put("endRno", String.valueOf(endRno));
+		
+        
+		foodstoreList = service.viewFoodstoreList(map); // 맛집 리스트
 		
 		//System.out.println("foodstoreList 길이 : " + foodstoreList.size());
+		
+		// 패이지바 만들기
+		int blockSize = 3;
+		int loop = 1;
+		int pageNo = ((currentShowPageNo - 1)/blockSize) * blockSize + 1;
+		
+		String pageBar = "<ul style='list-style:none;'>";
+		String url = "foodstoreList.trip";
+		
+		
+		
+		
+		
+		
+		
+		//////////////////////////////////////////////////////////////////////////////
 		
 		JSONArray jsonArr = new JSONArray();
 	    
@@ -132,6 +185,28 @@ public class Yj_TripController {
 	}
 	
 	
+	// == 맛집 상세 페이지 보이기 == //
+	@GetMapping("foodstoreDetail.trip")
+	public ModelAndView foodstoreDetail(ModelAndView mav, HttpServletRequest request) {
+		
+		String food_store_code = request.getParameter("food_store_code");
+		// System.out.println("## 확인용 => "+ food_store_code);
+
+		List<Map<String, String>> addimgList = service.viewfoodaddImg(food_store_code); // 맛집 상세 추가 이미지
+		FoodstoreVO foodstorevo = service.viewfoodstoreDetail(food_store_code); // 맛집 상세 페이지
+		
+		
+		mav.addObject("addimgList", addimgList);
+ 		mav.addObject("foodstorevo", foodstorevo);
+		
+ 		mav.setViewName("foodstore/foodstoreDetail.tiles1");
+ 		
+ 		
+		return mav;
+	}
+		
+
+	
 	
 	// 검색어 입력시 자동글 완성하기
 /*	@ResponseBody
@@ -155,6 +230,8 @@ public class Yj_TripController {
 		return jsonArr.toString();
 	}
 */
+	
+	
 	
 	
 
