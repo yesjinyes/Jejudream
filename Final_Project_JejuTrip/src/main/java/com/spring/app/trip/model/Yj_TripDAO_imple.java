@@ -28,8 +28,8 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 
 	// == 맛집 랜덤 추천 == //
 	@Override
-	public List<FoodstoreVO> randomRecommend(Map<String, String> paraMap) {
-		List<FoodstoreVO> randomRecommend = sqlsession.selectList("yj_trip.randomRecommend", paraMap);
+	public List<FoodstoreVO> randomRecommend(Map<String, Object> map) {
+		List<FoodstoreVO> randomRecommend = sqlsession.selectList("yj_trip.randomRecommend", map);
 		return randomRecommend;
 	}
 
@@ -41,11 +41,12 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 		return totalCount;
 	}
 
+	////////////////////////////////////////////////////////////////////////////////////////////////
 
 	// == 맛집 상세 조회하기 == //
 	@Override
-	public FoodstoreVO viewfoodstoreDetail(String food_store_code) {
-		FoodstoreVO foodstorevo = sqlsession.selectOne("yj_trip.viewfoodstoreDetail", food_store_code);
+	public FoodstoreVO viewfoodstoreDetail(Map<String, String> paraMap) {
+		FoodstoreVO foodstorevo = sqlsession.selectOne("yj_trip.viewfoodstoreDetail", paraMap);
 		return foodstorevo;
 	}
 

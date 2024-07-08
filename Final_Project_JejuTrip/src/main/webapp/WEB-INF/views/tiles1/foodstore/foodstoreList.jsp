@@ -136,7 +136,6 @@ span#data {
 
 		// 전체 리스트 띄우기
 		goAjax();
-
 		
 		///////////////////////////////////////////////////////////////////////////////////////////
 		
@@ -219,8 +218,11 @@ span#data {
 		
 		// == 전체보기 클릭 시 == //
 		$("button#btnAll").click(function() {
+			const frm = document.dataFrm;
 			
-		
+			frm.orderValue_asc.value = "";
+			frm.orderValue_desc.value = "";
+			
 			goAjax();
 		});
 		
@@ -271,35 +273,53 @@ span#data {
 			success:function(json) {
 				// console.log("json 확인" +JSON.stringify(json));
 				
-				let v_html = ``;
+				let v_html_main = ``;
+				let v_html_side = ``;
 				
 				if(json.length > 0) {
 				
 					json.forEach(function(item, index, array) {
 						
-						v_html += `<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
-										<div class="imgMainList">
-								            <img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/\${item.food_main_img}" onclick="goDetail(\${item.food_store_code})" style="cursor: pointer;" alt="..." />
-							        	</div>
-								        <div class="contentList">
-								            <div class="mb-3">
-								            	<h3 class="pt-3 title"><a href="foodstoreDetail.trip?food_store_code=\${item.food_store_code}">\${item.food_name}</a></h3>
-								            	<span>\${item.food_content}</span>
-								            </div>
-								            <div class="pb-3">
-								                <span style="color:#b5aec4;">\${item.food_category}</span><br>
-								                <span>\${item.food_address}</span>
-								            </div>
-								        </div>
-								    </div>`;
+						// 맛집 리스트 띄우기
+						if(item.status == 0){
+							v_html_main += `<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
+												<div class="imgMainList">
+										            <img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/\${item.food_main_img}" onclick="goDetail(\${item.food_store_code})" style="cursor: pointer;" alt="..." />
+									        	</div>
+										        <div class="contentList">
+										            <div class="mb-3">
+										            	<h3 class="pt-3 title"><a href="foodstoreDetail.trip?food_store_code=\${item.food_store_code}">\${item.food_name}</a></h3>
+										            	<span>\${item.food_content}</span>
+										            </div>
+										            <div class="pb-3">
+										                <span style="color:#b5aec4;">\${item.food_category}</span><br>
+										                <span>\${item.food_address}</span>
+										            </div>
+										        </div>
+										    </div>`;
+						}
+						
+						// 맛집 랜덤 추천
+						else if(item.status == 1){
+							v_html_side += `<div class="border rounded p-3 mb-3">
+											    <div class="recommend-img">
+										            <img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/\${item.food_main_img}" onclick="goDetailRecommend(\${item.random_recommend_code})" style="cursor: pointer;" alt="..." />
+										        </div>
+										        <div class="mt-2">
+										        	<span>\${item.food_name}</span><br>
+										        	<span style="color: #808080;">\${item.food_content}</span>
+										        </div>
+									      	</div>`
+						}
 					});// end of json.forEach------------------------
-					
 				}
+				
 			 	else {
 					v_html = "<span>관련 데이터가 없습니다.</span>";
 				}	 
 					
-				$("div#storeList").html(v_html);
+				$("div#storeList").html(v_html_main);
+				$("div#side").html(v_html_side);
 			},
 			error: function(request, status, error){
             	alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
@@ -307,7 +327,6 @@ span#data {
 		});// end of $.ajax------------
 		
 	}// end of function goAjax()----------------------
-	
 	
 	// == 검색하기 == //
 	function goSearch() {
@@ -332,7 +351,6 @@ span#data {
 		})
 	}
 	
-	
 	// == 카테고리 한개라도 체크 해제 시 전체 체크 해제 == //
 	function selectCategory() {
 		const checkboxes = document.querySelectorAll("input[name='food_category']"); // 모든 체크박스
@@ -354,9 +372,8 @@ span#data {
 		 
 		checkboxes.forEach((checkbox) => {
 			checkbox.checked = allArea.checked;
-		})
+		});
 	}
-	
 	
 	// == 지역 한개라도 체크 해제 시 전체 체크 해제 == //
 	function selectArea() {
@@ -372,6 +389,7 @@ span#data {
 		}
 	}// end of function selectArea()---------------------
 	
+	//////////////////////////////////////////////////////////////////////////////
 	
 	// == 맛집 상세 페이지로 이동 == //
 	function goDetail(food_store_code) {
@@ -381,6 +399,20 @@ span#data {
 		frm.action = "foodstoreDetail.trip"
 		frm.submit();
 	}// end of function goDetail(food_store_code)-----------------------
+	
+	
+	// == 맛집 추천 상세 페이지로 이동 == //
+	function goDetailRecommend(random_recommend_code) {
+		const frm = document.goDetailFrm;
+		console.log("확인용 random_recommend_code => "+ random_recommend_code);
+		
+		frm.random_recommend_code.value = random_recommend_code;
+		
+		frm.action = "foodstoreDetail.trip"
+		frm.submit();
+	}// end of function goDetailRecommend(random_recommend_code)------------------
+	
+	
 	
 </script>
 
@@ -493,8 +525,6 @@ span#data {
 				<!-- 맛집 리스트 -->
 				<div class="col-md-8" id="foodstoreList"> 
 					<div class="row" id="storeList">
-						<c:forEach var="foodstoreList" items="${requestScope.foodstoreList}" varStatus="status">	
-						</c:forEach>
 					</div>
 				</div>
 				
@@ -503,21 +533,8 @@ span#data {
 					<div class="border rounded" style="margin-right: -5%;">
 						<div class="m-4"> 
 							<h4 class="mb-4">추천맛집</h4>
-							
-							<c:forEach var="randomRecommend" items="${requestScope.randomRecommend}" varStatus="status">	
-								<c:if test="${status.index < 3}">
-									<div class="border rounded p-3 mb-3">
-										<a href="#">
-								            <img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/${randomRecommend.food_main_img}" alt="..." />
-								        </a>
-								        <div class="mt-2">
-								        	<a href="" class="foodRecommend mb-5" style="color: #1a1a1a;">${randomRecommend.food_name}</a><br>
-								        	<span style="color: #808080;">${randomRecommend.food_content}</span>
-								        </div>
-							      	</div>
-						      	</c:if>
-							</c:forEach>
-							
+							<div id="side">
+							</div>
 						</div>
 					</div>
 				</div>
@@ -550,22 +567,23 @@ span#data {
 	</div> 
 
 
-	<form name="dataFrm">
-		<!-- 카테고리, 지역 체크박스 -->
-		<input type="hidden" name="str_category" />
-		<input type="hidden" name="str_area" />
-		
-		<!-- 오름차순, 내림차순 정렬 -->
-		<input type="hidden" name="orderType" />
-		<input type="hidden" name="orderValue_asc" />
-		<input type="hidden" name="orderValue_desc" />
-		
-		<!-- 검색어 -->
-		<input type="hidden" name="searchWord" />
-	</form>
-	
-	<form name="goDetailFrm">
-		<input type="hidden" name="food_store_code" />
-	</form>
+<form name="dataFrm">
+	<!-- 카테고리, 지역 체크박스 -->
+	<input type="hidden" name="str_category" />
+	<input type="hidden" name="str_area" />
+	<!-- 오름차순, 내림차순 정렬 -->
+	<input type="hidden" name="orderType" />
+	<input type="hidden" name="orderValue_asc" />
+	<input type="hidden" name="orderValue_desc" />
+	<!-- 검색어 -->
+	<input type="hidden" name="searchWord" />
+</form>
+
+<form name="goDetailFrm">
+	<!-- 맛집 리스트에서 상세 페이지로 이동 -->
+	<input type="hidden" name="food_store_code" />
+	<!-- 맛집 랜덤 추천에서 상세 페이지로 이동 -->
+	<input type="hidden" name="random_recommend_code" />
+</form>
 
 
