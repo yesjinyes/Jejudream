@@ -137,15 +137,15 @@
 	</select>
 	
 	
-	<!-- 비밀번호찾기 - 비밀번호 변경 (일반회원, 관리자) -->
+	<!-- 비밀번호 변경 (일반회원, 관리자) -->
 	<update id="memberPwUpdate" parameterType="HashMap">
-		update tbl_member set pw = #{new_pw}
+		update tbl_member set pw = #{new_pw}, lastpwdchangedate = sysdate
 		where userid = #{id}
 	</update>
 	
-	<!-- 비밀번호찾기 - 비밀번호 변경 (업체회원) -->
+	<!-- 비밀번호 변경 (업체회원) -->
 	<update id="companyPwUpdate" parameterType="HashMap">
-		update tbl_company set pw = #{new_pw}
+		update tbl_company set pw = #{new_pw}, lastpwdchangedate = sysdate
 		where companyid = #{id}
 	</update>
 	
@@ -169,5 +169,49 @@
 		insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img)
 		values(seq_foodaddimg.nextval, #{fk_food_store_code}, #{food_add_img})
 	</insert>
+	
+	
+	<!-- 기존 비밀번호와 값이 일치한지 비교하기 (일반회원, 관리자) -->
+	<select id="isSamePwMember" parameterType="HashMap" resultType="String">
+		select pw
+		from tbl_member
+		where userid = #{id} and pw = #{new_pw}
+	</select>
+	
+	
+	<!-- 기존 비밀번호와 값이 일치한지 비교하기 (업체회원) -->
+	<select id="isSamePwCompany" parameterType="HashMap" resultType="String">
+		select pw
+		from tbl_company
+		where companyid = #{id} and pw = #{new_pw}
+	</select>
+	
+	
+	<!-- 기존의 로그인 기록 삭제하기 (일반회원, 관리자) -->
+	<delete id="deleteMemberLoginHistory" parameterType="String">
+		delete from tbl_member_loginhistory
+		where fk_userid = #{id}
+	</delete>
+	
+	
+	<!-- 기존의 로그인 기록 삭제하기 (업체회원) -->
+	<delete id="deleteCompanyLoginHistory" parameterType="String">
+		delete from tbl_company_loginhistory
+		where fk_companyid = #{id}
+	</delete>
+	
+	
+	<!-- idle을 0으로 변경하기 (일반회원, 관리자) -->
+	<update id="memberIdleUpdate" parameterType="String">
+		update tbl_member set idle = 0
+		where userid = #{id}
+	</update>
+	
+	
+	<!-- idle을 0으로 변경하기 (업체회원) -->
+	<update id="companyIdleUpdate" parameterType="String">
+		update tbl_company set idle = 0
+		where companyid = #{id}
+	</update>
 	
 </mapper>

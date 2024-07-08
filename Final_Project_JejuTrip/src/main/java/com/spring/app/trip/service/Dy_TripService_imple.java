@@ -142,7 +142,6 @@ public class Dy_TripService_imple implements Dy_TripService {
 
 				String message = "장기 미접속으로 휴면 처리 되었습니다.\\n휴면 해제 페이지로 이동합니다.";
 				String loc = request.getContextPath() + "/login/idleUpdate.trip";
-				// 추후에 휴면 계정을 풀어주는 페이지로 이동하기
 				
 				mav.addObject("message", message);
 				mav.addObject("loc", loc);
@@ -236,9 +235,8 @@ public class Dy_TripService_imple implements Dy_TripService {
 			
 			if(loginCompanyuser.getIdle() == 1) { // 로그인 한 지 1년이 경과한 경우
 
-				String message = "로그인을 한 지 1년이 지나 휴면상태가 되었습니다.\\n관리자에게 문의 바랍니다.";
-				String loc = request.getContextPath() + "/index.trip";
-				// 추후에 휴면 계정을 풀어주는 페이지로 이동하기
+				String message = "장기 미접속으로 휴면 처리 되었습니다.\\n휴면 해제 페이지로 이동합니다.";
+				String loc = request.getContextPath() + "/login/idleUpdate.trip";
 				
 				mav.addObject("message", message);
 				mav.addObject("loc", loc);
@@ -326,7 +324,7 @@ public class Dy_TripService_imple implements Dy_TripService {
 	}
 
 
-	// 비밀번호찾기 - 비밀번호 변경
+	// 비밀번호 변경
 	@Override
 	public int pwUpdate(Map<String, String> paraMap) {
 		
@@ -363,6 +361,42 @@ public class Dy_TripService_imple implements Dy_TripService {
 		int n = dao.insert_food_add_img(paraMap);
 		
 		return n;
+	}
+
+
+	// 기존 비밀번호와 값이 일치한지 비교하기
+	@Override
+	public boolean isSamePw(Map<String, String> paraMap) {
+		
+		boolean isSamePw = false;
+		
+		String result = dao.isSamePw(paraMap);
+		
+		if(result != null) {
+			isSamePw = true;
+		}
+		
+		return isSamePw;
+	}
+
+
+	// 기존의 로그인 기록 삭제하기
+	@Override
+	public int deleteLoginHistory(Map<String, String> paraMap) {
+		
+		int n = dao.deleteLoginHistory(paraMap);
+		
+		return n;
+	}
+
+
+	// 회원의 idle을 0으로 변경하기
+	@Override
+	public int idleUpdate(Map<String, String> paraMap) {
+		
+		int result = dao.idleUpdate(paraMap);
+		
+		return result;
 	}
 
 

@@ -95,11 +95,20 @@
         	type: "post",
         	data: {
         		"memberType": $("input[name='memberType']").val(),
-        		"id": $("input[name='id']").val()
+        		"id": $("input[name='id']").val(),
+        		"new_pw": $("input#pw").val()
         	},
         	dataType: "json",
         	success: function(json) {
-        		
+        		if(json.isOK) {
+        			alert("비밀번호가 변경되어 휴면 해제가 완료되었습니다.\n다시 로그인해 주시기 바랍니다.");
+        			location.href = "<%=ctxPath%>/login.trip";
+        			
+        		} else {
+        			alert("입력하신 비밀번호가 기존 비밀번호와 동일합니다.\n다시 입력해 주세요.");
+        			$("input#pw").val("").focus();
+        			$("input#pwCheck").val("");
+        		}
         	},
         	error: function(request, status, error) {
                 alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
@@ -120,8 +129,8 @@
                 <input type="password" name="pwCheck" id="pwCheck" placeholder="비밀번호 재입력">
             </div>
             
-            <input type="text" name="memberType" value="${requestScope.memberType}">
-            <input type="text" name="id" value="${requestScope.id}">
+            <input type="hidden" name="memberType" value="${requestScope.memberType}">
+            <input type="hidden" name="id" value="${requestScope.id}">
             
             <div class="mt-5" style="margin-bottom: 20%;">
                 <button type="button" class="btn" id="pwUpdateBtn" onclick="goPwUpdate()">변경하기</button>

@@ -103,6 +103,26 @@ from user_sequences;
 
 
 
+select *
+from tbl_member
+where userid = 'kimdy';
+
+select *
+from tbl_member_loginhistory
+where fk_userid = 'kimdy'
+order by logindate desc;
+
+update tbl_member_loginhistory
+set logindate = '23/06/30'
+where fk_userid = 'kimdy';
+
+commit;
+
+
+
+select pw
+from tbl_member
+where userid = 'kimdy' and pw = '9695b88a59a1610320897fa84cb7e144cc51f2984520efb77111d94b402a8382';
 
 
 

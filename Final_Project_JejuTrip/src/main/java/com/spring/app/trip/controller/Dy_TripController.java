@@ -22,6 +22,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -699,23 +700,65 @@ public class Dy_TripController {
 	}
 	
 	
+	// 휴면 해제 - 비밀번호 변경 페이지 요청
 	@GetMapping("login/idleUpdateEnd.trip")
-	public String idleUpdateEnd() {
+	public ModelAndView idleUpdateEnd(ModelAndView mav, HttpServletRequest request) {
 		
-		return "login/idleUpdateEnd.tiles1";
+		String memberType = request.getParameter("memberType");
+		String id = request.getParameter("id");
+		
+		mav.addObject("memberType", memberType);
+		mav.addObject("id", id);
+		
+		mav.setViewName("login/idleUpdateEnd.tiles1");
 		// /WEB-INF/views/tiles1/login/idleUpdateEnd.jsp
+		
+		return mav;
 	}
 	
 	
-	@PostMapping("login/idleUpdateEndJSON.trip")
-	public String idleUpdateEndJSON() {
+	// 휴면 해제 - 비밀번호 변경 처리하기
+	@ResponseBody
+	@PostMapping(value="login/idleUpdateEndJSON.trip", produces="text/plain;charset=UTF-8")
+	public String idleUpdateEndJSON(HttpServletRequest request,
+									@RequestParam(defaultValue="") String memberType,
+									@RequestParam(defaultValue="") String id,
+									@RequestParam(defaultValue="") String new_pw) {
+
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("memberType", memberType);
+		paraMap.put("id", id);
+		paraMap.put("new_pw", Sha256.encrypt(new_pw));
 		
-		// 기존 비밀번호랑 비교
+		// 기존 비밀번호와 값이 일치한지 비교하기
+		boolean isSamePw = service.isSamePw(paraMap);
 		
-		// 비밀번호 변경
+		JSONObject jsonObj = new JSONObject();
 		
+		if(isSamePw) { // 새 비밀번호가 기존 비밀번호와 같다면
+			jsonObj.put("isOK", false);
+			
+		} else {
+			// 비밀번호 변경
+			int n1 = service.pwUpdate(paraMap);
+			
+			if(n1 == 1) {
+				
+				// 기존의 로그인 기록 삭제하기
+				int n2 = service.deleteLoginHistory(paraMap);
+				
+				if(n2 != 0) {
+					// 회원의 idle을 0으로 변경하기
+					int result = service.idleUpdate(paraMap);
+					
+					if(result == 1) {
+						jsonObj.put("isOK", true);
+					}
+				}
+			}
+		}
 		
-		return "";
+		return jsonObj.toString();
 	}
 	
 }

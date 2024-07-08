@@ -84,7 +84,7 @@
         
         $(document).on("keyup", "input:text[name='input_confirmCode']", function(e) {
         	if(e.keyCode == 13) {
-        		goPwUpdate();
+        		goIdleUpdate();
         	}
         });
 
@@ -119,7 +119,7 @@
             return;
         }
 
-        const queryString = $("form[name='pwdFindFrm']").serialize();
+        const queryString = $("form[name='emailCertifyFrm']").serialize();
         
         $.ajax({
         	url: "<%=ctxPath%>/login/emailCertifyJSON.trip",
@@ -138,7 +138,7 @@
 		        		           </div>
 		        		           <div style="position: relative;">
 		        		              <input type="text" name="input_confirmCode" placeholder="인증번호 입력">
-		        		              <button type="button" class="btn btn-success" id="confirmBtn" onclick="goPwUpdate()">인증하기</button>
+		        		              <button type="button" class="btn btn-success" id="confirmBtn" onclick="goIdleUpdate()">인증하기</button>
 		        		           </div>`;
 		        		
         			} else {
@@ -146,6 +146,7 @@
         			}
 					
         			$("div#emailConfirm").html(v_html);
+        			$("input:text[name='input_confirmCode']").focus();
         			
         		} else {
         			alert("일치하는 사용자 정보가 없습니다.");
@@ -161,7 +162,7 @@
         });
     }
     
-    function goPwUpdate() {
+    function goIdleUpdate() {
     	const input_confirmCode = $("input[name='input_confirmCode']").val().trim();
     	
     	if(input_confirmCode == "") {

@@ -140,7 +140,7 @@ public class Dy_TripDAO_imple implements Dy_TripDAO {
 	}
 
 
-	// 비밀번호찾기 - 비밀번호 변경
+	// 비밀번호 변경
 	@Override
 	public int pwUpdate(Map<String, String> paraMap) {
 		
@@ -185,6 +185,60 @@ public class Dy_TripDAO_imple implements Dy_TripDAO {
 		
 		return n;
 	}
+
+
+	// 기존 비밀번호와 값이 일치한지 비교하기
+	@Override
+	public String isSamePw(Map<String, String> paraMap) {
+		
+		String result = "";
+		
+		if("company".equals(paraMap.get("memberType"))) {
+			result = sqlsession.selectOne("dy_trip.isSamePwCompany", paraMap);
+			
+		} else {
+			result = sqlsession.selectOne("dy_trip.isSamePwMember", paraMap);
+		}
+		
+		return result;
+	}
+
+
+	// 기존의 로그인 기록 삭제하기
+	@Override
+	public int deleteLoginHistory(Map<String, String> paraMap) {
+		
+		int n = 0;
+		
+		if("company".equals(paraMap.get("memberType"))) {
+			n = sqlsession.delete("dy_trip.deleteCompanyLoginHistory", paraMap.get("id"));
+			
+		} else {
+			n = sqlsession.delete("dy_trip.deleteMemberLoginHistory", paraMap.get("id"));
+		}
+		
+		return n;
+	}
+
+
+	// 회원의 idle을 0으로 변경하기
+	@Override
+	public int idleUpdate(Map<String, String> paraMap) {
+
+		int result = 0;
+		
+		if("company".equals(paraMap.get("memberType"))) {
+			result = sqlsession.update("dy_trip.companyIdleUpdate", paraMap.get("id"));
+			
+		} else {
+			result = sqlsession.update("dy_trip.memberIdleUpdate", paraMap.get("id"));
+		}
+		
+		return result;
+	}
+
+
+	
 	
 
 }
