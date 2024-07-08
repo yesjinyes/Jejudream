@@ -122,30 +122,109 @@
 	</select>
 	
 	
-	<!-- 비밀번호 찾기 시 사용자가 존재하는지 확인하기 (일반회원, 관리자) -->
-	<select id="memberPwFind" parameterType="HashMap" resultType="String">
+	<!-- 사용자가 존재하는지 확인하기 (일반회원, 관리자) -->
+	<select id="isMemberExist" parameterType="HashMap" resultType="String">
 		select userid
 		from tbl_member
 		where userid = #{id} and email = #{email}
 	</select>
 	
-	<!-- 비밀번호 찾기 시 사용자가 존재하는지 확인하기 (업체회원) -->
-	<select id="companyPwFind" parameterType="HashMap" resultType="String">
+	<!-- 사용자가 존재하는지 확인하기 (업체회원) -->
+	<select id="isCompanyExist" parameterType="HashMap" resultType="String">
 		select companyid
 		from tbl_company
 		where companyid = #{id} and email = #{email}
 	</select>
 	
 	
-	<!-- 비밀번호찾기 - 비밀번호 변경 (일반회원, 관리자) -->
+	<!-- 비밀번호 변경 (일반회원, 관리자) -->
 	<update id="memberPwUpdate" parameterType="HashMap">
-		update tbl_member set pw = #{new_pw}
+		update tbl_member set pw = #{new_pw}, lastpwdchangedate = sysdate
 		where userid = #{id}
 	</update>
 	
-	<!-- 비밀번호찾기 - 비밀번호 변경 (업체회원) -->
+	<!-- 비밀번호 변경 (업체회원) -->
 	<update id="companyPwUpdate" parameterType="HashMap">
-		update tbl_company set pw = #{new_pw}
+		update tbl_company set pw = #{new_pw}, lastpwdchangedate = sysdate
+		where companyid = #{id}
+	</update>
+	
+	
+	<!-- 맛집등록 - 일련번호 채번해오기 -->
+	<select id="getCommonSeq" resultType="String">
+		select SEQ_COMMON.nextval AS food_store_code
+		from dual
+	</select>
+	
+	
+	<!-- === 데이터베이스에 맛집 정보 insert 하기 === -->
+	<insert id="foodstoreRegister" parameterType="com.spring.app.trip.domain.FoodstoreVO">
+		insert into tbl_food_store(food_store_code, food_category, local_status, food_name, food_content, food_businesshours, food_mobile, food_address, food_main_img, filename, orgfilename, filesize)
+		values(#{food_store_code}, #{food_category}, #{local_status}, #{food_name}, #{food_content}, #{food_businesshours}, #{food_mobile}, #{food_address}, #{fileName}, #{fileName}, #{orgFilename}, #{fileSize})
+	</insert>
+	
+	
+	<!-- tbl_food_add_img 테이블에 추가이미지 파일명 insert 하기 -->
+	<insert id="insert_food_add_img" parameterType="HashMap">
+		insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img)
+		values(seq_foodaddimg.nextval, #{fk_food_store_code}, #{food_add_img})
+	</insert>
+	
+	
+	<!-- 기존 비밀번호와 값이 일치한지 비교하기 (일반회원, 관리자) -->
+	<select id="isSamePwMember" parameterType="HashMap" resultType="String">
+		select pw
+		from tbl_member
+		where userid = #{id} and pw = #{new_pw}
+	</select>
+	
+	
+	<!-- 기존 비밀번호와 값이 일치한지 비교하기 (업체회원) -->
+	<select id="isSamePwCompany" parameterType="HashMap" resultType="String">
+		select pw
+		from tbl_company
+		where companyid = #{id} and pw = #{new_pw}
+	</select>
+	
+	
+	<!-- 기존의 로그인 기록 삭제하기 (일반회원, 관리자) -->
+	<delete id="deleteMemberLoginHistory" parameterType="String">
+		delete from tbl_member_loginhistory
+		where fk_userid = #{id}
+	</delete>
+	
+	
+	<!-- 기존의 로그인 기록 삭제하기 (업체회원) -->
+	<delete id="deleteCompanyLoginHistory" parameterType="String">
+		delete from tbl_company_loginhistory
+		where fk_companyid = #{id}
+	</delete>
+	
+	
+	<!-- idle을 0으로 변경하기 (일반회원, 관리자) -->
+	<update id="memberIdleUpdate" parameterType="String">
+		update tbl_member set idle = 0
+		where userid = #{id}
+	</update>
+	
+	
+	<!-- idle을 0으로 변경하기 (업체회원) -->
+	<update id="companyIdleUpdate" parameterType="String">
+		update tbl_company set idle = 0
+		where companyid = #{id}
+	</update>
+	
+	
+	<!-- 비밀번호 변경 날짜(lastpwdchangedate)를 현재 날짜로 변경하기 (일반회원, 관리자) -->
+	<update id="updateMemberPwdChangeDate" parameterType="String">
+		update tbl_member set lastpwdchangedate = sysdate
+		where userid = #{id}
+	</update>
+	
+	
+	<!-- 비밀번호 변경 날짜(lastpwdchangedate)를 현재 날짜로 변경하기 (업체회원) -->
+	<update id="updateCompanyPwdChangeDate" parameterType="String">
+		update tbl_company set lastpwdchangedate = sysdate
 		where companyid = #{id}
 	</update>
 	

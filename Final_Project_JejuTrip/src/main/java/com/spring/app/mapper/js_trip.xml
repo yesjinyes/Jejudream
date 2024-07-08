@@ -6,80 +6,12 @@
 <!-- ==== #29. 루트 엘리먼트 & 네임스페이스 설정(네임스페이스명은 프로젝트 전체내에서 유일해야 한다!!!!!) ====  절대  ; 쓰지마라 !!!!!!!!!! 
 메퍼가 바뀌면 무조건  WAS를 껐다 켜야한다!!!!!!!!! -->
 <mapper namespace="js_trip">
-	
-	
-	
-	<resultMap type="HashMap" id="lodgingMap">
-		<result property="rno" column="rno" javaType="String" />
-		<result property="lodging_name" column="LODGING_NAME" javaType="String" />
-		<result property="lodging_address" column="LODGING_ADDRESS" javaType="String" />
-		<result property="lodging_code" column="LODGING_CODE" javaType="String" />
-		<result property="local_status" column="LOCAL_STATUS" javaType="String" />
-		<result property="lodging_category" column="LODGING_CATEGORY" javaType="String" />
-		<result property="main_img" column="MAIN_IMG" javaType="String" />
-		<result property="review_division" column="REVIEW_DIVISION" javaType="String" />
-		<result property="price" column="price" javaType="String" />
-	</resultMap>
-	<select id="lodgingList" resultMap="lodgingMap">
-	  select rno, LODGING_NAME, LODGING_ADDRESS, LODGING_CODE, LOCAL_STATUS,
-	   		 LODGING_CATEGORY, MAIN_IMG, REVIEW_DIVISION, price
-	  from
-	  (
-	  	select row_number() over(order by LODGING_CODE desc) as rno, LODGING_NAME, LODGING_ADDRESS, LODGING_CODE, LOCAL_STATUS,
-                 LODGING_CATEGORY, MAIN_IMG, REVIEW_DIVISION , price
-          from tbl_lodging L join 
-          (
-          select fk_lodging_code , min(price) as price
-          from tbl_room_detail
-          group by fk_lodging_code
-          )P
-          on L.lodging_code = P.fk_lodging_code
-          where status = 1 
-	   	<!-- 숙소 구분체크박스를 선택했다면 -->
-		<if test='arr_category != null'>
-	    and lodging_category in
-	    <foreach collection="arr_category" index="i" open="(" separator="," close=")">
-	    	'${arr_category[i]}'
-	    </foreach>
-	    </if>
-	    
-	    <!-- 지역 구분체크박스를 선택했다면 -->
-	    <if test='arr_local != null'>
-	    and local_status in
-		<foreach collection="arr_local" index="i" open="(" separator="," close=")">
-	    	'${arr_local[i]}'
-	    </foreach>
-	    </if>
-	    
-	    <!-- 검색어를 입력하고 검색버튼을 눌렀다면 -->
-	    <if test='searchWord != null'>
-	    and lodging_name like '%' || '${searchWord}' || '%'
-		</if>
-		
-	   )V
-	   where rno between #{startRno} and #{endRno}
-	</select>
-	
-	
-	<select id="getLodgingTotalCount" parameterType="HashMap" resultType="int">
-		select count(*)
-	    from tbl_lodging
-	    where status = 1 
-		<if test='arr_category != null'>
-	    and lodging_category in
-	    <foreach collection="arr_category" index="i" open="(" separator="," close=")">
-	    	'${arr_category[i]}'
-	    </foreach>
-	    </if>
-	    
-	    <if test='arr_local != null'>
-	    and local_status in
-		<foreach collection="arr_local" index="i" open="(" separator="," close=")">
-	    	'${arr_local[i]}'
-	    </foreach>
-	    </if>    
-	
-	
+
+	<select id="lodgingList" resultType="com.spring.app.trip.domain.LodgingVO">
+	  
+	  select LODGING_NAME, LODGING_ADDRESS, LODGING_CODE, LOCAL_STATUS,
+	   		 LODGING_CATEGORY, MAIN_IMG, REVIEW_DIVISION, LOCAL_STATUS
+	  from tbl_lodging
 	</select>
  
 </mapper>

@@ -18,25 +18,7 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 	private SqlSessionTemplate sqlsession;
 
 	
-/*	// == 맛집 카테고리 가져오기 == //
-	@Override
-	public List<String> categoryList() {
-		List<String> categoryList = sqlsession.selectList("yj_trip.categoryList");
-		return categoryList;
-	}
-	
-	
-	// == 지역 선택 == //
-	@Override
-	public List<String> areaList() {
-		List<String> areaList = sqlsession.selectList("yj_trip.areaList");
-		return areaList;
-	}
-
-*/
-
-	
-	// == 맛집 리스트 페이지 보이기 == //
+	// == 맛집 메인 페이지 보이기 == //
 	@Override
 	public List<FoodstoreVO> viewFoodstoreList(Map<String, Object> map) {
 		List<FoodstoreVO> foodstoreList = sqlsession.selectList("yj_trip.viewFoodstoreList", map);
@@ -49,6 +31,30 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 	public List<FoodstoreVO> randomRecommend(Map<String, String> paraMap) {
 		List<FoodstoreVO> randomRecommend = sqlsession.selectList("yj_trip.randomRecommend", paraMap);
 		return randomRecommend;
+	}
+
+
+	// == 맛집 총 개수 알아오기 == //
+	@Override
+	public int getTotalCount(Map<String, Object> map) {
+		int totalCount = sqlsession.selectOne("yj_trip.getTotalCount", map);
+		return totalCount;
+	}
+
+
+	// == 맛집 상세 조회하기 == //
+	@Override
+	public FoodstoreVO viewfoodstoreDetail(String food_store_code) {
+		FoodstoreVO foodstorevo = sqlsession.selectOne("yj_trip.viewfoodstoreDetail", food_store_code);
+		return foodstorevo;
+	}
+
+
+	// == 맛집 상세 추가 이미지 == //
+	@Override
+	public List<Map<String, String>> viewfoodaddImg(String food_store_code) {
+		List<Map<String, String>> addimgList = sqlsession.selectList("yj_trip.viewfoodaddImg", food_store_code);
+		return addimgList;
 	}
 
 

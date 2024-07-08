@@ -14,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.spring.app.trip.common.AES256;
 import com.spring.app.trip.common.Sha256;
 import com.spring.app.trip.domain.CompanyVO;
+import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.model.Dy_TripDAO;
 
@@ -139,9 +140,8 @@ public class Dy_TripService_imple implements Dy_TripService {
 			
 			if(loginuser.getIdle() == 1) { // 로그인 한 지 1년이 경과한 경우
 
-				String message = "로그인을 한 지 1년이 지나 휴면상태가 되었습니다.\\n관리자에게 문의 바랍니다.";
-				String loc = request.getContextPath() + "/index.trip";
-				// 추후에 휴면 계정을 풀어주는 페이지로 이동하기
+				String message = "장기 미접속으로 휴면 처리 되었습니다.\\n휴면 해제 페이지로 이동합니다.";
+				String loc = request.getContextPath() + "/login/idleUpdate.trip";
 				
 				mav.addObject("message", message);
 				mav.addObject("loc", loc);
@@ -156,9 +156,8 @@ public class Dy_TripService_imple implements Dy_TripService {
 				
 				if(loginuser.isRequirePwdChange()) { // 암호를 마지막으로 변경한 날짜로부터 3개월 경과한 경우
 					
-					String message = "비밀번호를 변경하신지 3개월이 지났습니다.\\n암호를 변경하는 것을 추천합니다.";
-					String loc = request.getContextPath() + "/index.trip";
-					// 추후에 비밀번호 변경 페이지로 이동하기
+					String message = "비밀번호를 변경한 지 3개월이 초과되었습니다.\\n비밀번호 변경 페이지로 이동합니다.";
+					String loc = request.getContextPath() + "/login/pwUpdate.trip";
 
 					mav.addObject("message", message);
 					mav.addObject("loc", loc);
@@ -235,9 +234,8 @@ public class Dy_TripService_imple implements Dy_TripService {
 			
 			if(loginCompanyuser.getIdle() == 1) { // 로그인 한 지 1년이 경과한 경우
 
-				String message = "로그인을 한 지 1년이 지나 휴면상태가 되었습니다.\\n관리자에게 문의 바랍니다.";
-				String loc = request.getContextPath() + "/index.trip";
-				// 추후에 휴면 계정을 풀어주는 페이지로 이동하기
+				String message = "장기 미접속으로 휴면 처리 되었습니다.\\n휴면 해제 페이지로 이동합니다.";
+				String loc = request.getContextPath() + "/login/idleUpdate.trip";
 				
 				mav.addObject("message", message);
 				mav.addObject("loc", loc);
@@ -252,9 +250,8 @@ public class Dy_TripService_imple implements Dy_TripService {
 				
 				if(loginCompanyuser.isRequirePwdChange()) { // 암호를 마지막으로 변경한 날짜로부터 3개월 경과한 경우
 					
-					String message = "비밀번호를 변경하신지 3개월이 지났습니다.\\n암호를 변경하는 것을 추천합니다.";
-					String loc = request.getContextPath() + "/index.trip";
-					// 추후에 비밀번호 변경 페이지로 이동하기
+					String message = "비밀번호를 변경한 지 3개월이 초과되었습니다.\\n비밀번호 변경 페이지로 이동합니다.";
+					String loc = request.getContextPath() + "/login/pwUpdate.trip";
 
 					mav.addObject("message", message);
 					mav.addObject("loc", loc);
@@ -301,7 +298,7 @@ public class Dy_TripService_imple implements Dy_TripService {
 	}
 
 
-	// 비밀번호찾기 시 사용자가 존재하는지 확인하기
+	// 사용자가 존재하는지 확인하기
 	@Override
 	public boolean isUserExist(Map<String, String> paraMap) {
 		
@@ -311,7 +308,7 @@ public class Dy_TripService_imple implements Dy_TripService {
 			String email = aES256.encrypt(paraMap.get("email"));
 			paraMap.put("email", email);
 
-			String user = dao.pwFind(paraMap);
+			String user = dao.isExist(paraMap);
 			
 			if(user != null) {
 				isUserExist = true;
@@ -325,11 +322,87 @@ public class Dy_TripService_imple implements Dy_TripService {
 	}
 
 
-	// 비밀번호찾기 - 비밀번호 변경
+	// 비밀번호 변경
 	@Override
 	public int pwUpdate(Map<String, String> paraMap) {
 		
 		int result = dao.pwUpdate(paraMap);
+		
+		return result;
+	}
+
+
+	// 맛집등록 - 일련번호 채번해오기
+	@Override
+	public String getCommonSeq() {
+		
+		String food_store_code = dao.getCommonSeq();
+		
+		return food_store_code;
+	}
+
+
+	// === 데이터베이스에 맛집 정보 insert 하기 ===
+	@Override
+	public int foodstoreRegister(FoodstoreVO fvo) {
+		
+		int n = dao.foodstoreRegister(fvo);
+		
+		return n;
+	}
+
+
+	// tbl_food_add_img 테이블에 추가이미지 파일명 insert 하기
+	@Override
+	public int insert_food_add_img(Map<String, String> paraMap) {
+		
+		int n = dao.insert_food_add_img(paraMap);
+		
+		return n;
+	}
+
+
+	// 기존 비밀번호와 값이 일치한지 비교하기
+	@Override
+	public boolean isSamePw(Map<String, String> paraMap) {
+		
+		boolean isSamePw = false;
+		
+		String result = dao.isSamePw(paraMap);
+		
+		if(result != null) {
+			isSamePw = true;
+		}
+		
+		return isSamePw;
+	}
+
+
+	// 기존의 로그인 기록 삭제하기
+	@Override
+	public int deleteLoginHistory(Map<String, String> paraMap) {
+		
+		int n = dao.deleteLoginHistory(paraMap);
+		
+		return n;
+	}
+
+
+	// 회원의 idle을 0으로 변경하기
+	@Override
+	public int idleUpdate(Map<String, String> paraMap) {
+		
+		int result = dao.idleUpdate(paraMap);
+		
+		return result;
+	}
+
+
+	// 비밀번호 변경 날짜(lastpwdchangedate)를 현재 날짜로 변경하기
+	@Override
+	public int updatePwdChangeDate(Map<String, String> paraMap) {
+		
+		int result = dao.updatePwdChangeDate(paraMap);
 		
 		return result;
 	}

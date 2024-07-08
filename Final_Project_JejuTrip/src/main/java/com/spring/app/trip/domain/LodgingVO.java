@@ -16,7 +16,8 @@ public class LodgingVO {
 	private String review_division;		// 리뷰용구분컬럼(default) A
 	private String main_img;			// 메인 이미지
 	private String status;				// 숙소 심사 상태 구분
-	private String feedback_msg;		// 반려 사유
+	private String Feedback_msg;
+	
 	
 	private MultipartFile attach;
 	/* form 태그에서 type="file" 인 파일을 받아서 저장되는 필드이다. 
@@ -30,7 +31,6 @@ public class LodgingVO {
 	private String orgFilename;
 	
 	private String fileSize;
-	
 	
 	
 	
@@ -158,11 +158,11 @@ public class LodgingVO {
 	}
 
 	public String getFeedback_msg() {
-		return feedback_msg;
+		return Feedback_msg;
 	}
 
 	public void setFeedback_msg(String feedback_msg) {
-		this.feedback_msg = feedback_msg;
+		Feedback_msg = feedback_msg;
 	}
 	
 	

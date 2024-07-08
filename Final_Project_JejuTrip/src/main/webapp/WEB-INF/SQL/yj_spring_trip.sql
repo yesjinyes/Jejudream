@@ -11,8 +11,6 @@ create user final_orauser2 identified by gclass default tablespace users;
 grant connect, resource, create view, unlimited tablespace to final_orauser2;
 -- Grant을(를) 성공했습니다.
 
-
-
 ---------------------------------------------------------------------------------------------------- 
 -- ■■■ TEST ■■■ --
 ----------------------------------------------------------------------------------------------------
@@ -42,63 +40,9 @@ UPDATE 테이블명 SET field3='변경된 값' WHERE field1 = 'data2';
 
 
 
+
+
 -- ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ㅍ
-----------------------------------------------------------------------------------------------------
-
--- VO 수정용
-/* 숙소 */
-CREATE TABLE tbl_lodging(
-	lodging_code VARCHAR2(20) NOT NULL, /* 숙소일련번호 */
-	fk_local_code VARCHAR2(20) NOT NULL, /* 지역코드 */
-	lodging_category VARCHAR2(20) NOT NULL, /* 숙소카테고리 */
-	fk_companyid VARCHAR2(20) NOT NULL, /* 업체아이디 */
-	lodging_name VARCHAR2(50) NOT NULL, /* 숙소이름 */
-	lodging_tell VARCHAR2(20), /* 숙소연락처 */
-	lodging_content VARCHAR2(1000), /* 숙소설명 */
-	lodging_address VARCHAR2(200), /* 상세주소 */
-	main_img VARCHAR2(100), /* 대표이미지 */
-	review_division VARCHAR2(10) default 'A', /* 리뷰용구분컬럼(default) A */
-    CONSTRAINT PK_tbl_lodging PRIMARY KEY (lodging_code),
-    CONSTRAINT FK_tbl_local_tbl_lodging FOREIGN KEY (fk_local_code) REFERENCES tbl_local (local_code) on delete cascade,
-    CONSTRAINT FK_tbl_company_fk_companyid FOREIGN KEY (fk_companyid) REFERENCES tbl_company (companyid) on delete cascade
-);
-
-
-/* 맛집 */
-CREATE TABLE tbl_food_store (
-	food_store_code VARCHAR2(20) NOT NULL, /* 맛집일련번호 */
-	fk_local_code VARCHAR2(20) NOT NULL, /* 지역코드 */
-    food_category VARCHAR2(20) NOT NULL, /* 맛집카테고리 */
-    food_name VARCHAR2(20) NOT NULL, /* 맛집식당이름 */
-    food_content VARCHAR2(200), /* 맛집간단정보 */
-    food_businesshours VARCHAR2(100), /* 영업시간 */
-    food_mobile VARCHAR2(100),  /* 맛집 연락처 */
-	food_address VARCHAR2(200), /* 상세주소 */
-	food_main_img VARCHAR2(100), /* 대표이미지 */
-	review_division VARCHAR2(10) default 'B', /* 리뷰용구분컬럼(default) B */
-    CONSTRAINT PK_tbl_food_store PRIMARY KEY (food_store_code),
-    CONSTRAINT FK_tbl_local_code FOREIGN KEY (fk_local_code) REFERENCES tbl_local (local_code) on delete cascade
-);
-
-desc tbl_food_store;
-
-/* 즐길거리 */
-CREATE TABLE tbl_play (
-	play_code VARCHAR2(20) NOT NULL, /* 즐길거리일련번호 */
-	fk_local_code VARCHAR2(20) NOT NULL, /* 지역코드 */
-    play_category VARCHAR2(20) NOT NULL, /* 즐길거리카테고리 */
-    play_name VARCHAR2(20) NOT NULL, /* 즐길거리 명칭 */
-    play_content VARCHAR2(100), /* 즐길거리 짧은상세정보 */
-    play_mobile VARCHAR2(100), /* 즐길거리 연락처 */
-    play_businesshours VARCHAR2(100), /* 즐길거리 운영시간 */
-	play_address VARCHAR2(200), /* 상세주소 */
-	play_main_img VARCHAR2(100), /* 대표이미지 */
-	review_division VARCHAR2(10) default 'C', /* 리뷰용구분컬럼(default) C */
-    CONSTRAINT PK_tbl_play 	PRIMARY KEY (play_code),
-    CONSTRAINT FK_tbl_play_local_code FOREIGN KEY (fk_local_code) REFERENCES tbl_local (local_code) on delete cascade
-);
-
-
 ----------------------------------------------------------------------------------------------------
 
 -- // 맛집 테이블 insert // --
@@ -109,7 +53,7 @@ insert into tbl_food_store(food_store_code, food_category, local_status, food_na
 insert into tbl_food_store(food_store_code, food_category, local_status, food_name, food_content, food_businesshours, food_mobile, food_address, food_main_img, review_division) values(seq_common.nextval, '양식' ,'서귀포시 동부', '제주 판타스틱버거','서양 느낌 물씬 나는 분위기, 음식 맛집','9:00~21:00','0507-1339-6990','제주특별자치도 서귀포시 표선면 토산중앙로15번길 6','제주 판타스틱버거.jpg',default);
 insert into tbl_food_store(food_store_code, food_category, local_status, food_name, food_content, food_businesshours, food_mobile, food_address, food_main_img, review_division) values(seq_common.nextval, '양식' ,'제주시 서부', '동백키친','데이트하기 좋은 유채꽃뷰 파스타, 스테이크맛집','11:00~21:00','0507-1358-1016','제주특별자치도 제주시 한림읍 수원7길 42 1층','동백키친.jpg',default);
 insert into tbl_food_store(food_store_code, food_category, local_status, food_name, food_content, food_businesshours, food_mobile, food_address, food_main_img, review_division) values(seq_common.nextval, '양식' ,'서귀포시 서부', '젠하이드어웨이 제주점','제주 스타일 브런치','11:00~20:00','064-794-0133','제주특별자치도 서귀포시 안덕면 사계남로 186-8','젠하이드어웨이 제주점.jpg',default);
-insert into tbl_food_store(food_store_code, food_category, local_status, food_name, food_content, food_businesshours, food_mobile, food_address, food_main_img, review_division) values(seq_common.nextval, '일식' ,'서귀포 시권', '영육일삼','촉촉한 카츠가 일품인 곳','11:30~15:00','0507-1329-9492','제주특별자치도 서귀포시 이어도로 679 1층','영육일삼.jpg',default);
+insert into tbl_food_store(food_store_code, food_category, local_status, food_name, food_content, food_businesshours, food_mobile, food_address, food_main_img, review_division) values(seq_common.nextval, '일식' ,'서귀포 시내', '영육일삼','촉촉한 카츠가 일품인 곳','11:30~15:00','0507-1329-9492','제주특별자치도 서귀포시 이어도로 679 1층','영육일삼.jpg',default);
 insert into tbl_food_store(food_store_code, food_category, local_status, food_name, food_content, food_businesshours, food_mobile, food_address, food_main_img, review_division) values(seq_common.nextval, '일식' ,'제주 시내', '미도리제주','제주도에서 즐기는 퓨전일식','8:00~14:00','0507-1315-5635','제주특별자치도 제주시 우령4길 5 1층','미도리제주.jpg',default);
 insert into tbl_food_store(food_store_code, food_category, local_status, food_name, food_content, food_businesshours, food_mobile, food_address, food_main_img, review_division) values(seq_common.nextval, '일식' ,'서귀포 시내', '구르메스시 오마카세','갓 잡은 신선한 해산물로 요리하는 오마카세','17:00~3:00','064-738-4123','제주특별자치도 서귀포시 신서로48번길 59','구르메스시 오마카세.jpg',default);
 insert into tbl_food_store(food_store_code, food_category, local_status, food_name, food_content, food_businesshours, food_mobile, food_address, food_main_img, review_division) values(seq_common.nextval, '중식' ,'서귀포 시내', '강정중국집','불향 가득한 짬뽕 맛집','10:00~17:00','0507-1358-7021','제주특별자치도 서귀포시 이어도로 633','강정중국집.jpg',default);
@@ -122,14 +66,88 @@ insert into tbl_food_store(food_store_code, food_category, local_status, food_na
 insert into tbl_food_store(food_store_code, food_category, local_status, food_name, food_content, food_businesshours, food_mobile, food_address, food_main_img, review_division) values(seq_common.nextval, '카페' ,'제주시 서부', '카페데스틸','제주 분위기 낭낭한 감성카페','13:00~20:00','0507-1365-7402','제주특별자치도 제주시 한경면 한경해안로 110','카페데스틸.jpg',default);
 insert into tbl_food_store(food_store_code, food_category, local_status, food_name, food_content, food_businesshours, food_mobile, food_address, food_main_img, review_division) values(seq_common.nextval, '카페' ,'제주시 서부', '레이지펌프','데이트하기 좋은 브런치 맛집','11:00~19:00','0507-1325-8732','제주특별자치도 제주시 애월읍 애월북서길 32','레이지펌프.jpg',default);
 
+-- 맛집 추가 이미지 테이블 insert
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5316', '물꼬해녀의집_add1.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5316', '물꼬해녀의집_add2.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5316', '물꼬해녀의집_add3.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5321', '성산일출봉 아시횟집_add1.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5321', '성산일출봉 아시횟집_add2.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5321', '성산일출봉 아시횟집_add3.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5319', '돌집식당_add1.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5319', '돌집식당_add2.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5319', '돌집식당_add3.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5318', '대윤흑돼지 서귀포올레시장점_add1.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5318', '대윤흑돼지 서귀포올레시장점_add2.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5318', '대윤흑돼지 서귀포올레시장점_add3.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5322', '제주 판타스틱버거_add1.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5322', '제주 판타스틱버거_add2.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5322', '제주 판타스틱버거_add3.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5317', '동백키친_add1.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5317', '동백키친_add2.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5317', '동백키친_add3.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5320', '젠하이드어웨이 제주점_add1.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5320', '젠하이드어웨이 제주점_add2.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5320', '젠하이드어웨이 제주점_add3.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5323', '영육일삼_add1.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5323', '영육일삼_add2.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5323', '영육일삼_add3.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5315', '미도리제주_add1.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5315', '미도리제주_add2.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5315', '미도리제주_add3.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5324', '구르메스시 오마카세_add1.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5324', '구르메스시 오마카세_add2.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5324', '구르메스시 오마카세_add3.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5325', '강정중국집_add1.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5325', '강정중국집_add2.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5325', '강정중국집_add3.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5326', '연태만_add1.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5326', '연태만_add2.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5326', '연태만_add3.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5327', '함덕중국집_add1.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5327', '함덕중국집_add2.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5327', '함덕중국집_add3.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5328', '쏭타이 제주점_add1.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5328', '쏭타이 제주점_add2.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5328', '쏭타이 제주점_add3.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5329', '위미애머물다락쿤_add1.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5329', '위미애머물다락쿤_add2.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5329', '위미애머물다락쿤_add3.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5330', '인디언키친 본점_add1.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5330', '인디언키친 본점_add2.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5330', '인디언키친 본점_add3.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5331', '서울앵무새 제주_add1.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5331', '서울앵무새 제주_add2.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5331', '서울앵무새 제주_add3.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5332', '카페데스틸_add1.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5332', '카페데스틸_add2.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5332', '카페데스틸_add3.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5333', '레이지펌프_add1.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5333', '레이지펌프_add2.jpg' );
+insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5333', '레이지펌프_add3.jpg' );
+
+commit;
+
+select *
+from tbl_food_add_img
+order by FOOD_ADD_CODE;
+
+desc tbl_food_add_img;
+
+rollback;
+
+UPDATE tbl_food_add_img SET food_add_img='대윤흑돼지 서귀포올레시장점_add1.jpg' WHERE food_add_img = '대윤흑돼지 서귀포올레시장점_add2.jpg';
+
+delete from tbl_food_add_img where food_add_code = 14;
+commit;
+
+select food_store_code, food_name
+from tbl_food_store;
 
 delete from tbl_food_store;
 
 desc tbl_food_store;
 
 commit;
-
--- tbl_food_store 데이터타입 varchar(20) -> varchar(50) 으로 변경
 
 제주 시내
 제주시 서부
@@ -138,7 +156,6 @@ commit;
 서귀포시 동부
 서귀포시 서부
 
-UPDATE tbl_food_store SET local_status='제주 시내' WHERE local_status = '제주시 시내권';
 
 select *
 from tbl_food_store;
@@ -147,8 +164,6 @@ commit;
 
 select local_status
 from tbl_food_store 
-
-ALTER TABLE tbl_food_store ADD img_local_status varchar2(50);
 
 commit;
 
@@ -159,13 +174,12 @@ select food_name, substr(food_address, instr(food_address, ' ', 1, 1)+1, instr(f
 from tbl_food_store;
 
 
-
-
-
 -- 맛집 랜덤 추천
 select food_main_img, food_name
 from (
-    select food_main_img, food_name from tbl_food_store order by DBMS_RANDOM.RANDOM
+    select food_main_img, food_name 
+    from tbl_food_store 
+    order by DBMS_RANDOM.RANDOM
 )
 where rownum <= 5;
 
@@ -197,24 +211,25 @@ order by food_store_code;
 
 select * from user_tables;
 
-select *
-from tbl_local;
 
 
-select distinct local_status
-from tbl_food_store;
-
-select *
+select count(*)
 from tbl_food_store;
 
 
+select substr(food_add_img, 0, (food_add_img-3) )
+from tbl_food_add_img
 
 
-제주 시내
-제주시 서부
-제주시 동부
-서귀포 시내
-서귀포시 동부
-서귀포시 서부
+select *
+from tbl_food_add_img
 
+select reverse(substr(reverse(food_add_img), 0, 11))
+from tbl_food_add_img
+where food_add_code = 5;
 
+-- 물꼬해물의집_add1.jpg 에서 물꼬해물의집 만 뽑아온 것
+select reverse(substr(reverse(food_add_img),10))
+from tbl_food_add_img
+where food_add_code = 5;
+-- 물꼬해물의집

@@ -63,7 +63,7 @@ public class GoogleMail {
 		msg.addRecipient(Message.RecipientType.TO, toAddr);
 
 		// 메시지 본문의 내용과 형식, 캐릭터 셋 설정
-		msg.setContent("발송된 인증코드 : <span style='font-size:14pt; color:red;'>" + certification_code + "</span>", "text/html;charset=UTF-8");
+		msg.setContent("발송된 인증코드 :  <span style='font-size:16pt; color:red;'>" + certification_code + "</span>", "text/html;charset=UTF-8");
 
 		// 메일 발송하기
 		Transport.send(msg);
@@ -73,8 +73,8 @@ public class GoogleMail {
 	
 	
 	
-	public void sendmail_OrderFinish(String recipient, String name, String emailContents) throws Exception {
-		
+	public void sendCode_idleUpdate(String recipient, String certification_code) throws Exception {
+
 		// 1. 정보를 담기 위한 객체
 		Properties prop = new Properties();
 
@@ -96,8 +96,11 @@ public class GoogleMail {
 
 		prop.put("mail.smtp.ssl.enable", "true");
 		prop.put("mail.smtp.ssl.trust", "smtp.gmail.com");
-		prop.put("mail.smtp.ssl.protocols", "TLSv1.2");
+		prop.put("mail.smtp.ssl.protocols", "TLSv1.2"); // MAC 에서도 이메일 보내기 가능하도록 한 것임.
+														// 또한 만약에 SMTP 서버를 google 대신 naver 를 사용하려면 이것을 해주어야 함.
+
 		
+//		혹시나 465 포트에 연결할 수 없다는 에러메시지가 나오면 아래의 3개를 넣어주면 해결된다.
 		prop.put("mail.smtp.starttls.enable", "true");
 		prop.put("mail.smtp.starttls.required", "true");
 		prop.put("mail.smtp.ssl.protocols", "TLSv1.2");
@@ -113,7 +116,7 @@ public class GoogleMail {
 		MimeMessage msg = new MimeMessage(ses);
 
 		// 제목 설정
-		String subject = "localhost:9090/MyMVC/mallHome1.up "+name+"님의 주문이 성공되었습니다.";
+		String subject = "[JejuDream] 휴면 해제 이메일 인증";
 		msg.setSubject(subject);
 
 		// 보내는 사람의 메일주소
@@ -126,12 +129,11 @@ public class GoogleMail {
 		msg.addRecipient(Message.RecipientType.TO, toAddr);
 
 		// 메시지 본문의 내용과 형식, 캐릭터 셋 설정
-		msg.setContent("<div style='font-size:14pt; color:red;'>"+emailContents+"</div>", "text/html;charset=UTF-8");
+		msg.setContent("발송된 인증코드 :  <span style='font-size:16pt; color:red;'>" + certification_code + "</span>", "text/html;charset=UTF-8");
 
 		// 메일 발송하기
 		Transport.send(msg);
 
-		
-	} // end of public void sendmail_OrderFinish(String email, String name, String emailContents) ---------------------
+	} // end of public void sendCode_idleUpdate(String email, String name, String emailContents) ---------------------
 	
 }

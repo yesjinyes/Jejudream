@@ -11,16 +11,3 @@ create user final_orauser2 identified by gclass default tablespace users;
 grant connect, resource, create view, unlimited tablespace to final_orauser2;
 -- Grant을(를) 성공했습니다.
 
-SELECT userid, email, pw, user_name, mobile, address, detail_address, gender, registerday, status, idle
-FROM 
-(
-    SELECT rownum AS RNO
-         , userid, email, pw, user_name, mobile, address, detail_address, gender, registerday, status, idle
-    FROM
-    (
-        select userid, email, pw, user_name, mobile, address, detail_address, gender, registerday, status, idle
-        from tbl_member
-        order by registerday desc
-    )V
-) T
-where RNO between 1 and 5

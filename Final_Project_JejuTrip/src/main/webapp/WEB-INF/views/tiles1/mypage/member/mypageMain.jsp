@@ -29,6 +29,7 @@
 </script>
 
 <div class="body">
+	<div>개인유저</div>
     <div class="navigation">
         <ul>
             <li class="list active">

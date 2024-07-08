@@ -88,6 +88,7 @@
             alert("비밀번호가 일치하지 않습니다.");
             $("input#pwCheck").val("");
             $("input#pwCheck").focus();
+            return;
         }
         
         const frm = document.pwFindEndFrm;

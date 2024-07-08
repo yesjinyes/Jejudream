@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import com.spring.app.trip.domain.CompanyVO;
+import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.MemberVO;
 
 @Repository
@@ -124,22 +125,22 @@ public class Dy_TripDAO_imple implements Dy_TripDAO {
 
 	// 비밀번호찾기 시 사용자가 존재하는지 확인하기
 	@Override
-	public String pwFind(Map<String, String> paraMap) {
+	public String isExist(Map<String, String> paraMap) {
 		
 		String user = "";
 		
 		if("company".equals(paraMap.get("memberType"))) {
-			user = sqlsession.selectOne("dy_trip.companyPwFind", paraMap);
+			user = sqlsession.selectOne("dy_trip.isCompanyExist", paraMap);
 			
 		} else {
-			user = sqlsession.selectOne("dy_trip.memberPwFind", paraMap);
+			user = sqlsession.selectOne("dy_trip.isMemberExist", paraMap);
 		}
 		
 		return user;
 	}
 
 
-	// 비밀번호찾기 - 비밀번호 변경
+	// 비밀번호 변경
 	@Override
 	public int pwUpdate(Map<String, String> paraMap) {
 		
@@ -154,6 +155,107 @@ public class Dy_TripDAO_imple implements Dy_TripDAO {
 		
 		return result;
 	}
+
+
+	// 맛집등록 - 일련번호 채번해오기
+	@Override
+	public String getCommonSeq() {
+		
+		String food_store_code = sqlsession.selectOne("dy_trip.getCommonSeq");
+		
+		return food_store_code;
+	}
+
+
+	// === 데이터베이스에 맛집 정보 insert 하기 ===
+	@Override
+	public int foodstoreRegister(FoodstoreVO fvo) {
+		
+		int n = sqlsession.insert("dy_trip.foodstoreRegister", fvo);
+		
+		return n;
+	}
+
+
+	// tbl_food_add_img 테이블에 추가이미지 파일명 insert 하기
+	@Override
+	public int insert_food_add_img(Map<String, String> paraMap) {
+		
+		int n = sqlsession.insert("dy_trip.insert_food_add_img", paraMap);
+		
+		return n;
+	}
+
+
+	// 기존 비밀번호와 값이 일치한지 비교하기
+	@Override
+	public String isSamePw(Map<String, String> paraMap) {
+		
+		String result = "";
+		
+		if("company".equals(paraMap.get("memberType"))) {
+			result = sqlsession.selectOne("dy_trip.isSamePwCompany", paraMap);
+			
+		} else {
+			result = sqlsession.selectOne("dy_trip.isSamePwMember", paraMap);
+		}
+		
+		return result;
+	}
+
+
+	// 기존의 로그인 기록 삭제하기
+	@Override
+	public int deleteLoginHistory(Map<String, String> paraMap) {
+		
+		int n = 0;
+		
+		if("company".equals(paraMap.get("memberType"))) {
+			n = sqlsession.delete("dy_trip.deleteCompanyLoginHistory", paraMap.get("id"));
+			
+		} else {
+			n = sqlsession.delete("dy_trip.deleteMemberLoginHistory", paraMap.get("id"));
+		}
+		
+		return n;
+	}
+
+
+	// 회원의 idle을 0으로 변경하기
+	@Override
+	public int idleUpdate(Map<String, String> paraMap) {
+
+		int result = 0;
+		
+		if("company".equals(paraMap.get("memberType"))) {
+			result = sqlsession.update("dy_trip.companyIdleUpdate", paraMap.get("id"));
+			
+		} else {
+			result = sqlsession.update("dy_trip.memberIdleUpdate", paraMap.get("id"));
+		}
+		
+		return result;
+	}
+
+
+	// 비밀번호 변경 날짜(lastpwdchangedate)를 현재 날짜로 변경하기
+	@Override
+	public int updatePwdChangeDate(Map<String, String> paraMap) {
+		
+		int result = 0;
+		
+		if("company".equals(paraMap.get("memberType"))) {
+			result = sqlsession.update("dy_trip.updateCompanyPwdChangeDate", paraMap.get("id"));
+			
+		} else {
+			result = sqlsession.update("dy_trip.updateMemberPwdChangeDate", paraMap.get("id"));
+		}
+		
+		return result;
+	}
+
+
+	
 	
 
 }
