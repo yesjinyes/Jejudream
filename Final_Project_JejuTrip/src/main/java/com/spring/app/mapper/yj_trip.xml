@@ -7,12 +7,6 @@
 메퍼가 바뀌면 무조건  WAS를 껐다 켜야한다!!!!!!!!! -->
 <mapper namespace="yj_trip">
 
-	<!-- 맛집 카테고리 띄우기 -->
-	<select id="categoryList" resultType="String">
-		select distinct food_category
-		from tbl_food_store
-	</select>
-
 
 	<!-- 맛집 리스트 띄우기 -->
 	<resultMap type="HashMap" id="categoryMap">
@@ -26,37 +20,102 @@
 		<result property="food_main_img" 		column="food_main_img" 		javaType="String" />	
 		<result property="review_division" 		column="review_division" 	javaType="String" />	
 		<result property="food_category" 		column="food_category" 		javaType="String" />	
-	
 	</resultMap>
-	<select id="viewFoodstoreList" parameterType="HashMap" resultMap="categoryMap">
+	<select id="viewFoodstoreList" parameterType="HashMap" resultType="com.spring.app.trip.domain.FoodstoreVO">
 		SELECT food_store_code, local_status, food_name, food_content, food_businesshours, food_mobile
 			 , substr(food_address, 0, instr(food_address, ' ', 1, 2)-1) AS food_address
 			 , food_main_img, review_division
 			 , food_category
 		FROM tbl_food_store
 		WHERE 1=1
+		
+		<!-- 카테고리 체크박스 다중선택 -->
 		<if test="arr_category != null">
 			AND food_category IN
 			<foreach collection="arr_category" index="i" open="(" separator="," close=")">
 				'${arr_category[i]}'
 			</foreach>
 		</if>
-		ORDER BY food_store_code
+		
+		<!-- 지역 체크박스 다중선택 -->
+		<if test="arr_area != null">
+			AND local_status IN
+			<foreach collection="arr_area" index="i" open="(" separator="," close=")">
+				'${arr_area[i]}'
+			</foreach>
+		</if>
+		
+		<!-- 검색 -->
+		<if test="searchWord != ''">
+			AND lower(food_name) like '%'||lower(#{searchWord})||'%'
+		</if>
+		
+		<!-- 오름차순, 내림차순 정렬 -->
+		<if test="orderValue_asc != null">
+			ORDER BY ${orderType} ${orderValue_asc}
+		</if>
+		<if test="orderValue_desc != null">
+			ORDER BY ${orderType} ${orderValue_desc}
+		</if>
+		<if test="orderType == null">
+			ORDER BY food_store_code
+		</if>
+	</select>
+	
+	
+	<!-- 맛집 총 개수 알아오기  -->
+	<select id="getTotalCount" parameterType="HashMap" resultType="int">
+		select count(*)
+		from tbl_food_store
+	</select>
+	
+	
+	<!-- 맛집 상세 조회하기 -->
+	<select id="viewfoodstoreDetail" parameterType="String" resultType="com.spring.app.trip.domain.FoodstoreVO">
+		select food_store_code, local_status, food_name, food_category, food_content, food_address, food_businesshours, food_mobile
+			 , food_main_img, review_division
+		from tbl_food_store
+		where food_store_code = #{food_store_code}
+	</select>
+	
+	<!-- 맛집 상세 추가 이미지  -->
+	<resultMap type="HashMap" id="imgMap">
+		<result property="food_add_code" 		column="food_add_code" 		javaType="String" />	
+		<result property="fk_food_store_code" 	column="fk_food_store_code" javaType="String" />	
+		<result property="food_add_img" 		column="food_add_img" 		javaType="String" />	
+	</resultMap>
+	<select id="viewfoodaddImg" parameterType="String" resultMap="imgMap">
+		select food_add_code, fk_food_store_code, food_add_img
+		from tbl_food_add_img
+		where fk_food_store_code = #{food_store_code}
+		order by food_add_img
 	</select>
 	
 	
 	<!-- 맛집 랜덤 추천 -->
 	<select id="randomRecommend" parameterType="HashMap" resultType="com.spring.app.trip.domain.FoodstoreVO">
 		<![CDATA[
-			select food_main_img, food_name
+			select food_main_img, food_name, food_content
 			from (
-			    select food_main_img, food_name from tbl_food_store order by DBMS_RANDOM.RANDOM
+			    select food_main_img, food_name, food_content
+			    from tbl_food_store
+			    order by DBMS_RANDOM.RANDOM
 			)
 			where rownum <= 3
 		]]> 
 	</select>
 	
-	
+	<!-- 검색어 입력시 자동글 완성하기  -->
+<!-- 	<select id="wordSearchShow" parameterType="String" resultType="String">
+		select food_name
+		from tbl_food_store
+		<if test="searchWord != ''">
+			where lower(food_name) like '%'||lower(#{searchWord})||'%'
+		</if>
+		<if test="searchType == 'food_name'">
+			order by food_store_code
+		</if>
+	</select> -->
 
 
 </mapper>
