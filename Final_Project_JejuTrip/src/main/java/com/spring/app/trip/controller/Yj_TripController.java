@@ -155,8 +155,8 @@ public class Yj_TripController {
 		Map<String, String> paraMap = new HashMap<>();
 		
 		String food_store_code = request.getParameter("food_store_code");
-		// System.out.println("## 확인용 food_store_code => "+ food_store_code);
-		// System.out.println("## 확인용 random_recommend_code => "+ random_recommend_code);
+		System.out.println("## 확인용 food_store_code => "+ food_store_code);
+		System.out.println("## 확인용 random_recommend_code => "+ random_recommend_code);
 		
 		paraMap.put("food_store_code", food_store_code); // 맛집 리스트에서 상세 페이지로 넘어가기
 		paraMap.put("random_recommend_code", random_recommend_code); // 맛집 추천에서 상세 페이지로 넘어가기
