@@ -123,4 +123,47 @@
 		from tbl_lodging
 		where lodging_code = #{lodging_code}
 	</select>
+	
+	<select id="select_member_all" resultType="com.spring.app.trip.domain.MemberVO">
+		SELECT userid, email, user_name, mobile, address, detail_address, gender, to_char(registerday,'yyyy-mm-dd') as registerday, status, idle
+		FROM 
+		(
+		    SELECT rownum AS RNO
+		         , userid, email, user_name, mobile, address, detail_address, gender, registerday, status, idle
+		    FROM
+		    (
+		        select userid, email, user_name, mobile, address, detail_address, gender, registerday, status, idle
+		        from tbl_member
+		        order by registerday desc
+		    )V
+		) T
+		where RNO between #{startRno} and #{endRno}
+	</select>
+	
+	<select id="select_Company_all" resultType="com.spring.app.trip.domain.CompanyVO">
+		SELECT companyid, company_name, email, mobile, registerday, status, idle
+		FROM 
+		(
+		    SELECT rownum AS RNO
+		         , companyid, company_name, email, mobile, registerday, status, idle
+		    FROM
+		    (
+		        select companyid, company_name, email, mobile, registerday, status, idle
+		        from tbl_company
+		        order by registerday desc
+		    )V
+		) T
+		where RNO between #{startRno} and #{endRno}
+	</select>
+	
+	<select id="getTotalMemberCount" resultType="Integer">
+		select count(*) as count
+		from tbl_member
+	</select>
+	
+	<select id="getTotalCompanyCount" resultType="Integer">
+		select count(*) as count
+		from tbl_Company
+	</select>
+	
 </mapper>

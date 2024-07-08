@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.spring.app.trip.domain.CompanyVO;
 import com.spring.app.trip.domain.LodgingVO;
+import com.spring.app.trip.domain.MemberVO;
 
 public interface Ws_TripDAO {
 
@@ -22,5 +23,9 @@ public interface Ws_TripDAO {
 	List<Map<String, String>> select_count_registerHotel(String companyid);// 숙소 테이블에서 해당 업체의 신청건수, 승인건수, 반려 건수를 각각 알아온다.
 	List<LodgingVO> select_loginCompany_lodgingvo(String companyid);// 로그인 한 기업의 신청 목록을 읽어와서 view 페이지에 목록으로 뿌려주기 위한 select
 	LodgingVO selectRegisterHotelJSON(String lodging_code);// 업체가 신청한 호텔에 대한 상세 정보를 보여주기위해 DB에서 읽어온다.
+	List<MemberVO> select_member_all(Map<String, String> paraMap);// 모든 회원의 정보를 읽어오는 메소드 생성
+	List<CompanyVO> select_Company_all(Map<String, String> paraMap);// 모든 기업의 정보를 읽어오는 메소드 생성
+	int getTotalMemberCount();// member 테이블의 총 행 개수 알아오기
+	int getTotalCompanyCount();// company 테이블의 총 행 개수 알아오기
 
 }

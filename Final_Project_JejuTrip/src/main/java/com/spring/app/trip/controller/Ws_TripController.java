@@ -1,5 +1,6 @@
 package com.spring.app.trip.controller;
 
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -554,6 +556,157 @@ public class Ws_TripController {
 		jsonObj.put("feedback_msg", lodgingvo.getFeedback_msg());
 		
 		return jsonObj.toString();
+		
+	}
+	
+	@GetMapping("/show_userList.trip")
+	public ModelAndView show_userList(HttpServletRequest request, ModelAndView mav) {
+		
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
+		
+		if(loginuser.getUserid().equals("admin")) {
+			
+			int count_all_member = service.getTotalMemberCount();// 모든 회원의 정보를 읽어오는 메소드 생성
+			int count_all_company = service.getTotalCompanyCount();// 모든 기업의 정보를 읽어오는 메소드 생성
+			
+			mav.addObject("count_all_member",count_all_member);
+			mav.addObject("count_all_company",count_all_company);
+			mav.addObject("count_all_user",count_all_member+count_all_company);
+			mav.setViewName("mypage/admin/userList.tiles1");
+		}
+		else {
+			String message = "잘못된 접근입니다.";
+			String loc = "javascript:history.back()";
+
+			mav.addObject("message", message);
+			mav.addObject("loc", loc);
+			
+			mav.setViewName("msg");
+		}
+		
+		return mav;
+	}
+	
+	@ResponseBody
+	@PostMapping(value="/MemberListJSON.trip", produces="text/plain;charset=UTF-8") 
+	public String MemberListJSON(HttpServletRequest request) {
+
+		String currentShowPageNo = request.getParameter("currentShowPageNo"); 
+		
+		if(currentShowPageNo == null) {
+			currentShowPageNo = "1";
+		}
+		
+		
+		int sizePerPage = 5; // 한 페이지당 5개의 댓글을 보여줄 것임.
+		
+		// **** 가져올 게시글의 범위를 구한다.(공식임!!!) **** 
+		/*
+		     currentShowPageNo      startRno     endRno
+		    --------------------------------------------
+		         1 page        ===>    1           10
+		         2 page        ===>    11          20
+		         3 page        ===>    21          30
+		         4 page        ===>    31          40
+		         ......                ...         ...
+		 */
+		int startRno = ((Integer.parseInt(currentShowPageNo) - 1) * sizePerPage) + 1; // 시작 행번호 
+		int endRno = startRno + sizePerPage - 1; // 끝 행번호
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("startRno", String.valueOf(startRno));
+		paraMap.put("endRno", String.valueOf(endRno));
+		
+		List<MemberVO> memberList = service.select_member_all(paraMap); 
+		int totalCount = service.getTotalMemberCount(); // 페이징 처리시 보여주는 순번을 나타내기 위한 것임.
+		
+		JSONArray jsonArr = new JSONArray(); // [] 
+		if(memberList != null) {
+			for(MemberVO member : memberList) {
+				JSONObject jsonObj = new JSONObject();      
+				jsonObj.put("userid", member.getUserid()); 
+				jsonObj.put("email", member.getEmail());
+				jsonObj.put("user_name", member.getUser_name()); 
+				jsonObj.put("mobile", member.getMobile()); 
+				jsonObj.put("address", member.getAddress());
+				jsonObj.put("detail_address", member.getDetail_address());
+				jsonObj.put("gender", member.getGender());
+				jsonObj.put("registerday", member.getRegisterday());
+				jsonObj.put("status", member.getStatus());
+				jsonObj.put("idle", member.getIdle());
+				
+				jsonObj.put("totalCount", totalCount);   // 페이징 처리시 보여주는 순번을 나타내기 위한 것임.
+				jsonObj.put("sizePerPage", sizePerPage); // 페이징 처리시 보여주는 순번을 나타내기 위한 것임. 
+				
+				jsonArr.put(jsonObj);
+			}// end of for-----------------------
+		}
+		
+		
+		return jsonArr.toString(); // "[{"seq":1, "fk_userid":"seoyh","name":서영학,"content":"첫번째 댓글입니다. ㅎㅎㅎ","regdate":"2024-06-18 15:36:31"}]"
+		                           // 또는
+		                           // "[]"		
+		
+	}
+	
+	
+	@ResponseBody
+	@PostMapping(value="/CompanyListJSON.trip", produces="text/plain;charset=UTF-8") 
+	public String CompanyListJSON(HttpServletRequest request) {
+
+		String currentShowPageNo = request.getParameter("currentShowPageNo"); 
+		
+		if(currentShowPageNo == null) {
+			currentShowPageNo = "1";
+		}
+		
+		
+		int sizePerPage = 5; // 한 페이지당 5개의 댓글을 보여줄 것임.
+		
+		// **** 가져올 게시글의 범위를 구한다.(공식임!!!) **** 
+		/*
+		     currentShowPageNo      startRno     endRno
+		    --------------------------------------------
+		         1 page        ===>    1           10
+		         2 page        ===>    11          20
+		         3 page        ===>    21          30
+		         4 page        ===>    31          40
+		         ......                ...         ...
+		 */
+		int startRno = ((Integer.parseInt(currentShowPageNo) - 1) * sizePerPage) + 1; // 시작 행번호 
+		int endRno = startRno + sizePerPage - 1; // 끝 행번호
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("startRno", String.valueOf(startRno));
+		paraMap.put("endRno", String.valueOf(endRno));
+		
+		List<CompanyVO> companyList = service.select_Company_all(paraMap); 
+		int totalCount = service.getTotalCompanyCount(); // 페이징 처리시 보여주는 순번을 나타내기 위한 것임.
+		
+		JSONArray jsonArr = new JSONArray(); // [] 
+		if(companyList != null) {
+			for(CompanyVO company : companyList) {
+				JSONObject jsonObj = new JSONObject();      
+				jsonObj.put("companyid", company.getCompanyid());
+				jsonObj.put("company_name", company.getCompany_name());
+				jsonObj.put("email", company.getEmail());
+				jsonObj.put("mobile", company.getMobile());
+				jsonObj.put("registerday", company.getRegisterday());
+				jsonObj.put("status", company.getStatus());
+				jsonObj.put("idle", company.getIdle());
+				
+				jsonObj.put("totalCount", totalCount);   // 페이징 처리시 보여주는 순번을 나타내기 위한 것임.
+				jsonObj.put("sizePerPage", sizePerPage); // 페이징 처리시 보여주는 순번을 나타내기 위한 것임. 
+				
+				jsonArr.put(jsonObj);
+			}// end of for-----------------------
+		}
+		
+		
+		return jsonArr.toString(); // "[{"seq":1, "fk_userid":"seoyh","name":서영학,"content":"첫번째 댓글입니다. ㅎㅎㅎ","regdate":"2024-06-18 15:36:31"}]"
+		                           // 또는
+		                           // "[]"		
 		
 	}
 	

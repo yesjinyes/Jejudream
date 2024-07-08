@@ -13,6 +13,7 @@ import com.spring.app.trip.common.AES256;
 import com.spring.app.trip.common.Sha256;
 import com.spring.app.trip.domain.CompanyVO;
 import com.spring.app.trip.domain.LodgingVO;
+import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.model.Ws_TripDAO;
 @Service
 public class Ws_TripService_imple implements Ws_TripService {
@@ -139,6 +140,55 @@ public class Ws_TripService_imple implements Ws_TripService {
 	public LodgingVO selectRegisterHotelJSON(String lodging_code) {
 		LodgingVO lodgingvo = dao.selectRegisterHotelJSON(lodging_code);
 		return lodgingvo;
+	}
+	
+	// 모든 회원의 정보를 읽어오는 메소드 생성
+	@Override
+	public List<MemberVO> select_member_all(Map<String, String> paraMap) {
+		List<MemberVO> memberList = dao.select_member_all(paraMap);
+		
+		for(MemberVO member : memberList) {
+			try {
+				member.setEmail(aES256.decrypt(member.getEmail()));
+				member.setMobile(aES256.decrypt(member.getMobile()));
+			} catch (UnsupportedEncodingException | GeneralSecurityException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return memberList;
+	}
+	
+	// 모든 기업의 정보를 읽어오는 메소드 생성
+	@Override
+	public List<CompanyVO> select_Company_all(Map<String, String> paraMap) {
+		List<CompanyVO> companyList = dao.select_Company_all(paraMap);
+		
+		for(CompanyVO company : companyList) {
+			try {
+				company.setEmail(aES256.decrypt(company.getEmail()));
+				company.setMobile(aES256.decrypt(company.getMobile()));
+			} catch (UnsupportedEncodingException | GeneralSecurityException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return companyList;
+	}
+	
+	// member 테이블의 총 행 개수 알아오기
+	@Override
+	public int getTotalMemberCount() {
+		int count = dao.getTotalMemberCount();
+		return count;
+	}
+	
+	// company 테이블의 총 행 개수 알아오기
+	@Override
+	public int getTotalCompanyCount() {
+		int count = dao.getTotalCompanyCount();
+		return count;
 	}
 
 }

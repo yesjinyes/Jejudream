@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import com.spring.app.trip.domain.CompanyVO;
 import com.spring.app.trip.domain.LodgingVO;
+import com.spring.app.trip.domain.MemberVO;
 
 @Component
 @Repository
@@ -137,6 +138,34 @@ public class Ws_TripDAO_imple implements Ws_TripDAO {
 	public LodgingVO selectRegisterHotelJSON(String lodging_code) {
 		LodgingVO lodgingvo = sqlsession.selectOne("ws_trip.selectRegisterHotelJSON", lodging_code);
 		return lodgingvo;
+	}
+	
+	// 모든 회원의 정보를 읽어오는 메소드 생성
+	@Override
+	public List<MemberVO> select_member_all(Map<String, String> paraMap) {
+		List<MemberVO> memberList = sqlsession.selectList("ws_trip.select_member_all", paraMap);
+		return memberList;
+	}
+	
+	// 모든 기업의 정보를 읽어오는 메소드 생성
+	@Override
+	public List<CompanyVO> select_Company_all(Map<String, String> paraMap) {
+		List<CompanyVO> company = sqlsession.selectList("ws_trip.select_Company_all", paraMap);
+		return company;
+	}
+	
+	// member 테이블의 총 행 개수 알아오기
+	@Override
+	public int getTotalMemberCount() {
+		int count = sqlsession.selectOne("ws_trip.getTotalMemberCount");
+		return count;
+	}
+	
+	// company 테이블의 총 행 개수 알아오기
+	@Override
+	public int getTotalCompanyCount() {
+		int count = sqlsession.selectOne("ws_trip.getTotalCompanyCount");
+		return count;
 	}
 
 }

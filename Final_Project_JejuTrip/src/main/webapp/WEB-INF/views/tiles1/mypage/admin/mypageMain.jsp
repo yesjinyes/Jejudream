@@ -38,7 +38,7 @@
                 </a>
             </li>
             <li class="list">
-                <a href="<%= ctxPath%>/editProfile.trip">
+                <a href="<%= ctxPath%>/show_userList.trip">
                     <span class="icon"><ion-icon name="person-outline"></ion-icon></span>
                     <span class="title">회원관리</span>
                 </a>
