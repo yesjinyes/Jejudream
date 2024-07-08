@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>    
 <% String ctxPath = request.getContextPath(); %>
 <link rel="stylesheet" href="<%=ctxPath%>/resources/css/mypage/mypageMain.css"/>
 <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
@@ -33,7 +32,7 @@
     <div class="navigation">
         <ul>
             <li class="list active">
-                <a href="<%= ctxPath%>/requiredLogin_goMypage.trip">
+                <a href="#">
                     <span class="icon"><ion-icon name="bed-outline"></ion-icon></span>
                     <span class="title">예약내역</span>
                 </a>
@@ -45,7 +44,7 @@
                 </a>
             </li>
             <li class="list">
-                <a href="<%= ctxPath%>/myRegisterHotel.trip">
+                <a href="<%= ctxPath%>/cash_points.trip">
                     <span class="icon"><ion-icon name="wallet-outline"></ion-icon></span>
                     <span class="title">숙소등록신청현황</span>
                 </a>

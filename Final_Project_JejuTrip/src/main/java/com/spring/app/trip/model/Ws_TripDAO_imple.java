@@ -117,26 +117,5 @@ public class Ws_TripDAO_imple implements Ws_TripDAO {
 		List<Map<String,String>> mapList = sqlsession.selectList("ws_trip.select_convenient_list");
 		return mapList;
 	}
-	
-	// 숙소 테이블에서 해당 업체의 신청건수, 승인건수, 반려 건수를 각각 알아온다.
-	@Override
-	public List<Map<String, String>> select_count_registerHotel(String companyid) {
-		List<Map<String,String>> mapList = sqlsession.selectList("ws_trip.select_count_registerHotel",companyid);
-		return mapList;
-	}
-	
-	// 로그인 한 기업의 신청 목록을 읽어와서 view 페이지에 목록으로 뿌려주기 위한 select
-	@Override
-	public List<LodgingVO> select_loginCompany_lodgingvo(String companyid) {
-		List<LodgingVO> lodgingvo = sqlsession.selectList("ws_trip.select_loginCompany_lodgingvo",companyid);
-		return lodgingvo;
-	}
-	
-	// 업체가 신청한 호텔에 대한 상세 정보를 보여주기위해 DB에서 읽어온다.
-	@Override
-	public LodgingVO selectRegisterHotelJSON(String lodging_code) {
-		LodgingVO lodgingvo = sqlsession.selectOne("ws_trip.selectRegisterHotelJSON", lodging_code);
-		return lodgingvo;
-	}
 
 }

@@ -70,16 +70,6 @@ a.menu_bar_a {
 li.user_menu:hover {
 	font-weight: bold;
 }
-
-<%--
-div#main_bg {
-	background-image: 
-		linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1)),
-		url("<%=ctxPath%>/resources/images/main_bg_sky.jpg");
-	background-size: cover;
-	background-position: center;
-}
---%>
 </style>
 
 <script type="text/javascript">
@@ -101,7 +91,7 @@ $(document).ready(function() {
 });
 </script>
 
-<div id="main_bg" style="background-color: #F5F5F5;">
+<div style="background-color: #F5F5F5;">
 
 	<div class="pt-2" style="width: 70%; margin: 0 auto;">
 		<nav class="navbar navbar-expand-lg navbar-light" style="font-size: 0.8rem;">

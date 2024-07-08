@@ -18,14 +18,4 @@ from tbl_convenient;
 select *
 from tbl_lodging_convenient
 
-select status, count(status) as count_status
-from tbl_lodging
-where fk_companyid = 'kakao'
-group by status;
 
-select *
-from tbl_lodging
-where fk_companyid = 'kakao'
-order by lodging_code desc;
-
-desc tbl_lodging;

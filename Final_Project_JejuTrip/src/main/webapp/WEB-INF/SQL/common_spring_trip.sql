@@ -390,18 +390,3 @@ CREATE TABLE tbl_add_img (
 
 
 
-
--- 맛집 추가이미지 테이블 시퀀스 생성
-create sequence seq_foodaddimg
-start with 1
-increment by 1
-nomaxvalue
-nominvalue
-nocycle
-nocache;
--- Sequence SEQ_FOODADDIMG이(가) 생성되었습니다.
-
-
-
-
-

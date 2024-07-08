@@ -226,41 +226,49 @@ public class Hs_TripController {
 		@ResponseBody
 		@GetMapping(value = "/playMainJSON.trip",produces="text/plain;charset=UTF-8")
 		public String play_mainJSON( HttpServletRequest request,
-									@RequestParam(defaultValue="") String localString) {
+									@RequestParam(defaultValue="") String str_local, 
+									@RequestParam(defaultValue="") String category, 
+									@RequestParam(defaultValue="") String currentShowPageNo) {
 			
-			//--------------스크롤 페이징----------------------//
+			System.out.println("str_local"+str_local);
+			System.out.println("category"+category);
+			System.out.println("currentShowPageNo"+currentShowPageNo);
 			
-			String start = request.getParameter("start");
-		    String len = request.getParameter("len");
-		    String end = String.valueOf(Integer.parseInt(start) + Integer.parseInt(len) - 1); // 1 + 8 = 9 - 1 = 8
+			
+			
+			int sizePerPage = 6; //한페이지당 6개의 댓글을 보여줄 것임.
+			
+			
 		    
-		    //--------------스크롤 페이징----------------------//
-
-		    String category = request.getParameter("category");
-		    String local_status = localString;
+		    Map<String,Object> paraMap = new HashMap<>();
 		    
-		    System.out.println(category);
-		    //System.out.println("local_status"+local_status);
+		    if("".equals(currentShowPageNo) || currentShowPageNo == null) {
+		    	currentShowPageNo="1";
+			}
 		    
-		    Map<String, Object> paraMap = new HashMap<>();
-		    paraMap.put("start", start); // "1"  "9"  "17"  "25"  "33"
-		    paraMap.put("end", end); // end => start + len - 1; 
-		    paraMap.put("category", category); 
+		    int startRno = ((Integer.parseInt(currentShowPageNo)- 1) * sizePerPage) + 1; // 시작 행번호 
+		    int endRno = startRno + sizePerPage - 1; // 끝 행번호
 		    
-		    if(!"".equals(local_status)) {
-				String[] arr_local_status = local_status.trim().split("\\,"); // in 절을 사용하기 위해서는 배열로 만든 후 넘겨줘야한다
+		    paraMap.put("startRno",String.valueOf(startRno) );
+		    paraMap.put("endRno",String.valueOf(endRno));
+		     
+		   
+		    if(!"".equals(category)) { 
+		    	paraMap.put("category", category);
+		    }
+		    if(!"".equals(str_local)) {
+				String[] arr_local_status = str_local.trim().split("\\,"); // in 절을 사용하기 위해서는 배열로 만든 후 넘겨줘야한다
 				System.out.println("arr_local_status"+Arrays.toString(arr_local_status));
+				
 				paraMap.put("arr_local_status",arr_local_status);
 			} 
+		    paraMap.put("currentShowPageNo", currentShowPageNo); 
 		    
-			List<PlayVO> playList;
-			
-			if (category == null || category.equals("전체")) {
-	            playList = service.playList(paraMap); // 모든 항목 가져오기
-	        } else {
-	            playList = service.getPlayListByCategory(paraMap); // 카테고리에 따른 항목 가져오기
-	        }
-			
+		    //전체개수
+		    int totalCount = service.getPlayTotalCount(paraMap);
+		    System.out.println("totalCount"+totalCount);
+		    //조건에 맞는 리트 가져오기
+			List<PlayVO> playList=service.getPlayListByCategory(paraMap);
 			
 			JSONArray jsonArr = new JSONArray();
 			if(playList != null) {
@@ -274,6 +282,9 @@ public class Hs_TripController {
 					jsonObj.put("play_address",playvo.getPlay_address() ); 
 					jsonObj.put("play_main_img",playvo.getPlay_main_img() ); 
 					
+					jsonObj.put("totalCount", totalCount); //총 페이지 
+	            	jsonObj.put("currentShowPageNo", currentShowPageNo); //현재페이지
+	            	jsonObj.put("sizePerPage", sizePerPage); //한페이지당 보여줄 개수
 		
 					jsonArr.put(jsonObj);
 				}

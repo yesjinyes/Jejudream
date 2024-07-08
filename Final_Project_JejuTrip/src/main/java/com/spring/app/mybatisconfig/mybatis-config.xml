@@ -4,9 +4,7 @@
 <configuration>
 
 	<!--  domain(VO) package (메퍼에서 패키지명을 생략할수있게하려면 여기서 선언해주면된다!) -->
-	
-	<typeAliases>
-		<typeAlias type="com.spring.app.trip.domain.FoodstoreVO" alias="FoodstoreVO"/>
-	</typeAliases>
-	
+
+
+
 </configuration>
