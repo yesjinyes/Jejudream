@@ -241,7 +241,7 @@ span#data {
 		
 		////////////////////////////////////////////////////////////////////////
 	
-		// == 검색하기 == //
+		// == 검색하기 엔터 == //
 		$("input:text[name='searchbox']").bind("keyup", function(e){
 			if(e.keyCode == 13) {
 				goSearch();
@@ -292,7 +292,6 @@ span#data {
 			 	else {
 					v_html = "<span>관련 데이터가 없습니다.</span>";
 				}	 
-			
 					
 				$("div#storeList").html(v_html);
 			},
@@ -307,7 +306,7 @@ span#data {
 	// == 검색하기 == //
 	function goSearch() {
 		const searchWord = $("input[name='searchbox']").val();
-		console.log("검색어 확인 : " +searchWord);
+		console.log("검색어 확인 : " + searchWord);
 		
 		const frm = document.dataFrm;
 		frm.searchWord.value = searchWord;
@@ -318,7 +317,11 @@ span#data {
 	
 	// == '전체보기' 클릭 시 전체 리스트 보이기 == //
 	function viewAll() {
+
 		goAjax();
+		
+		
+		
 	}// end of function viewAll()-------------------
 	
 	//////////////////////////////////////////////////////////////////////////////
@@ -374,13 +377,16 @@ span#data {
 		}
 	}// end of function selectArea()---------------------
 	
+	
+	// == 맛집 상세 페이지로 이동 == //
 	function goDetail(food_store_code) {
 		
 		const frm = document.goDetailFrm;
+		
 		frm.food_store_code.value = food_store_code;
+		
 		frm.action = "foodstoreDetail.trip"
 		frm.submit();
-		
 	}// end of function goDetail(food_store_code)-----------------------
 	
 </script>
@@ -562,11 +568,11 @@ span#data {
 		<input type="hidden" name="orderValue_desc" />
 		
 		<!-- 검색어 -->
-		<input type="hidden" name="searchWord" />
+		<input type="text" name="searchWord" />
 	</form>
 	
 	<form name="goDetailFrm">
-		<input type="text" name="food_store_code" />
+		<input type="hidden" name="food_store_code" />
 	</form>
 
 

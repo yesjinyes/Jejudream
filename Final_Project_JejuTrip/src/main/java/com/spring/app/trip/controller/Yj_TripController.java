@@ -57,7 +57,8 @@ public class Yj_TripController {
 	@GetMapping(value="foodstoreListJSON.trip", produces="text/plain;charset=UTF-8")
 	public String foodstoreListJSON(HttpServletRequest request,
 							    @RequestParam(defaultValue="") String str_category,
-							    @RequestParam(defaultValue="") String str_area,			  
+							    @RequestParam(defaultValue="") String str_area,
+							    @RequestParam(defaultValue="") String searchWord,
 							    @RequestParam(defaultValue="") String orderType, 
 							    @RequestParam(defaultValue="") String orderValue_asc,
 							    @RequestParam(defaultValue="") String orderValue_desc) {
@@ -91,7 +92,6 @@ public class Yj_TripController {
 		}
 		
 		// 검색하기 //
-		String searchWord = request.getParameter("searchWord");
 		
 		if(searchWord == null) {
 			searchWord = "";

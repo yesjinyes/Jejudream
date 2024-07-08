@@ -45,6 +45,11 @@
 			</foreach>
 		</if>
 		
+		<!-- 검색 -->
+		<if test="searchWord != ''">
+			AND lower(food_name) like '%'||lower(#{searchWord})||'%'
+		</if>
+		
 		<!-- 오름차순, 내림차순 정렬 -->
 		<if test="orderValue_asc != null">
 			ORDER BY ${orderType} ${orderValue_asc}
@@ -52,14 +57,7 @@
 		<if test="orderValue_desc != null">
 			ORDER BY ${orderType} ${orderValue_desc}
 		</if>
-		<if test="orderType == null">
-			ORDER BY food_store_code
-		</if>
-		
-		<!-- 검색 -->
-		<if test="searchWord != ''">
-			and lower(food_name) like '%'||lower(#{searchWord})||'%'
-		</if>
+		ORDER BY food_store_code
 	</select>
 	
 	<!-- 맛집 총 개수 알아오기  -->
