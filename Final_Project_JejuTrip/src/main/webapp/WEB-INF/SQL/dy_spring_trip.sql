@@ -125,8 +125,9 @@ from tbl_member
 where userid = 'kimdy' and pw = '9695b88a59a1610320897fa84cb7e144cc51f2984520efb77111d94b402a8382';
 
 
-
-
+update tbl_member set lastpwdchangedate = '24/04/01'
+where userid = 'eomjh';
+commit;
 
 
 

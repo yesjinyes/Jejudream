@@ -720,8 +720,7 @@ public class Dy_TripController {
 	// 휴면 해제 - 비밀번호 변경 처리하기
 	@ResponseBody
 	@PostMapping(value="login/idleUpdateEndJSON.trip", produces="text/plain;charset=UTF-8")
-	public String idleUpdateEndJSON(HttpServletRequest request,
-									@RequestParam(defaultValue="") String memberType,
+	public String idleUpdateEndJSON(@RequestParam(defaultValue="") String memberType,
 									@RequestParam(defaultValue="") String id,
 									@RequestParam(defaultValue="") String new_pw) {
 
@@ -759,6 +758,76 @@ public class Dy_TripController {
 		}
 		
 		return jsonObj.toString();
+	}
+	
+	
+	// 비밀번호 변경 3개월 초과 시 띄우는 페이지 요청
+	@GetMapping("login/pwUpdate.trip")
+	public String pwUpdate() {
+		
+		return "login/pwUpdate.tiles1";
+	}
+	
+	
+	// 비밀번호 변경 3개월 초과 시 비밀번호 변경하기
+	@ResponseBody
+	@PostMapping(value="login/pwUpdateEndJSON.trip", produces="text/plain;charset=UTF-8")
+	public String pwUpdateEndJSON(HttpServletRequest request,
+								  @RequestParam(defaultValue="") String memberType,
+								  @RequestParam(defaultValue="") String id,
+								  @RequestParam(defaultValue="") String new_pw) {
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("memberType", memberType);
+		paraMap.put("id", id);
+		paraMap.put("new_pw", Sha256.encrypt(new_pw));
+		
+		// 기존 비밀번호와 값이 일치한지 비교하기
+		boolean isSamePw = service.isSamePw(paraMap);
+		
+		JSONObject jsonObj = new JSONObject();
+		
+		if(isSamePw) { // 새 비밀번호가 기존 비밀번호와 같다면
+			jsonObj.put("isOK", false);
+			
+		} else {
+			// 비밀번호 변경
+			int result = service.pwUpdate(paraMap);
+			
+			if(result == 1) {
+				
+				// 다시 로그인하게 하기 위해서 세션 삭제
+				HttpSession session = request.getSession();
+				session.invalidate();
+				
+				jsonObj.put("isOK", true);
+			}
+		}
+		
+		return jsonObj.toString();
+	}
+	
+	
+	// 비밀번호 변경 3개월 초과 시 띄우는 페이지에서 '다음에 변경하기'를 눌렀을 경우
+	@PostMapping("login/cancelPwUpdate.trip")
+	public ModelAndView cancelPwUpdate(ModelAndView mav, 
+									   @RequestParam(defaultValue="") String memberType,
+									   @RequestParam(defaultValue="") String id) {
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("memberType", memberType);
+		paraMap.put("id", id);
+		
+		if(id != "") {
+			// 비밀번호 변경 날짜(lastpwdchangedate)를 현재 날짜로 변경하기 (현재로부터 3개월 뒤에 다시 변경 안내를 띄우기 위해)
+			int result = service.updatePwdChangeDate(paraMap);
+			
+			if(result == 1) {
+				mav.setViewName("redirect:/index.trip");
+			}
+		}
+		
+		return mav;
 	}
 	
 }

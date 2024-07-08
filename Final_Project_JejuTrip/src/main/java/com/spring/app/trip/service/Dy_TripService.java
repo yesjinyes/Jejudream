@@ -55,4 +55,7 @@ public interface Dy_TripService {
 
 	// 회원의 idle을 0으로 변경하기
 	int idleUpdate(Map<String, String> paraMap);
+
+	// 비밀번호 변경 날짜(lastpwdchangedate)를 현재 날짜로 변경하기
+	int updatePwdChangeDate(Map<String, String> paraMap);
 }

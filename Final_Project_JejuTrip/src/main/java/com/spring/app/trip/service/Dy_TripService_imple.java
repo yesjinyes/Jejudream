@@ -156,9 +156,8 @@ public class Dy_TripService_imple implements Dy_TripService {
 				
 				if(loginuser.isRequirePwdChange()) { // 암호를 마지막으로 변경한 날짜로부터 3개월 경과한 경우
 					
-					String message = "비밀번호를 변경하신지 3개월이 지났습니다.\\n암호를 변경하는 것을 추천합니다.";
-					String loc = request.getContextPath() + "/index.trip";
-					// 추후에 비밀번호 변경 페이지로 이동하기
+					String message = "비밀번호를 변경한 지 3개월이 초과되었습니다.\\n비밀번호 변경 페이지로 이동합니다.";
+					String loc = request.getContextPath() + "/login/pwUpdate.trip";
 
 					mav.addObject("message", message);
 					mav.addObject("loc", loc);
@@ -251,9 +250,8 @@ public class Dy_TripService_imple implements Dy_TripService {
 				
 				if(loginCompanyuser.isRequirePwdChange()) { // 암호를 마지막으로 변경한 날짜로부터 3개월 경과한 경우
 					
-					String message = "비밀번호를 변경하신지 3개월이 지났습니다.\\n암호를 변경하는 것을 추천합니다.";
-					String loc = request.getContextPath() + "/index.trip";
-					// 추후에 비밀번호 변경 페이지로 이동하기
+					String message = "비밀번호를 변경한 지 3개월이 초과되었습니다.\\n비밀번호 변경 페이지로 이동합니다.";
+					String loc = request.getContextPath() + "/login/pwUpdate.trip";
 
 					mav.addObject("message", message);
 					mav.addObject("loc", loc);
@@ -395,6 +393,16 @@ public class Dy_TripService_imple implements Dy_TripService {
 	public int idleUpdate(Map<String, String> paraMap) {
 		
 		int result = dao.idleUpdate(paraMap);
+		
+		return result;
+	}
+
+
+	// 비밀번호 변경 날짜(lastpwdchangedate)를 현재 날짜로 변경하기
+	@Override
+	public int updatePwdChangeDate(Map<String, String> paraMap) {
+		
+		int result = dao.updatePwdChangeDate(paraMap);
 		
 		return result;
 	}

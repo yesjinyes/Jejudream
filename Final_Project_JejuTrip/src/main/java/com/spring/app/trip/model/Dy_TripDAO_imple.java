@@ -238,6 +238,23 @@ public class Dy_TripDAO_imple implements Dy_TripDAO {
 	}
 
 
+	// 비밀번호 변경 날짜(lastpwdchangedate)를 현재 날짜로 변경하기
+	@Override
+	public int updatePwdChangeDate(Map<String, String> paraMap) {
+		
+		int result = 0;
+		
+		if("company".equals(paraMap.get("memberType"))) {
+			result = sqlsession.update("dy_trip.updateCompanyPwdChangeDate", paraMap.get("id"));
+			
+		} else {
+			result = sqlsession.update("dy_trip.updateMemberPwdChangeDate", paraMap.get("id"));
+		}
+		
+		return result;
+	}
+
+
 	
 	
 

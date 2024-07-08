@@ -158,7 +158,7 @@
 	
 	
 	<!-- === 데이터베이스에 맛집 정보 insert 하기 === -->
-	<insert id="foodstoreRegister" parameterType="FoodstoreVO">
+	<insert id="foodstoreRegister" parameterType="com.spring.app.trip.domain.FoodstoreVO">
 		insert into tbl_food_store(food_store_code, food_category, local_status, food_name, food_content, food_businesshours, food_mobile, food_address, food_main_img, filename, orgfilename, filesize)
 		values(#{food_store_code}, #{food_category}, #{local_status}, #{food_name}, #{food_content}, #{food_businesshours}, #{food_mobile}, #{food_address}, #{fileName}, #{fileName}, #{orgFilename}, #{fileSize})
 	</insert>
@@ -211,6 +211,20 @@
 	<!-- idle을 0으로 변경하기 (업체회원) -->
 	<update id="companyIdleUpdate" parameterType="String">
 		update tbl_company set idle = 0
+		where companyid = #{id}
+	</update>
+	
+	
+	<!-- 비밀번호 변경 날짜(lastpwdchangedate)를 현재 날짜로 변경하기 (일반회원, 관리자) -->
+	<update id="updateMemberPwdChangeDate" parameterType="String">
+		update tbl_member set lastpwdchangedate = sysdate
+		where userid = #{id}
+	</update>
+	
+	
+	<!-- 비밀번호 변경 날짜(lastpwdchangedate)를 현재 날짜로 변경하기 (업체회원) -->
+	<update id="updateCompanyPwdChangeDate" parameterType="String">
+		update tbl_company set lastpwdchangedate = sysdate
 		where companyid = #{id}
 	</update>
 	
