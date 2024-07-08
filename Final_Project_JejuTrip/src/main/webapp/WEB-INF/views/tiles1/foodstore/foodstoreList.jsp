@@ -217,6 +217,13 @@ span#data {
 		
 		////////////////////////////////////////////////////////////////////////
 		
+		// == 전체보기 클릭 시 == //
+		$("button#btnAll").click(function() {
+			
+		
+			goAjax();
+		});
+		
 		// == 오름차순 정렬 == //
 		$("button#btnAsc").click(function() {
 			const frm = document.dataFrm;
@@ -247,7 +254,6 @@ span#data {
 				goSearch();
 			}
 		});
-	
 		
 	});// end of $(document).ready(function()})-------------------
 	
@@ -306,7 +312,7 @@ span#data {
 	// == 검색하기 == //
 	function goSearch() {
 		const searchWord = $("input[name='searchbox']").val();
-		console.log("검색어 확인 : " + searchWord);
+		// console.log("검색어 확인 : " + searchWord);
 		
 		const frm = document.dataFrm;
 		frm.searchWord.value = searchWord;
@@ -314,16 +320,7 @@ span#data {
 		goAjax();
 	}// end of function goSearch()--------------------
 	
-	
-	// == '전체보기' 클릭 시 전체 리스트 보이기 == //
-	function viewAll() {
 
-		goAjax();
-		
-		
-		
-	}// end of function viewAll()-------------------
-	
 	//////////////////////////////////////////////////////////////////////////////
 	
 	// == 카테고리 전체 체크 == //
@@ -338,7 +335,6 @@ span#data {
 	
 	// == 카테고리 한개라도 체크 해제 시 전체 체크 해제 == //
 	function selectCategory() {
-		
 		const checkboxes = document.querySelectorAll("input[name='food_category']"); // 모든 체크박스
 		const checked = document.querySelectorAll("input[name='food_category']:checked"); // 선택된 체크박스
 		const selectAllcategory = document.querySelector('input[name="food_category_all"]'); // '전체' 체크박스
@@ -364,7 +360,6 @@ span#data {
 	
 	// == 지역 한개라도 체크 해제 시 전체 체크 해제 == //
 	function selectArea() {
-		
 		const checkboxes = document.querySelectorAll("input[name='area']"); // 모든 체크박스
 		const checked = document.querySelectorAll("input[name='area']:checked"); // 선택된 체크박스
 		const selectAllarea = document.querySelector('input[name="allArea"]'); // '전체' 체크박스
@@ -380,9 +375,7 @@ span#data {
 	
 	// == 맛집 상세 페이지로 이동 == //
 	function goDetail(food_store_code) {
-		
 		const frm = document.goDetailFrm;
-		
 		frm.food_store_code.value = food_store_code;
 		
 		frm.action = "foodstoreDetail.trip"
@@ -479,7 +472,7 @@ span#data {
       	<div class="row mt-5">
 	       <div class="sort-filter main" style="display: flex; justify-content: space-between; width: 100%">
 	            <div style="width: 50%;">
-					<button type="button" id="btnAll" class="mr-4" onclick="viewAll()">전체보기</button>
+					<button type="button" id="btnAll" class="mr-4">전체보기</button>
 					<button type="button" id="btnLike" class="sort">인기순</button>
 					<button type="button" id="btnAsc" class="sort">오름차순</button>
 					<button type="button" id="btnDesc" class="sort">내림차순</button>
@@ -568,7 +561,7 @@ span#data {
 		<input type="hidden" name="orderValue_desc" />
 		
 		<!-- 검색어 -->
-		<input type="text" name="searchWord" />
+		<input type="hidden" name="searchWord" />
 	</form>
 	
 	<form name="goDetailFrm">

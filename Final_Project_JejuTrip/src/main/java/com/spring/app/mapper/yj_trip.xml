@@ -57,14 +57,18 @@
 		<if test="orderValue_desc != null">
 			ORDER BY ${orderType} ${orderValue_desc}
 		</if>
-		ORDER BY food_store_code
+		<if test="orderType == null">
+			ORDER BY food_store_code
+		</if>
 	</select>
+	
 	
 	<!-- 맛집 총 개수 알아오기  -->
 	<select id="getTotalCount" parameterType="HashMap" resultType="int">
 		select count(*)
 		from tbl_food_store
 	</select>
+	
 	
 	<!-- 맛집 상세 조회하기 -->
 	<select id="viewfoodstoreDetail" parameterType="String" resultType="com.spring.app.trip.domain.FoodstoreVO">
