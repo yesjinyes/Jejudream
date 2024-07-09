@@ -9,32 +9,12 @@
 
 
 
-<select id="playList_1" resultType="com.spring.app.trip.domain.PlayVO">
+<select id="playList" resultType="com.spring.app.trip.domain.PlayVO">
 	 SELECT play_code,play_category ,local_status,play_name,play_content,
        		play_mobile,play_businesshours,play_address,play_main_img,review_division
 	 FROM tbl_play
 	
 </select>
-
-<!-- <select id="playList" parameterType="HashMap" resultType="com.spring.app.trip.domain.PlayVO">
-	 select play_code,play_category ,local_status,play_name,play_content,RNO
-       		play_mobile,play_businesshours,play_address,play_main_img,review_division ,orgFilename
-	 from
-	 (
-	 SELECT play_code,play_category ,local_status,play_name,play_content,rownum AS RNO,
-       		play_mobile,play_businesshours,play_address,play_main_img,review_division ,orgFilename
-	 FROM tbl_play
-	 )
-	 WHERE RNO between #{startRno} and #{endRno}
-	 <if test="arr_local_status != null">
-		 AND local_status IN 
-			<foreach collection="arr_local_status" index="i" open="(" separator="," close=")"> parameter 로 들어온 map 의 key 값 , 무조건 배열만 가능 
-				             배열의                            길이만큼돌린다         (로 열고                , 로 구분짓고         ) 로 닫음     
-				'${arr_local_status[i]}'
-	 		</foreach>
-	 </if>
-	 
-</select> -->
 
 
 <!-- 카테고리별 select용  -->
@@ -87,4 +67,25 @@ where 1=1
 </select>
 
 
+<select id="goAddSchedule" parameterType="String" resultType="com.spring.app.trip.domain.PlayVO">
+	 SELECT play_code,play_category ,local_status,play_name,play_content,
+       		play_mobile,play_businesshours,play_address,play_main_img,review_division
+	 FROM tbl_play
+	 where play_code=#{play_code}
+	
+</select>
+
+<insert id="addReview" parameterType="com.spring.app.trip.domain.ReviewVO">
+insert into tbl_review (review_code, fk_userid, parent_code, review_content, review_division_R )
+				values (seq_review.nextval,#{fk_userid},#{parent_code},#{review_content},#{review_division_R})
+</insert>
+ 
+<select id="reviewList" parameterType="HashMap" resultType="com.spring.app.trip.domain.ReviewVO">
+select review_content,fk_userid,registerday,review_code
+from tbl_review
+where parent_code = #{parent_code}
+
+</select>
+ 
+ 
 </mapper>

@@ -296,6 +296,12 @@ $(document).ready(function() {
     });
 
     
+    // 카드 클릭 시 play_code 전달 (이벤트 위임 사용)
+    $(document).on('click', '.container_card', function() {
+        const playCode = $(this).find('input[name="play_code"]').val(); // 클릭된 카드의 play_code 값 가져오기
+        console.log("Play Code: ", playCode); // play_code 확인용 로그
+        goAddSchedule(playCode); // play_code를 매개변수로 전달
+    });
     
     
    /*  $("input:text[name='searchWord']").bind("keydown", function(e) {
@@ -367,6 +373,10 @@ $(document).ready(function() {
 
 
 //----------------------------------------------------------------------------//
+function goAddSchedule(playCode) {
+	location.href= `<%= ctxPath %>/goAddSchedule.trip?play_code=\${playCode}`;
+}
+
 
 function contentPlay(currentShowPageNo) {
 	
@@ -392,6 +402,8 @@ function contentPlay(currentShowPageNo) {
                     v_html += "          <div class='inner_front'>";
                     v_html += "            <p style='font-size: 40px;'>" + item.play_name + "</p>";
                     v_html += "            <span style=' color:#786b94;'>" + item.play_category + "</span>";
+                    v_html += "         <input type='text' name='play_code' value='" + item.play_code + "'/>"; // 문자열 내부 따옴표 수정
+
                     v_html += "          </div>";
                     v_html += "        </div>";
                     v_html += "        <div class='back'>";

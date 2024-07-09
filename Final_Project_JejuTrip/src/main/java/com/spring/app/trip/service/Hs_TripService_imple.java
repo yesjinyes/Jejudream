@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.spring.app.trip.domain.PlayVO;
+import com.spring.app.trip.domain.ReviewVO;
 import com.spring.app.trip.model.Hs_TripDAO;
 @Service
 public class Hs_TripService_imple implements Hs_TripService {
@@ -24,11 +25,6 @@ public class Hs_TripService_imple implements Hs_TripService {
 	}
 	
 	
-	@Override
-	public List<PlayVO> playList(Map<String, Object> paraMap) {
-		List<PlayVO> playList = dao.playList(paraMap);
-		return playList;
-	}
 
 
 	@Override
@@ -49,6 +45,31 @@ public class Hs_TripService_imple implements Hs_TripService {
 	public int getPlayTotalCount(Map<String, Object> paraMap) {
 		int n = dao.getPlayTotalCount(paraMap);
 		return n;
+	}
+
+
+	@Override
+	public PlayVO goAddSchedule(String play_code) {
+		PlayVO goAddSchedule = dao.goAddSchedule(play_code);
+		return goAddSchedule;
+	}
+
+
+
+	//리뷰작성
+	@Override
+	public int addReview(ReviewVO reviewvo) {
+		int n = dao.addReview(reviewvo);
+		return n;
+	}
+
+
+
+	//리뷰 보여주기
+	@Override
+	public List<ReviewVO> reviewList(String parent_code) {
+		List<ReviewVO> reviewList = dao.reviewList(parent_code);
+		return reviewList;
 	}
 
 
