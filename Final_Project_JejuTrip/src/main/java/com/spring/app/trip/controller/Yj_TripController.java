@@ -1,10 +1,14 @@
 package com.spring.app.trip.controller;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -94,7 +98,7 @@ public class Yj_TripController {
 
 		//////////////////////////////////////////////////////////////////////////////
 		
-		List<FoodstoreVO> foodstoreList = service.viewFoodstoreList(map); // 맛집 리스트
+		List<FoodstoreVO> foodstoreList = service.viewFoodstoreList(map); // 맛집 리스트(조회수 증가X)
 		//System.out.println("foodstoreList 길이 : " + foodstoreList.size());
 		
 		List<FoodstoreVO> randomRecommend = service.randomRecommend(map); // 맛집 랜덤 추천
@@ -151,33 +155,42 @@ public class Yj_TripController {
 	@GetMapping("foodstoreDetail.trip")
 	public ModelAndView foodstoreDetail(ModelAndView mav, HttpServletRequest request,
 										@RequestParam(defaultValue="") String random_recommend_code) {
-		
+	
 		Map<String, String> paraMap = new HashMap<>();
 		
 		String food_store_code = request.getParameter("food_store_code");
+		
+		System.out.println("-------------------------------------------------------");
 		System.out.println("## 확인용 food_store_code => "+ food_store_code);
 		System.out.println("## 확인용 random_recommend_code => "+ random_recommend_code);
 		
 		paraMap.put("food_store_code", food_store_code); // 맛집 리스트에서 상세 페이지로 넘어가기
-		paraMap.put("random_recommend_code", random_recommend_code); // 맛집 추천에서 상세 페이지로 넘어가기
+		paraMap.put("food_store_code", random_recommend_code); // 맛집 추천에서 상세 페이지로 넘어가기
 		
 		FoodstoreVO foodstorevo = service.viewfoodstoreDetail(paraMap); // 맛집 상세 페이지 띄우기
-
-		List<Map<String, String>> addimgList = service.viewfoodaddImg(food_store_code); // 맛집 상세 추가 이미지
 		
- 		mav.addObject("foodstorevo", foodstorevo);
-
+		// String food_name =  foodstorevo.getFood_name();
+		// System.out.println("food_name 확인 =>" + food_name);
+		
+		
+		
+		
+	
+		List<Map<String, String>> addimgList = service.viewfoodaddImg(paraMap); // 맛집 상세 추가 이미지
+		
+		mav.addObject("foodstorevo", foodstorevo);
+		
  		mav.addObject("addimgList", addimgList);
 		
  		mav.setViewName("foodstore/foodstoreDetail.tiles1");
- 		
-		return mav;
-	}
 		
-	// 수정중
+ 		return mav;
+		
+	}
 	
 	
 	
+
 
 	
 	

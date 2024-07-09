@@ -211,7 +211,8 @@ order by food_store_code;
 
 select * from user_tables;
 
-
+select *
+from tbl_food_store;
 
 select count(*)
 from tbl_food_store;
@@ -233,3 +234,27 @@ select reverse(substr(reverse(food_add_img),10))
 from tbl_food_add_img
 where food_add_code = 5;
 -- 물꼬해물의집
+
+
+desc tbl_food_store;
+
+
+select S.food_name
+FROM 
+(
+select food_store_code
+from tbl_food_store
+where food_store_code = 5316
+)S
+join tbl_food_add_img I
+where S.food_store_code = I.fk_food_store_code
+
+
+
+select food_store_code
+from tbl_food_store
+where food_store_code = 5316
+
+
+
+

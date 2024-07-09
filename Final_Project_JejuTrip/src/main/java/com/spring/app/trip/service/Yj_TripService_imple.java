@@ -41,20 +41,25 @@ public class Yj_TripService_imple implements Yj_TripService {
 
 	//////////////////////////////////////////////////////////////////////////////////////
 
-	// == 맛집 상세 조회하기 == //
+	// == 맛집 상세 조회하기 (조회수 증가 X) == //
 	@Override
 	public FoodstoreVO viewfoodstoreDetail(Map<String, String> paraMap) {
 		FoodstoreVO foodstorevo = dao.viewfoodstoreDetail(paraMap);
 		return foodstorevo;
 	}
 
-
+	
+	
 	// == 맛집 상세 추가 이미지 == //
 	@Override
-	public List<Map<String, String>> viewfoodaddImg(String food_store_code) {
-		List<Map<String, String>> addimgList = dao.viewfoodaddImg(food_store_code);
+	public List<Map<String, String>> viewfoodaddImg(Map<String, String> paraMap) {
+		List<Map<String, String>> addimgList = dao.viewfoodaddImg(paraMap);
 		return addimgList;
+	
+	
 	}
+
+	
 
 
 

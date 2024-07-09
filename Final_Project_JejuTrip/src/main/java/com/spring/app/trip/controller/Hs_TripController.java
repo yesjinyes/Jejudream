@@ -1,5 +1,7 @@
 package com.spring.app.trip.controller;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
+
 import java.io.File;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Arrays;
@@ -173,8 +175,9 @@ public class Hs_TripController {
 		
 		//즐길거리 페이지
 		@GetMapping(value = "playMain.trip", produces = "text/plain;charset=UTF-8")
-		public ModelAndView play_main(ModelAndView mav) {
+		public ModelAndView play_main(HttpServletRequest request,ModelAndView mav) {
 			List<PlayVO> playList = service.playList();
+			
 			
 			mav.addObject("playList", playList);
 			mav.setViewName("play/playMain.tiles1");
@@ -190,15 +193,16 @@ public class Hs_TripController {
 		public String play_mainJSON( HttpServletRequest request,
 									@RequestParam(defaultValue="") String str_local, 
 									@RequestParam(defaultValue="") String category, 
-									@RequestParam(defaultValue="") String currentShowPageNo) {
+									@RequestParam(defaultValue="") String currentShowPageNo,
+									@RequestParam(defaultValue="") String searchWord) {
 			
-			System.out.println("str_local"+str_local);
-			System.out.println("category"+category);
-			System.out.println("currentShowPageNo"+currentShowPageNo);
+//			System.out.println("str_local"+str_local);
+//			System.out.println("category"+category);
+//			System.out.println("currentShowPageNo"+currentShowPageNo);
 			
 			
 			
-			int sizePerPage = 6; //한페이지당 6개의 댓글을 보여줄 것임.
+			int sizePerPage = 6; //한페이지당 6개의 글 보여주기
 			
 			
 		    
@@ -207,6 +211,9 @@ public class Hs_TripController {
 		    if("".equals(currentShowPageNo) || currentShowPageNo == null) {
 		    	currentShowPageNo="1";
 			}
+		    if("".equals(searchWord) || searchWord == null) {
+		    	searchWord="";
+		    }
 		    
 		    int startRno = ((Integer.parseInt(currentShowPageNo)- 1) * sizePerPage) + 1; // 시작 행번호 
 		    int endRno = startRno + sizePerPage - 1; // 끝 행번호
@@ -224,7 +231,8 @@ public class Hs_TripController {
 				
 				paraMap.put("arr_local_status",arr_local_status);
 			} 
-		    paraMap.put("currentShowPageNo", currentShowPageNo); 
+		    paraMap.put("currentShowPageNo", currentShowPageNo);
+		    paraMap.put("searchWord", searchWord); 
 		    
 		    //전체개수
 		    int totalCount = service.getPlayTotalCount(paraMap);
@@ -246,8 +254,9 @@ public class Hs_TripController {
 					jsonObj.put("play_code",playvo.getPlay_code() ); 
 					
 					jsonObj.put("totalCount", totalCount); //총 페이지 
-	            	jsonObj.put("currentShowPageNo", currentShowPageNo); //현재페이지
 	            	jsonObj.put("sizePerPage", sizePerPage); //한페이지당 보여줄 개수
+	            	jsonObj.put("currentShowPageNo", currentShowPageNo); //현재페이지
+	            	jsonObj.put("searchWord", searchWord); //검색어가 있을경우
 		
 					jsonArr.put(jsonObj);
 				}
@@ -257,6 +266,8 @@ public class Hs_TripController {
 		 
 		}
 		
+		
+		//디테일겸, 일정추가 있는 페이지
 		@GetMapping("goAddSchedule.trip")
 		public ModelAndView goAddSchedule (ModelAndView mav , HttpServletRequest request) {
 			
@@ -320,8 +331,30 @@ public class Hs_TripController {
 		public String reviewList (HttpServletRequest request) {
 			
 			String parent_code = request.getParameter("parent_code");
+			String currentShowPageNo = request.getParameter("currentShowPageNo");
 			
-			List<ReviewVO> reviewList = service.reviewList(parent_code);
+			if("".equals(currentShowPageNo) || currentShowPageNo == null) {
+		    	currentShowPageNo="1";
+			}
+			
+			int sizePerPage = 6; //한페이지당 6개의 글 보여주기
+			int startRno = ((Integer.parseInt(currentShowPageNo)- 1) * sizePerPage) + 1; // 시작 행번호 
+			int endRno = startRno + sizePerPage - 1; // 끝 행번호
+			
+			Map<String,String> paraMap = new HashMap<>();
+
+		
+		    paraMap.put("startRno",String.valueOf(startRno) );
+		    paraMap.put("endRno",String.valueOf(endRno));
+
+		    paraMap.put("parent_code", parent_code);
+		    paraMap.put("currentShowPageNo", currentShowPageNo);
+		     
+		    //전체개수
+		    int totalCount = service.getPlayReviewCount(paraMap);
+		    System.out.println("totalCount"+totalCount);
+		    //조건에 맞는 리트 가져오기
+			List<ReviewVO> reviewList = service.reviewList(paraMap);
 			
 			JSONArray jsonArr = new JSONArray();
 			if(reviewList != null) {
@@ -331,6 +364,10 @@ public class Hs_TripController {
 					jsonObj.put("fk_userid",reviewvo.getFk_userid()); 
 					jsonObj.put("registerday",reviewvo.getRegisterday()); 
 					jsonObj.put("review_code",reviewvo.getReview_code()); 
+					
+					jsonObj.put("totalCount", totalCount); //총 페이지 
+	            	jsonObj.put("sizePerPage", sizePerPage); //한페이지당 보여줄 개수
+	            	jsonObj.put("currentShowPageNo", currentShowPageNo); //현재페이지
 				
 		
 					jsonArr.put(jsonObj);

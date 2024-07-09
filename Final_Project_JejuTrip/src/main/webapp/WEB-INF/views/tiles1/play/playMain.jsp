@@ -28,7 +28,7 @@
 <style type="text/css">
 
 /*구글 웹 폰트 적용*/
-@import url('https://fonts.googleapis.com/css2?family=Dongle&family=Sunflower:wght@300&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Dongle&family=Sunflower:wght@300&display=swap');
 
 .inner_back{
   font-family: "Dongle", sans-serif;
@@ -43,7 +43,7 @@
   font-weight: 200;
   font-style: normal;
   font-size: 25px;
-}
+} */
 
 
 .single-post {
@@ -271,12 +271,16 @@
   right: 0;
   margin: 0 auto;
   bottom: -.75rem;
+  
 }
 
 .list-group-item  {cursor: pointer; }
    .moveColor {color: #660029; font-weight: bold; background-color: #ffffe6;}
 
+.inner_back div span{
+font-size: 17px;
 
+}
 /*-----------------------------------------------------------------------------------------  */
 </style>
 
@@ -303,13 +307,28 @@ $(document).ready(function() {
         goAddSchedule(playCode); // play_code를 매개변수로 전달
     });
     
-    
-   /*  $("input:text[name='searchWord']").bind("keydown", function(e) {
-        if(e.keyCode == 13){ // 엔터
-            goSearch();
-        }
-    }); */
+   
+     $(document).on('click', '.search', function() {
+        	
+    	 searchWord = $(this).parent().find('input[name="searchWord"]').val();
+         console.log("searchWord",searchWord);
+         const frm = document.totalPlayFrm;
+         frm.searchWord.value = searchWord;
+         contentPlay(1);
+    }); 
 
+     
+     $("input:text[name='searchWord']").bind("keydown", function(e){
+         
+         if(e.keyCode == 13){ // 엔터
+            
+        	 searchWord = $(this).parent().find('input[name="searchWord"]').val();
+             console.log("searchWord",searchWord);
+             const frm = document.totalPlayFrm;
+             frm.searchWord.value = searchWord;
+             contentPlay(1);
+         }
+     });
 
     // ================================ 지역구분 체크박스 ================================ //
     
@@ -349,7 +368,9 @@ $(document).ready(function() {
     });
     // ================================ 지역구분 체크박스 ================================ //
     
-  //================================ 카테고리 클릭 이벤트용 시작 ================================//
+    
+    
+  //================================ 카테고리 클릭 이벤트 시작 ================================//
     $('.list-group-item').on('click', function() {
         category = $(this).find('input').val();
         const frm = document.totalPlayFrm;
@@ -372,10 +393,14 @@ $(document).ready(function() {
 
 
 
-//----------------------------------------------------------------------------//
+//-----------------------디테일 겸 예약할수있는 페이지 호출 함수--------------------------------//
+
 function goAddSchedule(playCode) {
+	
 	location.href= `<%= ctxPath %>/goAddSchedule.trip?play_code=\${playCode}`;
+	
 }
+//----------------------------------------------------------------------------//
 
 
 function contentPlay(currentShowPageNo) {
@@ -383,9 +408,7 @@ function contentPlay(currentShowPageNo) {
 	
 	$("input:hidden[name='currentShowPageNo']").val(currentShowPageNo);
     const formData = $("form[name='totalPlayFrm']").serialize(); //totalPlayFrm 폼에 담았던  데이터들을 전체 ~~ 
-    
-    
-    
+
     $.ajax({
         url: "<%= ctxPath %>/playMainJSON.trip",
         data: formData,
@@ -400,9 +423,9 @@ function contentPlay(currentShowPageNo) {
                     v_html += "      <div class='container_card'>";
                     v_html += "        <div class='front' style='background-image: url(<%= ctxPath %>/resources/images/play/" + item.play_main_img + ")'>";
                     v_html += "          <div class='inner_front'>";
-                    v_html += "            <p style='font-size: 40px;'>" + item.play_name + "</p>";
-                    v_html += "            <span style=' color:#786b94;'>" + item.play_category + "</span>";
-                    v_html += "         <input type='text' name='play_code' value='" + item.play_code + "'/>"; // 문자열 내부 따옴표 수정
+                    v_html += "            <p style='font-size: 23px;font-weight: bold;'>" + item.play_name + "</p>";
+                    v_html += "            <span style=' color:#786b94;font-size: 15px;'>" + item.play_category + "</span>";
+                    v_html += "         <input type='hidden' name='play_code' value='" + item.play_code + "'/>"; // 문자열 내부 따옴표 수정
 
                     v_html += "          </div>";
                     v_html += "        </div>";
@@ -427,9 +450,9 @@ function contentPlay(currentShowPageNo) {
                     v_html += "      </div>";
                     v_html += "  </div>";
                 });
-                console.log("json[0].sizePerPage" , json[0].sizePerPage);
-	        	console.log("json[0].totalCount" , json[0].totalCount);
-	        	console.log("json[0].currentShowPageNo" , json[0].currentShowPageNo);
+                //console.log("json[0].sizePerPage" , json[0].sizePerPage);
+	        	//console.log("json[0].totalCount" , json[0].totalCount);
+	        	//console.log("json[0].currentShowPageNo" , json[0].currentShowPageNo);
                 
               /*  if( Number(currentShowPageNo) != 1){
             	   currentShowPageNo =  Number(json[0].currentShowPageNo);
@@ -534,55 +557,52 @@ function goTop() {
             </div>
             
             <div class="col-md-9 py-3">
-                <div class="row py-3">
-                    <div id="tabArea" class="tabArea1 text-center" style="display: flex; border: solid 0px black; align-items: center;">
-                        <div class="tabTitle pr-3" style="align-self: center; width:15%;">
-                            <span>여행하실 곳을 <br> 선택해주세요.</span>
-                        </div>
+                <div class="row py-8">
+                    <div id="tabArea" class="tabArea1 text-center" style="display: flex; width:100%;margin:3% auto 6%; ">
                         <div class="areaMap" style="display: flex;">
-                            <div class="areamap mx-2" style="width: 15%;">
+                            <div class="areamap mx-2" style="width: 25%;">
                                 <img src="<%= ctxPath %>/resources/images/areamap_total.png" />
                                 <div>
                                     <input name="local_status" id="all_local" type="checkbox" class="are_map" value="">
                                     <br><label for="all_local" class="label_chk">전체</label>
                                 </div>
                             </div>
-                            <div class="areamap mx-2" style="width: 15%;">
+                            <div class="areamap mx-2" style="width: 20%;">
                                 <img src="<%= ctxPath %>/resources/images/areamap_city.png" />
                                 <div>
                                     <input name="local_status" id="area02" type="checkbox" class="are_map" value="제주 시내">
                                     <label for="area02" class="label_chk">제주시 시내</label>
                                 </div>
                             </div>
-                            <div class="areamap mx-2" style="width: 15%;">
+                            <div class="areamap mx-2" style="width: 20%;">
                                 <img src="<%= ctxPath %>/resources/images/areamap_jeju_east.png" />
                                 <div>
                                     <input name="local_status" id="area03" type="checkbox" class="are_map" value="제주시 동부">
                                     <label for="area03" class="label_chk">제주시 동부</label>
                                 </div>
                             </div>
-                            <div class="areamap mx-2" style="width: 15%;">
+                            <div class="areamap mx-2" style="width: 20%;">
                                 <img src="<%= ctxPath %>/resources/images/areamap_jeju_west.png" />
                                 <div>
                                     <input name="local_status" id="area04" type="checkbox" class="are_map" value="제주시 서부">
                                     <label for="area04" class="label_chk">제주시 서부</label>
                                 </div>
                             </div>
-                            <div class="areamap mx-2" style="width: 15%;">
+                            <div class="areamap mx-2" style="width: 25%;">
                                 <img src="<%= ctxPath %>/resources/images/areamap_bt_city.png" />
                                 <div>
                                     <input name="local_status" id="area05" type="checkbox" class="are_map" value="서귀포시 시내">
                                     <label for="area05" class="label_chk">서귀포시 시내</label>
                                 </div>
                             </div>
-                            <div class="areamap mx-2" style="width: 15%;">
+                            <div class="areamap mx-2" style="width: 25%;">
                                 <img src="<%= ctxPath %>/resources/images/areamap_bt_east.png" />
                                 <div>
                                     <input name="local_status" id="area06" type="checkbox" class="are_map" value="서귀포시 동부">
                                     <label for="area06" class="label_chk">서귀포시 동부</label>
                                 </div>
                             </div>
-                            <div class="areamap mx-2" style="width: 15%;">
+                            <div class="areamap mx-2" style="width: 25%;">
                                 <img src="<%= ctxPath %>/resources/images/areamap_bt_west.png" />
                                 <div>
                                     <input name="local_status" id="area07" type="checkbox" class="are_map" value="서귀포시 서부">
@@ -595,15 +615,16 @@ function goTop() {
                 <div class="row">
                     <div class="sort-filter main" style="display: flex; justify-content:space-between; width: 98%; margin-bottom: 20px;">
                         <div>
-                            <button type="button" onclick="" class="sort active" value="">추천순</button>
-                            <button type="button" onclick="" class="sort" value="NEW">최신등록순</button>
+                            <button type="button" onclick="" class="btn btn-outline-warning btn-sm" value="">추천순</button>
+                            <button type="button" onclick="" class="btn btn-outline-warning btn-sm" value="NEW">최신등록순</button>
                             <c:if test="${sessionScope.loginuser.userid == 'admin'}">
                                 <button type="button" onclick="location.href='<%= ctxPath%>/registerPlay.trip'" class="sort" value="NEW">즐길거리 등록</button>
                             </c:if>
                         </div>
                         <div>
-                            <input type="text" id="searchWord" class="" placeholder="검색 ">
-                            <button type="button" title="검색">검색</button>
+                            <input type="text" name="searchWord" size="20" autocomplete="off" /> 
+                            <input type="text" style="display: none;"/>
+                            <button class="btn btn-outline-warning btn-sm search" type="button" title="검색">검색</button>
                         </div>
                     </div>
                 </div>
@@ -627,6 +648,7 @@ function goTop() {
 	        <input type="hidden" name="str_local" />  <!--지역구분  -->
 	        <input type="hidden" name="category"/>    <!--전체,관광지,체험,박물관 카테고리  -->
 	        <input type="hidden" name="currentShowPageNo"/>
+	        <input type="hidden" name="searchWord"/>
 	    </form>	
     </div>
 </body>

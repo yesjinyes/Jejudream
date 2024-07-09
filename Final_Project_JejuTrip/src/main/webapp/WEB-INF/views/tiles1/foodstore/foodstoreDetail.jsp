@@ -126,9 +126,23 @@ img.images {
 
 </style>
 
+<script type="text/javascript">
+
+	$(document).ready(function() {
+		
+		
+		
+		
+		
+	});// end of $(document).ready(function() {})-----------------------------
+
+</script>
+
+
 
 <div id="container">
 	<div class="imgcrop">
+		<input type="text" name="food_store_code" value="${requestScope.foodstorevo.food_store_code}" />
 		<img class="imgAdd img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgAdd/${requestScope.foodstorevo.food_name}_add1.jpg" alt="..." />
 		<div class="div_img_text">
 			<p class="main_img_text">${requestScope.foodstorevo.food_name}</p>
@@ -193,24 +207,34 @@ img.images {
 	
 	<div class="border" id="storedetail">
 		<h3 class="mb-5">상세정보</h3>
-		<ul>
-			<li class="info-detail">
-				<p class="info-title">카테고리</p>
-				<p class="info-content">${requestScope.foodstorevo.food_category}</p>
-			</li>
-			<li class="info-detail">
-				<p class="info-title">주소</p>
-				<p class="info-content">${requestScope.foodstorevo.food_address}</p>
-			</li>
-			<li class="info-detail">
-				<p class="info-title">영업시간</p>
-				<p class="info-content">${requestScope.foodstorevo.food_businesshours}</p>
-			</li>
-			<li class="info-detail">
-				<p class="info-title">연락처</p>
-				<p class="info-content">${requestScope.foodstorevo.food_mobile}</p>
-			</li>
-		</ul>
+		
+			
+			<c:if test="${not empty requestScope.foodstorevo.food_store_code}">
+				<ul>
+					<li class="info-detail">
+						<p class="info-title">카테고리</p>
+						<p class="info-content">${requestScope.foodstorevo.food_category}</p>
+					</li>
+					<li class="info-detail">
+						<p class="info-title">주소</p>
+						<p class="info-content">${requestScope.foodstorevo.food_address}</p>
+					</li>
+					<li class="info-detail">
+						<p class="info-title">영업시간</p>
+						<p class="info-content">${requestScope.foodstorevo.food_businesshours}</p>
+					</li>
+					<li class="info-detail">
+						<p class="info-title">연락처</p>
+						<p class="info-content">${requestScope.foodstorevo.food_mobile}</p>
+					</li>
+				</ul>
+			</c:if>
+			
+			
+			<c:if test="${empty requestScope.foodstorevo.food_store_code}">
+				<div>해당 상세페이지 없음</div>
+			</c:if>
+			
 	</div>
 	
 	<div class="border img-add mb-5">

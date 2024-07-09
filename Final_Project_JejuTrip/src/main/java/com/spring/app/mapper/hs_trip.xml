@@ -29,13 +29,16 @@
 
  	<if test="category != null ">
         and play_category in '${category}'
-        </if>
+    </if>
     <if test="arr_local_status != null">
 			 AND local_status IN 
 			<foreach collection="arr_local_status" index="i" open="(" separator="," close=")"> <!--parameter 로 들어온 map 의 key 값 , 무조건 배열만 가능  -->
 				<!--              배열의                            길이만큼돌린다         (로 열고                , 로 구분짓고         ) 로 닫음      -->
 				'${arr_local_status[i]}'
 	 		</foreach>
+	</if>
+	<if test='searchWord != "" '>
+		and play_name||play_content like '%'||lower('${searchWord}')||'%'
 	</if>
 	)
      where RNO between #{startRno} and #{endRno}
@@ -63,7 +66,9 @@ where 1=1
 				'${arr_local_status[i]}'
 	 		</foreach>
 	</if>
-
+	<if test='searchWord != "" '>
+		and play_name||play_content like '%'||lower('${searchWord}')||'%'
+	</if>
 </select>
 
 
@@ -81,10 +86,22 @@ insert into tbl_review (review_code, fk_userid, parent_code, review_content, rev
 </insert>
  
 <select id="reviewList" parameterType="HashMap" resultType="com.spring.app.trip.domain.ReviewVO">
-select review_content,fk_userid,registerday,review_code
+SELECT review_content,fk_userid,registerday,review_code,RNO
+FROM
+	(
+		select review_content,fk_userid,registerday,review_code,rownum as RNO
+		from tbl_review
+		where parent_code = #{parent_code}
+	)
+where RNO between #{startRno} and #{endRno}
+
+</select>
+
+
+<select id="getPlayReviewCount" parameterType="HashMap" resultType="int">
+select count(*)
 from tbl_review
 where parent_code = #{parent_code}
-
 </select>
  
  
