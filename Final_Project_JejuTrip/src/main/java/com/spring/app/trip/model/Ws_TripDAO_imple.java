@@ -167,5 +167,26 @@ public class Ws_TripDAO_imple implements Ws_TripDAO {
 		int count = sqlsession.selectOne("ws_trip.getTotalCompanyCount");
 		return count;
 	}
+	
+	// 멤버 정보를 가져온다.
+	@Override
+	public MemberVO select_detailMember(String userid) {
+		MemberVO member = sqlsession.selectOne("ws_trip.select_detailMember",userid);
+		return member;
+	}
+	
+	// 아이디를 토대로 회사 정보를 가져온다.
+	@Override
+	public CompanyVO select_detailCompany(String userid) {
+		CompanyVO company = sqlsession.selectOne("ws_trip.select_detailCompany",userid);
+		return company;
+	}
+	
+	// 매년 가입자 수 통계를 내기 위한 차트 값 가져오기
+	@Override
+	public List<Map<String, String>> get_member_line_year_chart() {
+		List<Map<String,String>> mapList = sqlsession.selectList("ws_trip.get_member_line_year_chart");
+		return mapList;
+	}
 
 }

@@ -166,4 +166,33 @@
 		from tbl_Company
 	</select>
 	
+	<select id="select_detailMember" parameterType="String" resultType="com.spring.app.trip.domain.MemberVO">
+		select userid, email, user_name, mobile, address, detail_address, birthday, gender, registerday, status, idle
+		from tbl_member
+		where userid = #{userid}
+	</select>
+	
+	<select id="select_detailCompany" parameterType="String" resultType="com.spring.app.trip.domain.CompanyVO">
+		select companyid, company_name, email, mobile, registerday, status, idle
+		from tbl_company
+		where companyid = #{userid}
+	</select>
+	
+	<resultMap type="HashMap" id="CNT_YEAR_REGISTER_MEMBER">
+		<result property="line_year" column="line_year" 	javaType="String" />
+		<result property="line_CNT" 	column="line_CNT" 	javaType="String" />
+	</resultMap>
+	
+	<select id="get_member_line_year_chart" parameterType="String" resultMap="CNT_YEAR_REGISTER_MEMBER">
+		WITH A
+		AS (
+		select to_char(registerday,'yyyy') as line_year, count(*) as line_CNT
+		from tbl_member
+		group by to_char(registerday,'yyyy')
+		)
+		SELECT A.line_year, A.line_CNT
+		FROM A CROSS JOIN (SELECT SUM(line_CNT) AS TOTAL FROM A) B
+		order by line_year asc
+	</select>
+	
 </mapper>

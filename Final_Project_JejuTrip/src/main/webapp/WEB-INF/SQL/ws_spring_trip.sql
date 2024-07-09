@@ -11,3 +11,37 @@ create user final_orauser2 identified by gclass default tablespace users;
 grant connect, resource, create view, unlimited tablespace to final_orauser2;
 -- Grant을(를) 성공했습니다.
 
+WITH A
+AS (
+select to_char(registerday,'yyyy-mm') as registerday, count(*) as CNT
+from tbl_company
+group by to_char(registerday,'yyyy-mm')
+)
+SELECT A.registerday, A.CNT, TO_CHAR( ROUND((A.CNT / B.TOTAL) * 100, 1), '990.0') AS PERCNTAGE
+FROM A CROSS JOIN (SELECT SUM(CNT) AS TOTAL FROM A) B
+order by registerday;
+
+
+WITH A
+AS (
+select to_char(registerday,'yyyy-mm-dd') as registerday, count(*) as CNT
+from tbl_company
+where registerday between '24-07-01' and last_day('24-07-01')
+group by to_char(registerday,'yyyy-mm-dd')
+)
+SELECT A.registerday, A.CNT, TO_CHAR( ROUND((A.CNT / B.TOTAL) * 100, 1), '990.0') AS PERCNTAGE
+FROM A CROSS JOIN (SELECT SUM(CNT) AS TOTAL FROM A) B
+order by registerday asc;
+
+WITH A
+AS (
+select to_char(registerday,'yyyy') as line_year, count(*) as line_CNT
+from tbl_company
+group by to_char(registerday,'yyyy')
+)
+SELECT A.line_year, A.line_CNT
+FROM A CROSS JOIN (SELECT SUM(line_CNT) AS TOTAL FROM A) B
+order by line_year asc;
+
+select *
+from tbl_reservation;

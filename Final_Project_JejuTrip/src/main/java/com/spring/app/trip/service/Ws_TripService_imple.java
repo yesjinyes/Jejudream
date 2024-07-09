@@ -15,6 +15,8 @@ import com.spring.app.trip.domain.CompanyVO;
 import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.model.Ws_TripDAO;
+
+import oracle.security.crypto.core.AES;
 @Service
 public class Ws_TripService_imple implements Ws_TripService {
 	
@@ -189,6 +191,48 @@ public class Ws_TripService_imple implements Ws_TripService {
 	public int getTotalCompanyCount() {
 		int count = dao.getTotalCompanyCount();
 		return count;
+	}
+	
+	// 멤버 정보를 가져온다.
+	@Override
+	public MemberVO select_detailMember(String userid) {
+		MemberVO member = dao.select_detailMember(userid);
+		if(member!=null) {
+			try {
+				member.setEmail(aES256.decrypt(member.getEmail()));
+				member.setMobile(aES256.decrypt(member.getMobile()));
+			} catch (UnsupportedEncodingException | GeneralSecurityException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return member;
+	}
+	
+	// 아이디를 토대로 회사 정보를 가져온다.
+	@Override
+	public CompanyVO select_detailCompany(String userid) {
+		CompanyVO company = dao.select_detailCompany(userid);
+		
+		if(company!=null) {
+			try {
+				company.setMobile(aES256.decrypt(company.getMobile()));
+				company.setEmail(aES256.decrypt(company.getEmail()));
+			} catch (UnsupportedEncodingException | GeneralSecurityException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return company;
+	}
+	
+	// 매년 가입자 수 통계를 내기 위한 차트 값 가져오기
+	@Override
+	public List<Map<String, String>> get_member_line_year_chart() {
+		List<Map<String,String>> mapList = dao.get_member_line_year_chart();
+		return mapList;
 	}
 
 }

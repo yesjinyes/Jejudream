@@ -27,5 +27,8 @@ public interface Ws_TripDAO {
 	List<CompanyVO> select_Company_all(Map<String, String> paraMap);// 모든 기업의 정보를 읽어오는 메소드 생성
 	int getTotalMemberCount();// member 테이블의 총 행 개수 알아오기
 	int getTotalCompanyCount();// company 테이블의 총 행 개수 알아오기
+	MemberVO select_detailMember(String userid);// 멤버 정보를 가져온다.
+	CompanyVO select_detailCompany(String userid);// 아이디를 토대로 회사 정보를 가져온다.
+	List<Map<String, String>> get_member_line_year_chart();// 매년 가입자 수 통계를 내기 위한 차트 값 가져오기
 
 }

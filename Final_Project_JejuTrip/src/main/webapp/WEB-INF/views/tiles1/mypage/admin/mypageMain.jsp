@@ -44,7 +44,7 @@
                 </a>
             </li>
             <li class="list">
-                <a href="<%= ctxPath%>/cash_points.trip">
+                <a href="<%= ctxPath%>/admin_chart.trip">
                     <span class="icon"><ion-icon name="bar-chart-outline"></ion-icon></ion-icon></span>
                     <span class="title">통계</span>
                 </a>

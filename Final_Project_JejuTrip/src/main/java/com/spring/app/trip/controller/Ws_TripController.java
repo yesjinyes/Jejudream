@@ -710,4 +710,96 @@ public class Ws_TripController {
 		
 	}
 	
+	
+	// 한 유저의 상세 정보를 가져와서 json 타입으로 뿌려준다.
+	@ResponseBody
+	@PostMapping(value="/selectUserJSON.trip", produces="text/plain;charset=UTF-8") 
+	public String selectUserJSON(HttpServletRequest request) {
+
+		String userid = request.getParameter("userid"); 
+		
+		MemberVO member = service.select_detailMember(userid);// 아이디를 토대로 회사 정보를 가져온다.
+		
+		JSONObject jsonObj = new JSONObject(); 
+		
+		if(member == null) {
+			// 가져온 정보가 null 이라면 읽어오는 계정이 member가 아니라는 소리이므로 company 테이블에서 정보를 읽어와야 한다.
+			CompanyVO company = service.select_detailCompany(userid);// 아이디를 토대로 회사 정보를 가져온다.
+			
+			if(company != null) {
+				     
+				jsonObj.put("companyid", company.getCompanyid());
+				jsonObj.put("company_name", company.getCompany_name());
+				jsonObj.put("email", company.getEmail());
+				jsonObj.put("mobile", company.getMobile());
+				jsonObj.put("registerday", company.getRegisterday());
+				jsonObj.put("status", company.getStatus());
+				jsonObj.put("idle", company.getIdle());
+				jsonObj.put("type", "company");
+			}
+			
+		}
+		else {
+			if(member != null) {
+				
+				jsonObj.put("userid", member.getUserid());
+				jsonObj.put("user_name", member.getUser_name());
+				jsonObj.put("email", member.getEmail());
+				jsonObj.put("mobile", member.getMobile());
+				jsonObj.put("address", member.getAddress());
+				jsonObj.put("detail_address", member.getDetail_address());
+				jsonObj.put("birthday", member.getBirthday());
+				jsonObj.put("gender", member.getGender());
+				jsonObj.put("registerday", member.getRegisterday());
+				jsonObj.put("status", member.getStatus());
+				jsonObj.put("idle", member.getIdle());
+				jsonObj.put("type", "member");	
+				
+			}
+		}
+		return jsonObj.toString(); 	
+	}
+	
+	@GetMapping("/admin_chart.trip")
+	public ModelAndView admin_chart(HttpServletRequest request, ModelAndView mav) {
+		
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
+		
+		if(loginuser.getUserid().equals("admin")) {
+			
+			mav.setViewName("mypage/admin/admin_chart.tiles1");
+		}
+		else {
+			String message = "잘못된 접근입니다.";
+			String loc = "javascript:history.back()";
+
+			mav.addObject("message", message);
+			mav.addObject("loc", loc);
+			
+			mav.setViewName("msg");
+		}
+		
+		return mav;
+	}
+	
+	// 한 유저의 상세 정보를 가져와서 json 타입으로 뿌려준다.
+	@ResponseBody
+	@GetMapping(value="/get_chart.trip", produces="text/plain;charset=UTF-8") 
+	public String get_chart(HttpServletRequest request) {
+		
+		 
+		
+		List<Map<String,String>> mapList = service.get_member_line_year_chart();// 매년 가입자 수 통계를 내기 위한 차트 값 가져오기
+
+		JSONArray jsonArr = new JSONArray();
+		for(Map<String,String> map : mapList) {
+			JSONObject jsonObj = new JSONObject();
+			jsonObj.put("line_year_CNT", map.get("line_CNT"));
+			jsonArr.put(jsonObj);
+		}
+		
+		return jsonArr.toString(); 	
+	}
+	
 }
