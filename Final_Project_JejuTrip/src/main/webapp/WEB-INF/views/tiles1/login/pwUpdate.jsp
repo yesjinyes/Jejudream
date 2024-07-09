@@ -125,10 +125,14 @@
     
     
     function goBack() {
-    	const frm = document.pwUpdateFrm;
-    	frm.method = "post";
-    	frm.action = "<%=ctxPath%>/login/cancelPwUpdate.trip";
-    	frm.submit();
+    	
+    	if(confirm("다음에 변경하시겠습니까?")) {
+    		
+	    	const frm = document.pwUpdateFrm;
+	    	frm.method = "post";
+	    	frm.action = "<%=ctxPath%>/login/cancelPwUpdate.trip";
+	    	frm.submit();
+    	}
     }
 </script>
 

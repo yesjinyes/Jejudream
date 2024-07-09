@@ -70,6 +70,14 @@ a.menu_bar_a {
 li.user_menu:hover {
 	font-weight: bold;
 }
+
+input:focus {
+    outline: none;
+}
+
+button:click {
+	outline: none;
+}
 </style>
 
 <script type="text/javascript">
