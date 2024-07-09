@@ -552,6 +552,59 @@ WHERE R.fk_lodging_code || ' ' || R.room_name NOT IN(SELECT fk_lodging_code || '
                                                 HAVING count(*) = 3);
 
 
+-------------------------------------------------------
+ 숙소코드  객실명   객실개수   예약개수    객실개수 - 예약개수
+-------------------------------------------------------
+ 
+ SELECT A.lodging_code, A.room_name, A.room_stock, 
+       NVL(B.RESERVATION_CNT, 0) AS RESERVATION_CNT,
+       CASE WHEN A.room_stock - NVL(B.RESERVATION_CNT, 0) >= 1 THEN '예약가능'
+       ELSE '예약종료' END AS RESERVATION_STATE
+ FROM 
+ (
+  SELECT L.lodging_code, D.room_name, D.room_stock
+  FROM tbl_lodging L JOIN tbl_room_detail D
+  ON L.lodging_code = D.fk_lodging_code 
+ ) A
+ LEFT JOIN
+ (
+  SELECT D.fk_lodging_code, D.room_name, COUNT(*) AS RESERVATION_CNT 
+  FROM tbl_room_detail D JOIN tbl_reservation RSV
+  ON D.room_detail_code = RSV.fk_room_detail_code
+  WHERE RSV.check_in BETWEEN '2024-07-08' AND '2024-07-09'
+  GROUP BY D.fk_lodging_code, D.room_name
+ ) B
+ ON A.lodging_code || A.room_name = B.fk_lodging_code || B.room_name;
+
+
+SELECT *
+FROM 
+(
+SELECT A.lodging_code, A.room_name, A.room_stock, 
+       NVL(B.RESERVATION_CNT, 0) AS RESERVATION_CNT,
+       CASE WHEN A.room_stock - NVL(B.RESERVATION_CNT, 0) >= 1 THEN '예약가능'
+       ELSE '예약종료' END AS RESERVATION_STATE
+ FROM 
+ (
+  SELECT L.lodging_code, D.room_name, D.room_stock
+  FROM tbl_lodging L JOIN tbl_room_detail D
+  ON L.lodging_code = D.fk_lodging_code 
+ ) A
+ LEFT JOIN
+ (
+  SELECT D.fk_lodging_code, D.room_name, COUNT(*) AS RESERVATION_CNT 
+  FROM tbl_room_detail D JOIN tbl_reservation RSV
+  ON D.room_detail_code = RSV.fk_room_detail_code
+  WHERE RSV.check_in BETWEEN '2024-07-08' AND '2024-07-09'
+  GROUP BY D.fk_lodging_code, D.room_name
+ ) B
+ ON A.lodging_code || A.room_name = B.fk_lodging_code || B.room_name
+) V
+WHERE V.RESERVATION_STATE = '예약가능';
+
+
+ 
+ 
 
 /////////////////////////////////////////////////////////
 
