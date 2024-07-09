@@ -59,9 +59,15 @@ public class Hs_TripDAO_imple implements Hs_TripDAO {
 	}
 	//리뷰보여주기
 	@Override
-	public List<ReviewVO> reviewList(String parent_code) {
-		List<ReviewVO> reviewList = sqlsession.selectList("hs_trip.reviewList",parent_code);
+	public List<ReviewVO> reviewList(Map<String, String> paraMap) {
+		List<ReviewVO> reviewList = sqlsession.selectList("hs_trip.reviewList",paraMap);
 		return reviewList;
+	}
+	//리뷰 총수량 알아오기
+	@Override
+	public int getPlayReviewCount(Map<String, String> paraMap) {
+		int getPlayReviewCount = sqlsession.selectOne("hs_trip.getPlayReviewCount",paraMap);
+		return getPlayReviewCount;
 	}
 
 

@@ -21,7 +21,9 @@ public interface Hs_TripService {
 	//리뷰작성
 	int addReview(ReviewVO reviewvo);
 	//리뷰 보여주기
-	List<ReviewVO> reviewList(String parent_code);
+	List<ReviewVO> reviewList(Map<String, String> paraMap);
+	//리뷰 총수량 알아오기 
+	int getPlayReviewCount(Map<String, String> paraMap);
 
 	
 
