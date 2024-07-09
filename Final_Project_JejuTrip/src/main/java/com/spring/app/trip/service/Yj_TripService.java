@@ -18,11 +18,13 @@ public interface Yj_TripService {
 
 	/////////////////////////////////////////////////////////////////////////////
 	
-	// == 맛집 상세 조회하기 == //
+	// == 맛집 상세 조회하기 (조회수 증가 X) == //
 	FoodstoreVO viewfoodstoreDetail(Map<String, String> paraMap);
 
+
 	// == 맛집 상세 추가 이미지 == //
-	List<Map<String, String>> viewfoodaddImg(String food_store_code);
+	List<Map<String, String>> viewfoodaddImg(Map<String, String> paraMap);
+
 
 
 	

@@ -394,7 +394,10 @@ span#data {
 	// == 맛집 상세 페이지로 이동 == //
 	function goDetail(food_store_code) {
 		const frm = document.goDetailFrm;
+		// console.log("확인용 food_store_code => "+ food_store_code);
+		
 		frm.food_store_code.value = food_store_code;
+		frm.random_recommend_code.value = "";
 		
 		frm.action = "foodstoreDetail.trip"
 		frm.submit();
@@ -404,9 +407,10 @@ span#data {
 	// == 맛집 추천 상세 페이지로 이동 == //
 	function goDetailRecommend(random_recommend_code) {
 		const frm = document.goDetailFrm;
-		console.log("확인용 random_recommend_code => "+ random_recommend_code);
+		// console.log("확인용 random_recommend_code => "+ random_recommend_code);
 		
 		frm.random_recommend_code.value = random_recommend_code;
+		frm.food_store_code.value = "";
 		
 		frm.action = "foodstoreDetail.trip"
 		frm.submit();
@@ -581,9 +585,12 @@ span#data {
 
 <form name="goDetailFrm">
 	<!-- 맛집 리스트에서 상세 페이지로 이동 -->
-	<input type="hidden" name="food_store_code" />
+	<input type="text" name="food_store_code" />
 	<!-- 맛집 랜덤 추천에서 상세 페이지로 이동 -->
-	<input type="hidden" name="random_recommend_code" />
+	<input type="text" name="random_recommend_code" />
+	
+	<input type="hidden" name="goBackURL" />
+
 </form>
 
 

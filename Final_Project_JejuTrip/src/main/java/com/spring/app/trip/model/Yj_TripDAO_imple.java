@@ -53,10 +53,11 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 
 	// == 맛집 상세 추가 이미지 == //
 	@Override
-	public List<Map<String, String>> viewfoodaddImg(String food_store_code) {
-		List<Map<String, String>> addimgList = sqlsession.selectList("yj_trip.viewfoodaddImg", food_store_code);
+	public List<Map<String, String>> viewfoodaddImg(Map<String, String> paraMap) {
+		List<Map<String, String>> addimgList = sqlsession.selectList("yj_trip.viewfoodaddImg", paraMap);
 		return addimgList;
 	}
+
 
 
 	// == 검색어 입력시 자동글 완성하기 == //
