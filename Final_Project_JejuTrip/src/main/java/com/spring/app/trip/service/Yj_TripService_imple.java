@@ -26,8 +26,8 @@ public class Yj_TripService_imple implements Yj_TripService {
 	
 	// == 맛집 랜덤 추천 == //
 	@Override
-	public List<FoodstoreVO> randomRecommend(Map<String, String> paraMap) {
-		List<FoodstoreVO> randomRecommend = dao.randomRecommend(paraMap);
+	public List<FoodstoreVO> randomRecommend(Map<String, Object> map) {
+		List<FoodstoreVO> randomRecommend = dao.randomRecommend(map);
 		return randomRecommend;
 	}
 
@@ -39,11 +39,12 @@ public class Yj_TripService_imple implements Yj_TripService {
 		return totalCount;
 	}
 
+	//////////////////////////////////////////////////////////////////////////////////////
 
 	// == 맛집 상세 조회하기 == //
 	@Override
-	public FoodstoreVO viewfoodstoreDetail(String food_store_code) {
-		FoodstoreVO foodstorevo = dao.viewfoodstoreDetail(food_store_code);
+	public FoodstoreVO viewfoodstoreDetail(Map<String, String> paraMap) {
+		FoodstoreVO foodstorevo = dao.viewfoodstoreDetail(paraMap);
 		return foodstorevo;
 	}
 
@@ -54,16 +55,6 @@ public class Yj_TripService_imple implements Yj_TripService {
 		List<Map<String, String>> addimgList = dao.viewfoodaddImg(food_store_code);
 		return addimgList;
 	}
-
-
-	// == 검색어 입력시 자동글 완성하기 == //
-//	@Override
-//	public List<String> wordSearchShow(String searchWord) {
-//		List<String> wordList = dao.wordSearchShow(searchWord);
-//		return wordList;
-//	}
-
-
 
 
 
