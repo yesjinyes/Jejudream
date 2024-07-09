@@ -165,12 +165,12 @@ public class Yj_TripController {
 		System.out.println("## 확인용 random_recommend_code => "+ random_recommend_code);
 		
 		paraMap.put("food_store_code", food_store_code); // 맛집 리스트에서 상세 페이지로 넘어가기
-		paraMap.put("food_store_code", random_recommend_code); // 맛집 추천에서 상세 페이지로 넘어가기
+		paraMap.put("random_recommend_code", random_recommend_code); // 맛집 추천에서 상세 페이지로 넘어가기
 		
 		FoodstoreVO foodstorevo = service.viewfoodstoreDetail(paraMap); // 맛집 상세 페이지 띄우기
 		
-		// String food_name =  foodstorevo.getFood_name();
-		// System.out.println("food_name 확인 =>" + food_name);
+//		String food_name =  foodstorevo.getFood_name();
+//		System.out.println("food_name 확인 =>" + food_name);
 		
 		
 		

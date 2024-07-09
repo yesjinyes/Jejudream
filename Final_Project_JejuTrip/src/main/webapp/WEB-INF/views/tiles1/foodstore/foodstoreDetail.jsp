@@ -8,6 +8,7 @@
 
 <style type="text/css">
 
+
 .imgcrop {
   max-height: 420px;
   overflow: hidden;
@@ -20,41 +21,66 @@
   margin-top: -30%;
 }
 
-.div_img_text {
+.main_img_title {
   border: solid 0px red;
   position: absolute;
-  top: 50%;
+  top: 45%;
   left: 50%;
   padding: 0 1%;
   transform: translate( -50%, -50% );
   color: white;
-  font-size: 35pt;
-  font-weight : 450;
+  font-size: 40pt;
+  font-weight : 500;
   background-color: rgba(115, 115, 115, 0.5)
 }
 
-.main_img_text {
+.main_img_content {
   text-align: center;
 }
 
+.main_img_content {
+  border: solid 0px red;
+  position: absolute;
+  top: 70%;
+  left: 50%;
+  padding: 0 1%;
+  transform: translate( -50%, -50% );
+  color: white;
+  font-size: 20pt;
+  font-weight : 450;
+}
+
+.main_img_title {
+  text-align: center;
+}
+
+
 hr#line {
-  width: 50%;
+  width: 70%;
   margin: 3% auto 2% auto;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 ul.list {
-  border: solid 0px black;
+  border: solid 2px black;
   width : 50%;
   display: flex;
   margin: 0 auto;
 }
 
 ul.list li {
-  border: solid 0px red;
+  border: solid 1px red;
   margin: 0 auto;
   list-style: none;
   display: block;
-  width: 13%;
+  width: 10%;
   text-align: center;
   font-size: 15pt;
 }
@@ -83,7 +109,7 @@ img.icon {
 }
 
 div#storedetail {
-  width: 40%;
+  width: 90%;
   margin: 3% auto;
   padding: 2%;
   background-color: rgba(115, 115, 115, 0.1);
@@ -124,6 +150,7 @@ img.images {
   height: 400px;
 }
 
+
 </style>
 
 <script type="text/javascript">
@@ -132,112 +159,105 @@ img.images {
 		
 		
 		
-		
-		
 	});// end of $(document).ready(function() {})-----------------------------
 
+	
 </script>
 
 
 
 <div id="container">
+	
 	<div class="imgcrop">
-		<input type="text" name="food_store_code" value="${requestScope.foodstorevo.food_store_code}" />
 		<img class="imgAdd img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgAdd/${requestScope.foodstorevo.food_name}_add1.jpg" alt="..." />
 		<div class="div_img_text">
-			<p class="main_img_text">${requestScope.foodstorevo.food_name}</p>
+			<p class="main_img_title">${requestScope.foodstorevo.food_name}</p>
+			<p class="main_img_content">${requestScope.foodstorevo.food_content}</p>
 		</div>
 	</div>
 	
 	<hr id="line">
 	
-	<ul class="list">
-
-		<li class="list-item">
-			<button type="button" class="iconbtn">
-				<div class="item-each">
-					<img class="icon" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_like.png">
-				</div>
-				<p class="icon-title">좋아요</p>
-				<p class="count">30</p>
-			</button>
-		</li>
-		
-		<li class="list-item">
-			<button type="button" class="iconbtn">
-				<div class="imgicon">
-					<img class="icon" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_mine.png">
-				</div>
-				<p class="icon-title">찜하기</p>
-				<p class="count">10</p>
-			</button>
-		</li>
-		
-		<li class="list-item">
-			<button type="button" class="iconbtn">
-				<div>
-					<img class="icon" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_review2.png">
-				</div>
-				<p class="icon-title">리뷰</p>
-				<p class="count">5</p>
-			</button>
-		</li>
-		
-		<li class="list-item">
-			<button type="button" class="iconbtn">
-				<div>
-					<img class="icon" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_calender.png">
-				</div>
-				<p class="icon-title">일정에 추가</p>
-				<p class="count">30</p>
-			</button>
-		</li>
-		
-		<li class="list-item">
-			<button type="button" class="iconbtn" style="cursor: default;">
-				<div>
-					<img class="icon" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_viewcount.png">
-				</div>
-				<p class="icon-title">조회수</p>
-				<p class="count">128</p>
-			</button>
-		</li>
+	<div class="row" style="width: 70%; margin: 0 auto;">
 	
-	</ul>
+		<div class="col-md-5">
+			사진이 들어갈 자리
+		</div>
 	
-	<div class="border" id="storedetail">
-		<h3 class="mb-5">상세정보</h3>
-		
-			
-			<c:if test="${not empty requestScope.foodstorevo.food_store_code}">
-				<ul>
-					<li class="info-detail">
-						<p class="info-title">카테고리</p>
-						<p class="info-content">${requestScope.foodstorevo.food_category}</p>
-					</li>
-					<li class="info-detail">
-						<p class="info-title">주소</p>
-						<p class="info-content">${requestScope.foodstorevo.food_address}</p>
-					</li>
-					<li class="info-detail">
-						<p class="info-title">영업시간</p>
-						<p class="info-content">${requestScope.foodstorevo.food_businesshours}</p>
-					</li>
-					<li class="info-detail">
-						<p class="info-title">연락처</p>
-						<p class="info-content">${requestScope.foodstorevo.food_mobile}</p>
-					</li>
-				</ul>
-			</c:if>
-			
-			
-			<c:if test="${empty requestScope.foodstorevo.food_store_code}">
-				<div>해당 상세페이지 없음</div>
-			</c:if>
-			
+		<div class="col-md-7">
+			<!-- 아이콘 모음 -->
+			<ul class="list border">
+				<li class="list-item">
+					<button type="button" class="iconbtn">
+						<div class="item-each">
+							<img class="icon" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_like.png">
+						</div>
+						<p class="icon-title">좋아요</p>
+					</button>
+					<p class="count">30</p>
+				</li>
+				<li class="list-item">
+					<button type="button" class="iconbtn">
+						<div>
+							<img class="icon" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_review2.png">
+						</div>
+						<p class="icon-title">리뷰</p>
+					</button>
+					<p class="count">5</p>
+				</li>
+				<li class="list-item">
+					<button type="button" class="iconbtn">
+						<div>
+							<img class="icon" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_calender.png">
+						</div>
+						<p class="icon-title">일정에 추가</p>
+					</button>
+					<p class="count">30</p>
+				</li>
+				<li class="list-item">
+					<button type="button" class="iconbtn" style="cursor: default;">
+						<div>
+							<img class="icon" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_viewcount.png">
+						</div>
+						<p class="icon-title">조회수</p>
+					</button>
+					<p class="count">128</p>
+				</li>
+			</ul>
+	
+			<!-- 상세 정보 -->
+			<div class="border" id="storedetail">
+				<h3 class="mb-5">상세정보</h3>
+				<c:if test="${not empty requestScope.foodstorevo.food_store_code}">
+					<ul>
+						<li class="info-detail">
+							<p class="info-title">카테고리</p>
+							<p class="info-content">${requestScope.foodstorevo.food_category}</p>
+						</li>
+						<li class="info-detail">
+							<p class="info-title">주소</p>
+							<p class="info-content">${requestScope.foodstorevo.food_address}</p>
+						</li>
+						<li class="info-detail">
+							<p class="info-title">영업시간</p>
+							<p class="info-content">${requestScope.foodstorevo.food_businesshours}</p>
+						</li>
+						<li class="info-detail">
+							<p class="info-title">연락처</p>
+							<p class="info-content">${requestScope.foodstorevo.food_mobile}</p>
+						</li>
+					</ul>
+				</c:if>
+				
+				<c:if test="${empty requestScope.foodstorevo.food_store_code}">
+					<div>해당 상세페이지 없음</div>
+				</c:if>
+			</div>
+		</div>
 	</div>
 	
-	<div class="border img-add mb-5">
+	<!-- 맛집 추가이미지 -->
+ 	<div class="border img-add mb-5">
 		<h3 class="mb-5">추가이미지</h3>
 		<div class="imgList">
 			<c:forEach var="addimgList" items="${requestScope.addimgList}" varStatus="status">
@@ -245,5 +265,9 @@ img.images {
 			</c:forEach>
 		</div>
 	</div>
+	
+
+	
+	
 </div>
 

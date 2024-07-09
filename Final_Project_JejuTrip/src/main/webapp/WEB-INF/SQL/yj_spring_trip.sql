@@ -239,15 +239,16 @@ where food_add_code = 5;
 desc tbl_food_store;
 
 
-select S.food_name
+select I.food_add_img
 FROM 
 (
-select food_store_code
+select food_store_code, food_name
 from tbl_food_store
 where food_store_code = 5316
 )S
 join tbl_food_add_img I
-where S.food_store_code = I.fk_food_store_code
+on S.food_store_code = I.fk_food_store_code
+order by food_add_img
 
 
 

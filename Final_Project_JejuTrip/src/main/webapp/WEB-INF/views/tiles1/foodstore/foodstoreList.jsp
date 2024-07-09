@@ -588,8 +588,6 @@ span#data {
 	<input type="text" name="food_store_code" />
 	<!-- 맛집 랜덤 추천에서 상세 페이지로 이동 -->
 	<input type="text" name="random_recommend_code" />
-	
-	<input type="hidden" name="goBackURL" />
 
 </form>
 
