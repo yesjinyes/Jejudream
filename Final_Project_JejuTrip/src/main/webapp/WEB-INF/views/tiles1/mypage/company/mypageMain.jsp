@@ -44,7 +44,7 @@
                 </a>
             </li>
             <li class="list">
-                <a href="<%= ctxPath%>/cash_points.trip">
+                <a href="<%= ctxPath%>/myRegisterHotel.trip">
                     <span class="icon"><ion-icon name="wallet-outline"></ion-icon></span>
                     <span class="title">숙소등록신청현황</span>
                 </a>

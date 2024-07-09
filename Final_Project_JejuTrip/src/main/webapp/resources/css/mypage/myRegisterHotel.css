@@ -1,0 +1,132 @@
+@charset "UTF-8";
+
+.body{
+    display: flex;
+    float: none;
+    width: 100%;
+    justify-content: left;
+}
+
+
+.navigation {
+   position: relative;
+   height: 800px;
+   width: 250px;
+   background: #ff8000;
+}
+
+
+.navigation ul {
+   position: absolute;
+   width: 100%;
+   padding-left: 5px;
+   padding-right: 5px;
+   padding-top: 40px;
+}
+
+.navigation ul li {
+   position: relative;
+   list-style: none;
+   width: 90%;
+   border-radius: 20px 20px;
+}
+
+.navigation ul li.active {
+   background: #ffcccc;/* 고정되어있을때 강조색 [1] */
+}
+
+.navigation ul li a {
+   position: relative;
+   display: block;
+   width: 100%;
+   display: flex;
+   text-decoration: none;
+   color: #fff;
+}
+
+
+
+.navigation ul li a .icon {
+   position: relative;
+   display: block;
+   min-width: 60px;
+   height: 60px;
+   line-height: 70px;
+   text-align: center;
+}
+
+.navigation ul li a .icon ion-icon {
+   position: relative;
+   font-size: 1.5em;
+   z-index: 1;
+}
+
+.navigation ul li a .title {
+   position: relative;
+   display: block;
+   height: 60px;
+   line-height: 60px;
+   white-space: nowrap;
+   font-weight:bold;
+}
+
+#contentFrame{
+   width: 1024px; 
+   padding-bottom: 1%; 
+   margin-left: 2%;
+   border: 1px solid #e6e6e6;
+   /* background: #008000; */
+   
+}
+
+.flex-row {
+	display: flex;
+	flex-direction: row;
+}
+
+.flex-col {
+	display: flex;
+	flex-direction: col;
+}
+
+form.reservationFrm {
+    width:50%;
+    margin:2% auto;
+    border:solid 0px red;
+}
+
+#reservation {
+	width: 100%;
+	border-top: 2px solid black;
+	border-left: 1px solid gray;
+	border-right: 1px solid gray;
+	border-bottom: 1px solid gray;
+	border-radius: 10px 10px;
+    margin:auto;
+}
+
+#top_color{
+padding: 20px 10px 0px 20px; 
+border-bottom: solid 1px #ff8000; 
+background: #ff8000; 
+border-radius: 10px 10px 0px 0px;
+}
+
+li a {
+	color: black;
+}
+
+.reservation li {
+	list-style: none;
+	display: block;
+	float: left;
+	width: 55%;
+	padding: 0 0 2%;
+	margin: 0 auto;
+	border-right: 1px dotted #c9c7ca;
+	text-align: center;
+}
+
+tr:hover{
+	cursor: pointer;
+}
