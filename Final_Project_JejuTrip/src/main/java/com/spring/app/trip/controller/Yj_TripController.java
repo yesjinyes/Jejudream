@@ -174,7 +174,7 @@ public class Yj_TripController {
 		return mav;
 	}
 		
-	
+	// 수정중
 	
 	
 	
