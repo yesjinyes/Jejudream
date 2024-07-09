@@ -830,4 +830,19 @@ public class Dy_TripController {
 		return mav;
 	}
 	
+	
+	// 커뮤니티 전체 페이지 요청
+	@GetMapping("community/allBoard.trip")
+	public String community() {
+		
+		return "community/allBoard";
+	}
+	
+	// 커뮤니티 자유게시판 페이지 요청
+	@GetMapping("community/freeBoard.trip")
+	public String boardList() {
+		
+		return "community/freeBoard";
+	}
+	
 }

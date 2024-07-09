@@ -172,7 +172,7 @@ $(document).ready(function() {
 			        <div class="menu_bar_line"></div>
 			      </li>
 			      <li class="nav-item">
-			        <a class="nav-link menu_bar_a" href="#">커뮤니티</a>
+			        <a class="nav-link menu_bar_a" href="<%=ctxPath%>/communityMain.trip">커뮤니티</a>
 			        <div class="menu_bar_line"></div>
 			      </li>
 			    </ul>
