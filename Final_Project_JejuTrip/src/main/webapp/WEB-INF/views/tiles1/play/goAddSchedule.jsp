@@ -61,15 +61,14 @@ body {
     }
 
     div.info_block > input,
-    input#email,
     span.error {
         font-size: 0.8rem !important;
     }
 }
 
 div.container {
-    width: 80%;
-    margin: 5% auto;
+    width: 60%;
+    margin: 7% auto;
     border: solid 1px rgba(0, 0, 0, 0.15);
     border-radius: 40px;
     box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
@@ -206,12 +205,16 @@ table#schedule{
 <script type="text/javascript">
 
 $(document).ready(function() {
+	
 	const today = new Date();
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
     const day = String(today.getDate()).padStart(2, '0');
 	
-    goReviewListView()
+    let currentShowPageNo = 1; // currentShowPageNo 초기값
+    goReviewListView(currentShowPageNo); // 페이징처리된 리뷰보여주는 함수
+
+    
     //모달창 띄우기전 로그인 검사--------------------------------------------------------------- 
     
 	 $(document).on('click', '.addSchedule', function() {
@@ -269,7 +272,7 @@ $(document).ready(function() {
 			const review_content = $("textarea[name='review_content']").val().trim(); 
             
             if(review_content == "") {
-               alert("제품후기 내용을 입력하세요!!");
+               alert("리뷰 내용을 입력해 주세요.");
                $("textarea[name='review_content']").val(""); // 공백제거
                return; // 종료
             }  
@@ -294,7 +297,7 @@ $(document).ready(function() {
                    $("textarea[name='review_content']").val("").focus();
                 },
                 error: function(request, status, error){
-                   alert("여기가문제임code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+                   alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
                 
                 }
              });
@@ -305,6 +308,8 @@ $(document).ready(function() {
     	  
       });//end of  $("button#btnCommentOK").click(function())--------------
     
+      
+      
     //달력용--------------------------------------------------------------------
 	 $(function() {
 	        //모든 datepicker에 대한 공통 옵션 설정
@@ -396,7 +401,8 @@ $(document).ready(function() {
     
     
     //--------------------------------------map관련---------------------------------------//
-		 // 서버 측 변수를 JavaScript 변수로 할당
+		 
+    	// 서버 측 변수를 JavaScript 변수로 할당
         var playAddress = document.getElementById("playAddress").textContent.trim();
         
         // 지도 생성 및 설정
@@ -442,12 +448,14 @@ $(document).ready(function() {
 });//end of $(document).ready(function() {
 
 // 리뷰 보여주기
- function goReviewListView(){
+ function goReviewListView(currentShowPageNo){
 	  
     $.ajax({
     url:"<%= ctxPath%>/reviewList.trip",
     type:"get",
-    data: {"parent_code":"${requestScope.playvo.play_code}"},
+    data: {"parent_code":"${requestScope.playvo.play_code}"
+    	  ,"currentShowPageNo":currentShowPageNo},
+    
     dataType:"json",
     success:function(json){
  	
@@ -475,14 +483,16 @@ $(document).ready(function() {
                   v_html += "<div class='customDisplay spacediv commentDel' onclick='delMyReview("+item.review_code+")'>후기삭제</div>"; 
                   v_html += "<div class='customDisplay spacediv commentDel commentUpdate' onclick='updateMyReview("+index+","+item.review_code+")'>후기수정</div>"; 
                }
-           } ); 
+           }); 
+           const totalPage = Math.ceil(json[0].totalCount / json[0].sizePerPage);
+           PageBar(currentShowPageNo, totalPage);
         }// end of if -----------------------
         
         else {
            v_html += "<div>등록된 리뷰가 없습니다.</div>";
         }// end of else ---------------------
-        
         $("div#viewComments").html(v_html);
+        
     },
     error: function(request, status, error){
         alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
@@ -492,6 +502,49 @@ $(document).ready(function() {
 	   });
 	   
 }//end of function goReviewListView()-------------
+
+
+//페이지바 함수
+ function PageBar(currentShowPageNo,totalPage){
+ 	   
+     const blockSize = 10;
+ 	let loop = 1;
+ 	let pageNo = Math.floor((currentShowPageNo - 1)/blockSize) * blockSize + 1;
+ 	
+ 	let pageBar_HTML = "<ul style='list-style:none'>";
+ 	
+ 	// [맨처음] [이전] 만들기
+ 	if(pageNo != 1) {
+ 		pageBar_HTML += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='javascript:goReviewListView(1)'>[맨처음]</a></li>";
+ 		pageBar_HTML += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='javascript:goReviewListView("+(pageNo-1)+")'>[이전]</a></li>";
+ 	}
+ 	
+ 	while(!(loop>blockSize || pageNo > totalPage)) {
+ 		if(pageNo == currentShowPageNo) {
+ 			pageBar_HTML += "<li style='display:inline-block; width:30px; font-size:12pt; border:solid 1px gray; color:red; padding:2px 4px;'>"+pageNo+"</a></li>";
+ 		}
+ 		else {
+ 			pageBar_HTML += "<li style='display:inline-block; width:30px; font-size:12pt;'><a href='javascript:goReviewListView("+pageNo+")'>"+pageNo+"</a></li>";
+ 		}
+ 		loop++;
+ 		pageNo++;
+ 	}//end of while
+ 	
+ 	// [다음] [마지막] 만들기
+ 	if(pageNo <= totalPage) {
+ 		pageBar_HTML += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='javascript:goReviewListView("+(pageNo+1)+")'>[다음]</a></li>";
+ 		pageBar_HTML += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='javascript:goReviewListView("+totalPage+")'>[마지막]</a></li>";
+ 	}
+ 	
+ 	
+ 	pageBar_HTML += "</ul>";
+ 	
+ 	// 156.댓글 페이지바 출력하기
+ 	$("div#pageBar").html(pageBar_HTML);
+ 	
+ }
+
+
 
 <%-- 
 // 특정 제품의 제품후기를 삭제하는 함수
@@ -622,7 +675,7 @@ function updateMyReview(index,review_seq){
 		        </a>
 		    </em>
 	    </p>
-		<div id="map" style="width:95%;height:600px;margin: auto; margin-bottom: 50px;"></div>
+		<div id="map" style="width:95%;height:500px;margin: auto; margin-bottom: 50px;"></div>
 		<div id="clickLatlng"></div>
 	</div>
 
@@ -647,6 +700,9 @@ function updateMyReview(index,review_seq){
     </div>
     <div style="margin-bottom: 10%; margin-top: 5%;">
     	<div id="viewComments" ></div><%-- 리뷰내용 --%>
+    	<div style="display: flex; margin-bottom: 50px;">
+        	<div id="pageBar" style="margin: auto; text-align: center;"></div>
+     	</div>
     </div>
     
     
