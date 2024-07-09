@@ -22,14 +22,6 @@ public class Yj_TripService_imple implements Yj_TripService {
 		List<FoodstoreVO> foodstoreList = dao.viewFoodstoreList(map);
 		return foodstoreList;
 	}
-	
-	
-	// == 맛집 랜덤 추천 == //
-	@Override
-	public List<FoodstoreVO> randomRecommend(Map<String, Object> map) {
-		List<FoodstoreVO> randomRecommend = dao.randomRecommend(map);
-		return randomRecommend;
-	}
 
 
 	// == 맛집 총 개수 알아오기 == //
@@ -37,6 +29,14 @@ public class Yj_TripService_imple implements Yj_TripService {
 	public int getTotalCount(Map<String, Object> map) {
 		int totalCount = dao.getTotalCount(map);
 		return totalCount;
+	}
+	
+	
+	// == 맛집 랜덤 추천 == //
+	@Override
+	public List<FoodstoreVO> randomRecommend(Map<String, Object> map) {
+		List<FoodstoreVO> randomRecommend = dao.randomRecommend(map);
+		return randomRecommend;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////
@@ -49,14 +49,11 @@ public class Yj_TripService_imple implements Yj_TripService {
 	}
 
 	
-	
 	// == 맛집 상세 추가 이미지 == //
 	@Override
 	public List<Map<String, String>> viewfoodaddImg(Map<String, String> paraMap) {
 		List<Map<String, String>> addimgList = dao.viewfoodaddImg(paraMap);
 		return addimgList;
-	
-	
 	}
 
 	
