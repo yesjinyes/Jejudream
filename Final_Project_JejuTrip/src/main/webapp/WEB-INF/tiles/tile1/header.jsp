@@ -75,9 +75,6 @@ input:focus {
     outline: none;
 }
 
-button:click {
-	outline: none;
-}
 </style>
 
 <script type="text/javascript">
@@ -182,7 +179,7 @@ $(document).ready(function() {
 			    
 			    
 			      <form class="form-inline mt-2 mt-lg-0 mr-auto">
-					    <input type="text" class="mr-sm-2" style="background-color: #F5F5F5; border-width: 0 0 1px;" placeholder="검색어를 입력하세요">
+					    <input type="text" class="mr-sm-2" style="background-color: #F5F5F5; border-width: 0 0 2px;" placeholder="검색어를 입력하세요">
 					    <button class="btn my-2 my-sm-0" type="button"><i class="fa-solid fa-magnifying-glass"></i></button>
 				  </form>
 				
