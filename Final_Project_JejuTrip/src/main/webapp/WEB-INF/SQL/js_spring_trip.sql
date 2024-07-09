@@ -384,16 +384,176 @@ REFERENCES tbl_company (companyid) ON DELETE CASCADE;
     and local_status in ('서귀포시 시내', '제주시 서부')
     
     
-    select * from tbl_convenient; 
+    select * from tbl_lodging order by lodging_code; 
     
-  
-    select * from tbl_lodging_convenient;
-    select * from tbl_convenient;
+    select * from tbl_lodging_convenient order by fk_lodging_code
+    select * from tbl_lodging_convenient where fk_lodging_code = '5204';
+    select convenient_name from tbl_convenient;
     
     select * from tbl_lodging order by lodging_code asc;
     주차장 보유  수영장  바비큐  조식운영  반려동물 허용  편의점 스파/사우나  WIFI  전기차충전소  레스토랑  피트니스센터
-    insert into tbl_lodging_convenient (fk_lodging_code, fk_convenient_code) values ('5157' , (select convenient_code from tbl_convenient where convenient_name = '주차장 보유') );
+    insert into tbl_lodging_convenient (fk_lodging_code, fk_convenient_code) values ('5207' , (select convenient_code from tbl_convenient where convenient_name = '반려동물 허용') );
+    insert into tbl_lodging_convenient (fk_lodging_code, fk_convenient_code) values ('5216' , (select convenient_code from tbl_convenient where convenient_name = '바비큐') );
+    insert into tbl_lodging_convenient (fk_lodging_code, fk_convenient_code) values ('5206' , (select convenient_code from tbl_convenient where convenient_name = '주차장 보유') );
+    insert into tbl_lodging_convenient (fk_lodging_code, fk_convenient_code) values ('5214' , (select convenient_code from tbl_convenient where convenient_name = '수영장') );
+    insert into tbl_lodging_convenient (fk_lodging_code, fk_convenient_code) values ('5214' , (select convenient_code from tbl_convenient where convenient_name = '조식운영') );
+    insert into tbl_lodging_convenient (fk_lodging_code, fk_convenient_code) values ('5213' , (select convenient_code from tbl_convenient where convenient_name = '편의점') );
+    insert into tbl_lodging_convenient (fk_lodging_code, fk_convenient_code) values ('5213' , (select convenient_code from tbl_convenient where convenient_name = '스파/사우나') );
+    insert into tbl_lodging_convenient (fk_lodging_code, fk_convenient_code) values ('5219' , (select convenient_code from tbl_convenient where convenient_name = 'WIFI') );
+    insert into tbl_lodging_convenient (fk_lodging_code, fk_convenient_code) values ('5219' , (select convenient_code from tbl_convenient where convenient_name = '전기차충전소') );
+    insert into tbl_lodging_convenient (fk_lodging_code, fk_convenient_code) values ('5188' , (select convenient_code from tbl_convenient where convenient_name = '레스토랑') );
+    insert into tbl_lodging_convenient (fk_lodging_code, fk_convenient_code) values ('5188' , (select convenient_code from tbl_convenient where convenient_name = '피트니스센터') );
+    insert into tbl_lodging_convenient (fk_lodging_code, fk_convenient_code) values ('5209' , (select convenient_code from tbl_convenient where convenient_name = '주차장 보유') );
+    
+    
+    commit;
+    select * from tbl_member;
+    
+    select ROOM_DETAIL_CODE, FK_LODGING_CODE, ROOM_NAME, PRICE, 
+    CHECK_IN, CHECK_OUT, ROOM_STOCK, MIN_PERSON, MAX_PERSON,
+    ROOM_IMG
+    from tbl_room_detail
+    where fk_lodging_code = ;
+    desc tbl_room_detail;
+    desc tbl_reservation;
+    
+    ALTER TABLE tbl_reservation ADD status number(1) DEFAULT 0;
+    
+    select * from tbl_room_detail where fk_lodging_code = 5159;
+    
+    create sequence seq_reserve
+    start with 1
+    increment by 1
+    nomaxvalue
+    nominvalue
+    nocycle
+    nocache;
+    
+    select * from user_sequences
+    
+    insert into tbl_reservation (RESERVATION_CODE ,FK_USERID, FK_ROOM_DETAIL_CODE, CHECK_IN, CHECK_OUT, RESERVATION_PRICE, STATUS)
+    values (seq_reserve.nextval , 'kudi03628', 375, to_date('2024-07-08', 'yyyy-mm-dd'), to_date('2024-07-09', 'yyyy-mm-dd'), 1, 1);
+    insert into tbl_reservation (RESERVATION_CODE ,FK_USERID, FK_ROOM_DETAIL_CODE, CHECK_IN, CHECK_OUT, RESERVATION_PRICE, STATUS)
+    values (seq_reserve.nextval , 'kudi03628', 375, to_date('2024-07-08', 'yyyy-mm-dd'), to_date('2024-07-09', 'yyyy-mm-dd'), 1, 1);
+    insert into tbl_reservation (RESERVATION_CODE ,FK_USERID, FK_ROOM_DETAIL_CODE, CHECK_IN, CHECK_OUT, RESERVATION_PRICE, STATUS)
+    values (seq_reserve.nextval , 'kudi03628', 375, to_date('2024-07-08', 'yyyy-mm-dd'), to_date('2024-07-09', 'yyyy-mm-dd'), 1, 1);
+    
+    insert into tbl_reservation (RESERVATION_CODE ,FK_USERID, FK_ROOM_DETAIL_CODE, CHECK_IN, CHECK_OUT, RESERVATION_PRICE, STATUS)
+    values (seq_reserve.nextval , 'kudi03628', 376, '2024-07-08', '2024-07-09', 1, 1);
+    insert into tbl_reservation (RESERVATION_CODE ,FK_USERID, FK_ROOM_DETAIL_CODE, CHECK_IN, CHECK_OUT, RESERVATION_PRICE, STATUS)
+    values (seq_reserve.nextval , 'kudi03628', 376, '2024-07-08', '2024-07-09', 1, 1);
+    insert into tbl_reservation (RESERVATION_CODE ,FK_USERID, FK_ROOM_DETAIL_CODE, CHECK_IN, CHECK_OUT, RESERVATION_PRICE, STATUS)
+    values (seq_reserve.nextval , 'kudi03628', 376, '2024-07-08', '2024-07-09', 1, 1);
+    
     commit;
     
-   
+    
+    select count(*) from tbl_reservation where CHECK_IN between '2024-07-08' and '2024-07-09' and FK_ROOM_DETAIL_CODE = 375;
+    
+    
+    select room_stock from tbl_room_detail where room_detail_code = 375;
+    
+    
+    select room_name
+    from tbl_room_detail D
+    join tbl_reservation R
+    on D.room_detail_code != R.fk_room_detail_code
+    where R.CHECK_IN between '2024-07-08' and '2024-07-09'
+    and status != 1
+    order by room_detail_code asc;
+    
+    select * from tbl_room_detail;
+    select * from tbl_reservation;
+    delete from tbl_reservation where reservation_code = 5;
+    commit;  
+         
+        select lodging_code,  min(price)
+        from tbl_lodging L join
+        (
+        select fk_lodging_code, room_name, price
+        from tbl_room_detail D
+        
+                    
+        minus
+        
+        select fk_lodging_code, room_name, price
+        from tbl_room_detail D
+        join tbl_reservation R
+        on D.room_detail_code = R.fk_room_detail_code
+        where R.check_in between '2024-07-08' and '2024-07-09'
+        
+        )V
+        on L.lodging_code = V.fk_lodging_code
+        group by lodging_code
+        order by lodging_code asc;
+        
+        
+        select room_stock from tbl_
+        
+        
+////////////////////////////////////////////////////////
+
+select *
+from tbl_room_detail
+
+select *
+from tbl_lodging
+
+SELECT R.fk_lodging_code, R.room_name, R.price, R.room_stock  --, L.lodging_name 
+from tbl_room_detail R LEFT JOIN tbl_lodging L
+ON R.fk_lodging_code = L.lodging_code;
+
+select R.fk_lodging_code, R.room_name, R.price 
+from tbl_room_detail R
+join tbl_reservation RSV
+on R.room_detail_code = RSV.fk_room_detail_code
+where RSV.check_in between '2024-07-08' and '2024-07-09';
+
+
+SELECT fk_lodging_code, room_name, count(*) AS RESERVATION_CNT
+FROM 
+(
+select R.fk_lodging_code, R.room_name, R.price 
+from tbl_room_detail R
+join tbl_reservation RSV
+on R.room_detail_code = RSV.fk_room_detail_code
+where RSV.check_in between '2024-07-08' and '2024-07-09'
+) V
+GROUP BY fk_lodging_code, room_name
+HAVING count(*) < 3;
+
+
+SELECT fk_lodging_code, room_name
+FROM 
+(
+select R.fk_lodging_code, R.room_name, R.price 
+from tbl_room_detail R
+join tbl_reservation RSV
+on R.room_detail_code = RSV.fk_room_detail_code
+where RSV.check_in between '2024-07-08' and '2024-07-09'
+) V
+GROUP BY fk_lodging_code, room_name
+HAVING count(*) = 3;
+
+
+SELECT R.fk_lodging_code, R.room_name, R.price
+from tbl_room_detail R LEFT JOIN tbl_lodging L
+ON R.fk_lodging_code = L.lodging_code
+WHERE R.fk_lodging_code || ' ' || R.room_name NOT IN(SELECT fk_lodging_code || ' ' || room_name
+                                                     FROM 
+                                                (
+                                                select R.fk_lodging_code, R.room_name, R.price 
+                                                from tbl_room_detail R
+                                                join tbl_reservation RSV
+                                                on R.room_detail_code = RSV.fk_room_detail_code
+                                                where RSV.check_in between '2024-07-08' and '2024-07-09'
+                                                ) V
+                                                GROUP BY fk_lodging_code, room_name
+                                                HAVING count(*) = 3);
+
+
+
+/////////////////////////////////////////////////////////
+
+        
     

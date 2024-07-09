@@ -44,27 +44,14 @@ list-style: none;
     text-decoration: none;
 }
 
-.slider-container {
-    width: 80%;
- 
-    text-align: center;
-}
 
-.slider {
-    width: 100%;
-
-}
-
-.price-display {
-    font-size: 20px;
-
-}
 
 </style>
 
 <script type="text/javascript">
 
 let currentShowPageNo = 1;
+let currentSort = "";
 
 $(document).ready(function(){
 	
@@ -73,7 +60,7 @@ $(document).ready(function(){
     const month = String(today.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
     const day = String(today.getDate()).padStart(2, '0');
     
-    fetchFilteredData(currentShowPageNo);
+    fetchFilteredData(currentShowPageNo, currentSort);
     
     
     $('input#datepicker').keyup( (e)=>{
@@ -81,7 +68,8 @@ $(document).ready(function(){
             $(e.target).val("").next().show(); // 에러메시지 표현
 
     }); // end of $('input#datepicker').keyup( (e)=>{})
-
+    
+   
        
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -140,7 +128,19 @@ $(document).ready(function(){
     
     
     
+	// 정렬 버튼
+	const sortButton = $("button.sort");
 	
+	sortButton.click(function(e){
+		
+		// console.log($(e.target).val());
+		currentSort = $(e.target).val();
+		
+		const currentShowPageNo = $("input:hidden[name='currentShowPageNo']").val();
+		
+		fetchFilteredData(currentShowPageNo, currentSort);
+		
+	});
 	
 	
 	
@@ -231,13 +231,13 @@ $(document).ready(function(){
 		
 		const str_category = arr_category.join();
     	
-    	console.log(str_category);
+    	// console.log(str_category);
     	
     	const frm = document.filterForm;
 		
 		frm.str_category.value = str_category;
     	
-        fetchFilteredData(1);
+		fetchFilteredData(currentShowPageNo, frm.sort.value);
         
     }); // end of $("input:checkbox[name='lodging_category']").on('change', function() {})
     
@@ -258,13 +258,15 @@ $(document).ready(function(){
 		
 		const str_convenient = arr_convenient.join();
     	
-    	console.log(str_convenient);
+    	// console.log(str_convenient);
+    	
+    	
     	
     	const frm = document.filterForm;
 		
 		frm.str_convenient.value = str_convenient;
     	
-        fetchFilteredData(1);
+        fetchFilteredData(currentShowPageNo, frm.sort.value);
         
     }); // end of $("input:checkbox[name='lodging_category']").on('change', function() {})
     
@@ -285,13 +287,13 @@ $(document).ready(function(){
 		
 		const str_local = arr_local.join();
     	
-    	console.log(str_local);
+    	// console.log(str_local);
     	
     	const frm = document.filterForm;
 		
 		frm.str_local.value = str_local;
     	
-        fetchFilteredData(1);
+		fetchFilteredData(currentShowPageNo, frm.sort.value);
         
     }); // end of $("input:checkbox[name='lodging_category']").on('change', function() {})
     
@@ -318,14 +320,17 @@ $(document).ready(function(){
 	
 }); // end of $(document).ready(function(){})
 
-	function fetchFilteredData(currentShowPageNo) {
+
+
+	// ajax로 실시간 반영되는 숙소리스트 함수
+	function fetchFilteredData(currentShowPageNo, sort) {
 	
 		$("input:hidden[name='currentShowPageNo']").val(currentShowPageNo);
-	
+		
+		$("input:hidden[name='sort']").val(sort); 
 	
 	    // FormData 객체 생성
 	    const formData = $("form[name='filterForm']").serialize();
-	    
 	    
 	    // AJAX 요청 보내기
 	    $.ajax({
@@ -336,20 +341,20 @@ $(document).ready(function(){
 	        	
 	        	let v_html = ``;
 	        	
-	        	if(json.length > 0){
+	        	const jsonData = JSON.parse(json);
 	        	
-		        	const jsonData = JSON.parse(json);
-		            
+	        	if(jsonData.length > 0){
+	        	
 		        	$.each(jsonData, function(index, item){
 		        		
 		        		v_html += `<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
 									  <div style="width: 30%;">
-		                    			 <a href="#">
+		                    			 <a href="javascript:goDetail('\${item.lodging_code}')">
 		                        		 	<img src="<%=ctxPath%>/resources/images/lodginglist/\${item.main_img}" style="width: 100%; height: auto;">
 		                    			 </a>
 		                			  </div>
 		                			  <div style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding-left: 20px;">
-										 <h3 class="pt-3 title"><a href="#">\${item.lodging_name}</a></h3>
+										 <h3 class="pt-3 title"><a href="javascript:goDetail('\${item.lodging_code}')">\${item.lodging_name}</a></h3>
 										 <div class="pb-3">
 		                        			<span style="color:#b5aec4;">\${item.lodging_category}</span><br>
 		                        			<span>\${item.local_status}</span><br>
@@ -375,14 +380,12 @@ $(document).ready(function(){
 		        		
 		        	}
 		        	
-		        	
-		        	
 		        	const totalPage = Math.ceil( Number(jsonData[0].totalCount) / Number(jsonData[0].sizePerPage));
 		        	
 		        	// console.log("totalPage ==> ", totalPage);
 		        	// console.log("totalPage type==> ", typeof totalPage);
 		        	
-		        	makePageBar(currentShowPageNo, totalPage);
+		        	makePageBar(currentShowPageNo, totalPage, sort);
 		        	
 	        	}else{
 	        		
@@ -390,10 +393,7 @@ $(document).ready(function(){
 	        		
 	        	}
 		        	
-		        	
 	        	$('div#result_list').html(v_html);
-	        	
-	        	
 	        	
 	        },
 	        error: function(request, status, error){
@@ -407,52 +407,65 @@ $(document).ready(function(){
 	
 	
 	
+	// 페이지바 호출하는 함수
+	function makePageBar(currentPageNo, totalPage, sort){
+	    const blockSize = 5;
+	    let loop = 1;
+	    let pageNo = Math.floor((currentPageNo - 1)/blockSize) * blockSize + 1;
+	    let pageBar_HTML = "<ul style='list-style:none;'>";
 	
-	function makePageBar(currentPageNo, totalPage){
-		
-		const blockSize = 10;
-		let loop = 1;
-		let pageNo = Math.floor((currentPageNo - 1)/blockSize) * blockSize + 1;
-		let pageBar_HTML = "<ul style='list-style:none;'>";
-	      
-		if(pageNo != 1) {
-			pageBar_HTML += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='javascript:fetchFilteredData(1)'>[맨처음]</a></li>";
-			pageBar_HTML += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='javascript:fetchFilteredData("+(pageNo-1)+")'>[이전]</a></li>";
-		}
-		
-		while( !(loop > blockSize || pageNo > totalPage) ) {			 
-			if(pageNo == currentPageNo) {
-	            pageBar_HTML += "<li style='display:inline-block; width:30px; font-size:12pt; border:solid 1px gray; color:red; padding:2px 4px;'>"+pageNo+"</a></li>";
+	    if(pageNo != 1) {
+	        pageBar_HTML += `<li style='display:inline-block; width:70px; font-size:12pt;'><a href='javascript:fetchFilteredData(1, "\${sort}")'>[맨처음]</a></li>`;
+	        pageBar_HTML += `<li style='display:inline-block; width:50px; font-size:12pt;'><a href='javascript:fetchFilteredData(\${pageNo-1}, "\${sort}")'>[이전]</a></li>`;
+	    }
+	
+	    while( !(loop > blockSize || pageNo > totalPage) ) {			 
+	        if(pageNo == currentPageNo) {
+	            pageBar_HTML += `<li style='display:inline-block; width:30px; font-size:12pt; font-weight:bold; padding:2px 4px;'>\${pageNo}</li>`;
 	        } else {
-	            pageBar_HTML += "<li style='display:inline-block; width:30px; font-size:12pt;'><a href='javascript:fetchFilteredData("+pageNo+")'>"+pageNo+"</li>";
+	            pageBar_HTML += `<li style='display:inline-block; width:30px; font-size:12pt;'><a href='javascript:fetchFilteredData(\${pageNo}, "\${sort}")'>\${pageNo}</a></li>`;
 	        }
-			loop++;
-			pageNo++;
-		}
-		
-		if(pageNo <= totalPage) {
-			pageBar_HTML += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='javascript:fetchFilteredData("+(pageNo+1)+")'>[다음]</a></li>";
-			pageBar_HTML += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='javascript:fetchFilteredData("+totalPage+")'>[마지막]</a></li>";
-		}
-		pageBar_HTML += "</ul>";
-		
-		$("div#pageBar").html(pageBar_HTML);
-		
+	        loop++;
+	        pageNo++;
+	    }
+	
+	    if(pageNo <= totalPage) {
+	        pageBar_HTML += `<li style='display:inline-block; width:50px; font-size:12pt;'><a href='javascript:fetchFilteredData(\${pageNo+1}, "\${sort}")'>[다음]</a></li>`;
+	        pageBar_HTML += `<li style='display:inline-block; width:70px; font-size:12pt;'><a href='javascript:fetchFilteredData(\${totalPage}, "\${sort}")'>[마지막]</a></li>`;
+	    }
+	    pageBar_HTML += "</ul>";
+	
+	    $("div#pageBar").html(pageBar_HTML);
+	    
 	} // end of function makePageBar(currentPageNo, totalPage)
 	
 	
+	// 검색어를 받아주는 (엔터와 검색버튼) 함수
 	function goSearch(){
 		
 		const searchWord = $("input:text[name='inputWord']").val();
-    	
+		
+		
 		const frm = document.filterForm;
 		
 		frm.searchWord.value = searchWord;
     	
-        fetchFilteredData(1);
+        fetchFilteredData(1,currentSort);
 		
 	} // end of function goSearch()
 	
+	
+	function goDetail(lodging_code){
+		
+		const frm = document.goDetail;
+	
+		frm.lodging_code.value = lodging_code;
+		frm.method = "post";
+		frm.action = "<%= ctxPath%>/lodgingDetail.trip";
+		
+		frm.submit();
+		
+	} // end of function goDetail(lodging_code) 
 
 </script>
 
@@ -533,47 +546,27 @@ $(document).ready(function(){
                             <input type="checkbox" name="convenient" id="all_con" value="" />
                             <label for="all_con">전체</label>
                         </div>
+                        
+                        <c:forEach var="convenientList" items="${requestScope.convenientList}" varStatus="status">
                         <div>
-                            <input type="checkbox" name="convenient" id="pool" value="수영장" />
-                            <label for="pool">수영장</label>
+                        	<input type="checkbox" name="convenient" id="convenient${status.count}" value="${convenientList}" />
+                        	<label for="convenient${status.count}">${convenientList}</label>
                         </div>
-                        <div>
-                            <input type="checkbox" name="convenient" id="bbq" value="바비큐" />
-                            <label for="bbq">바비큐</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" name="convenient" id="free_breakfast" value="조식무료" />
-                            <label for="free_breakfast">조식무료</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" name="convenient" id="breakfast" value="조식운영" />
-                            <label for="breakfast">조식운영</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" name="convenient" id="pet" value="애완동물" />
-                            <label for="pet">애완동물</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" name="convenient" id="store" value="매점" />
-                            <label for="store">매점</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" name="convenient" id="spa" value="스파/사우나" />
-                            <label for="spa">스파/사우나</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" name="convenient" id="wifi" value="WIFI" />
-                            <label for="wifi">WIFI</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" name="convenient" id="ev_charge" value="전기차충전소" />
-                            <label for="ev_charge">전기차충전소</label>
-                        </div>
+                        </c:forEach>
+                        
                     </li>
                     
                     <li class="nav-item">
                     	<h4>숙소 가격범위</h4>
-                    	<input class="" type="range" min="0;" max="1000000;" />
+                    	<div class="slider">
+					        <input type="range" id="input-left" min="1" max="100" value="1" />
+					        <input type="range" id="input-right" min="1" max="100" value="100" />
+					        <div class="track">
+					          <div class="range"></div>
+					          <div class="thumb left"></div>
+					          <div class="thumb right"></div>
+					        </div>
+					    </div>
                     </li>
                     
                 </ul>
@@ -638,43 +631,27 @@ $(document).ready(function(){
 			            </div>
 			        </div>
             	</div>	
-            	
-            	
-            		
-                    <div class="sort-filter main" style="display: flex; justify-content:space-between; width:100%;">
-                    	
-                        <div> 
-                                <button type="button" onclick="" class="sort active" value="">추천순</button>
-                           
-                                <button type="button" onclick="" class="sort" value="PRICE">낮은가격순</button>
-                          
-                                <button type="button" onclick="" class="sort" value="PRICE_DESC">높은가격순</button>
-                             
-                                <button type="button" onclick="" class="sort" value="NEW">최신등록순</button>
-                             
-                        </div>
-                        
-                        <div>
-                            <input type="text" name="inputWord"  placeholder="검색 결과 내 숙소명 검색">
-                            <button type="button" id="search" title="검색">검색</button>
-                        </div>
+            	<div class="sort-filter main" style="display: flex; justify-content:space-between; width:100%;">
+                  	<div> 
+                        <button type="button" class="sort btn btn-outline-warning" value="">최신등록순</button>
+                        <button type="button" class="sort btn btn-outline-warning" value="price_asc">낮은가격순</button>
+                        <button type="button" class="sort btn btn-outline-warning" value="price_desc">높은가격순</button>
                     </div>
-                    
-                    
-                    <div id="result_list">
-                    	<!-- ajax 뿌릴곳 -->
+                    <div>
+                        <input type="text" name="inputWord"  placeholder="검색 결과 내 숙소명 검색">
+                        <button type="button" id="search" title="검색">검색</button>
                     </div>
-                    
-                    <div id="pageBar">
-                    </div>
-           		 </div>
-            </div>
-            
-            	
-             
-            	
+                </div>
                 
-		</div> 
+                <div class="mt-3" id="result_list">
+                  	<!-- ajax 뿌릴곳 -->
+                </div>
+                    
+                <div id="pageBar" style="text-align: center;">
+                </div>
+           	</div>
+        </div>
+    </div> 
 		
 		
           <form name="filterForm">
@@ -683,7 +660,14 @@ $(document).ready(function(){
           	<input type="hidden" name="str_local" /> 
           	<input type="hidden" name="searchWord" />
           	<input type="hidden" name="currentShowPageNo" />
+          	<input type="hidden" name="sort" />
           </form>
+          
+          
+          <form name="goDetail">
+          	<input type="hidden" name="lodging_code" />
+          </form>
+          
  
 </body>
 </html>

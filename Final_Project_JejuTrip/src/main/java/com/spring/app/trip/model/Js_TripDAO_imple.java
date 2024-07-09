@@ -20,6 +20,7 @@ public class Js_TripDAO_imple implements Js_TripDAO {
 	@Qualifier("sqlsession")
 	private SqlSessionTemplate sqlsession;
 
+	// 조건에 따른 숙소리스트 select 해오기
 	@Override
 	public List<Map<String,String>> lodgingList(Map<String, Object> paraMap) {
 		
@@ -37,5 +38,37 @@ public class Js_TripDAO_imple implements Js_TripDAO {
 		return totalCount;
 		
 	} // end of public int getLodgingTotalCount(Map<String, String> paraMap) {} 
+
+
+	// 숙소리스트에 표현할 편의시설 목록 구해오기
+	@Override
+	public List<String> getConvenientList() {
+		
+		List<String> convenientList = sqlsession.selectList("js_trip.getConvenientList");
+		
+		return convenientList;
+		
+	} // end of public List<String> getConvenientList() { 
+
+
+	// 숙소의상세정보만 가져오기
+	@Override
+	public LodgingVO getLodgingDetail(String lodgingCode) {
+		
+		LodgingVO lodgingDetail = sqlsession.selectOne("js_trip.getLodgingDetail",lodgingCode);
+		
+		return lodgingDetail;
+	} // end of public LodgingVO getLodgingDetail(String lodgingCode) {
+
+
+	// 숙소의 객실 정보 가져오기
+	@Override
+	public List<Map<String, String>> getRoomDetail(String lodgingCode) {
+		
+		List<Map<String, String>> roomDetailList = sqlsession.selectList("js_trip.getRoomDetail", lodgingCode);
+		
+		return roomDetailList;
+		
+	} // end of public List<Map<String, String>> getRoomDetail(String lodgingCode) { 
 
 }
