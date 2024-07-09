@@ -1,6 +1,7 @@
 package com.spring.app.trip.controller;
 
 import java.io.File;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +25,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.spring.app.trip.common.FileManager;
 import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.domain.PlayVO;
+import com.spring.app.trip.domain.ReviewVO;
 import com.spring.app.trip.service.Hs_TripService;
 
 @Controller
@@ -34,48 +36,8 @@ public class Hs_TripController {
 	
 	@Autowired
 	private FileManager fileManager;
+
 	
-	// === 커뮤니티 메인 페이지 보이기 === //
-		@GetMapping("mypageMain.trip")
-		public String mypage_main(HttpServletRequest request) {
-			return "mypage/mypageMain.tiles1"; 
-			// /WEB-INF/views/tiles1/mypage/mypageMain.jsp 파일 생성
-		}
-		
-		
-		@GetMapping("reservations.trip")
-		public String reservation(HttpServletRequest request) {
-			return "mypage/reservations.tiles1"; 
-			// /WEB-INF/views/mypage/reservations.jsp 파일 생성
-		}
-		
-		
-		@GetMapping("editProfile.trip")
-		public String edit_profile(HttpServletRequest request) {
-			return "mypage/editProfile.tiles1"; 
-			// /WEB-INF/views/mypage/edit_profile.jsp 파일 생성
-		}
-		
-		/*@GetMapping("cash_points.trip")
-		public String cash_points(HttpServletRequest request) {
-			return "mypage/cash_points"; 
-			// /WEB-INF/views/mypage/cash_points.jsp 파일 생성
-		}*/
-		
-		@GetMapping("review.trip")
-		public String review(HttpServletRequest request) {
-			return "mypage/review.tiles1"; 
-			// /WEB-INF/views/mypage/review.jsp 파일 생성
-		}
-		
-		@GetMapping("support.trip")
-		public String support(HttpServletRequest request) {
-			return "mypage/support.tiles1"; 
-			// /WEB-INF/views/mypage/support.jsp 파일 생성
-		}
-		
-		
-		
 		//즐길거리 등록페이지 
 		@GetMapping("registerPlay.trip")
 		public ModelAndView registerPlay(ModelAndView mav, HttpServletRequest request) {
@@ -281,6 +243,7 @@ public class Hs_TripController {
 					jsonObj.put("play_businesshours",playvo.getPlay_businesshours() ); 
 					jsonObj.put("play_address",playvo.getPlay_address() ); 
 					jsonObj.put("play_main_img",playvo.getPlay_main_img() ); 
+					jsonObj.put("play_code",playvo.getPlay_code() ); 
 					
 					jsonObj.put("totalCount", totalCount); //총 페이지 
 	            	jsonObj.put("currentShowPageNo", currentShowPageNo); //현재페이지
@@ -293,5 +256,110 @@ public class Hs_TripController {
 			return jsonArr.toString();
 		 
 		}
+		
+		@GetMapping("goAddSchedule.trip")
+		public ModelAndView goAddSchedule (ModelAndView mav , HttpServletRequest request) {
+			
+			String play_code = request.getParameter("play_code");
+			System.out.println("play_code"+play_code);
+			
+			
+			PlayVO playvo = service.goAddSchedule(play_code);
+			
+			
+			mav.addObject("playvo", playvo);
+			mav.setViewName("play/goAddSchedule.tiles1");
+			
+			return mav;
+		}
+		
+		
+		//리뷰작성
+		@ResponseBody
+		@PostMapping(value = "reviewRegister.trip",produces="text/plain;charset=UTF-8")
+		public String reviewRegister (HttpServletRequest request) {
+			 
+			 String review_content = request.getParameter("review_content");
+	         String fk_userid = request.getParameter("fk_userid");
+	         String parent_code = request.getParameter("play_code");
+	         String review_division_R = "C";
+	        /* 
+	         // **** 크로스 사이트 스크립트 공격에 대응하는 안전한 코드(시큐어 코드) 작성하기 **** // 
+	         contents = contents.replaceAll("<", "&lt;");
+	         contents = contents.replaceAll(">", "&gt;");
+	         
+	         // 입력한 내용에서 엔터는 <br>로 변환시키기
+	         contents = contents.replaceAll("\r\n", "<br>");
+	         */
+	         
+	         System.out.println("review_content"+review_content);
+	         System.out.println("fk_userid"+fk_userid);
+	         System.out.println("parent_code"+parent_code);
+	         System.out.println("review_division_R"+review_division_R);
+	         
+	         ReviewVO reviewvo = new ReviewVO();
+	         reviewvo.setFk_userid(fk_userid);
+	         reviewvo.setReview_content(review_content);
+	         reviewvo.setParent_code(parent_code);
+	         reviewvo.setReview_division_R(review_division_R);
+	         
+	         int n = service.addReview(reviewvo);
+	         
+	         
+	         JSONObject jsonObj = new JSONObject();
+	         jsonObj.put("n", n);
+	         
+	        
+	         return jsonObj.toString();
+		}
 
+		
+		//리뷰 보여주기 
+		@ResponseBody
+		@GetMapping(value="reviewList.trip",produces="text/plain;charset=UTF-8")
+		public String reviewList (HttpServletRequest request) {
+			
+			String parent_code = request.getParameter("parent_code");
+			
+			List<ReviewVO> reviewList = service.reviewList(parent_code);
+			
+			JSONArray jsonArr = new JSONArray();
+			if(reviewList != null) {
+				for(ReviewVO reviewvo : reviewList) {
+					JSONObject jsonObj = new JSONObject(); //{}
+					jsonObj.put("review_content",reviewvo.getReview_content()); 
+					jsonObj.put("fk_userid",reviewvo.getFk_userid()); 
+					jsonObj.put("registerday",reviewvo.getRegisterday()); 
+					jsonObj.put("review_code",reviewvo.getReview_code()); 
+				
+		
+					jsonArr.put(jsonObj);
+				}
+				//System.out.println("json" + jsonArr);
+			}
+			return jsonArr.toString();
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 }
