@@ -164,7 +164,7 @@ $(document).ready(function() {
 			        <div class="menu_bar_line"></div>
 			      </li>
 			      <li class="nav-item">
-			        <a class="nav-link menu_bar_a" href="#">맛집</a>
+			        <a class="nav-link menu_bar_a" href="<%=ctxPath%>/foodstoreList.trip">맛집</a>
 			        <div class="menu_bar_line"></div>
 			      </li>
 			      <li class="nav-item">
