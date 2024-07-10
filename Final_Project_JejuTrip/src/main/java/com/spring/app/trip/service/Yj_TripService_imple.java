@@ -1,12 +1,17 @@
 package com.spring.app.trip.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.spring.app.trip.domain.FoodstoreVO;
+import com.spring.app.trip.domain.ReviewVO;
 import com.spring.app.trip.model.Yj_TripDAO;
 
 @Service
@@ -22,14 +27,6 @@ public class Yj_TripService_imple implements Yj_TripService {
 		List<FoodstoreVO> foodstoreList = dao.viewFoodstoreList(map);
 		return foodstoreList;
 	}
-	
-	
-	// == 맛집 랜덤 추천 == //
-	@Override
-	public List<FoodstoreVO> randomRecommend(Map<String, Object> map) {
-		List<FoodstoreVO> randomRecommend = dao.randomRecommend(map);
-		return randomRecommend;
-	}
 
 
 	// == 맛집 총 개수 알아오기 == //
@@ -37,6 +34,14 @@ public class Yj_TripService_imple implements Yj_TripService {
 	public int getTotalCount(Map<String, Object> map) {
 		int totalCount = dao.getTotalCount(map);
 		return totalCount;
+	}
+	
+	
+	// == 맛집 랜덤 추천 == //
+	@Override
+	public List<FoodstoreVO> randomRecommend(Map<String, Object> map) {
+		List<FoodstoreVO> randomRecommend = dao.randomRecommend(map);
+		return randomRecommend;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////
@@ -49,14 +54,20 @@ public class Yj_TripService_imple implements Yj_TripService {
 	}
 
 	
-	
 	// == 맛집 상세 추가 이미지 == //
 	@Override
 	public List<Map<String, String>> viewfoodaddImg(Map<String, String> paraMap) {
 		List<Map<String, String>> addimgList = dao.viewfoodaddImg(paraMap);
 		return addimgList;
-	
-	
+	}
+
+
+	// == 맛집 리뷰 쓰기 == //
+	@Override
+	public int addFoodstoreReview(ReviewVO reviewvo) {
+		int n = dao.addFoodstoreReview(reviewvo); // 리뷰쓰기(tbl_review 에 insert)
+		//System.out.println("service 에서 n 확인 => " + n);
+		return n;
 	}
 
 	

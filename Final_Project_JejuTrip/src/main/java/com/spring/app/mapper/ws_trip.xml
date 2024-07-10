@@ -166,4 +166,133 @@
 		from tbl_Company
 	</select>
 	
+	<select id="select_detailMember" parameterType="String" resultType="com.spring.app.trip.domain.MemberVO">
+		select userid, email, user_name, mobile, address, detail_address, birthday, gender, registerday, status, idle
+		from tbl_member
+		where userid = #{userid}
+	</select>
+	
+	<select id="select_detailCompany" parameterType="String" resultType="com.spring.app.trip.domain.CompanyVO">
+		select companyid, company_name, email, mobile, registerday, status, idle
+		from tbl_company
+		where companyid = #{userid}
+	</select>
+	
+	<resultMap type="HashMap" id="CNT_YEAR_REGISTER_MEMBER">
+		<result property="line_year" column="line_year" 	javaType="String" />
+		<result property="line_CNT" 	column="line_CNT" 	javaType="String" />
+	</resultMap>
+	
+	<select id="get_year_login_member_chart" parameterType="String" resultMap="CNT_YEAR_REGISTER_MEMBER">
+		WITH A
+		AS (
+		select to_char(logindate,'yyyy') as line_year, count(*) as line_CNT
+		from tbl_member_loginhistory
+		where fk_userid !='admin'
+		group by to_char(logindate,'yyyy')
+		)
+		SELECT A.line_year, A.line_CNT
+		FROM A CROSS JOIN (SELECT SUM(line_CNT) AS TOTAL FROM A) B
+		order by line_year asc
+	</select>
+	
+	<resultMap type="HashMap" id="CNT_MONTH_REGISTER_MEMBER">
+		<result property="line_month" column="line_month" 	javaType="String" />
+		<result property="line_CNT" 	column="line_CNT" 	javaType="String" />
+	</resultMap>
+	
+	<select id="get_month_login_member_chart" parameterType="String" resultMap="CNT_MONTH_REGISTER_MEMBER">
+		WITH A
+		AS (
+		select to_char(logindate,'yyyy-mm') as line_month, count(*) as line_CNT
+		from tbl_member_loginhistory
+		where fk_userid != 'admin' and logindate between #{choice_year}||'-01-01' and #{choice_year}||'-12-31'
+		group by to_char(logindate,'yyyy-mm')
+		)
+		SELECT A.line_month, A.line_CNT
+		FROM A CROSS JOIN (SELECT SUM(line_CNT) AS TOTAL FROM A) B
+		order by line_month asc
+	</select>
+	
+	<resultMap type="HashMap" id="PERCNTAGE_AGE_GROUP">
+		<result property="ageGroup" 	column="ageGroup" 	javaType="String" />
+		<result property="PERCNTAGE" 	column="PERCNTAGE" 	javaType="String" />
+	</resultMap>
+	
+	<select id="user_age_group_chart" resultMap="PERCNTAGE_AGE_GROUP">
+		<![CDATA[
+		WITH A
+		AS (
+		SELECT ageGroup, count(*) as ageGroup_CNT
+		FROM
+		(
+		select trunc(case 
+		       when to_date(extract(year from sysdate)||substr(birthday,6,2)||substr(birthday,9,2),'yyyymmdd') <= to_date(to_char(sysdate,'yyyymmdd')) 
+		       then extract(year from sysdate) - substr(birthday,0,4)
+		       else extract(year from sysdate) - substr(birthday,0,4) - 1
+		       end,-1) as ageGroup
+		from tbl_member
+		where userid != 'admin'
+		)
+		group by ageGroup
+		)
+		SELECT A.ageGroup||'대' as ageGroup, TO_CHAR( ROUND((A.ageGroup_CNT / B.TOTAL) * 100, 1), '990.0') AS PERCNTAGE
+		FROM A CROSS JOIN (SELECT SUM(ageGroup_CNT) AS TOTAL FROM A) B
+		order by ageGroup asc
+		]]> 
+	</select>
+	
+	<resultMap type="HashMap" id="PERCNTAGE_GENDER">
+		<result property="gender" 		column="gender" 	javaType="String" />
+		<result property="PERCNTAGE" 	column="PERCNTAGE" 	javaType="String" />
+	</resultMap>
+	
+	<select id="user_gender_chart" resultMap="PERCNTAGE_GENDER">
+		WITH A
+		AS (
+		select gender, count(*) as CNT
+		from tbl_member
+		where userid != 'admin'
+		group by gender
+		)
+		SELECT A.gender, TO_CHAR( ROUND((A.CNT / B.TOTAL) * 100, 1), '990.0') AS PERCNTAGE
+		FROM A CROSS JOIN (SELECT SUM(CNT) AS TOTAL FROM A) B
+		order by gender asc
+	</select>
+	
+	<resultMap type="HashMap" id="CNT_YEAR_RESERVATION">
+		<result property="reservation_year" column="reservation_year" 	javaType="String" />
+		<result property="CNT" 				column="CNT" 	javaType="String" />
+	</resultMap>
+	
+	<select id="get_year_reservation_hotel_chart" parameterType="String" resultMap="CNT_YEAR_RESERVATION">
+		WITH A
+		AS (
+		select to_char(reservation_date,'yyyy') as reservation_year, count(*) as CNT
+		from tbl_reservation
+		group by to_char(reservation_date,'yyyy')
+		)
+		SELECT A.reservation_year, A.CNT
+		FROM A CROSS JOIN (SELECT SUM(CNT) AS TOTAL FROM A) B
+		order by reservation_year
+	</select>
+	
+	<resultMap type="HashMap" id="CNT_MONTH_RESERVATION">
+		<result property="line_month" column="line_month" 	javaType="String" />
+		<result property="line_CNT" 	column="line_CNT" 	javaType="String" />
+	</resultMap>
+	
+	<select id="get_month_reservation_chart" parameterType="String" resultMap="CNT_MONTH_RESERVATION">
+		WITH A
+		AS (
+		select to_char(reservation_date,'yyyy-mm') as line_month, count(*) as line_CNT
+		from tbl_reservation
+		where reservation_date between #{choice_year}||'-01-01' and #{choice_year}||'-12-31'
+		group by to_char(reservation_date,'yyyy-mm')
+		)
+		SELECT A.line_month, A.line_CNT
+		FROM A CROSS JOIN (SELECT SUM(line_CNT) AS TOTAL FROM A) B
+		order by line_month asc
+	</select>
+	
 </mapper>

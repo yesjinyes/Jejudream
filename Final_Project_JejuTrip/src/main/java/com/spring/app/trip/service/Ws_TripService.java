@@ -27,5 +27,13 @@ public interface Ws_TripService {
 	List<CompanyVO> select_Company_all(Map<String, String> paraMap);// 모든 기업의 정보를 읽어오는 메소드 생성
 	int getTotalMemberCount();// member 테이블의 총 행 개수 알아오기
 	int getTotalCompanyCount();// company 테이블의 총 행 개수 알아오기
+	MemberVO select_detailMember(String userid);// 멤버 정보를 가져온다.
+	CompanyVO select_detailCompany(String userid);// 아이디를 토대로 회사 정보를 가져온다.
+	List<Map<String, String>> get_year_login_member_chart();// 매년 로그인 수 통계를 내기 위한 차트 값 가져오기
+	List<Map<String, String>> get_month_login_member_chart(String choice_year);// 매달 가입자 수 통계를 내기 위한 차트 값 가져오기
+	List<Map<String, String>> user_age_group_chart();// 사용자 연령대 차트에 사용할 정보 가져오기
+	List<Map<String, String>> user_gender_chart();// 사용자 성별 차트에 사용할 정보 가져오기
+	List<Map<String, String>> get_year_reservation_hotel_chart();// 매년 호텔 예약건수를 찾아와서 차트화 시켜주기위한 정보 가져오기
+	List<Map<String, String>> get_month_reservation_chart(String choice_year);// 선택한 년도의 매월 예약건수를 가져와서 차트화 시켜준다.
 
 }

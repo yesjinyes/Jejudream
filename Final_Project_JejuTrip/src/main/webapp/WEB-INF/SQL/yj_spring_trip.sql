@@ -239,22 +239,41 @@ where food_add_code = 5;
 desc tbl_food_store;
 
 
-select S.food_name
+select I.food_add_img
 FROM 
 (
-select food_store_code
+select food_store_code, food_name
 from tbl_food_store
 where food_store_code = 5316
 )S
 join tbl_food_add_img I
-where S.food_store_code = I.fk_food_store_code
+on S.food_store_code = I.fk_food_store_code
+order by food_add_img
 
 
 
-select food_store_code
-from tbl_food_store
-where food_store_code = 5316
+SELECT food_store_code, local_status, food_name, food_content, food_businesshours, food_mobile
+     , substr(food_address, 0, instr(food_address, ' ', 1, 2)-1) AS food_address
+     , food_main_img, review_division
+     , food_category
+FROM tbl_food_store
+WHERE 1=1
+
+select rno, food_store_code, local_status, food_name, food_content, food_businesshours, food_mobile
+     , food_address, food_main_img, review_division, food_category
+     , filename, orgfilename, filesize
+from
+(
+SELECT rownum as RNO, food_store_code, local_status, food_name, food_content, food_businesshours, food_mobile
+     , substr(food_address, 0, instr(food_address, ' ', 1, 2)-1) AS food_address
+     , food_main_img, review_division, food_category
+     , filename, orgfilename, filesize   
+FROM tbl_food_store
+WHERE 1=1
+
+)
+where rno between 1 and 2
 
 
-
+desc tbl_food_store;
 

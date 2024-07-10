@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import com.spring.app.trip.domain.FoodstoreVO;
+import com.spring.app.trip.domain.ReviewVO;
 
 @Repository
 public class Yj_TripDAO_imple implements Yj_TripDAO {
@@ -58,17 +59,17 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 		return addimgList;
 	}
 
-
-
-	// == 검색어 입력시 자동글 완성하기 == //
-//	@Override
-//	public List<String> wordSearchShow(String searchWord) {
-//		List<String> wordList = sqlsession.selectList("yj_trip.wordSearchShow", searchWord);
-//		return wordList;
-//	}
-
-
 	
+	// == 맛집 리뷰 쓰기 == //
+	@Override
+	public int addFoodstoreReview(ReviewVO reviewvo) {
+		int n = sqlsession.insert("yj_trip.addFoodstoreReview", reviewvo);
+		//System.out.println("dao 에서 n 확인 => " + n);
+		return n;
+	}
+
+
+
 
 
 	
