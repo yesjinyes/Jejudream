@@ -274,6 +274,13 @@ WHERE 1=1
 )
 where rno between 1 and 2
 
+select * from user_sequences;
 
-desc tbl_food_store;
+desc tbl_review;
 
+select *
+from tbl_review
+order by fk_userid desc;
+
+
+commit;

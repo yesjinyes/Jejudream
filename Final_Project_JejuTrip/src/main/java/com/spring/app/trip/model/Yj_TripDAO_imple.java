@@ -69,6 +69,14 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 	}
 
 
+	// == 작성한 리뷰 보이기 == //
+	@Override
+	public List<ReviewVO> getReviewList(String parent_code) {
+		List<ReviewVO> reviewList = sqlsession.selectList("yj_trip.getReviewList", parent_code);
+		return reviewList;
+	}
+
+
 
 
 

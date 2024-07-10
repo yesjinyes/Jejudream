@@ -29,6 +29,9 @@ public interface Yj_TripDAO {
 	// == 맛집 리뷰 쓰기 == //
 	int addFoodstoreReview(ReviewVO reviewvo);
 
+	// == 작성한 리뷰 보이기 == //
+	List<ReviewVO> getReviewList(String parent_code);
+
 	
 
 	

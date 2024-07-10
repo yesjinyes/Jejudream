@@ -214,31 +214,60 @@ public class Yj_TripController {
 	@PostMapping(value="/addReview.trip", produces="text/plain;charset=UTF-8")
 	public String addComment(ReviewVO reviewvo, HttpServletRequest request) {
 
-		String parent_code = request.getParameter("parent_code");
-		// System.out.println("확인용 parent_code => " + parent_code);
-		
 		int n = 0;
 		
 		try {
-			n = service.addFoodstoreReview(reviewvo); // 리뷰쓰기, 리뷰 개수 증가
-			// 댓글쓰기(insert) 및 원게시물(tbl_board 테이블)에 댓글의 개수 증가(update 1씩 증가)하기 
+			n = service.addFoodstoreReview(reviewvo); // 리뷰쓰기
 		
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
 		
 		JSONObject jsonObj = new JSONObject();
+		
 		jsonObj.put("n", n);
 		jsonObj.put("fk_userid", reviewvo.getFk_userid());
-		jsonObj.put("parent_code", parent_code);
 		
-		// System.out.println("### 확인 : "+ jsonObj.toString());
+		System.out.println("### jsonObj 확인 : "+ jsonObj.toString());
 		
 		return jsonObj.toString();
-		
 	}
 	
 
+	
+	// == 작성한 리뷰 보이기 == //
+	@ResponseBody
+	@GetMapping(value="/foodstoreReviewList.trip", produces="text/plain;charset=UTF-8")
+	public String foodstoreReviewList(ReviewVO reviewvo, HttpServletRequest request) {
+		
+		String parent_code = request.getParameter("parent_code");
+		
+		// 작성한 리뷰 보이기
+		List<ReviewVO> reviewList = service.getReviewList(parent_code);
+		
+		JSONArray jsonArr = new JSONArray();
+		
+		if(reviewList != null) {
+			for(ReviewVO rvo : reviewList) {
+				JSONObject jsonObj = new JSONObject();
+				jsonObj.put("review_code", rvo.getReview_code());
+				jsonObj.put("fk_userid", rvo.getFk_userid());
+				jsonObj.put("parent_code", rvo.getParent_code());
+				jsonObj.put("review_content", rvo.getReview_content());
+				jsonObj.put("registerday", rvo.getRegisterday());
+				
+				jsonArr.put(jsonObj);
+			}// end of for------------------
+			
+		}
+		System.out.println("~~~리뷰 List jsonArr 확인 => "+jsonArr.toString());
+		
+		return jsonArr.toString();
+		
+	}
+	
+	
+	
 	
 	
 

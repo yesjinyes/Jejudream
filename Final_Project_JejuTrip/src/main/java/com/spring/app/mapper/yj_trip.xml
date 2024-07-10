@@ -144,6 +144,13 @@
 		values(seq_review.nextval, #{fk_userid}, #{parent_code}, #{review_content}, default, 'B')
 	</insert>
 	
-
+	<!-- 작성한 리뷰 보이기 -->
+	<select id="getReviewList" parameterType="String" resultType="com.spring.app.trip.domain.ReviewVO">
+		select review_code, fk_userid, parent_code, review_content
+			 , to_char(registerday, 'yyyy-mm-dd') AS registerday
+		from tbl_review
+		where parent_code = #{parent_code}
+		order by review_code desc
+	</select>
 
 </mapper>

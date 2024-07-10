@@ -263,6 +263,8 @@ span#data {
 	// == 카테고리, 지역 Ajax 처리 == //
 	function goAjax(currentShowPageNo) {
 		
+		goTop();
+		
 		$("input:hidden[name='currentShowPageNo']").val(currentShowPageNo);
 		
 		// form 태그 불러오기
@@ -349,16 +351,16 @@ span#data {
 		
 		// [맨처음] [이전] 만들기
 		if(pageNo != 1) {
-			pageBar_HTML += "<li style='display:inline-block; width:70px; font-size:12pt;' onclick='goTop()'><a href='javascript:goAjax(1)'>[맨처음]</a></li>";
-			pageBar_HTML += "<li style='display:inline-block; width:50px; font-size:12pt; onclick='goTop()'><a href='javascript:goAjax("+(pageNo-1)+")'>[이전]</a></li>";
+			pageBar_HTML += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='javascript:goAjax(1)'>[맨처음]</a></li>";
+			pageBar_HTML += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='javascript:goAjax("+(pageNo-1)+")'>[이전]</a></li>";
 		}
 		
 		while(!(loop>blockSize || pageNo > totalPage)) {
 			if(pageNo == currentShowPageNo) {
-				pageBar_HTML += "<li style='display:inline-block; width:30px; font-size:12pt; border:solid 1px gray; color:red; padding:2px 4px;' onclick='goTop()'>"+pageNo+"</a></li>";
+				pageBar_HTML += "<li style='display:inline-block; width:30px; font-size:12pt; border:solid 1px gray; color:red; padding:2px 4px;'>"+pageNo+"</a></li>";
 			}
 			else {
-				pageBar_HTML += "<li style='display:inline-block; width:30px; font-size:12pt;' onclick='goTop()'><a href='javascript:goAjax("+pageNo+")'>"+pageNo+"</a></li>";
+				pageBar_HTML += "<li style='display:inline-block; width:30px; font-size:12pt;'><a href='javascript:goAjax("+pageNo+")'>"+pageNo+"</a></li>";
 			}
 			loop++;
 			pageNo++;
@@ -366,8 +368,8 @@ span#data {
 		
 		// [다음] [마지막] 만들기
 		if(pageNo <= totalPage) {
-			pageBar_HTML += "<li style='display:inline-block; width:50px; font-size:12pt;' onclick='goTop()'><a href='javascript:goAjax("+(pageNo+1)+")'>[다음]</a></li>";
-			pageBar_HTML += "<li style='display:inline-block; width:70px; font-size:12pt;' onclick='goTop()'><a href='javascript:goAjax("+totalPage+")'>[마지막]</a></li>";
+			pageBar_HTML += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='javascript:goAjax("+(pageNo+1)+")'>[다음]</a></li>";
+			pageBar_HTML += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='javascript:goAjax("+totalPage+")'>[마지막]</a></li>";
 		}
 		
 		pageBar_HTML += "</ul>";

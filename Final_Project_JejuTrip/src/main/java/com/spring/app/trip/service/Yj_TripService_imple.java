@@ -70,6 +70,14 @@ public class Yj_TripService_imple implements Yj_TripService {
 		return n;
 	}
 
+
+	// == 작성한 리뷰 보이기 == //
+	@Override
+	public List<ReviewVO> getReviewList(String parent_code) {
+		List<ReviewVO> reviewList = dao.getReviewList(parent_code);
+		return reviewList;
+	}
+
 	
 
 

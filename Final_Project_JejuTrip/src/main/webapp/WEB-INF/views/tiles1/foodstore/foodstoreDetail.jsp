@@ -8,7 +8,7 @@
 
 <style type="text/css">
 
-
+/* 상단 이미지, 텍스트 */
 .imgcrop {
   max-height: 420px;
   overflow: hidden;
@@ -60,7 +60,7 @@ hr#line {
   margin: 6% auto 3% auto;
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+/*--------------------------------------------------------*/
 
 /* 추가이미지 캐러셀 */
 div.add_img_carousel {
@@ -74,8 +74,9 @@ div.add_img_carousel img{
   height: 500px;
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+/*--------------------------------------------------------*/
 
+/* 아이콘 리스트 */
 ul.list {
   list-style: none;
 }
@@ -116,6 +117,7 @@ img.icon {
   font-size: 13pt;
 }
 
+/* 상세정보 */
 div#storedetail {
   width: 90%;
   margin: 3% auto;
@@ -141,11 +143,11 @@ p.info-title {
   width: 16%;
 }
 
-/*--------------------------*/
-/* 리뷰 */
+/*--------------------------------------------------------*/
+
+/* 맛집 리뷰 */
 div#reviewList {
   width: 70%;
- /*  height: 300px; */
   margin: 5% auto;
   padding: 3%;
 }
@@ -156,7 +158,14 @@ div#reviewList {
 
 	$(document).ready(function() {
 
+		goViewReview(1);
 		
+		// == 리뷰 input 엔터 키 == //
+		$("input:text[name='review_content']").bind("keyup", function(e) {
+			if(e.keyCode == 13) {
+				goAddReview();
+			}
+		});
 		
 	});// end of $(document).ready(function() {})-----------------------------
 	
@@ -171,18 +180,20 @@ div#reviewList {
 	////////////////////////////////////////////////////////////////////////////////////////
 	
 	// Function declaration
+	// == 맛집 리뷰 작성하기 == //
 	function goAddReview() {
 		
 		const review_content = $("input:text[name='review_content']").val().trim();
-		console.log("~~확인용 review_content => " + review_content);
+		//console.log("~~확인용 review_content => " + review_content);
 		
 		if(review_content == "") {
 			alert("리뷰 내용을 입력하세요!");
 			return;
 		}
 		
-		
-		queryString = $("form[name='addWriteFrm']").serialize();
+		const queryString = $("form[name='addWriteFrm']").serialize();
+		//console.log("!!!확인!!! => " + queryString);
+		// fk_userid=yy6037&review_content=Ajax%20%EC%B2%98%EB%A6%AC&food_store_code=5316&parent_code=5316
 		
 		$.ajax({
 			url:"<%= ctxPath%>/addReview.trip",
@@ -190,11 +201,18 @@ div#reviewList {
 	        type:"post",
 	        dataType:"json",
 	        success:function(json){
-	        	console.log("리뷰 JSON 확인 : ", JSON.stringify(json));
-	        	// {"food_store_code":"5316","fk_userid":"yy6037","n":0}
+	        	 console.log("리뷰 insert 확인 : ", JSON.stringify(json));
+	        	// {"food_store_code":"5316","fk_userid":"yy6037","n":1}
 	        	
+	        	if(json.n == 1) {
+	        		goViewReview();
+	        	}
+	        	else {
+	        		alert("리뷰 작성 실패");
+	        	}
 	        	
-	        	//$("input:text[name='review_content']").val("");
+	        	$("input:text[name='review_content']").val("");
+	        	
 	        },
 	        error: function(request, status, error){
 				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
@@ -202,8 +220,127 @@ div#reviewList {
 			
 		});// end of $.ajax({})--------
 		
-		
 	}// end of function goAddReview()--------------------------------------------------
+	
+	
+	// == 작성한 리뷰 보이기 == //
+	function goViewReview(currentShowPageNo) {
+		
+		$.ajax({
+			url:"<%=ctxPath%>/foodstoreReviewList.trip",
+			data:{"parent_code":"${requestScope.foodstorevo.food_store_code}",
+				  "currentShowPageNo":currentShowPageNo},
+			dataType:"json",
+			success:function(json) {
+				 console.log("리뷰 select 확인 : "+JSON.stringify(json));
+				
+				
+				let v_html = ``;
+				
+				if(json.length > 0) {
+					$.each(json, function(index, item){
+						
+						v_html += `<tr>
+			    		       		<td class='review'>\${item.totalCount - (currentShowPageNo - 1) * item.sizePerPage - index}</td>`;
+						
+					    v_html +=  `<td>\${item.review_content}</td>`;    
+					    
+					    
+						v_html +=  `<td class='review'>\${item.fk_userid}</td>    
+						            <td class='review'>\${item.registerday}</td>`;    
+							       
+						           if(${sessionScope.loginuser != null} &&
+						             "${sessionScope.loginuser.userid}" == item.fk_userid) {
+						    	  
+						    	      v_html += `<td class='review'>
+						    	   				     <button class='btn btn-secondary btn-sm btnUpdateReview'>수정</button>
+						    	   				     <input type='hidden' value='\${item.parent_code}'/>
+						    		                 <button class='btn btn-secondary btn-sm btnDeleteReview'>삭제</button>
+						    		                 <input type='hidden' value='\${currentShowPageNo}' class='currentShowPageNo' />
+						    		             </td>`;
+						    		}
+					    
+						 v_html += `</tr>`;           
+
+					});// end of $.each-------------------------
+				}
+				
+				else {
+					v_html += `<tr>
+							       <td colspan='5' class='review'>등록된 리뷰가 없습니다.</td>
+							   </tr>`;
+				}
+				
+				$("tbody#reviewDisplay").html(v_html);
+				
+				// === 페이지바 함수 호출 === //
+				// const totalPage = Math.ceil( json[0].totalCount / json[0].sizePerPage ) // 위에 $.each 의 item 을 알아야 한다. => $.each 가 위에서 끝나니까 json 의 가장 첫번째 값을 잡아줌.
+				// makeReviewPageBar(currentShowPageNo, totalPage);
+				
+			},
+			error: function(request, status, error){
+				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+			}
+		});
+		
+	}// end of function goViewReview()----------------------
+	
+	// 리뷰 페이지바 함수 만들기 === //
+/*  	function makeReviewPageBar(currentShowPageNo, totalPage) {
+		
+		const blockSize = 7; 
+		
+		let loop = 1;
+		
+		let pageNo = Math.floor((currentShowPageNo - 1)/blockSize) * blockSize + 1;
+		
+		let pageBar_html = "<ul style='list-style:none;'>";
+		
+		// === [맨처음] [이전] 만들기 === //
+		if(pageNo != 1) {
+			pageBar_html += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='javascript:goViewReview(1)'>[맨처음]</a></li>";
+			pageBar_html += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='javascript:goViewReview("+(pageNo-1)+")'>[이전]</a></li>";
+		}
+		
+		while( !(loop > blockSize || pageNo > totalPage) ) {
+		      
+			if(pageNo == currentShowPageNo) {
+				pageBar_html += "<li style='display:inline-block; width:30px; font-size:12pt; border:solid 1px gray; padding:2px 4px;'>"+pageNo+"</li>";
+			}
+			else {
+				pageBar_html += "<li style='display:inline-block; width:30px; font-size:12pt;'><a href='javascript:goViewReview("+pageNo+")'>"+pageNo+"</a></li>";
+			}
+			      
+			loop++;
+			pageNo++;
+		      
+		} // end of while-------------------------------
+		
+		// === [다음] [마지막] 만들기 === //
+		if(pageNo <= totalPage) {
+			pageBar_html += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='javascript:goViewReview("+(pageNo+1)+")'>[다음]</a></li>";
+			pageBar_html += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='javascript:goViewReview("+totalPage+")'>[마지막]</a></li>";
+		}
+		
+		pageBar_html += "</ul>";
+		 
+		console.log("pageBar_html 확인 : ", pageBar_html);
+
+		
+		// === #156. 댓글 페이지바 출력하기)
+		$("div#pageBar").html(pageBar_html);
+		
+	}// end of function makeReviewPageBar(currentShowPageNo)------------------ */
+	
+	
+	// == 맛집 상세 페이지에서 로그인 페이지로 이동 (리뷰 작성을 위한 것) == //
+	function goLogin() {
+		
+		location.href = "login.trip";
+
+		// 로그인 후에 다시 전 페이지로 돌아가는 기능 구현해야 함
+		
+	}// end of function goLogin()---------------------------
 	
 </script>
 
@@ -382,69 +519,61 @@ div#reviewList {
 	</div> <!-- row 끝 -->
 	
 	<!-- //////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
-	<!-- //////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
-
-
-
-
-
-
-
-
-
 
 	<!-- 맛집 리뷰 -->
 	<div class="border rounded" id="reviewList">
 
 		<!-- 리뷰쓰기 폼 추가 -->
+		<c:if test="${empty sessionScope.loginuser}">
+			<h4 class="mb-5" style="color: orange;">리뷰를 작성하려면 먼저 로그인을 해주세요.
+				<button type="button" class="btn btn-secondary ml-4" onclick="goLogin()">로그인하기</button>
+			</h4>
+			
+		</c:if>
         <c:if test="${not empty sessionScope.loginuser}">
-           <h3 style="margin-top: 50px;">리뷰 쓰기</h3>
+           <h3>리뷰 작성</h3>
            <form name="addWriteFrm" id="addWriteFrm" style="margin-top: 20px;">
-               <table class="table" style="width: 1024px">
-                    <tr style="height: 30px;">
-                       <th width="10%">아이디</th>
-                       <td>
-                          <input type="text" name="fk_userid" value="${sessionScope.loginuser.userid}" readonly />
-                          <%-- <input type="text" name="name" value="${sessionScope.loginuser.name}" readonly /> --%>
-                       </td>
-                    </tr>
-                    
-                    <tr style="height: 30px;">
-                       <th>작성된 리뷰 </th>
-                       <td>
-                          <input type="text" name="review_content" size="100" maxlength="1000" />
-                          
-                          <!-- 리뷰에 달리는 원게시물 글번호(즉, 리뷰의 부모글 글번호) -->
-                          <input type="hidden" name="food_store_code" value="${requestScope.foodstorevo.food_store_code}" />
-                       </td>
-                    </tr>
-                    
-                    <tr>
-                     <th colspan="2">
-                          <button type="button" class="btn btn-success btn-sm mr-3" onclick="goAddReview()">리뷰쓰기</button>
-                         <button type="reset" class="btn btn-success btn-sm">리뷰쓰기 취소</button>
-                     </th>
-                    </tr>
+	               <table class="table">
+	                    
+	                    <tr style="height: 30px;">
+	                       <th style="width: 10%;">리뷰 내용 </th>
+	                       <td>
+	                          <input type="text" name="review_content" maxlength="1000" style="width: 75%;" />
+	                          <button type="reset" class="btn btn-light btn-sm mr-2 ml-3">취소</button>
+	                     	  <button type="button" class="btn btn-success btn-sm mr-3" onclick="goAddReview()">리뷰등록</button>
 
-				</table>       
-				
-				<input type="hidden" name="parent_code" value="${requestScope.foodstorevo.food_store_code}" />  
+	                          <!-- 리뷰에 달리는 원게시물 글번호(즉, 리뷰의 부모글 글번호) -->
+	                          <input type="hidden" name="food_store_code" value="${requestScope.foodstorevo.food_store_code}" />
+			                    <input type="hidden" name="fk_userid" value="${sessionScope.loginuser.userid}" readonly />
+	                       </td>
+	                    </tr>
+	                   
+	                    
+	                   <!--  <tr>
+	                     <th colspan="2" style="text-align: right;"> 
+	                        <button type="reset" class="btn btn-light btn-sm mr-2">취소</button>
+	                     	<button type="button" class="btn btn-success btn-sm mr-3" onclick="goAddReview()">리뷰등록</button>
+	                     </th>
+	                    </tr> -->
+					</table>       
+					<input type="hidden" name="parent_code" value="${requestScope.foodstorevo.food_store_code}" />  
 			</form>
 		</c:if>
 
 		<!-- 리뷰 내용 보여주기 -->
-		<h3 class="mb-5">작성된 리뷰</h3>
+		<h3 class="mb-4 mt-5">작성된 리뷰</h3>
 		<table class="table" style="margin-bottom: 3%;">
 			<thead>
 				<tr>
 					<th style="width: 6%;">순번</th>
 					<th style="text-align: center;">내용</th>
-					<th style="width: 12%; text-align: center;">작성자 아이디</th>
-					<th style="width: 12%; text-align: center;">작성일자</th>
-					<th style="width: 12%; text-align: center;">수정/삭제</th>
+					<th style="width: 12%;">작성자 아이디</th>
+					<th style="width: 12%;">작성일자</th>
+					<th style="width: 12%;">수정/삭제</th>
 				</tr>
 			</thead>
-			<tbody id="commentDisplay"></tbody>
+			<tbody id="reviewDisplay">
+			</tbody>
 		</table>
 		
 		<!-- 리뷰 페이지바가 보여지는 곳 -->
