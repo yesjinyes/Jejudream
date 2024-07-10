@@ -48,8 +48,8 @@ button#searchBtn:hover {
 
 <div class="container" style="margin: 3% auto; width: 100%; height: 500px;">
 
-	<div class="d-flex mb-5">
-		<form name="searchFrm">
+	<form name="searchFrm">
+		<div class="d-flex mb-5">
 			<select class="mr-3" name="searchType" style="width: 7%;">
 				<option value="subject">글제목</option>
 				<option value="content">글내용</option>
@@ -60,8 +60,8 @@ button#searchBtn:hover {
 			<button type="button" id="searchBtn" class="btn">
 				<i class="fa-solid fa-magnifying-glass"></i>&nbsp;검색
 			</button>
-		</form>
-	</div>
+		</div>
+	</form>
 	
 	<table id="freeBoard" class="table table-hover" style="width: 100%;">
 		<thead>
