@@ -27,6 +27,8 @@ import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.service.Ws_TripService;
 
+import oracle.jdbc.proxy.annotation.Post;
+
 @Controller
 public class Ws_TripController {
 	
@@ -783,19 +785,161 @@ public class Ws_TripController {
 		return mav;
 	}
 	
-	// 한 유저의 상세 정보를 가져와서 json 타입으로 뿌려준다.
+	// 매년 호텔 예약건수를 찾아와서 차트화 시켜준다
 	@ResponseBody
-	@GetMapping(value="/get_chart.trip", produces="text/plain;charset=UTF-8") 
-	public String get_chart(HttpServletRequest request) {
+	@GetMapping(value="/get_year_reservation_hotel_chart.trip", produces="text/plain;charset=UTF-8") 
+	public String get_year_reservation_hotel_chart(HttpServletRequest request) {
 		
 		 
 		
-		List<Map<String,String>> mapList = service.get_member_line_year_chart();// 매년 가입자 수 통계를 내기 위한 차트 값 가져오기
+		List<Map<String,String>> mapList = service.get_year_reservation_hotel_chart();// 매년 호텔 예약건수를 찾아와서 차트화 시켜주기위한 정보 가져오기
+		
+		JSONArray jsonArr = new JSONArray();
+		
+		for(int i=2015;i<=2024;i++) {
+			JSONObject jsonObj = new JSONObject();
+			boolean is_exist = false;
+			for(Map<String,String> map : mapList) {
+				if(map.get("reservation_year").equals(String.valueOf(i))) {
+					is_exist = true;
+					jsonObj.put("line_year_CNT", map.get("CNT"));
+				}
+			}
+			if(!is_exist) {
+				jsonObj.put("line_year_CNT", "0");
+			}
+			jsonArr.put(jsonObj);
+		}
+		
+		return jsonArr.toString(); 	
+	}
+	
+	// 선택한 년도의 매월 예약건수를 가져와서 차트화 시켜준다.
+	@ResponseBody
+	@GetMapping(value="/get_month_reservation_chart.trip", produces="text/plain;charset=UTF-8") 
+	public String get_month_reservation_chart(HttpServletRequest request) {
+		
+		String choice_year = request.getParameter("choice_year");
+		List<Map<String,String>> mapList = service.get_month_reservation_chart(choice_year);// 선택한 년도의 매월 예약건수를 가져와서 차트화 시켜준다.
+
+		JSONArray jsonArr = new JSONArray();
+		String str_i = "";
+		for(int i=1;i<=12;i++) {
+			JSONObject jsonObj = new JSONObject();
+			boolean is_exist = false;
+			for(Map<String,String> map : mapList) {
+				if(i<10) {
+					str_i = "0"+i;
+				}
+				if(map.get("line_month").equals(choice_year+"-"+str_i)) {
+					is_exist = true;
+					jsonObj.put("line_month_CNT", map.get("line_CNT"));
+				}
+			}
+			if(!is_exist) {
+				jsonObj.put("line_month_CNT", "0");
+			}
+			jsonArr.put(jsonObj);
+		}
+		
+		return jsonArr.toString(); 	
+	}
+	
+	// 매년 로그인 한 유저의 로그인 수를 가져와서 차트화 시켜준다.
+	@ResponseBody
+	@GetMapping(value="/get_year_login_member_chart.trip", produces="text/plain;charset=UTF-8") 
+	public String get_year_login_member_chart(HttpServletRequest request) {
+		
+		 
+		
+		List<Map<String,String>> mapList = service.get_year_login_member_chart();// 매년 가입자 수 통계를 내기 위한 차트 값 가져오기
+		
+		JSONArray jsonArr = new JSONArray();
+		
+		for(int i=2015;i<=2024;i++) {
+			JSONObject jsonObj = new JSONObject();
+			boolean is_exist = false;
+			for(Map<String,String> map : mapList) {
+				if(map.get("line_year").equals(String.valueOf(i))) {
+					is_exist = true;
+					jsonObj.put("line_year_CNT", map.get("line_CNT"));
+				}
+			}
+			if(!is_exist) {
+				jsonObj.put("line_year_CNT", "0");
+			}
+			jsonArr.put(jsonObj);
+		}
+		
+		return jsonArr.toString(); 	
+	}
+	
+	// 선택한 년도의 매월 로그인 한 유저의 로그인 수를 가져와서 차트화 시켜준다.
+	@ResponseBody
+	@GetMapping(value="/get_month_login_member_chart.trip", produces="text/plain;charset=UTF-8") 
+	public String get_month_login_member_chart(HttpServletRequest request) {
+		
+		String choice_year = request.getParameter("choice_year");
+		List<Map<String,String>> mapList = service.get_month_login_member_chart(choice_year);// 매달 가입자 수 통계를 내기 위한 차트 값 가져오기
+
+		JSONArray jsonArr = new JSONArray();
+		String str_i = "";
+		for(int i=1;i<=12;i++) {
+			JSONObject jsonObj = new JSONObject();
+			boolean is_exist = false;
+			for(Map<String,String> map : mapList) {
+				if(i<10) {
+					str_i = "0"+i;
+				}
+				if(map.get("line_month").equals(choice_year+"-"+str_i)) {
+					is_exist = true;
+					jsonObj.put("line_month_CNT", map.get("line_CNT"));
+				}
+			}
+			if(!is_exist) {
+				jsonObj.put("line_month_CNT", "0");
+			}
+			jsonArr.put(jsonObj);
+		}
+		
+		return jsonArr.toString(); 	
+	}
+	
+	// 전체 연령대 차트에 사용할 정보 가져오기
+	@ResponseBody
+	@GetMapping(value="/user_age_group_chart.trip", produces="text/plain;charset=UTF-8") 
+	public String user_age_group_chart(HttpServletRequest request) {
+		
+		List<Map<String,String>> mapList = service.user_age_group_chart();// 사용자 연령대 차트에 사용할 정보 가져오기
 
 		JSONArray jsonArr = new JSONArray();
 		for(Map<String,String> map : mapList) {
 			JSONObject jsonObj = new JSONObject();
-			jsonObj.put("line_year_CNT", map.get("line_CNT"));
+			jsonObj.put("ageGroup", map.get("ageGroup"));
+			jsonObj.put("PERCNTAGE", map.get("PERCNTAGE"));
+			jsonArr.put(jsonObj);
+		}
+		
+		return jsonArr.toString(); 	
+	}
+	
+	// 전체 성별 차트에 사용할 정보 가져오기
+	@ResponseBody
+	@GetMapping(value="/user_gender_chart.trip", produces="text/plain;charset=UTF-8") 
+	public String user_gender_chart(HttpServletRequest request) {
+		
+		List<Map<String,String>> mapList = service.user_gender_chart();// 사용자 성별 차트에 사용할 정보 가져오기
+
+		JSONArray jsonArr = new JSONArray();
+		for(Map<String,String> map : mapList) {
+			JSONObject jsonObj = new JSONObject();
+			if(map.get("gender").equals("1")) {
+				jsonObj.put("gender", "남성");
+			}
+			else if(map.get("gender").equals("2")) {
+				jsonObj.put("gender", "여성");
+			}
+			jsonObj.put("PERCNTAGE", map.get("PERCNTAGE"));
 			jsonArr.put(jsonObj);
 		}
 		

@@ -13,35 +13,25 @@ grant connect, resource, create view, unlimited tablespace to final_orauser2;
 
 WITH A
 AS (
-select to_char(registerday,'yyyy-mm') as registerday, count(*) as CNT
-from tbl_company
-group by to_char(registerday,'yyyy-mm')
+select to_char(reservation_date,'yyyy-mm') as reservation_year, count(*) as CNT
+from tbl_reservation
+where reservation_date between '2023-01-01' and '2023-12-31'
+group by to_char(reservation_date,'yyyy-mm')
 )
-SELECT A.registerday, A.CNT, TO_CHAR( ROUND((A.CNT / B.TOTAL) * 100, 1), '990.0') AS PERCNTAGE
+SELECT A.reservation_year, A.CNT
 FROM A CROSS JOIN (SELECT SUM(CNT) AS TOTAL FROM A) B
-order by registerday;
+order by reservation_year;
 
 
 WITH A
 AS (
-select to_char(registerday,'yyyy-mm-dd') as registerday, count(*) as CNT
-from tbl_company
-where registerday between '24-07-01' and last_day('24-07-01')
-group by to_char(registerday,'yyyy-mm-dd')
+select to_char(reservation_date,'yyyy-mm') as reservation_date, count(*) as CNT
+from tbl_reservation
+group by to_char(reservation_date,'yyyy-mm')
 )
-SELECT A.registerday, A.CNT, TO_CHAR( ROUND((A.CNT / B.TOTAL) * 100, 1), '990.0') AS PERCNTAGE
+SELECT A.reservation_date, A.CNT, TO_CHAR( ROUND((A.CNT / B.TOTAL) * 100, 1), '990.0') AS PERCNTAGE
 FROM A CROSS JOIN (SELECT SUM(CNT) AS TOTAL FROM A) B
-order by registerday asc;
-
-WITH A
-AS (
-select to_char(registerday,'yyyy') as line_year, count(*) as line_CNT
-from tbl_company
-group by to_char(registerday,'yyyy')
-)
-SELECT A.line_year, A.line_CNT
-FROM A CROSS JOIN (SELECT SUM(line_CNT) AS TOTAL FROM A) B
-order by line_year asc;
+order by reservation_date;
 
 select *
 from tbl_reservation;

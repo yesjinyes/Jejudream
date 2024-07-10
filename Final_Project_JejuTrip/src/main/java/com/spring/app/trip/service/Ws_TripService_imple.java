@@ -230,8 +230,43 @@ public class Ws_TripService_imple implements Ws_TripService {
 	
 	// 매년 가입자 수 통계를 내기 위한 차트 값 가져오기
 	@Override
-	public List<Map<String, String>> get_member_line_year_chart() {
-		List<Map<String,String>> mapList = dao.get_member_line_year_chart();
+	public List<Map<String, String>> get_year_login_member_chart() {
+		List<Map<String,String>> mapList = dao.get_year_login_member_chart();
+		return mapList;
+	}
+	
+	// 매달 가입자 수 통계를 내기 위한 차트 값 가져오기
+	@Override
+	public List<Map<String, String>> get_month_login_member_chart(String choice_year) {
+		List<Map<String,String>> mapList = dao.get_month_login_member_chart(choice_year);
+		return mapList;
+	}
+	
+	// 사용자 연령대 차트에 사용할 정보 가져오기
+	@Override
+	public List<Map<String, String>> user_age_group_chart() {
+		List<Map<String,String>> mapList = dao.user_age_group_chart();
+		return mapList;
+	}
+	
+	// 사용자 성별 차트에 사용할 정보 가져오기
+	@Override
+	public List<Map<String, String>> user_gender_chart() {
+		List<Map<String,String>> mapList = dao.user_gender_chart();
+		return mapList;
+	}
+	
+	// 매년 호텔 예약건수를 찾아와서 차트화 시켜주기위한 정보 가져오기
+	@Override
+	public List<Map<String, String>> get_year_reservation_hotel_chart() {
+		List<Map<String,String>> mapList = dao.get_year_reservation_hotel_chart();
+		return mapList;
+	}
+	
+	// 선택한 년도의 매월 예약건수를 가져와서 차트화 시켜준다.
+	@Override
+	public List<Map<String, String>> get_month_reservation_chart(String choice_year) {
+		List<Map<String,String>> mapList = dao.get_month_reservation_chart(choice_year);
 		return mapList;
 	}
 
