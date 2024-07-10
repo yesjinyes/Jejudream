@@ -69,6 +69,19 @@ public class Hs_TripDAO_imple implements Hs_TripDAO {
 		int getPlayReviewCount = sqlsession.selectOne("hs_trip.getPlayReviewCount",paraMap);
 		return getPlayReviewCount;
 	}
+	
+	//리뷰수정하기
+	@Override
+	public int updateReview(Map<String, String> paraMap) {
+		int n = sqlsession.update("hs_trip.updateReview",paraMap);
+		return n;
+	}
+	//리뷰삭제하기
+	@Override
+	public int reviewDel(String review_code) {
+		int n = sqlsession.delete("hs_trip.reviewDel",review_code);
+		return n;
+	}
 
 
 }

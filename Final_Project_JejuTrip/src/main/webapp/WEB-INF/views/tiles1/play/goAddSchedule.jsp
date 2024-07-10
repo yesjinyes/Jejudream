@@ -199,6 +199,21 @@ table#schedule{
     color:gray;
 }
 
+/*---------------------------------------------------*/
+
+	span.markColor {color: #ff8000; }
+	
+	div.customDisplay {display: inline-block;
+	                   margin: 1% 3% 0 0;
+	}
+	                
+	div.commentDel {font-size: 12pt;
+	                cursor: pointer; }
+	
+	div.commentDel:hover {background-color: #ff8000;
+						border-radius:2%;
+	                      color: white;	}
+
 </style>
 
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f42c6cbd2d2060c5c719ee80540fbfbc&libraries=services"></script> 
@@ -262,6 +277,7 @@ $(document).ready(function() {
     
     
     //리뷰 작성-----------------------------------------------------------------
+   
     $("button#btnCommentOK").click(function(){
     	  
     	  if(${empty sessionScope.loginuser}) {
@@ -308,7 +324,13 @@ $(document).ready(function() {
     	  
       });//end of  $("button#btnCommentOK").click(function())--------------
     
-      
+      //----------------------------------------------------------------------------------------
+     //댓글 수정 ,완료
+     
+     
+     
+     
+      //------------------------------------------------------------------------------------------------
       
     //달력용--------------------------------------------------------------------
 	 $(function() {
@@ -445,6 +467,11 @@ $(document).ready(function() {
         
         
         
+        
+        
+        
+        
+        
 });//end of $(document).ready(function() {
 
 // 리뷰 보여주기
@@ -468,20 +495,22 @@ $(document).ready(function() {
                              
                v_html  += "<div class='customDisplay'><img src='<%= ctxPath %>/resources/images/play/rogo.png' style='width: 30px;'>&nbsp;"+item.fk_userid+"</div>"    
             	   	    + "<div id='review"+index+"' style='font-weight: bold;'><span class='markColor'></span>&nbsp;"+item.review_content+"</div>"
-                        + "<div class='customDisplay' style='font-size: 12px;'>&nbsp;"+item.registerday+"</div>";
+                        + "<div class='customDisplay' style='font-size: 12px;'>&nbsp;"+item.registerday+"</div>"
+                        + "<input type='hidden' name='review_code' value='" + item.review_code + "'/>";
                
                if( loginuserid == "") { 
                   // 로그인을 안한 경우 
-                  v_html += "<div class='customDisplay spacediv'>&nbsp;</div>";
+                  v_html += "<div class='customDisplay spacediv'>&nbsp;</div><br>";
                }      
                else if( loginuserid != "" && writeuserid != loginuserid ) { 
                   // 로그인을 했으나 후기글이 로그인한 사용자 쓴 글이 아니라 다른 사용자 쓴 후기글 이라면  
-                  v_html += "<div class='customDisplay spacediv'>&nbsp;</div>";
+                  v_html += "<div class='customDisplay spacediv'>&nbsp;</div><br>";
                }    
                else if( loginuserid != "" && writeuserid == loginuserid ) {
                   // 로그인을 했고 후기글이 로그인한 사용자 쓴 글 이라면
-                  v_html += "<div class='customDisplay spacediv commentDel' onclick='delMyReview("+item.review_code+")'>후기삭제</div>"; 
-                  v_html += "<div class='customDisplay spacediv commentDel commentUpdate' onclick='updateMyReview("+index+","+item.review_code+")'>후기수정</div>"; 
+                           v_html += "<div class='customDisplay spacediv commentDel commentUpdate' onclick='updateMyReview("+index+","+item.review_code+")'>후기수정</div>&nbsp;&nbsp;"; 
+                  		   v_html += "<div class='customDisplay spacediv commentDel' onclick='delMyReview("+item.review_code+")'>후기삭제</div><br><br>"; 
+                  		   
                }
            }); 
            const totalPage = Math.ceil(json[0].totalCount / json[0].sizePerPage);
@@ -545,27 +574,25 @@ $(document).ready(function() {
  }
 
 
-
-<%-- 
 // 특정 제품의 제품후기를 삭제하는 함수
-function delMyReview(review_seq){
-	   if(confirm("정말로 제품후기를 삭제하시겠습니까?")) {
+function delMyReview(review_code){
+	   if(confirm("리뷰를 삭제하시겠습니까?")) {
 	         $.ajax({
 	            url:"<%= ctxPath%>/play/reviewDel.trip",
 	            type:"post",
-	            data:{"review_seq":review_seq},
+	            data:{"review_code":review_code},
 	            dataType:"json",
 	            success:function(json){
 	            // console.log(JSON.stringify(json));
 	            // {"n":1} 또는 {"n":0}
 	            
 	               if(json.n == 1) {
-	                  alert("제품후기 삭제가 성공되었습니다.");
-	                  goReviewListView(); // 특정 제품의 제품후기글들을 보여주는 함수 호출하기 
+	                  alert("리뷰 삭제 완료.");
+	                  goReviewListView(1); // 특정 제품의 제품후기글들을 보여주는 함수 호출하기 
 	               } 
 	               else {
-	                  alert("제품후기 삭제가 실패했습니다.");
-	                  goReviewListView();
+	                  alert("삭제가 실패했습니다.");
+	                  goReviewListView(1);
 	               }
 	            
 	            },
@@ -579,14 +606,15 @@ function delMyReview(review_seq){
 
 
 // 특정 제품의 제품후기를 수정하는 함수
-function updateMyReview(index,review_seq){
+function updateMyReview(index,review_code){
 		const origin_elmt = $("div#review" + index).html();//원래의 제품후기 엘리먼트   
 		//alert(origin_elmt)
 		
 		//alert($("div#review" + index).html())
-		const review_contents = $("div#review" + index).text().substring(2);
+		const review_contents = $("div#review" + index).text().substring(1);
 		
-		$("div.commentUpdate").hide(); //후기수정 글자 감추기
+		$("div.commentUpdate").hide(); 
+		$("div.commentDel").hide(); 
 		// "후기수정" 을 위한 엘리먼트 만들기 
 	       let v_html = "<textarea id='edit_textarea' style='font-size: 12pt; width: 40%; height: 50px;'>"+review_contents+"</textarea>";
 	       v_html += "<div style='display: inline-block; position: relative; top: -20px; left: 10px;'><button type='button' class='btn btn-sm btn-outline-secondary' id='btnReviewUpdate_OK'>수정완료</button></div>"; 
@@ -599,26 +627,27 @@ function updateMyReview(index,review_seq){
 	    // 수정취소 버튼 클릭시
 	       $(document).on("click", "button#btnReviewUpdate_NO", function(){
 	    	   $("div#review"+index).html(origin_elmt);//원래의 제품후기 엘리먼트로 복원하기.
-	    	   $("div.commentUpdate").show();//"후기수정"글자 보여주기
+	    	   $("div.commentUpdate").show();
+	    	   $("div.commentDel").show();
 	       });
 	    // 수정완료 버튼 클릭시
 	       $(document).on("click", "button#btnReviewUpdate_OK", function(){
 	    	   $.ajax({
-		            url:"<%= ctxPath%>/shop/reviewUpdate.up",
+		            url:"<%= ctxPath%>/play/reviewUpdate.trip",
 		            type:"post",
-		            data:{"review_seq":review_seq
-		            	 ,"contents":$("textarea#edit_textarea").val()},
+		            data:{"review_code":review_code
+		            	 ,"review_content":$("textarea#edit_textarea").val()},
 		            dataType:"json",
 		            success:function(json){
 		            // console.log(JSON.stringify(json));
 		            // {"n":1} 또는 {"n":0}
 		            
 		               if(json.n == 1) {
-		                  goReviewListView(); // 특정 제품의 제품후기글들을 보여주는 함수 호출하기 
+		                  goReviewListView(1); // 특정 제품의 제품후기글들을 보여주는 함수 호출하기 
 		               } 
 		               else {
 		                  alert("제품후기 수정이 실패했습니다.");
-		                  goReviewListView();
+		                  goReviewListView(1);
 		               }
 		            
 		            },
@@ -630,13 +659,12 @@ function updateMyReview(index,review_seq){
 	    
 	    
 }
- --%>
 
 
 </script>
 
 <body>
-방문예정일 선택 달력(모달ok), 행사정보 , 운영시간 , 오시는길 + map 추가(ok) , 뒤로가기 
+
 <div class="container">
 	
 	<div style="width: 90%; margin: 3% auto;text-align: right;">
@@ -659,7 +687,9 @@ function updateMyReview(index,review_seq){
     		<span>운영시간 : </span>
     		<span>${requestScope.playvo.play_businesshours}</span> <br><br>
     		<span>오시는길 : </span>
-    		<span id="playAddress">${requestScope.playvo.play_address}</span>
+    		<span id="playAddress">${requestScope.playvo.play_address}</span><br><br>
+    		<span>연락처 : </span>
+    		<span>${requestScope.playvo.play_mobile}</span>
     	</div>
     </div>
        
