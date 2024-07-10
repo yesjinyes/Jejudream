@@ -1,7 +1,9 @@
 package com.spring.app.trip.model;
 
+import java.util.List;
 import java.util.Map;
 
+import com.spring.app.trip.domain.BoardVO;
 import com.spring.app.trip.domain.CompanyVO;
 import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.MemberVO;
@@ -67,5 +69,11 @@ public interface Dy_TripDAO {
 
 	// 비밀번호 변경 날짜(lastpwdchangedate)를 현재 날짜로 변경하기
 	int updatePwdChangeDate(Map<String, String> paraMap);
+	
+	// 커뮤니티 자유게시판 리스트 조회하기
+	List<BoardVO> getFreeBoardList();
+
+	// 커뮤니티 글 등록 처리하기
+	int addBoard(BoardVO boardvo);
 
 }

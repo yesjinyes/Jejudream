@@ -56,12 +56,17 @@
 			<label class="tab" for="radio-6">구인</label>
 			<span class="glider"></span>
 		</div>
-		
+		<%--
 		<div class="search">
 			<input type="text" id="inputSearch" placeholder="검색어 입력">
 			<img id="imgSearch" src="<%= ctxPath%>/resources/images/community/search.png">
 		</div>
-	</div>	
+		--%>
+		
+		<div style="width: 7%;">
+			<button type="button" id="writeBtn" class="btn" onclick="location.href='<%=ctxPath%>/community/addBoard.trip'">글쓰기</button>
+		</div>
+	</div>
 	
 	
 	

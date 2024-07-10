@@ -32,6 +32,7 @@ import com.spring.app.trip.common.AES256;
 import com.spring.app.trip.common.FileManager;
 import com.spring.app.trip.common.GoogleMail;
 import com.spring.app.trip.common.Sha256;
+import com.spring.app.trip.domain.BoardVO;
 import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.service.Dy_TripService;
@@ -833,16 +834,68 @@ public class Dy_TripController {
 	
 	// 커뮤니티 전체 페이지 요청
 	@GetMapping("community/allBoard.trip")
-	public String community() {
+	public String allBoard() {
 		
 		return "community/allBoard";
 	}
 	
+	
 	// 커뮤니티 자유게시판 페이지 요청
 	@GetMapping("community/freeBoard.trip")
-	public String boardList() {
+	public ModelAndView freeBoard(ModelAndView mav, HttpServletRequest request) {
+		/*
+		List<BoardVO> freeBoardList = null;
 		
-		return "community/freeBoard";
+		// === #69. 글조회수(readCount)증가 (DML문 update)는
+		//          반드시 목록보기에 와서 해당 글제목을 클릭했을 경우에만 증가되고,
+		//          웹브라우저에서 새로고침(F5)을 했을 경우에는 증가가 되지 않도록 해야 한다.
+		//          이것을 하기 위해서는 session 을 사용하여 처리하면 된다.
+		HttpSession session = request.getSession();
+		session.setAttribute("readCountPermission", "yes");
+
+		String searchType = request.getParameter("searchType");
+		String searchWord = request.getParameter("searchWord");
+		String str_currentShowPageNo = request.getParameter("currentShowPageNo"); 
+		
+		
+		
+		
+		freeBoardList = service.getFreeBoardList();
+		
+		mav.addObject("freeBoardList", freeBoardList);
+		*/
+		mav.setViewName("community/freeBoard");
+		
+		return mav;
+	}
+	
+	
+	// 커뮤니티 글 등록 페이지 요청
+	@GetMapping("community/addBoard.trip")
+	public String requiredLogin_addBoard(HttpServletRequest request, HttpServletResponse response) {
+		
+		return "community/addBoard.tiles1";
+	}
+	
+	
+	// 커뮤니티 글 등록 처리하기
+	@PostMapping("community/addBoardEnd.trip")
+	public ModelAndView addBoardEnd(ModelAndView mav, BoardVO boardvo, HttpServletRequest request) {
+		
+		int n = service.addBoard(boardvo);
+		
+		if(n == 1) {
+			mav.addObject("message", "글 등록이 성공되었습니다.");
+			mav.addObject("loc", request.getContextPath() + "/communityMain.trip");
+			
+		} else {
+			mav.addObject("message", "글 등록에 실패하였습니다.\\n메인 페이지로 돌아갑니다.");
+			mav.addObject("loc", request.getContextPath() + "/index.trip");
+		}
+		
+		mav.setViewName("msg");
+		
+		return mav;
 	}
 	
 }

@@ -1,5 +1,6 @@
 package com.spring.app.trip.model;
 
+import java.util.List;
 import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
+import com.spring.app.trip.domain.BoardVO;
 import com.spring.app.trip.domain.CompanyVO;
 import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.MemberVO;
@@ -254,8 +256,24 @@ public class Dy_TripDAO_imple implements Dy_TripDAO {
 		return result;
 	}
 
+	
+	// 커뮤니티 자유게시판 리스트 조회하기
+	@Override
+	public List<BoardVO> getFreeBoardList() {
+		
+		List<BoardVO> list = sqlsession.selectList("dy_trip.getFreeBoardList");
+		
+		return list;
+	}
 
 	
-	
+	// 커뮤니티 글 등록 처리하기
+	@Override
+	public int addBoard(BoardVO boardvo) {
+		
+		int n = sqlsession.insert("dy_trip.addBoard", boardvo);
+		
+		return n;
+	}
 
 }

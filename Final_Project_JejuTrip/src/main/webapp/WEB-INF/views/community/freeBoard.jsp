@@ -46,29 +46,31 @@ button#searchBtn:hover {
 </script>
 
 
-<div class="container" style="margin-top: 3%; height: 500px;">
+<div class="container" style="margin: 3% auto; width: 100%; height: 500px;">
 
 	<div class="d-flex mb-5">
-		<select class="mr-3" style="width: 7%;">
-			<option>글제목</option>
-			<option>글내용</option>
-			<option>작성자</option>
-		</select>
-		
-		<input type="text" id="boardSearch" class="mr-3" />
-		<button type="button" id="searchBtn" class="btn">
-			<i class="fa-solid fa-magnifying-glass"></i>&nbsp;검색
-		</button>
+		<form name="searchFrm">
+			<select class="mr-3" name="searchType" style="width: 7%;">
+				<option value="subject">글제목</option>
+				<option value="content">글내용</option>
+				<option value="name">작성자</option>
+			</select>
+			
+			<input type="text" id="boardSearch" class="mr-3" name="searchWord" />
+			<button type="button" id="searchBtn" class="btn">
+				<i class="fa-solid fa-magnifying-glass"></i>&nbsp;검색
+			</button>
+		</form>
 	</div>
 	
-	<table id="freeBoard" class="table table-bordered">
+	<table id="freeBoard" class="table table-hover" style="width: 100%;">
 		<thead>
 			<tr>
-				<th style="width: 70px;  text-align: center;">순번</th>
-				<th style="width: 360px; text-align: center;">제목</th>
-				<th style="width: 70px;  text-align: center;">성명</th>
-				<th style="width: 150px; text-align: center;">날짜</th>
-				<th style="width: 70px;  text-align: center;">조회수</th>
+				<th style="width: 7%;  text-align: center;">순번</th>
+				<th style="width: 50%; text-align: center;">제목</th>
+				<th style="width: 10%;  text-align: center;">성명</th>
+				<th style="width: 20%; text-align: center;">날짜</th>
+				<th style="width: 8%;  text-align: center;">조회수</th>
 			</tr>
 		</thead>
 		

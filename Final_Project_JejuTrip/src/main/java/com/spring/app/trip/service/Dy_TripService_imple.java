@@ -2,6 +2,7 @@ package com.spring.app.trip.service;
 
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.app.trip.common.AES256;
 import com.spring.app.trip.common.Sha256;
+import com.spring.app.trip.domain.BoardVO;
 import com.spring.app.trip.domain.CompanyVO;
 import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.MemberVO;
@@ -407,6 +409,24 @@ public class Dy_TripService_imple implements Dy_TripService {
 		return result;
 	}
 
+	
+	// 커뮤니티 자유게시판 리스트 조회하기
+	@Override
+	public List<BoardVO> getFreeBoardList() {
+		
+		List<BoardVO> list = dao.getFreeBoardList();
+		
+		return list;
+	}
 
+	
+	// 커뮤니티 글 등록 처리하기
+	@Override
+	public int addBoard(BoardVO boardvo) {
+		
+		int n = dao.addBoard(boardvo);
+		
+		return n;
+	}
 
 }

@@ -228,4 +228,16 @@
 		where companyid = #{id}
 	</update>
 	
+	
+	<!-- 커뮤니티 자유게시판 리스트 조회하기 -->
+	<select id="getFreeBoardList" resultType="">
+	</select>
+	
+	
+	<!-- 커뮤니티 글 등록 처리하기 -->
+	<insert id="addBoard" parameterType="com.spring.app.trip.domain.BoardVO">
+		insert into tbl_board(seq, fk_userid, name, subject, content, pw, category)
+		values(boardSeq.nextval, #{fk_userid}, #{name}, #{subject}, #{content}, #{pw}, #{category})
+	</insert>
+	
 </mapper>
