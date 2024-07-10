@@ -1,12 +1,17 @@
 package com.spring.app.trip.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.spring.app.trip.domain.FoodstoreVO;
+import com.spring.app.trip.domain.ReviewVO;
 import com.spring.app.trip.model.Yj_TripDAO;
 
 @Service
@@ -54,6 +59,15 @@ public class Yj_TripService_imple implements Yj_TripService {
 	public List<Map<String, String>> viewfoodaddImg(Map<String, String> paraMap) {
 		List<Map<String, String>> addimgList = dao.viewfoodaddImg(paraMap);
 		return addimgList;
+	}
+
+
+	// == 맛집 리뷰 쓰기 == //
+	@Override
+	public int addFoodstoreReview(ReviewVO reviewvo) {
+		int n = dao.addFoodstoreReview(reviewvo); // 리뷰쓰기(tbl_review 에 insert)
+		//System.out.println("service 에서 n 확인 => " + n);
+		return n;
 	}
 
 	

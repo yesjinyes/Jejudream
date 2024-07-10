@@ -137,6 +137,13 @@
 		]]> 
 	</select>
 	
+	
+	<!-- 맛집 리뷰 쓰기  -->
+	<insert id="addFoodstoreReview" parameterType="com.spring.app.trip.domain.ReviewVO">
+		insert into tbl_review(REVIEW_CODE, FK_USERID, PARENT_CODE, REVIEW_CONTENT, REGISTERDAY, REVIEW_DIVISION_R)
+		values(seq_review.nextval, #{fk_userid}, #{parent_code}, #{review_content}, default, 'B')
+	</insert>
+	
 
 
 </mapper>

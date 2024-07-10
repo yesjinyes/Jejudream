@@ -11,11 +11,13 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.app.trip.domain.FoodstoreVO;
+import com.spring.app.trip.domain.ReviewVO;
 import com.spring.app.trip.service.Yj_TripService;
 
 @Controller
@@ -204,12 +206,38 @@ public class Yj_TripController {
  		mav.setViewName("foodstore/foodstoreDetail.tiles1");
 		
  		return mav;
-		
 	}
 	
 	
-	
+	// == 리뷰 쓰기 == //
+	@ResponseBody
+	@PostMapping(value="/addReview.trip", produces="text/plain;charset=UTF-8")
+	public String addComment(ReviewVO reviewvo, HttpServletRequest request) {
 
+		String parent_code = request.getParameter("parent_code");
+		// System.out.println("확인용 parent_code => " + parent_code);
+		
+		int n = 0;
+		
+		try {
+			n = service.addFoodstoreReview(reviewvo); // 리뷰쓰기, 리뷰 개수 증가
+			// 댓글쓰기(insert) 및 원게시물(tbl_board 테이블)에 댓글의 개수 증가(update 1씩 증가)하기 
+		
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("n", n);
+		jsonObj.put("fk_userid", reviewvo.getFk_userid());
+		jsonObj.put("parent_code", parent_code);
+		
+		// System.out.println("### 확인 : "+ jsonObj.toString());
+		
+		return jsonObj.toString();
+		
+	}
+	
 
 	
 	
