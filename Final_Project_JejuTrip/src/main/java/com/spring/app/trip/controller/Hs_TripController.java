@@ -1,15 +1,14 @@
 package com.spring.app.trip.controller;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
 
 import java.io.File;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.json.JSONArray;
@@ -419,13 +418,121 @@ public class Hs_TripController {
 		}
 		
 	
+		@GetMapping("editPlay.trip")
+		public ModelAndView requiredLogin_editPlay(HttpServletRequest request,HttpServletResponse response, ModelAndView mav) {
+			String message = "";
+			// 글 삭제 할 글번호 가져오기
+			
+			HttpSession session = request.getSession();
+			MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
+			
+			String play_code = request.getParameter("play_code");
+			System.out.println("play_code " + play_code);
+			
+			try {
+				Integer.parseInt(play_code);
+				System.out.println("play_code integer" + play_code);
+				
+				if(loginuser != null && !loginuser.getUserid().equals("admin")) {
+					message="관리자만 접근 가능합니다.";
+					mav.setViewName("play/playMain.tiles1");
+				}
+				else {
+				//글 수정해야 할 글 1 개 내용 가져오기
+					Map<String, String> paraMap = new HashMap<>();
+					paraMap.put("play_code", play_code);
+					
+					PlayVO playvo=service.getPlaySelect(paraMap);
+					
+					if(playvo == null) {
+						message = "존재하지 않는 글 입니다";
+					}
+					else {
+						mav.addObject("playvo",playvo);
+						mav.setViewName("play/edit.tiles1");
+						
+						return mav;
+					}
+				}
+				
+				
+			} catch (NumberFormatException e) {
+				message = "관리자만 접근 가능합니다.2";
+			}
+			
+			String loc = "javascript:history.back()";
+			mav.addObject("message",message);
+			mav.addObject("loc",loc);
+			
+			mav.setViewName("msg");
+			
+			return mav;
+		}
 		
 		
 		
-		
-		
-		
-		
+		@PostMapping("editPlayEnd.trip")
+		public ModelAndView editEnd (ModelAndView mav ,PlayVO playvo ,MultipartHttpServletRequest mrequest) {
+			
+			MultipartFile attach = playvo.getAttach();
+		      
+			if( !attach.isEmpty() ) {
+			    
+				HttpSession session = mrequest.getSession(); 
+				String root = session.getServletContext().getRealPath("/"); 
+				
+				String path = root + "resources"+File.separator+"images"+File.separator+"play";     
+		        String newFileName = "";
+		         
+		        byte[] bytes = null;// 첨부파일의 내용물을 담는 것
+		        
+		         
+		        long fileSize = 0;// 첨부파일의 크기 
+
+		        try {
+		            bytes = attach.getBytes();
+		            String originalFilename = attach.getOriginalFilename();
+		            newFileName = fileManager.doFileUpload(bytes, originalFilename, path); 
+		            
+		            playvo.setFileName(newFileName);
+		                     
+		            playvo.setOrgFilename(playvo.getPlay_name()+"_main.jpg");
+		                     
+		            fileSize = attach.getSize();  // 첨부파일의 크기(단위는 byte임) 
+		            playvo.setFileSize(String.valueOf(fileSize));
+		                     
+		         } catch (Exception e) {
+		            e.printStackTrace();
+		         }   
+			}
+			
+			// =========== !!! 첨부파일 업로드 끝 !!! ============ //;
+			String address = mrequest.getParameter("play_address");
+			String detail_address = mrequest.getParameter("detail_address");
+			
+			playvo.setPlay_address(address + " " + detail_address);
+			
+			System.out.println("setPlay_address"+ playvo.getPlay_address());
+			System.out.println("getFileName"+ playvo.getFileName());
+			System.out.println("getLocal_status"+ playvo.getLocal_status());
+			System.out.println("getPlay_businesshours"+  playvo.getPlay_businesshours());
+			
+			
+			int n = service.editEnd(playvo); 
+			
+			if(n==1) {
+				mav.addObject("message","글 수정 성공!!");
+				mav.addObject("loc", mrequest.getContextPath()+"/playMain.trip?play_code=" + playvo.getPlay_code());//수정되어진 글을 다시 보여줌
+				
+				mav.setViewName("msg");
+				//  /list.action 페이지로 redirect(페이지이동)해라는 말이다.
+			}
+			else {
+		        mav.setViewName("play/playMain.tiles1");
+		        //  /WEB-INF/views/tiles1/board/error/add_error.jsp 파일을 생성한다.
+		      }
+			return mav;
+		}
 		
 		
 		

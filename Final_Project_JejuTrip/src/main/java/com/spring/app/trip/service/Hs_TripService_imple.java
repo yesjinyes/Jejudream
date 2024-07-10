@@ -98,6 +98,24 @@ public class Hs_TripService_imple implements Hs_TripService {
 	}
 
 
+
+	//글 한개 조회하기
+	@Override
+	public PlayVO getPlaySelect(Map<String, String> paraMap) {
+		PlayVO getPlaySelect = dao.getPlaySelect(paraMap);
+		return getPlaySelect;
+	}
+
+
+
+
+	@Override
+	public int editEnd(PlayVO playvo) {
+		int n=dao.editEnd(playvo);
+		return n;
+	}
+
+
 	
 
 }

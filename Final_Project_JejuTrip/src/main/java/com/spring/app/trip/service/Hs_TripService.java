@@ -28,6 +28,11 @@ public interface Hs_TripService {
 	int updateReview(Map<String, String> paraMap);
 	//리뷰 삭제하기
 	int reviewDel(String review_code);
+	
+	//글 한개 조회하기
+	PlayVO getPlaySelect(Map<String, String> paraMap);
+
+	int editEnd(PlayVO playvo);
 
 	
 

@@ -28,6 +28,10 @@ public interface Hs_TripDAO {
 	//리뷰 삭제하기
 	int reviewDel(String review_code);
 
+	PlayVO getPlaySelect(Map<String, String> paraMap);
+
+	int editEnd(PlayVO playvo);
+
 	
 
 	

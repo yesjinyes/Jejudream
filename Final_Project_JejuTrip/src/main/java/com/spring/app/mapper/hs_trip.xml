@@ -113,5 +113,33 @@ where parent_code = #{parent_code}
 	delete from tbl_review where review_code = #{review_code}
 </delete> 
  
+<select id="getPlaySelect" parameterType="HashMap" resultType="com.spring.app.trip.domain.PlayVO">
+SELECT play_code,play_category ,local_status,play_name,play_content,
+       		play_mobile,play_businesshours,play_address,play_main_img,review_division
+	 FROM tbl_play
+WHERE play_code = #{play_code}	 
+</select>
+
+
+<update id="editEnd" parameterType="com.spring.app.trip.domain.PlayVO">
+    update tbl_play
+    <set>
+        play_category = #{play_category},
+        local_status = #{local_status},
+        play_name = #{play_name},
+        play_content = #{play_content},
+        play_mobile = #{play_mobile},
+        play_businesshours = #{play_businesshours},
+        play_address = #{play_address}
+        <if test="fileName != null">
+            , fileName = #{fileName},
+            orgFilename = #{orgFilename},
+            fileSize = #{fileSize},
+            play_main_img = #{fileName}
+        </if>
+    </set>
+    where play_code = #{play_code}
+</update>
+
  
 </mapper>

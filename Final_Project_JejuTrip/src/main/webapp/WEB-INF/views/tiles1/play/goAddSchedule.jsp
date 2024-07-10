@@ -667,6 +667,12 @@ function updateMyReview(index,review_code){
 
 <div class="container">
 	
+	<c:if test="${sessionScope.loginuser.userid == 'admin'}">
+		<div style="width: 90%; margin: 3% auto;text-align: right;">
+		<button type="button" onclick="javascript:location.href='<%= ctxPath%>/editPlay.trip?play_code=${requestScope.playvo.play_code}'" class="btn btn-outline-warning btn-lg" value="NEW">즐길거리 수정</button>
+		<button type="button" onclick="location.href='<%= ctxPath%>/deletePlay.trip'" class="sort" value="NEW">즐길거리 삭제</button>
+		</div>
+	</c:if>
 	<div style="width: 90%; margin: 3% auto;text-align: right;">
     	<i class="fa-regular fa-calendar-plus fa-3x addSchedule"  ></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     	<i class="fa-regular fa-heart fa-3x"></i>
