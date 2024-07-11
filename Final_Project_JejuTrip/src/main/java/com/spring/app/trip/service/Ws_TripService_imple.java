@@ -260,15 +260,15 @@ public class Ws_TripService_imple implements Ws_TripService {
 	
 	// 매년 호텔 예약건수를 찾아와서 차트화 시켜주기위한 정보 가져오기
 	@Override
-	public List<Map<String, String>> get_year_reservation_hotel_chart() {
-		List<Map<String,String>> mapList = dao.get_year_reservation_hotel_chart();
+	public List<Map<String, String>> get_year_reservation_hotel_chart(String lodging_code) {
+		List<Map<String,String>> mapList = dao.get_year_reservation_hotel_chart(lodging_code);
 		return mapList;
 	}
 	
 	// 선택한 년도의 매월 예약건수를 가져와서 차트화 시켜준다.
 	@Override
-	public List<Map<String, String>> get_month_reservation_chart(String choice_year) {
-		List<Map<String,String>> mapList = dao.get_month_reservation_chart(choice_year);
+	public List<Map<String, String>> get_month_reservation_chart(Map<String, String> paraMap) {
+		List<Map<String,String>> mapList = dao.get_month_reservation_chart(paraMap);
 		return mapList;
 	}
 	
@@ -312,6 +312,34 @@ public class Ws_TripService_imple implements Ws_TripService {
 	public int getTotalPlayCount() {
 		int totalCount = dao.getTotalPlayCount();
 		return totalCount;
+	}
+	
+	// 선택한 월에서 매일의 예약건수를 가져와서 차트화 시켜준다.
+	@Override
+	public List<Map<String, String>> get_day_reservation_chart(Map<String, String> paraMap) {
+		List<Map<String, String>> mapList = dao.get_day_reservation_chart(paraMap);
+		return mapList;
+	}
+	
+	// 내가 선택한 월이 있다면 그 월의 마지막 날을 구해준다.
+	@Override
+	public String get_last_day(String choice_month) {
+		String choice_month_last_day = dao.get_last_day(choice_month);
+		return choice_month_last_day;
+	}
+	
+	// 매년 업체수익을 찾아와서 차트화 시켜주기위한 정보 가져오기
+	@Override
+	public List<Map<String, String>> get_year_profit_chart(String companyid) {
+		List<Map<String, String>> mapList = dao.get_year_profit_chart(companyid);
+		return mapList;
+	}
+	
+	// 선택한 년도의 매월 매출액을 가져와서 차트화 시켜준다.
+	@Override
+	public List<Map<String, String>> get_month_profit_chart(Map<String, String> paraMap) {
+		List<Map<String, String>> mapList = dao.get_month_profit_chart(paraMap);
+		return mapList;
 	}
 	
 	

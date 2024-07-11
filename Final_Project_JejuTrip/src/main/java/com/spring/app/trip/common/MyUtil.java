@@ -42,7 +42,5 @@ public class MyUtil {
 		
 	} // end of public static String getCurrentURL(HttpServletRequest request) {}
 	
-	
-	
 
 }

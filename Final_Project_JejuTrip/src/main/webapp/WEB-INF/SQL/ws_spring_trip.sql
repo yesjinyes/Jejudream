@@ -39,34 +39,57 @@ from tbl_reservation;
 -- 일자별 예약 금액 총합 (숙소 마이페이지에서 통계카테고리 내부에 사용할 sql문)
 WITH A
 AS (
-select room_detail_code
-from tbl_room_detail
-where fk_lodging_code = 5159
+select R.room_detail_code
+from tbl_lodging L JOIN tbl_room_detail R
+on L.lodging_code = r.fk_lodging_code
+where L.fk_companyid = 'kakao'
 )
-SELECT to_char(R.reservation_date,'yyyy-mm-dd'), sum(R.reservation_price) as day_total_price
+SELECT to_char(R.reservation_date,'yyyy-mm') as year, sum(R.reservation_price) as profit
 FROM A JOIN tbl_reservation R
 ON A.room_detail_code = R.fk_room_detail_code
-GROUP BY to_char(R.reservation_date,'yyyy-mm-dd');
+WHERE R.reservation_date between '24-01-01' and '24-12-31'
+GROUP BY to_char(R.reservation_date,'yyyy-mm')
+ORDER BY year;
+
+WITH A
+AS (
+select R.room_detail_code
+from tbl_lodging L JOIN tbl_room_detail R
+on L.lodging_code = r.fk_lodging_code
+where L.fk_companyid = 'kakao'
+)
+SELECT to_char(R.check_in,'yyyy-mm-dd') as reservation_year , count(*) as CNT 
+FROM A JOIN tbl_reservation R
+ON A.room_detail_code = R.fk_room_detail_code
+WHERE R.reservation_date between '2024-01-01' and '2024-12-31'
+GROUP BY to_char(R.check_in,'yyyy-mm-dd')
+order by 1;
+
+WITH A
+AS (
+select R.room_detail_code
+from tbl_lodging L JOIN tbl_room_detail R
+on L.lodging_code = r.fk_lodging_code
+where L.fk_companyid = 'kakao'
+)
+SELECT to_char(R.check_in,'yyyy-mm-dd') as reservation_day , count(*) as CNT 
+FROM A JOIN tbl_reservation R
+ON A.room_detail_code = R.fk_room_detail_code
+WHERE R.reservation_date between extract(year from sysdate)||'-07-01' and '2024-07-31'
+GROUP BY to_char(R.check_in,'yyyy-mm-dd')
+ORDER BY 1;
 
 
-
-
-SELECT food_store_code, food_name, food_mobile, food_address
-FROM 
-(
-    SELECT rownum AS RNO
-         , food_store_code, food_name, food_mobile, food_address
-    FROM
-    (
-        select play_code, play_name, play_mobile, play_address
-        from tbl_play
-        order by play_name asc
-    )V
-) T
-where RNO between 1 and 5;
-
-select count(*)
-from tbl_food_store;
-
-select play_code, play_name, play_mobile, play_address
-from tbl_play;
+WITH A
+AS (
+select R.room_detail_code
+from tbl_lodging L JOIN tbl_room_detail R
+on L.lodging_code = r.fk_lodging_code
+where L.fk_companyid = 'kakao'
+)
+SELECT to_char(R.check_in,'yyyy-mm') as reservation_month , count(*) as CNT 
+FROM A JOIN tbl_reservation R
+ON A.room_detail_code = R.fk_room_detail_code
+WHERE R.reservation_date between '2024-01-01' and '2024-12-31'
+GROUP BY to_char(R.check_in,'yyyy-mm')
+ORDER BY 1
