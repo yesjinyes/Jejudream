@@ -71,4 +71,28 @@ public class Js_TripDAO_imple implements Js_TripDAO {
 		
 	} // end of public List<Map<String, String>> getRoomDetail(String lodgingCode) { 
 
+
+	
+	// 결제페이지에서 예약하려하는 객실정보 가져오기
+	@Override
+	public Map<String, String> getReserveRoomDetail(Map<String, String> paraMap) {
+		
+		Map<String, String> roomDetail = sqlsession.selectOne("js_trip.getReserveRoomDetail", paraMap);
+		
+		return roomDetail;
+		
+	} // end of public Map<String, String> getReserveRoomDetail(Map<String, String> paraMap) {
+
+
+	
+	// 결제 후 예약테이블에 insert 하기
+	@Override
+	public int insertReservation(Map<String, String> paraMap) {
+		
+		int n = sqlsession.insert("js_trip.insertReservation", paraMap);
+		
+		return n;
+		
+	}// end of public int insertReservation(Map<String, String> paraMap) {
+
 }
