@@ -103,7 +103,7 @@ $(document).ready(function() {
 			
 			<div class="collapse navbar-collapse" id="inner_bar">
 				
-				<ul class="navbar-nav ml-auto my-2 my-lg-0" style="justify-content: ">
+				<ul class="navbar-nav ml-auto my-2 my-lg-0">
 					<c:if test="${empty sessionScope.loginuser && empty sessionScope.loginCompanyuser}">
 						<li class="nav-item">
 							<a class="nav-link" href="<%=ctxPath%>/login.trip">로그인<span class="sr-only">(current)</span></a>
@@ -168,7 +168,7 @@ $(document).ready(function() {
 			        <div class="menu_bar_line"></div>
 			      </li>
 			      <li class="nav-item">
-			        <a class="nav-link menu_bar_a" href="#">즐길거리</a>
+			        <a class="nav-link menu_bar_a" href="<%=ctxPath%>/playMain.trip">즐길거리</a>
 			        <div class="menu_bar_line"></div>
 			      </li>
 			      <li class="nav-item">
