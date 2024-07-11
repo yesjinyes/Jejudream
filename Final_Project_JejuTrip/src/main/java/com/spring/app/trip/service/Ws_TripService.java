@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.spring.app.trip.domain.CompanyVO;
+import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.MemberVO;
+import com.spring.app.trip.domain.PlayVO;
 
 public interface Ws_TripService {
 
@@ -35,5 +37,11 @@ public interface Ws_TripService {
 	List<Map<String, String>> user_gender_chart();// 사용자 성별 차트에 사용할 정보 가져오기
 	List<Map<String, String>> get_year_reservation_hotel_chart();// 매년 호텔 예약건수를 찾아와서 차트화 시켜주기위한 정보 가져오기
 	List<Map<String, String>> get_month_reservation_chart(String choice_year);// 선택한 년도의 매월 예약건수를 가져와서 차트화 시켜준다.
+	List<LodgingVO> select_lodging(Map<String, String> paraMap);// 숙소  테이블에서 기본적인 정보 목록을 가져온다.
+	int getTotalLodgingCount();// tbl_lodging 테이블에서 status가 1인 모든 숙소의 개수를 읽어온다.
+	List<FoodstoreVO> select_foodstore(Map<String, String> paraMap);// 맛집  테이블에서 기본적인 정보 목록을 가져온다.
+	int getTotalFoodstoreCount();// tbl_food_store 테이블에 있는 모든 맛집의 개수를 알아온다.
+	List<PlayVO> select_play(Map<String, String> paraMap);//즐길거리  테이블에서 기본적인 정보 목록을 가져온다.
+	int getTotalPlayCount();// tbl_play 테이블에 있는 모든 즐길거리 개수를 알아온다.
 
 }

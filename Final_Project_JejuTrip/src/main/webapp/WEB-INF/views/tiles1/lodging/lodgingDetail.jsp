@@ -43,12 +43,18 @@ $(document).ready(function(){
 	
 	$("button:button[name='reservation']").click(function(e){
 	
-		const tt = $(e.target).parent().find("div.room_detail_code").text();
+		const tt = $(e.target).parent().siblings('input[name="room_detail_code"]').val();
 		
-		alert(tt);
+		// alert(tt);
 		
+		const frm = document.reserve;
 		
+		frm.room_detail_code.value = tt;
 		
+		frm.method = "post";
+		frm.action = "<%= ctxPath%>/lodgingReservation.trip";
+		
+		frm.submit();
 	}); 
 	
 	
@@ -100,9 +106,9 @@ $(document).ready(function(){
 		   	객실명 : ${roomDetail.room_name}
 		   	</div>
 		   	
-		   	<div class="room_detail_code">
-		   	${roomDetail.room_detail_code}
-		   	</div>
+		   	<input type="text" name="room_detail_code" value="${roomDetail.room_detail_code}"/>
+		   	
+		   
 		   	
 		   	<div>
 		   	숙소 코드 : ${roomDetail.fk_lodging_code}
@@ -124,4 +130,8 @@ $(document).ready(function(){
    
 </div>
 
+<form name="reserve">
+	<input type="hidden" name="room_detail_code" />
+	<input type="hidden" name="lodging_code" value="${requestScope.lodgingDetail.lodging_code}" />
+</form>
   

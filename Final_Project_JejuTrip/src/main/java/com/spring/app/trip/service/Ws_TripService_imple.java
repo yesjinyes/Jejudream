@@ -12,8 +12,10 @@ import org.springframework.stereotype.Service;
 import com.spring.app.trip.common.AES256;
 import com.spring.app.trip.common.Sha256;
 import com.spring.app.trip.domain.CompanyVO;
+import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.MemberVO;
+import com.spring.app.trip.domain.PlayVO;
 import com.spring.app.trip.model.Ws_TripDAO;
 
 import oracle.security.crypto.core.AES;
@@ -269,5 +271,49 @@ public class Ws_TripService_imple implements Ws_TripService {
 		List<Map<String,String>> mapList = dao.get_month_reservation_chart(choice_year);
 		return mapList;
 	}
+	
+	// 숙소  테이블에서 기본적인 정보 목록을 가져온다.
+	@Override
+	public List<LodgingVO> select_lodging(Map<String, String> paraMap) {
+		List<LodgingVO> lodgingList = dao.select_lodging(paraMap);
+		return lodgingList;
+	}
+	
+	// tbl_lodging 테이블에서 status가 1인 모든 숙소의 개수를 읽어온다.
+	@Override
+	public int getTotalLodgingCount() {
+		int totalCount = dao.getTotalLodgingCount();
+		return totalCount;
+	}
+	
+	// 맛집  테이블에서 기본적인 정보 목록을 가져온다.
+	@Override
+	public List<FoodstoreVO> select_foodstore(Map<String, String> paraMap) {
+		List<FoodstoreVO> foodstore = dao.select_foodstore(paraMap);
+		return foodstore;
+	}
+	
+	// tbl_food_store 테이블에 있는 모든 맛집의 개수를 알아온다.
+	@Override
+	public int getTotalFoodstoreCount() {
+		int totalCount = dao.getTotalFoodstoreCount();
+		return totalCount;
+	}
+	
+	//즐길거리  테이블에서 기본적인 정보 목록을 가져온다.
+	@Override
+	public List<PlayVO> select_play(Map<String, String> paraMap) {
+		List<PlayVO> playList = dao.select_play(paraMap);
+		return playList;
+	}
+	
+	// tbl_play 테이블에 있는 모든 즐길거리 개수를 알아온다.
+	@Override
+	public int getTotalPlayCount() {
+		int totalCount = dao.getTotalPlayCount();
+		return totalCount;
+	}
+	
+	
 
 }
