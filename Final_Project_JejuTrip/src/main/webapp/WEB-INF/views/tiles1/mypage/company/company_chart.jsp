@@ -15,14 +15,21 @@
 <script type="text/javascript">
     $(document).ready(function(){
         const list = document.querySelectorAll('.list');
-		choice_month_login_member_chart_year($("select[name='choice_year_login']").val());
-        choice_month_reservation($("select[name='choice_year_reservation']").val());
-		
-		$("select[name='choice_year_login']").bind("change",function(e){
-			choice_month_login_member_chart_year($(e.target).val());
-		});
-		$("select[name='choice_year_reservation']").bind("change",function(e){
+        
+        choice_month_reservation($("select[name='choice_year_to_month_reservation']").val());
+        choice_day_reservation($("select[name='choice_month_to_day_reservation']").val());
+        choice_month_profit($("select[name='choice_year_to_month_profit']").val());
+        
+		$("select[name='choice_year_to_month_reservation']").bind("change",function(e){
 			choice_month_reservation($(e.target).val());
+		});
+		
+		$("select[name='choice_month_to_day_reservation']").bind("change",function(e){
+			choice_day_reservation($(e.target).val());
+		});
+		
+		$("select[name='choice_year_to_month_profit']").bind("change",function(e){
+			choice_month_profit($(e.target).val());
 		});
 		
         function activeLink() {
@@ -44,7 +51,8 @@
         
         $.ajax({
 			url:"<%= ctxPath%>/get_year_reservation_hotel_chart.trip",
-    		async:false, 
+    		data:{"lodging_code":"${sessionScope.loginCompanyuser.companyid}"},
+			async:false, 
     		dataType:"json",
     		success:function(json){
     			
@@ -101,7 +109,7 @@
 			            responsive: {
 			                rules: [{
 			                    condition: {
-			                        maxWidth: 500
+			                        maxWidth: 1000
 			                    },
 			                    chartOptions: {
 			                        legend: {
@@ -124,80 +132,85 @@
     	    }
 		});
         
+        
         $.ajax({
-			url:"<%= ctxPath%>/get_year_login_member_chart.trip",
-    		async:false, 
+			url:"<%= ctxPath%>/get_year_profit_chart.trip",
+    		data:{"companyid":"${sessionScope.loginCompanyuser.companyid}"},
+			async:false, 
     		dataType:"json",
     		success:function(json){
     			
    				const line_data = [];   
    				$.each(json, function(index, item){       
 			    	 
-			    	 line_data.push(Number(item.line_year_CNT));
+			    	 line_data.push(Number(item.profit));
 			    	 
 			    });          
    				
 			     
 			     ////////////////////////////////////////////////////////////////////////////////////////
 			     
-			     <%-- ===== 연도별 개인 회원 방문자수 통계 차트 시작 ===== --%>
-			    
-			     Highcharts.chart('year_login_member_chart_div', {
+			     <%-- ===== 연도별 매출액 통계 차트 시작 ===== --%>
+			     Highcharts.setOptions({
 
-			            title: {
-			                text: '연도별 사용자 방문자수 통계'
-			            },
+					lang: {
+						thousandsSep: ','
+					}
 
-			            yAxis: {
-			                title: {
-			                    text: 'Number of User'
-			                }
-			            },
-
-			            xAxis: {
-			                accessibility: {
-			                    rangeDescription: 'Range: 2015 to 2024'
-			                }
-			            },
-
-			            legend: {
-			                layout: 'vertical',
-			                align: 'right',
-			                verticalAlign: 'middle'
-			            },
-
-			            plotOptions: {
-			                series: {
-			                    label: {
-			                        connectorAllowed: false
-			                    },
-			                    pointStart: 2015
-			                }
-			            },
-
-			            series: [{
-			                name: "방문자 수",
-			            	data: line_data
-			            }],
-
-			            responsive: {
-			                rules: [{
-			                    condition: {
-			                        maxWidth: 500
-			                    },
-			                    chartOptions: {
-			                        legend: {
-			                            layout: 'horizontal',
-			                            align: 'center',
-			                            verticalAlign: 'bottom'
-			                        }
-			                    }
-			                }]
-			            }
-
-			        });
+				});
 			     
-			     <%-- ===== 연도별 개인 회원 방문자수 통계 차트 끝 ===== --%>
+			     Highcharts.chart('year_profit_chart_div', {
+			    	    chart: {
+			    	        type: 'column'
+			    	    },
+			    	    title: {
+			    	        text: '연도별 매출액 통계'
+			    	    },
+			    	    subtitle: {
+			    	        text: ''
+			    	    },
+			    	    xAxis: {
+			    	        categories: [
+			    	            '2015',
+			    	            '2016',
+			    	            '2017',
+			    	            '2018',
+			    	            '2019',
+			    	            '2020',
+			    	            '2021',
+			    	            '2022',
+			    	            '2023',
+			    	            '2024'
+			    	        ],
+			    	        crosshair: true
+			    	    },
+			    	    yAxis: {
+			    	        title: {
+			    	            useHTML: true,
+			    	            text: ''
+			    	        }
+			    	    },
+			    	    tooltip: {
+			    	        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+			    	        pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+			    	            '<td style="padding:0"><b>{point.y}원</b></td></tr>',
+			    	        footerFormat: '</table>',
+			    	        shared: true,
+			    	        useHTML: true
+			    	    },
+			    	    plotOptions: {
+			    	        column: {
+			    	            pointPadding: 0.2,
+			    	            borderWidth: 0
+			    	        }
+			    	    },
+			    	    series: [{
+			    	        name: '매출액',
+			    	        data: line_data
+			    	    }]
+			    	});
+			     
+			     <%-- ===== 연도별 매출액 통계 차트 끝 ===== --%>
 				     
     			
     		},
@@ -206,248 +219,13 @@
     	    }
 		});
         
-        <%-- === 회원 연령대별 파이차트 통계 시작 === --%>
-        
-        $.ajax({
-			url:"<%= ctxPath%>/user_age_group_chart.trip",
-    		async:false, 
-    		dataType:"json",
-    		success:function(json){
-    			
-    			let resultArr = [];
-				for(let i=0;i<json.length;i++){
-					let obj;
-					if(i==0){
-						obj = {
-							   name: json[i].ageGroup,
-							   y: Number(json[i].PERCNTAGE),
-							   sliced: true,
-							   selected: true
-							  };
-					}
-					else{
-						obj = {
-							   name: json[i].ageGroup,
-							   y: Number(json[i].PERCNTAGE)
-							  };
-					}
-					resultArr.push(obj);
-				}      
-   				
-			     
-			     ////////////////////////////////////////////////////////////////////////////////////////
-			    
-			     Highcharts.chart('user_age_group_chart_div', {
-			            chart: {
-			                plotBackgroundColor: null,
-			                plotBorderWidth: null,
-			                plotShadow: false,
-			                type: 'pie'
-			            },
-			            title: {
-			                text: '사용자 연령대별 퍼센티지'
-			            },
-			            tooltip: {
-			                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-			            },
-			            accessibility: {
-			                point: {
-			                    valueSuffix: '%'
-			                }
-			            },
-			            plotOptions: {
-			                pie: {
-			                    allowPointSelect: true,
-			                    cursor: 'pointer',
-			                    dataLabels: {
-			                        enabled: true,
-			                        format: '<b>{point.name}</b>: {point.percentage:.1f} %'
-			                    }
-			                }
-			            },
-			            series: [{
-			                name: '연령대',
-			                colorByPoint: true,
-			                data: resultArr
-			            }]
-			        });
-				     
-    			
-    		},
-    		error: function(request, status, error){
-    			alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
-    	    }
-		});
-        <%-- === 회원 연령대별 파이차트 통계 종료 === --%>
-        
-        
-		<%-- === 회원 성별 파이차트 통계 시작 === --%>
-        
-        $.ajax({
-			url:"<%= ctxPath%>/user_gender_chart.trip",
-    		async:false, 
-    		dataType:"json",
-    		success:function(json){
-    			
-    			let resultArr = [];
-				for(let i=0;i<json.length;i++){
-					let obj;
-					if(i==0){
-						obj = {
-							   name: json[i].gender,
-							   y: Number(json[i].PERCNTAGE),
-							   sliced: true,
-							   selected: true
-							  };
-					}
-					else{
-						obj = {
-							   name: json[i].gender,
-							   y: Number(json[i].PERCNTAGE)
-							  };
-					}
-					resultArr.push(obj);
-				}      
-   				
-			     
-			     ////////////////////////////////////////////////////////////////////////////////////////
-			    
-			     Highcharts.chart('user_gender_chart_div', {
-			            chart: {
-			                plotBackgroundColor: null,
-			                plotBorderWidth: null,
-			                plotShadow: false,
-			                type: 'pie'
-			            },
-			            title: {
-			                text: '사용자 연령대별 퍼센티지'
-			            },
-			            tooltip: {
-			                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-			            },
-			            accessibility: {
-			                point: {
-			                    valueSuffix: '%'
-			                }
-			            },
-			            plotOptions: {
-			                pie: {
-			                    allowPointSelect: true,
-			                    cursor: 'pointer',
-			                    dataLabels: {
-			                        enabled: true,
-			                        format: '<b>{point.name}</b>: {point.percentage:.1f} %'
-			                    }
-			                }
-			            },
-			            series: [{
-			                name: '연령대',
-			                colorByPoint: true,
-			                data: resultArr
-			            }]
-			        });
-				     
-    			
-    		},
-    		error: function(request, status, error){
-    			alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
-    	    }
-		});
-        <%-- === 회원 성별 파이차트 통계 종료 === --%>
         
     }); // end of $(document).ready(function(){
-    	
-    	
-    function choice_month_login_member_chart_year(choice_year){
-    	
-    	$.ajax({
-			url:"<%= ctxPath%>/get_month_login_member_chart.trip",
-			data:{"choice_year":choice_year},
-    		async:false, 
-    		dataType:"json",
-    		success:function(json){
-    			console.log(JSON.stringify(json));
-   				const line_data = [];   
-			    
-   				$.each(json, function(index, item){       
-			    	 
-			    	 line_data.push(Number(item.line_month_CNT));
-			    	 
-			    });    
-			     ////////////////////////////////////////////////////////////////////////////////////////
-			     
-			     <%-- ===== 연도별 개인 회원 가입자수 통계 차트 시작 ===== --%>
-			    
-			     Highcharts.chart('month_login_member_chart_div', {
-
-			            title: {
-			                text: '월별 사용자 방문자수 통계'
-			            },
-
-			            yAxis: {
-			                title: {
-			                    text: 'Number of User'
-			                }
-			            },
-
-			            xAxis: {
-			                accessibility: {
-			                    rangeDescription: 'Range: 1 to 12'
-			                }
-			            },
-
-			            legend: {
-			                layout: 'vertical',
-			                align: 'right',
-			                verticalAlign: 'middle'
-			            },
-
-			            plotOptions: {
-			                series: {
-			                    label: {
-			                        connectorAllowed: false
-			                    },
-			                    pointStart: 1
-			                }
-			            },
-
-			            series: [{
-			                name: "방문자 수",
-			            	data: line_data
-			            }],
-
-			            responsive: {
-			                rules: [{
-			                    condition: {
-			                        maxWidth: 500
-			                    },
-			                    chartOptions: {
-			                        legend: {
-			                            layout: 'horizontal',
-			                            align: 'center',
-			                            verticalAlign: 'bottom'
-			                        }
-			                    }
-			                }]
-			            }
-
-			        });
-			     
-			     <%-- ===== 연도별 개인 회원 가입자수 통계 차트 끝 ===== --%>
-				     
-    			
-    		},
-    		error: function(request, status, error){
-    			alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
-    	    }
-		});
-    }
     
 	function choice_month_reservation(choice_year){
-    	
     	$.ajax({
 			url:"<%= ctxPath%>/get_month_reservation_chart.trip",
-			data:{"choice_year":choice_year},
+			data:{"choice_year":choice_year,"companyid":"${sessionScope.loginCompanyuser.companyid}"},
     		async:false, 
     		dataType:"json",
     		success:function(json){
@@ -461,7 +239,7 @@
 			    });    
 			     ////////////////////////////////////////////////////////////////////////////////////////
 			     
-			     <%-- ===== 연도별 개인 회원 가입자수 통계 차트 시작 ===== --%>
+			     <%-- ===== 월별 숙소 예약 건수 통계 차트 시작 ===== --%>
 			    
 			     Highcharts.chart('month_reservation_chart_div', {
 
@@ -504,7 +282,7 @@
 			            responsive: {
 			                rules: [{
 			                    condition: {
-			                        maxWidth: 500
+			                        maxWidth: 1000
 			                    },
 			                    chartOptions: {
 			                        legend: {
@@ -518,7 +296,181 @@
 
 			        });
 			     
-			     <%-- ===== 연도별 개인 회원 가입자수 통계 차트 끝 ===== --%>
+			     <%-- ===== 월별 개인 회원 가입자수 통계 차트 끝 ===== --%>
+				     
+    			
+    		},
+    		error: function(request, status, error){
+    			alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+    	    }
+		});
+    }
+	
+	function choice_day_reservation(choice_month){
+    	$.ajax({
+			url:"<%= ctxPath%>/get_day_reservation_chart.trip",
+			data:{"choice_month":choice_month,"companyid":"${sessionScope.loginCompanyuser.companyid}"},
+    		async:false, 
+    		dataType:"json",
+    		success:function(json){
+    			console.log(JSON.stringify(json));
+   				const line_data = [];   
+			    const chart_length = json.length;
+   				$.each(json, function(index, item){       
+			    	 
+			    	 line_data.push(Number(item.CNT));
+			    	 
+			    });    
+			     ////////////////////////////////////////////////////////////////////////////////////////
+			     
+			     <%-- ===== 월별 숙소 예약 건수 통계 차트 시작 ===== --%>
+			    
+			     Highcharts.chart('day_reservation_chart_div', {
+
+			            title: {
+			                text: '일별 예약건수 통계'
+			            },
+
+			            yAxis: {
+			                title: {
+			                    text: 'Number of User'
+			                }
+			            },
+
+			            xAxis: {
+			                accessibility: {
+			                    rangeDescription: 'Range: 1 to '+chart_length
+			                }
+			            },
+
+			            legend: {
+			                layout: 'vertical',
+			                align: 'right',
+			                verticalAlign: 'middle'
+			            },
+
+			            plotOptions: {
+			                series: {
+			                    label: {
+			                        connectorAllowed: false
+			                    },
+			                    pointStart: 1
+			                }
+			            },
+
+			            series: [{
+			                name: "예약건수",
+			            	data: line_data
+			            }],
+
+			            responsive: {
+			                rules: [{
+			                    condition: {
+			                        maxWidth: 1000
+			                    },
+			                    chartOptions: {
+			                        legend: {
+			                            layout: 'horizontal',
+			                            align: 'center',
+			                            verticalAlign: 'bottom'
+			                        }
+			                    }
+			                }]
+			            }
+
+			        });
+			     
+			     <%-- ===== 월별 개인 회원 가입자수 통계 차트 끝 ===== --%>
+				     
+    			
+    		},
+    		error: function(request, status, error){
+    			alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+    	    }
+		});
+    }
+	
+	function choice_month_profit(choice_year){
+    	$.ajax({
+			url:"<%= ctxPath%>/get_month_profit_chart.trip",
+			data:{"choice_year":choice_year,"companyid":"${sessionScope.loginCompanyuser.companyid}"},
+    		async:false, 
+    		dataType:"json",
+    		success:function(json){
+    			console.log(JSON.stringify(json));
+   				const line_data = [];   
+			    
+   				$.each(json, function(index, item){       
+			    	 
+			    	 line_data.push(Number(item.profit));
+			    	 
+			    });    
+			     ////////////////////////////////////////////////////////////////////////////////////////
+			     
+			     <%-- ===== 월별 매출액 통계 차트 시작 ===== --%>
+			    
+			     Highcharts.setOptions({
+
+					lang: {
+						thousandsSep: ','
+					}
+
+				});
+			     
+			     Highcharts.chart('month_profit_chart_div', {
+			    	    chart: {
+			    	        type: 'column'
+			    	    },
+			    	    title: {
+			    	        text: '연도별 매출액 통계'
+			    	    },
+			    	    subtitle: {
+			    	        text: ''
+			    	    },
+			    	    xAxis: {
+			    	        categories: [
+			    	            '1',
+			    	            '2',
+			    	            '3',
+			    	            '4',
+			    	            '5',
+			    	            '6',
+			    	            '7',
+			    	            '8',
+			    	            '9',
+			    	            '10',
+			    	            '11',
+			    	            '12'
+			    	        ],
+			    	        crosshair: true
+			    	    },
+			    	    yAxis: {
+			    	        title: {
+			    	            useHTML: true,
+			    	            text: ''
+			    	        }
+			    	    },
+			    	    tooltip: {
+			    	        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+			    	        pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+			    	            '<td style="padding:0"><b>{point.y}원</b></td></tr>',
+			    	        footerFormat: '</table>',
+			    	        shared: true,
+			    	        useHTML: true
+			    	    },
+			    	    plotOptions: {
+			    	        column: {
+			    	            pointPadding: 0.2,
+			    	            borderWidth: 0
+			    	        }
+			    	    },
+			    	    series: [{
+			    	        name: '매출액',
+			    	        data: line_data
+			    	    }]
+			    	});
+			     
+			     <%-- ===== 월별 매출액 통계 차트 끝 ===== --%>
 				     
     			
     		},
@@ -534,20 +486,20 @@
         <ul>
             <li class="list">
                 <a href="<%= ctxPath%>/requiredLogin_goMypage.trip">
-                    <span class="icon"><ion-icon name="list-outline"></ion-icon></span>
-                    <span class="title">등록 컨텐츠</span>
-                </a>
-            </li>
-            <li class="list">
-                <a href="<%= ctxPath%>/show_userList.trip">
-                    <span class="icon"><ion-icon name="person-outline"></ion-icon></span>
-                    <span class="title">회원관리</span>
+                    <span class="icon"><ion-icon name="bed-outline"></ion-icon></span>
+                    <span class="title">예약내역</span>
                 </a>
             </li>
             <li class="list active">
-                <a href="<%= ctxPath%>/admin_chart.trip">
+                <a href="<%= ctxPath%>/company_chart.trip">
                     <span class="icon"><ion-icon name="bar-chart-outline"></ion-icon></ion-icon></span>
                     <span class="title">통계</span>
+                </a>
+            </li>
+            <li class="list">
+                <a href="<%= ctxPath%>/myRegisterHotel.trip">
+                    <span class="icon"><ion-icon name="wallet-outline"></ion-icon></span>
+                    <span class="title">숙소등록신청현황</span>
                 </a>
             </li>
             <li class="list">
@@ -578,16 +530,16 @@
 			    <a class="nav-link" data-toggle="tab" href="#month_reservation">월별 예약 건수 통계</a>
 			  </li>
 			  <li class="nav-item">
-			    <a class="nav-link" data-toggle="tab" href="#year_login_member">연도별 사용자 방문자수 통계</a>
+			    <a class="nav-link" data-toggle="tab" href="#day_reservation">일별 예약 건수 통계</a>
 			  </li>
 			  <li class="nav-item">
-			    <a class="nav-link" data-toggle="tab" href="#month_login_member">월별 사용자 방문자수 통계</a>
+			    <a class="nav-link" data-toggle="tab" href="#year_profit">연도별 수익 통계</a>
 			  </li>
 			  <li class="nav-item">
-			    <a class="nav-link" data-toggle="tab" href="#user_age_group">사용자 연령별 통계</a>
+			    <a class="nav-link" data-toggle="tab" href="#month_profit">월별 수익 통계</a>
 			  </li>
 			  <li class="nav-item">
-			    <a class="nav-link" data-toggle="tab" href="#user_gender">사용자 성별 통계</a>
+			    <a class="nav-link" data-toggle="tab" href="#day_profit">일별 수익 통계</a>
 			  </li>
 			</ul>
 			
@@ -599,52 +551,80 @@
 					</figure>
 				</div>
 				<div class="tab-pane fade" id="month_reservation">
-					<select name="choice_year_reservation">
+					<select name="choice_year_to_month_reservation">
 						<option value="2024" selected>현재</option>
-						<option value="2015">2015</option>
-						<option value="2016">2016</option>
-						<option value="2018">2018</option>
-						<option value="2019">2019</option>
-						<option value="2020">2020</option>
-						<option value="2021">2021</option>
-						<option value="2022">2022</option>
-						<option value="2023">2023</option>
-						<option value="2024">2024</option>
+						<option value="2015">2015년</option>
+						<option value="2016">2016년</option>
+						<option value="2018">2018년</option>
+						<option value="2019">2019년</option>
+						<option value="2020">2020년</option>
+						<option value="2021">2021년</option>
+						<option value="2022">2022년</option>
+						<option value="2023">2023년</option>
+						<option value="2024">2024년</option>
 					</select>
 					<figure class="highcharts-figure">
 					    <div id="month_reservation_chart_div"></div>
 					</figure>
 				</div>
-			  	<div class="tab-pane fade" id="year_login_member">
-					<figure class="highcharts-figure">
-					    <div id="year_login_member_chart_div"></div>
-					</figure>
-				</div>
-			  	<div class="tab-pane fade" id="month_login_member">
-					<select name="choice_year_login">
-						<option value="2024" selected>현재</option>
-						<option value="2015">2015</option>
-						<option value="2016">2016</option>
-						<option value="2018">2018</option>
-						<option value="2019">2019</option>
-						<option value="2020">2020</option>
-						<option value="2021">2021</option>
-						<option value="2022">2022</option>
-						<option value="2023">2023</option>
-						<option value="2024">2024</option>
+			  	<div class="tab-pane fade" id="day_reservation">
+					<select name="choice_month_to_day_reservation">
+						<option value="1" selected>1월</option>
+						<option value="2">2월</option>
+						<option value="3">3월</option>
+						<option value="4">4월</option>
+						<option value="5">5월</option>
+						<option value="6">6월</option>
+						<option value="7">7월</option>
+						<option value="8">8월</option>
+						<option value="9">9월</option>
+						<option value="10">10월</option>
+						<option value="11">11월</option>
+						<option value="12">12월</option>
 					</select>
 					<figure class="highcharts-figure">
-					    <div id="month_login_member_chart_div"></div>
+					    <div id="day_reservation_chart_div"></div>
 					</figure>
 				</div>
-				<div class="tab-pane fade" id="user_age_group">
+			  	<div class="tab-pane fade" id="year_profit">
 					<figure class="highcharts-figure">
-					    <div id="user_age_group_chart_div"></div>
+					    <div id="year_profit_chart_div"></div>
 					</figure>
 				</div>
-				<div class="tab-pane fade" id="user_gender">
+				<div class="tab-pane fade" id="month_profit">
+					<select name="choice_year_to_month_profit">
+						<option value="2024" selected>현재</option>
+						<option value="2015">2015년</option>
+						<option value="2016">2016년</option>
+						<option value="2018">2018년</option>
+						<option value="2019">2019년</option>
+						<option value="2020">2020년</option>
+						<option value="2021">2021년</option>
+						<option value="2022">2022년</option>
+						<option value="2023">2023년</option>
+						<option value="2024">2024년</option>
+					</select>
 					<figure class="highcharts-figure">
-					    <div id="user_gender_chart_div"></div>
+					    <div id="month_profit_chart_div"></div>
+					</figure>
+				</div>
+				<div class="tab-pane fade" id="day_profit">
+					<select name="choice_month_to_day_profit">
+						<option value="1" selected>1월</option>
+						<option value="2">2월</option>
+						<option value="3">3월</option>
+						<option value="4">4월</option>
+						<option value="5">5월</option>
+						<option value="6">6월</option>
+						<option value="7">7월</option>
+						<option value="8">8월</option>
+						<option value="9">9월</option>
+						<option value="10">10월</option>
+						<option value="11">11월</option>
+						<option value="12">12월</option>
+					</select>
+					<figure class="highcharts-figure">
+					    <div id="day_profit_chart_div"></div>
 					</figure>
 				</div>
 				

@@ -2,6 +2,7 @@ package com.spring.app.trip.controller;
 
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -800,9 +801,8 @@ public class Ws_TripController {
 	@GetMapping(value="/get_year_reservation_hotel_chart.trip", produces="text/plain;charset=UTF-8") 
 	public String get_year_reservation_hotel_chart(HttpServletRequest request) {
 		
-		 
-		
-		List<Map<String,String>> mapList = service.get_year_reservation_hotel_chart();// 매년 호텔 예약건수를 찾아와서 차트화 시켜주기위한 정보 가져오기
+		String lodging_code = request.getParameter("lodging_code");
+		List<Map<String,String>> mapList = service.get_year_reservation_hotel_chart(lodging_code);// 매년 호텔 예약건수를 찾아와서 차트화 시켜주기위한 정보 가져오기
 		
 		JSONArray jsonArr = new JSONArray();
 		
@@ -830,7 +830,12 @@ public class Ws_TripController {
 	public String get_month_reservation_chart(HttpServletRequest request) {
 		
 		String choice_year = request.getParameter("choice_year");
-		List<Map<String,String>> mapList = service.get_month_reservation_chart(choice_year);// 선택한 년도의 매월 예약건수를 가져와서 차트화 시켜준다.
+		String companyid = request.getParameter("companyid");
+		
+		Map<String,String> paraMap = new HashMap<>();
+		paraMap.put("choice_year", choice_year);
+		paraMap.put("companyid", companyid);
+		List<Map<String,String>> mapList = service.get_month_reservation_chart(paraMap);// 선택한 년도의 매월 예약건수를 가져와서 차트화 시켜준다.
 
 		JSONArray jsonArr = new JSONArray();
 		String str_i = "";
@@ -841,13 +846,63 @@ public class Ws_TripController {
 				if(i<10) {
 					str_i = "0"+i;
 				}
-				if(map.get("line_month").equals(choice_year+"-"+str_i)) {
+				else {
+					str_i = String.valueOf(i);
+				}
+				if(map.get("reservation_month").equals(choice_year+"-"+str_i)) {
 					is_exist = true;
-					jsonObj.put("line_month_CNT", map.get("line_CNT"));
+					jsonObj.put("CNT", map.get("CNT"));
 				}
 			}
 			if(!is_exist) {
-				jsonObj.put("line_month_CNT", "0");
+				jsonObj.put("CNT", "0");
+			}
+			jsonArr.put(jsonObj);
+		}
+		
+		return jsonArr.toString(); 	
+	}
+	
+	// 선택한 년도의 일별 예약건수를 가져와서 차트화 시켜준다.
+	@ResponseBody
+	@GetMapping(value="/get_day_reservation_chart.trip", produces="text/plain;charset=UTF-8") 
+	public String get_day_reservation_chart(HttpServletRequest request) {
+		
+		String choice_month = request.getParameter("choice_month");
+		
+		if(Integer.parseInt(choice_month)<10) {
+			choice_month = "0"+choice_month;
+		}
+		String companyid = request.getParameter("companyid");
+		
+		String choice_month_last_day = service.get_last_day(choice_month); // 내가 선택한 월이 있다면 그 월의 마지막 날을 구해준다.
+		
+		Map<String,String> paraMap = new HashMap<>();
+		paraMap.put("choice_month_last_day",choice_month_last_day);
+		paraMap.put("choice_month", choice_month);
+		paraMap.put("companyid", companyid);
+		List<Map<String,String>> mapList = service.get_day_reservation_chart(paraMap);// 선택한 월에서 매일의 예약건수를 가져와서 차트화 시켜준다.
+
+		int day = Integer.parseInt(choice_month_last_day.substring(8));
+		JSONArray jsonArr = new JSONArray();
+		String str_i = "";
+		for(int i=1;i<=day;i++) {
+			JSONObject jsonObj = new JSONObject();
+			boolean is_exist = false;
+			for(Map<String,String> map : mapList) {
+				if(i<10) {
+					str_i = "0"+i;
+				}
+				else {
+					str_i = String.valueOf(i);
+				}
+				if(map.get("reservation_day").equals(choice_month_last_day.substring(0,8)+str_i)) {
+					is_exist = true;
+					jsonObj.put("CNT", map.get("CNT"));
+				}
+			}
+			if(!is_exist) {
+				jsonObj.put("CNT", "0");
 			}
 			jsonArr.put(jsonObj);
 		}
@@ -1125,6 +1180,97 @@ public class Ws_TripController {
 		                           // 또는
 		                           // "[]"		
 		
+	}
+	
+	@GetMapping("company_chart.trip")
+	public ModelAndView company_chart(ModelAndView mav, HttpServletRequest request) {
+		
+		HttpSession session = request.getSession();
+		CompanyVO loginCompanyuser = (CompanyVO)session.getAttribute("loginCompanyuser");
+		
+		if(loginCompanyuser!=null) {
+			
+			mav.setViewName("mypage/company/company_chart.tiles1");
+		}
+		else {
+			String message = "잘못된 접근입니다.";
+			String loc = "javascript:history.back()";
+
+			mav.addObject("message", message);
+			mav.addObject("loc", loc);
+			
+			mav.setViewName("msg");
+		}
+		
+		return mav;
+	}
+	
+	// 매년 업체의 수익를 찾아와서 차트화 시켜준다
+	@ResponseBody
+	@GetMapping(value="/get_year_profit_chart.trip", produces="text/plain;charset=UTF-8") 
+	public String get_year_profit_chart(HttpServletRequest request) {
+		
+		String companyid = request.getParameter("companyid");
+		List<Map<String,String>> mapList = service.get_year_profit_chart(companyid);// 매년 업체수익을 찾아와서 차트화 시켜주기위한 정보 가져오기
+		
+		JSONArray jsonArr = new JSONArray();
+		for(int i=2015;i<=2024;i++) {
+			JSONObject jsonObj = new JSONObject();
+			boolean is_exist = false;
+			for(Map<String,String> map : mapList) {
+				if(map.get("year").equals(String.valueOf(i))) {
+					is_exist = true;
+					
+					jsonObj.put("profit", map.get("profit"));
+				}
+			}
+			if(!is_exist) {
+				jsonObj.put("profit", "0");
+			}
+			jsonArr.put(jsonObj);
+		}
+		
+		return jsonArr.toString(); 	
+	}
+	
+	
+	// 선택한 년도의 매월 매출액을 가져와서 차트화 시켜준다.
+	@ResponseBody
+	@GetMapping(value="/get_month_profit_chart.trip", produces="text/plain;charset=UTF-8") 
+	public String get_month_profit_chart(HttpServletRequest request) {
+		
+		String choice_year = request.getParameter("choice_year");
+		String companyid = request.getParameter("companyid");
+		
+		Map<String,String> paraMap = new HashMap<>();
+		paraMap.put("choice_year", choice_year);
+		paraMap.put("companyid", companyid);
+		List<Map<String,String>> mapList = service.get_month_profit_chart(paraMap);// 선택한 년도의 매월 매출액을 가져와서 차트화 시켜준다.
+
+		JSONArray jsonArr = new JSONArray();
+		String str_i = "";
+		for(int i=1;i<=12;i++) {
+			JSONObject jsonObj = new JSONObject();
+			boolean is_exist = false;
+			for(Map<String,String> map : mapList) {
+				if(i<10) {
+					str_i = "0"+i;
+				}
+				else {
+					str_i = String.valueOf(i);
+				}
+				if(map.get("year").equals(choice_year+"-"+str_i)) {
+					is_exist = true;
+					jsonObj.put("profit", map.get("profit"));
+				}
+			}
+			if(!is_exist) {
+				jsonObj.put("profit", "0");
+			}
+			jsonArr.put(jsonObj);
+		}
+		
+		return jsonArr.toString(); 	
 	}
 	
 }

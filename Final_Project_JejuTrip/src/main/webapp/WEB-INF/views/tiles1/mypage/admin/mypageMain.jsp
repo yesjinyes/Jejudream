@@ -31,6 +31,22 @@
                 document.getElementById('contentFrame').src = link;
             });
         });
+        
+        
+        $("tbody#lodgingList").bind("click",function(e){
+        	const code = $(e.target).parent().find("th").text();
+        	go_detail_lodging(code);
+        })
+        
+        $("tbody#foodstoreList").bind("click",function(e){
+        	const code = $(e.target).parent().find("th").text();
+        	go_detail_foodstore(code);
+        })
+        
+        $("tbody#playList").bind("click",function(e){
+        	const code = $(e.target).parent().find("th").text();
+        	go_detail_play(code);
+        })
     }); // end of $(document).ready(function(){
     	
 	function goViewLodgingList(currentShowPageNo){
@@ -47,7 +63,7 @@
 				let v_html = "";
 				if(json.length > 0){
 					$.each(json, function(index, item){
-					    v_html += "<tr class='click'>";
+					    v_html += "<tr id='lodging_tr'>";
 					    v_html += "<th>"+item.lodging_code+"</th>";
 						v_html += "<td>"+item.lodging_name+"</td>";
 						v_html += "<td>"+item.lodging_tell+"</td>";
@@ -198,13 +214,13 @@
 			type:"post",
 			dataType:"json",
 			success:function(json){
-				// console.log(JSON.stringify(json));
+				console.log(JSON.stringify(json));
 				// [{"fileName":"20240701121456357667780733900.jpg","fileSize":"334004","name":"엄정화","regdate":"2024-07-01 12:14:56","totalCount":1,"sizePerPage":5,"fk_userid":"eomjh","seq":"3","content":"첨부파일이 있는 댓글쓰기입니다.","orgFilename":"증명_DSC_6505.jpg"}] 
 				
 				let v_html = "";
 				if(json.length > 0){
 					$.each(json, function(index, item){
-					    v_html += "<tr class='click'>";
+					    v_html += "<tr>";
 					    v_html += "<th>"+item.food_store_code+"</th>";
 						v_html += "<td>"+item.food_name+"</td>";
 						v_html += "<td>"+item.food_mobile+"</td>";
@@ -361,7 +377,7 @@
 				let v_html = "";
 				if(json.length > 0){
 					$.each(json, function(index, item){
-					    v_html += "<tr class='click'>";
+					    v_html += "<tr id='play_tr'>";
 					    v_html += "<th>"+item.play_code+"</th>";
 						v_html += "<td>"+item.play_name+"</td>";
 						v_html += "<td>"+item.play_mobile+"</td>";
@@ -504,6 +520,17 @@
 		$("div#playListPageBar").html(pageBar_HTML);
 	}
 	
+	function go_detail_lodging(code){
+		location.href = "<%=ctxPath%>/lodgingDetail.trip?lodging_code="+code;
+	}
+	
+	function go_detail_foodstore(code){
+		location.href = "<%=ctxPath%>/foodstoreDetail.trip?food_store_code="+code;
+	}
+	
+	function go_detail_play(code){
+		location.href = "<%=ctxPath%>/goAddSchedule.trip?play_code="+code;
+	}
 </script>
 
 <div class="body">
