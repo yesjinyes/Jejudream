@@ -38,7 +38,7 @@ public class Hs_TripController {
 	@Autowired
 	private FileManager fileManager;
 
-	
+	  //-------------------------------------------------------------------------------//
 		//즐길거리 등록페이지 
 		@GetMapping("registerPlay.trip")
 		public ModelAndView registerPlay(ModelAndView mav, HttpServletRequest request) {
@@ -61,7 +61,7 @@ public class Hs_TripController {
 			return mav;
 		}
 		
-		
+		//-------------------------------------------------------------------------------//
 		
 		@ResponseBody
 		@PostMapping("registerPlayEnd.trip")
@@ -185,6 +185,7 @@ public class Hs_TripController {
 		}
 		
 		
+		//-------------------------------------------------------------------------------//
 		
 		//카테고리별로 데이터 가져오기 JSON
 		@ResponseBody
@@ -202,8 +203,6 @@ public class Hs_TripController {
 			
 			
 			int sizePerPage = 6; //한페이지당 6개의 글 보여주기
-			
-			
 		    
 		    Map<String,Object> paraMap = new HashMap<>();
 		    
@@ -235,7 +234,7 @@ public class Hs_TripController {
 		    
 		    //전체개수
 		    int totalCount = service.getPlayTotalCount(paraMap);
-		    System.out.println("totalCount"+totalCount);
+		    //System.out.println("totalCount"+totalCount);
 		    //조건에 맞는 리트 가져오기
 			List<PlayVO> playList=service.getPlayListByCategory(paraMap);
 			
@@ -265,13 +264,14 @@ public class Hs_TripController {
 		 
 		}
 		
+		//-------------------------------------------------------------------------------//
 		
 		//디테일겸, 일정추가 있는 페이지
 		@GetMapping("goAddSchedule.trip")
 		public ModelAndView goAddSchedule (ModelAndView mav , HttpServletRequest request) {
 			
 			String play_code = request.getParameter("play_code");
-			System.out.println("play_code"+play_code);
+			//System.out.println("play_code"+play_code);
 			
 			
 			PlayVO playvo = service.goAddSchedule(play_code);
@@ -283,11 +283,13 @@ public class Hs_TripController {
 			return mav;
 		}
 		
+		//-------------------------------------------------------------------------------//
 		
 		//리뷰작성
 		@ResponseBody
 		@PostMapping(value = "reviewRegister.trip",produces="text/plain;charset=UTF-8")
 		public String reviewRegister (HttpServletRequest request) {
+			 
 			 
 			 String review_content = request.getParameter("review_content");
 	         String fk_userid = request.getParameter("fk_userid");
@@ -301,11 +303,6 @@ public class Hs_TripController {
 	         // 입력한 내용에서 엔터는 <br>로 변환시키기
 	         contents = contents.replaceAll("\r\n", "<br>");
 	         */
-	         
-	         System.out.println("review_content"+review_content);
-	         System.out.println("fk_userid"+fk_userid);
-	         System.out.println("parent_code"+parent_code);
-	         System.out.println("review_division_R"+review_division_R);
 	         
 	         ReviewVO reviewvo = new ReviewVO();
 	         reviewvo.setFk_userid(fk_userid);
@@ -323,6 +320,7 @@ public class Hs_TripController {
 	         return jsonObj.toString();
 		}
 
+		//-------------------------------------------------------------------------------//
 		
 		//리뷰 보여주기 
 		@ResponseBody
@@ -351,7 +349,7 @@ public class Hs_TripController {
 		     
 		    //전체개수
 		    int totalCount = service.getPlayReviewCount(paraMap);
-		    System.out.println("totalCount"+totalCount);
+
 		    //조건에 맞는 리트 가져오기
 			List<ReviewVO> reviewList = service.reviewList(paraMap);
 			
@@ -376,8 +374,7 @@ public class Hs_TripController {
 			return jsonArr.toString();
 		}
 		
-		
-		
+		//-------------------------------------------------------------------------------//
 		
 		//리뷰수정하기
 		@ResponseBody
@@ -401,6 +398,8 @@ public class Hs_TripController {
 		
 		}
 		
+		//-------------------------------------------------------------------------------//
+		
 		//리뷰삭제하기
 		@ResponseBody
 		@PostMapping(value="play/reviewDel.trip",produces="text/plain;charset=UTF-8")
@@ -417,21 +416,22 @@ public class Hs_TripController {
 			
 		}
 		
-	
+		//-------------------------------------------------------------------------------//
+		
+		//즐길거리 수정
 		@GetMapping("editPlay.trip")
 		public ModelAndView requiredLogin_editPlay(HttpServletRequest request,HttpServletResponse response, ModelAndView mav) {
 			String message = "";
-			// 글 삭제 할 글번호 가져오기
 			
 			HttpSession session = request.getSession();
 			MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
 			
 			String play_code = request.getParameter("play_code");
-			System.out.println("play_code " + play_code);
+			//System.out.println("play_code " + play_code);
 			
 			try {
 				Integer.parseInt(play_code);
-				System.out.println("play_code integer" + play_code);
+				//System.out.println("play_code integer" + play_code);
 				
 				if(loginuser != null && !loginuser.getUserid().equals("admin")) {
 					message="관리자만 접근 가능합니다.";
@@ -469,8 +469,9 @@ public class Hs_TripController {
 			return mav;
 		}
 		
+		//-------------------------------------------------------------------------------//
 		
-		
+		//즐길거리 수정
 		@PostMapping("editPlayEnd.trip")
 		public ModelAndView editEnd (ModelAndView mav ,PlayVO playvo ,MultipartHttpServletRequest mrequest) {
 			
@@ -498,7 +499,7 @@ public class Hs_TripController {
 		                     
 		            playvo.setOrgFilename(playvo.getPlay_name()+"_main.jpg");
 		                     
-		            fileSize = attach.getSize();  // 첨부파일의 크기(단위는 byte임) 
+		            fileSize = attach.getSize();
 		            playvo.setFileSize(String.valueOf(fileSize));
 		                     
 		         } catch (Exception e) {
@@ -512,27 +513,102 @@ public class Hs_TripController {
 			
 			playvo.setPlay_address(address + " " + detail_address);
 			
-			System.out.println("setPlay_address"+ playvo.getPlay_address());
-			System.out.println("getFileName"+ playvo.getFileName());
-			System.out.println("getLocal_status"+ playvo.getLocal_status());
-			System.out.println("getPlay_businesshours"+  playvo.getPlay_businesshours());
-			
 			
 			int n = service.editEnd(playvo); 
 			
 			if(n==1) {
 				mav.addObject("message","글 수정 성공!!");
-				mav.addObject("loc", mrequest.getContextPath()+"/playMain.trip?play_code=" + playvo.getPlay_code());//수정되어진 글을 다시 보여줌
+				mav.addObject("loc", mrequest.getContextPath()+"/goAddSchedule.trip?play_code=" + playvo.getPlay_code());//수정되어진 글을 다시 보여줌
 				
 				mav.setViewName("msg");
 				//  /list.action 페이지로 redirect(페이지이동)해라는 말이다.
 			}
 			else {
-		        mav.setViewName("play/playMain.tiles1");
-		        //  /WEB-INF/views/tiles1/board/error/add_error.jsp 파일을 생성한다.
+		        String loc = "javascript:history.back()";
+				mav.addObject("loc", loc);
+		        
 		      }
 			return mav;
 		}
+		
+		//-------------------------------------------------------------------------------//
+		
+		//글삭제요청
+		@PostMapping("deletePlay.trip")
+		public ModelAndView requiredLogin_del(HttpServletRequest request,HttpServletResponse response, ModelAndView mav) {
+			
+			  String message = "";
+			    HttpSession session = request.getSession();
+			    MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
+
+			    // 글 삭제 할 글번호 가져오기
+			    String play_code = request.getParameter("play_code");
+
+			    if(!"admin".equals(loginuser.getUserid())) {
+			        message = "관리자 외 삭제가 불가능 합니다";
+			        mav.setViewName("redirect:/playMain.trip");
+			        return mav;
+			    }
+
+			    Map<String, String> paraMap = new HashMap<>();
+			    paraMap.put("play_code", play_code);
+
+			    PlayVO playvo = service.getPlaySelect(paraMap);
+			    String fileName = playvo.getFileName(); // 삭제해야 할 파일이름
+
+			    if (fileName != null && !"".equals(fileName)) { 
+			        String root = session.getServletContext().getRealPath("/"); 
+			        String path = root + "resources" + File.separator + "images" + File.separator + "play";  
+			        paraMap.put("path", path); // 삭제해야할 파일이 저장된 경로
+			        paraMap.put("fileName", fileName); // 삭제해야할 파일 명 
+			        
+			        //System.out.println("if fileName 들어옴");
+			    }
+
+			    int n = service.delPlay(paraMap);
+
+			    if(n == 1) {
+			        mav.addObject("message", "글 삭제 성공!!");
+			        mav.addObject("loc", request.getContextPath() + "/playMain.trip");
+			        mav.setViewName("msg");
+			    } else {
+			        mav.addObject("message", "글 삭제 실패!!");
+			        mav.addObject("loc", request.getContextPath() + "/playMain.trip");
+			        mav.setViewName("msg");
+			    }
+
+			    return mav;
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		
 		

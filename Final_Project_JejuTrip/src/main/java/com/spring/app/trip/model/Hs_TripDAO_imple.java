@@ -95,6 +95,24 @@ public class Hs_TripDAO_imple implements Hs_TripDAO {
 		int n = sqlsession.update("hs_trip.editEnd",playvo);
 		return n;
 	}
+	//조회수 증가
+	@Override
+	public int increase_readCount(String play_code) {
+		int n = sqlsession.update("hs_trip.increase_readCount",play_code);
+		return n;
+	}
+	//원글 삭제 전 리뷰삭제
+	@Override
+	public int delReview(Map<String, String> paraMap) {
+		int n = sqlsession.delete("hs_trip.delReview",paraMap);
+		return n;
+	}
+	//리뷰삭제 후 원글 삭제
+	@Override
+	public int delView(Map<String, String> paraMap) {
+		int n = sqlsession.delete("hs_trip.delView",paraMap);
+		return n;
+	}
 
 
 }

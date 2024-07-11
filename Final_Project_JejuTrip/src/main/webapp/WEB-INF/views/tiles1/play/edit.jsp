@@ -1,7 +1,138 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <% String ctxPath = request.getContextPath();%>
-<link rel="stylesheet" href="<%=ctxPath%>/resources/css/company/registerHotel.css"/>
+
+
+<style type="text/css">
+
+body {
+    font-family: "Noto Sans KR", sans-serif;
+    font-optical-sizing: auto;
+}
+
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+    div.container {
+        width: 70vw !important;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    div.container {
+        width: 80vw !important;
+    }
+}
+
+@media screen and (max-width: 425px) {
+    div.container {
+        width: 100vw !important;
+        margin-top: 0 !important;
+    }
+
+    h2 {
+        font-size: 1.4rem !important;
+    }
+
+    h5 {
+        font-size: 1rem !important;
+    }
+
+    div.info_block > input,
+    input#email,
+    span.error {
+        font-size: 0.8rem !important;
+    }
+}
+
+div.container {
+    width: 45%;
+    margin: 5% auto;
+    border: solid 1px rgba(0, 0, 0, 0.15);
+    border-radius: 40px;
+    box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+}
+
+div.info {
+    border: solid 0px red;
+    width: 80%;
+    margin: 10% auto;
+}
+
+div.info_block > input:first-child {
+    display: block;
+    width: 100%;
+    max-width: 680px;
+    height: 50px;
+    margin: 0 auto;
+    border-radius: 8px;
+    border: solid 1px rgba(15, 19, 42, .1);
+    padding: 0 0 0 15px;
+    font-size: 16px;
+}
+
+div.info_block > select {
+    display: block;
+    width: 100%;
+    max-width: 680px;
+    height: 50px;
+    margin: 0 auto;
+    border-radius: 8px;
+    border: solid 1px rgba(15, 19, 42, .1);
+    padding: 0 0 0 15px;
+    font-size: 16px;
+    color:gray;
+}
+
+div.info_block > textarea {
+    display: block;
+    width: 100%;
+    max-width: 680px;
+    height: 150px;
+    margin: 0 auto;
+    border-radius: 8px;
+    border: solid 1px rgba(15, 19, 42, .1);
+    padding: 0 0 0 15px;
+    font-size: 16px;
+    color:gray;
+}
+
+span.error {
+    font-size: 11pt;
+    margin: 0 3%;
+    color: red;
+}
+
+/* 유효성 검사 에러 시 input 테두리 색 변경 */
+.input_error {
+    border: solid 1px red !important;
+}
+
+button#registerBtn {
+    width: 25%;
+    height: 50px;
+    margin: 1% 5% 1%;
+    border-radius: 8px;
+    background-color: #ff5000;
+    color: white;
+}
+
+div.convenient{
+    font-size: 17pt;
+    margin-bottom: 10px;
+    margin-left: 10px;
+    color:gray;
+}
+
+label{
+    margin-left: 10px;
+    color:gray;
+}
+
+
+
+</style>
+
+
+
 <script type="text/javascript">
 
 
@@ -13,7 +144,7 @@
 	
 	$(document).ready(function(){
 		$("span.error").hide();
-		console.log("play_address" ,play_address);	
+		//console.log("play_address" ,play_address);	
 	    
 		// 주소 클릭 시
 	    $('input#play_address').click(function () {
@@ -91,29 +222,8 @@
 	            checkPlay_businesshours = true;
 	        }
 	    });
-	    
-	    
-	    
-	    // ===== 상세주소 유효성 검사 =====
-	   /*  $("input#play_address").blur((e) => {
 
-	        const play_address = $(e.target).val().trim();
 
-	        if(play_address == "") {
-	            $(e.target).addClass("input_error");
-	            $(e.target).next().show();
-	            $(e.target).next().text("상세주소를 입력해주세요.");
-	            checkPlay_address = false;
-
-	        } 
-			else {
-	            $(e.target).removeClass("input_error");
-	            $(e.target).next().hide();
-	            checkPlay_address = true;
-	        }
-	    });
- */
-	    
 		// ===== 즐길거리설명 유효성 검사 =====
 	    $("textarea#play_content").blur((e) => {
 
@@ -133,27 +243,25 @@
 			}
 		});
 
-	    /* $("input#play_mobile").keyup(function(e) {
-	        if(e.keyCode == 13) {
-	        	goRegisterPlay();
-	        }
-	    });  */
 	}); // end of $(document).ready(function(){
 		
 	function goeditPlay(ctxPath) {
 
-
-
-			let queryString = $("form[name='editPlayFrm']").serialize();
-			
-	        // 숙소 등록 처리하기.
-	        const frm = document.editPlayFrm;
-		   	frm.method = "post";
-		   	frm.action = "<%= ctxPath%>/editPlayEnd.trip";
-		   	frm.submit();
+		let queryString = $("form[name='editPlayFrm']").serialize();
+		
+	       // 숙소 등록 처리하기.
+	    const frm = document.editPlayFrm;
+	   	frm.method = "post";
+	   	frm.action = "<%= ctxPath%>/editPlayEnd.trip";
+	   	frm.submit();
 	  
 
 	}
+	
+	
+	
+	
+	
 </script>
 
 <div class="container">
@@ -217,13 +325,13 @@
                 <input type="file" name="attach" id="attach">
                 <span class="error"></span>
             </div>
+			<input type="hidden" name="play_code" id="play_code" value="${requestScope.playvo.play_code}">
         </div>
 
         <div style="text-align: center; margin-bottom: 13%;">
-            <button type="button" class="btn" id="registerBtn" onclick="goeditPlay('<%=ctxPath%>')">등록하기</button>
-            <button type="button" class="btn btn-secondary" onclick="javascript:history.back()">취소</button>  
+            <button type="button" class="btn" id="registerBtn" onclick="goeditPlay('<%=ctxPath%>')">수정하기</button>
+            <button type="button" class="btn" id="registerBtn" onclick="javascript:history.back()">취소</button>  
         </div>
-
     </form>
 
 </div>

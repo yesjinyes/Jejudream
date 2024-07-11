@@ -6,7 +6,11 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.spring.app.trip.common.FileManager;
 import com.spring.app.trip.domain.PlayVO;
 import com.spring.app.trip.domain.ReviewVO;
 import com.spring.app.trip.model.Hs_TripDAO;
@@ -16,6 +20,9 @@ public class Hs_TripService_imple implements Hs_TripService {
 	@Autowired
 	private Hs_TripDAO dao;
 	
+	//첨부파일 삭제를 위한 것
+	@Autowired
+	private FileManager fileManager;
 	
 	//즐길거리 List
 	@Override
@@ -23,10 +30,7 @@ public class Hs_TripService_imple implements Hs_TripService {
 		List<PlayVO> playList = dao.playList();
 		return playList;
 	}
-	
-	
-
-
+	//카테고리별 list 불러오기
 	@Override
 	public List<PlayVO> getPlayListByCategory(Map<String, Object> paraMap) {
 		List<PlayVO> platList = dao.getPlayListByCategory(paraMap);
@@ -47,14 +51,19 @@ public class Hs_TripService_imple implements Hs_TripService {
 		return n;
 	}
 
-
+	//조회수 증가
 	@Override
 	public PlayVO goAddSchedule(String play_code) {
+		
 		PlayVO goAddSchedule = dao.goAddSchedule(play_code);
+		
+		int n = dao.increase_readCount(goAddSchedule.getPlay_code());
+		if(n==1) {
+			goAddSchedule.setReadCount(String.valueOf(Integer.parseInt(goAddSchedule.getReadCount())+1));
+		}
+		
 		return goAddSchedule;
 	}
-
-
 
 	//리뷰작성
 	@Override
@@ -113,6 +122,39 @@ public class Hs_TripService_imple implements Hs_TripService {
 	public int editEnd(PlayVO playvo) {
 		int n=dao.editEnd(playvo);
 		return n;
+	}
+	
+	//글 삭제
+	@Override
+	@Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.READ_COMMITTED, rollbackFor= {Throwable.class})
+	public int delPlay(Map<String, String> paraMap) {
+		
+		// 댓글 삭제 시도
+	    int n1 = dao.delReview(paraMap);
+	    //System.out.println("n1 : " + n1);
+	    
+	    
+	    // 원글 삭제
+	    int n2 = dao.delView(paraMap);
+	    if (n2 != 1) {
+	        return 0; // 원글 삭제 실패 시 0 반환
+	    }
+
+	    // 파일 삭제
+	    String fileName = paraMap.get("fileName");
+	    String path = paraMap.get("path");
+	    if (fileName != null && !"".equals(fileName)) {
+	        try {
+	            fileManager.doFileDelete(fileName, path);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            System.out.println("서비스 파일삭제 실패");
+	            return 0; // 파일 삭제 실패 시 0 반환
+	        }
+	    }
+
+	    return 1; // 모든 작업이 성공적으로 완료되면 1 반환
+
 	}
 
 

@@ -214,6 +214,45 @@ table#schedule{
 						border-radius:2%;
 	                      color: white;	}
 
+/*------------아이콘관련------------------------------*/
+
+button.iconbtn {
+  border: none;
+  background-color: white;
+}
+
+div.item-each {
+  display: block;
+}
+
+
+img.icon {
+  width: 30%;
+  margin-bottom: 5%;
+}
+.icon-title {
+  color: gray;
+  font-size: 13pt;
+}
+.count {
+  color: orange;
+  margin-top: -8%;
+  font-size: 13pt;
+}
+
+ul.list {
+  list-style: none;
+}
+
+ul.list li {
+  border: solid 0px red;
+  margin: 2% 2% 0 2%;
+  list-style: none;
+  display: block;
+  width: 17%;
+  text-align: center;
+  font-size: 15pt;
+}
 </style>
 
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f42c6cbd2d2060c5c719ee80540fbfbc&libraries=services"></script> 
@@ -242,10 +281,13 @@ $(document).ready(function() {
     //------------------------------------------------------------------------ 
 	
 	// --------------------------좋아요 등록하기 --------------------------------- //
-	   <%-- function golikeAdd(pnum){
+
+	
+	
+	    function golikeAdd(pnum){
 		   
 		   if(${empty sessionScope.loginuser}) {
-		         alert("찜하기는 로그인후에 가능합니다.");
+		         alert("좋아요는 로그인 후 가능합니다.");
 		         return; // 종료
 		      }
 		   else{//로그인을 한 경우라면
@@ -272,7 +314,7 @@ $(document).ready(function() {
 			   
 		   }
 		 
-	   }// end of function golikeAdd(pnum} --%>
+	   }// end of function golikeAdd(pnum}
     //-----------------------------------------------------------------------
     
     
@@ -303,7 +345,7 @@ $(document).ready(function() {
                    console.log(JSON.stringify(json));
                   
                    if(json.n == 1) {
-                       goReviewListView(); // 함수 호출하기 
+                       goReviewListView(currentShowPageNo); // 함수 호출하기 
                      }
                     
                      else  {
@@ -487,7 +529,7 @@ $(document).ready(function() {
     success:function(json){
  	
  	   let v_html = "";
-        
+       let r_html = ""; 
         if (json.length > 0) {    
            $.each(json, function(index, item){ 
               let writeuserid = item.fk_userid;
@@ -497,7 +539,7 @@ $(document).ready(function() {
             	   	    + "<div id='review"+index+"' style='font-weight: bold;'><span class='markColor'></span>&nbsp;"+item.review_content+"</div>"
                         + "<div class='customDisplay' style='font-size: 12px;'>&nbsp;"+item.registerday+"</div>"
                         + "<input type='hidden' name='review_code' value='" + item.review_code + "'/>";
-               
+               r_html = item.totalCount
                if( loginuserid == "") { 
                   // 로그인을 안한 경우 
                   v_html += "<div class='customDisplay spacediv'>&nbsp;</div><br>";
@@ -513,6 +555,7 @@ $(document).ready(function() {
                   		   
                }
            }); 
+           
            const totalPage = Math.ceil(json[0].totalCount / json[0].sizePerPage);
            PageBar(currentShowPageNo, totalPage);
         }// end of if -----------------------
@@ -521,7 +564,7 @@ $(document).ready(function() {
            v_html += "<div>등록된 리뷰가 없습니다.</div>";
         }// end of else ---------------------
         $("div#viewComments").html(v_html);
-        
+        $("p#reviewCount").html(r_html);
     },
     error: function(request, status, error){
         alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
@@ -538,7 +581,7 @@ $(document).ready(function() {
  	   
      const blockSize = 10;
  	let loop = 1;
- 	let pageNo = Math.floor((currentShowPageNo - 1)/blockSize) * blockSize + 1;
+ 	let pageNo = Math.floor((Number(currentShowPageNo) - 1)/blockSize) * blockSize + 1;
  	
  	let pageBar_HTML = "<ul style='list-style:none'>";
  	
@@ -660,7 +703,14 @@ function updateMyReview(index,review_code){
 	    
 }
 
-
+function goDelete() {
+    if (confirm("정말로 이 게시물을 삭제하시겠습니까?")) {
+        const frm = document.delFrm;
+        frm.action = "<%=ctxPath%>/deletePlay.trip";
+        frm.method = "post";
+        frm.submit();
+	}
+}
 </script>
 
 <body>
@@ -669,13 +719,49 @@ function updateMyReview(index,review_code){
 	
 	<c:if test="${sessionScope.loginuser.userid == 'admin'}">
 		<div style="width: 90%; margin: 3% auto;text-align: right;">
-		<button type="button" onclick="javascript:location.href='<%= ctxPath%>/editPlay.trip?play_code=${requestScope.playvo.play_code}'" class="btn btn-outline-warning btn-lg" value="NEW">즐길거리 수정</button>
-		<button type="button" onclick="location.href='<%= ctxPath%>/deletePlay.trip'" class="sort" value="NEW">즐길거리 삭제</button>
+			<button type="button" onclick="javascript:location.href='<%= ctxPath%>/editPlay.trip?play_code=${requestScope.playvo.play_code}'" class="btn btn-outline-warning btn-sm">즐길거리 수정</button>
+			<button type="button" onclick="goDelete()" class="btn btn-outline-warning btn-sm" >즐길거리 삭제</button>
 		</div>
 	</c:if>
+	
 	<div style="width: 90%; margin: 3% auto;text-align: right;">
-    	<i class="fa-regular fa-calendar-plus fa-3x addSchedule"  ></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    	<i class="fa-regular fa-heart fa-3x"></i>
+		<ul class="list" style="display: flex; margin-left: 8%;">
+			<li class="list-item">
+				<button type="button" class="iconbtn">
+					<div class="item-each">
+						<img class="icon" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_like.png">
+					</div>
+					<p class="icon-title">좋아요</p>
+				</button>
+				<p class="count">30</p>
+			</li>
+			<li class="list-item">
+				<button type="button" class="iconbtn">
+					<div>
+						<img class="icon" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_review2.png">
+					</div>
+					<p class="icon-title">리뷰</p>
+				</button>
+				<p class="count" id="reviewCount">5</p>
+			</li>
+			<li class="list-item">
+				<button type="button" class="iconbtn" style="cursor: default;">
+					<div>
+						<img class="icon" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_viewcount.png">
+					</div>
+					<p class="icon-title">조회수</p>
+				</button>
+				<p class="count">${requestScope.playvo.readCount}</p>
+			</li>
+			<li class="list-item">
+				<button type="button" class="iconbtn addSchedule">
+					<div>
+						<img class="icon" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_calender.png">
+					</div>
+					<p class="icon-title">일정에 추가</p>
+				</button>
+			</li>
+		</ul>
     </div>
     
     <div style="width: 80%; margin: 3% auto;text-align: center;">
@@ -741,7 +827,9 @@ function updateMyReview(index,review_code){
      	</div>
     </div>
     
-    
+    <form name="delFrm">
+	  <input type="hidden" name="play_code" value="${requestScope.playvo.play_code}" />
+	</form>
     
     
 </div><!--컨테이너끝  -->

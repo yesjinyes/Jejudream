@@ -8,63 +8,59 @@
 <mapper namespace="hs_trip">
 
 
-
 <select id="playList" resultType="com.spring.app.trip.domain.PlayVO">
-	 SELECT play_code,play_category ,local_status,play_name,play_content,
+	 SELECT play_code,play_category ,local_status,play_name,play_content,readCount,
        		play_mobile,play_businesshours,play_address,play_main_img,review_division
-	 FROM tbl_play
-	
+	  FROM  tbl_play
+	 ORDER 	by play_code desc
 </select>
 
 
 <!-- 카테고리별 select용  -->
 <select id="getPlayListByCategory" parameterType="HashMap" resultType="com.spring.app.trip.domain.PlayVO">
-    select play_code, play_category, local_status, play_name, play_content, RNO,
+    select play_code, play_category, local_status, play_name, play_content, RNO,readCount,
            play_mobile, play_businesshours, play_address, play_main_img, review_division, orgFilename
     from (
-        select play_code, play_category, local_status, play_name, play_content, rownum as RNO,
-               play_mobile, play_businesshours, play_address, play_main_img, review_division, orgFilename
-        from tbl_play
-        where 1=1
-
- 	<if test="category != null ">
-        and play_category in '${category}'
-    </if>
-    <if test="arr_local_status != null">
-			 AND local_status IN 
+           select play_code, play_category, local_status, play_name, play_content, rownum as RNO,readCount,
+           play_mobile, play_businesshours, play_address, play_main_img, review_division, orgFilename
+           from tbl_play
+           where 1=1
+	 	<if test="category != null ">
+	       AND play_category in '${category}'
+	    </if>
+    	<if test="arr_local_status != null">
+		   AND local_status IN 
 			<foreach collection="arr_local_status" index="i" open="(" separator="," close=")"> <!--parameter 로 들어온 map 의 key 값 , 무조건 배열만 가능  -->
-				<!--              배열의                            길이만큼돌린다         (로 열고                , 로 구분짓고         ) 로 닫음      -->
 				'${arr_local_status[i]}'
 	 		</foreach>
-	</if>
-	<if test='searchWord != "" '>
-		and play_name||play_content like '%'||lower('${searchWord}')||'%'
-	</if>
-	)
-     where RNO between #{startRno} and #{endRno}
+		</if>
+		<if test='searchWord != "" '>
+			and play_name||play_content like '%'||lower('${searchWord}')||'%'
+		</if>
+		    order by play_code desc
+		  )
+     	  WHERE RNO between #{startRno} and #{endRno}
 </select>
 
 
 <insert id="registerPlayEnd" parameterType="com.spring.app.trip.domain.PlayVO">
-insert into tbl_play( play_code, play_category, local_status, play_name, play_content, play_mobile,play_businesshours, play_address,review_division ,fileName,orgFilename,fileSize,play_main_img )
-values (seq_common.nextval,#{play_category},#{local_status},#{play_name},#{play_content},#{play_mobile},#{play_businesshours},#{play_address},default,#{fileName},#{orgFilename},#{fileSize},#{fileName} )
-
+	insert into tbl_play( play_code, play_category, local_status, play_name, play_content, play_mobile,play_businesshours, play_address,review_division ,fileName,orgFilename,fileSize,play_main_img )
+	values (seq_common.nextval,#{play_category},#{local_status},#{play_name},#{play_content},#{play_mobile},#{play_businesshours},#{play_address},default,#{fileName},#{orgFilename},#{fileSize},#{fileName} )
 </insert>
 
 
 <select id="getPlayTotalCount" parameterType="HashMap" resultType="int">
-select count(*)
-from tbl_play
-where 1=1
-<if test="category != null ">
-        and play_category in '${category}'
-        </if>
+	select count(*)
+	from tbl_play
+	where 1=1
+	<if test="category != null ">
+        AND play_category in '${category}'
+    </if>
     <if test="arr_local_status != null">
-			 AND local_status IN 
-			<foreach collection="arr_local_status" index="i" open="(" separator="," close=")"> <!--parameter 로 들어온 map 의 key 값 , 무조건 배열만 가능  -->
-				<!--              배열의                            길이만큼돌린다         (로 열고                , 로 구분짓고         ) 로 닫음      -->
-				'${arr_local_status[i]}'
-	 		</foreach>
+		 AND local_status IN 
+		<foreach collection="arr_local_status" index="i" open="(" separator="," close=")"> <!--parameter 로 들어온 map 의 key 값 , 무조건 배열만 가능  -->
+			'${arr_local_status[i]}'
+ 		</foreach>
 	</if>
 	<if test='searchWord != "" '>
 		and play_name||play_content like '%'||lower('${searchWord}')||'%'
@@ -73,16 +69,15 @@ where 1=1
 
 
 <select id="goAddSchedule" parameterType="String" resultType="com.spring.app.trip.domain.PlayVO">
-	 SELECT play_code,play_category ,local_status,play_name,play_content,
+	 SELECT play_code,play_category ,local_status,play_name,play_content,readCount,readCount,
        		play_mobile,play_businesshours,play_address,play_main_img,review_division
 	 FROM tbl_play
 	 where play_code=#{play_code}
-	
 </select>
 
 <insert id="addReview" parameterType="com.spring.app.trip.domain.ReviewVO">
-insert into tbl_review (review_code, fk_userid, parent_code, review_content, review_division_R )
-				values (seq_review.nextval,#{fk_userid},#{parent_code},#{review_content},#{review_division_R})
+	insert into tbl_review (review_code, fk_userid, parent_code, review_content, review_division_R )
+					values (seq_review.nextval,#{fk_userid},#{parent_code},#{review_content},#{review_division_R})
 </insert>
  
 <select id="reviewList" parameterType="HashMap" resultType="com.spring.app.trip.domain.ReviewVO">
@@ -92,16 +87,17 @@ FROM
 		select review_content,fk_userid,registerday,review_code,rownum as RNO
 		from tbl_review
 		where parent_code = #{parent_code}
+		order by registerday desc
 	)
-where RNO between #{startRno} and #{endRno}
+WHERE RNO between #{startRno} and #{endRno}
 
 </select>
 
 
 <select id="getPlayReviewCount" parameterType="HashMap" resultType="int">
-select count(*)
-from tbl_review
-where parent_code = #{parent_code}
+	select count(*)
+	from tbl_review
+	where parent_code = #{parent_code}
 </select>
  
  
@@ -109,15 +105,16 @@ where parent_code = #{parent_code}
 	update tbl_review set review_content = #{review_content} , registerday = default where review_code = #{review_code}
 </update> 
  
+ 
 <delete id="reviewDel" parameterType="String">
 	delete from tbl_review where review_code = #{review_code}
 </delete> 
  
 <select id="getPlaySelect" parameterType="HashMap" resultType="com.spring.app.trip.domain.PlayVO">
-SELECT play_code,play_category ,local_status,play_name,play_content,
-       		play_mobile,play_businesshours,play_address,play_main_img,review_division
-	 FROM tbl_play
-WHERE play_code = #{play_code}	 
+	SELECT play_code,play_category ,local_status,play_name,play_content,fileName,
+	       play_mobile,play_businesshours,play_address,play_main_img,review_division
+	FROM tbl_play
+	WHERE play_code = #{play_code}	 
 </select>
 
 
@@ -141,5 +138,27 @@ WHERE play_code = #{play_code}
     where play_code = #{play_code}
 </update>
 
+
+<update id="increase_readCount" parameterType="String">
+	update tbl_play set readCount = to_number(readCount)+1 where play_code = #{play_code}
+</update>
+ 
+ 
+ 
+<delete id="delReview" parameterType="HashMap">
+	delete from tbl_review where parent_code = #{play_code}
+</delete> 
+
+
+<delete id="delView" parameterType="HashMap">
+	delete from tbl_play where play_code = #{play_code}
+</delete>
+
+ 
+ 
+ 
+ 
+ 
+ 
  
 </mapper>
