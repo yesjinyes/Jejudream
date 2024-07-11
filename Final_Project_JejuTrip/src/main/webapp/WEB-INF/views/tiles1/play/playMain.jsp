@@ -191,8 +191,8 @@
   top: 50%; 							/* 요소 중앙에 배치 */
   left: 50%;							/* 요소 중앙에 배치 */
   transform: translate(-50%, -50%);		/* 중앙 정렬 보정 */
-  width: 200px; 						/* 동그라미의 너비 */
-  height: 200px; 						/* 동그라미의 높이 */
+  width: 240px; 						/* 동그라미의 너비 */
+  height: 240px; 						/* 동그라미의 높이 */
   background-color: rgba(255, 255, 255, 0.7); /* 동그라미 색상 및 불투명도 */
   border-radius: 50%; 					/* 동그라미 모양으로 만들기 */
   z-index: -1; 							/* 텍스트 뒤로 배치 */
@@ -615,8 +615,9 @@ function goTop() {
                         <div>
                             <button type="button" onclick="" class="btn btn-outline-warning btn-sm" value="">추천순</button>
                             <button type="button" onclick="" class="btn btn-outline-warning btn-sm" value="NEW">최신등록순</button>
+                            
                             <c:if test="${sessionScope.loginuser.userid == 'admin'}">
-                                <button type="button" onclick="location.href='<%= ctxPath%>/registerPlay.trip'" class="sort" value="NEW">즐길거리 등록</button>
+                                <button type="button" onclick="location.href='<%= ctxPath%>/registerPlay.trip'" class="btn btn-outline-info btn-sm">즐길거리 등록</button>
                             </c:if>
                         </div>
                         <div>

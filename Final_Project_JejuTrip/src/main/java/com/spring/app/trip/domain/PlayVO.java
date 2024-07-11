@@ -15,7 +15,7 @@ public class PlayVO {
 	private String play_address;		// 상세주소
 	private String play_main_img;		// 대표이미지
 	private String review_division;		// 리뷰용구분컬럼(default) C
-	
+	private String readCount;           // 조회수
 //	-----------------------------------------------------------------------
 	// #172.파일을 첨부하도록 VO 수정하기
 	// 먼저, 오라클에서 tbl_board 테이블에 3개 컬럼(fileName, orgFilename, fileSize)을 추가한 다음에 아래의 작업을 한다.
@@ -145,6 +145,14 @@ public class PlayVO {
 
 	public void setLocal_status(String local_status) {
 		this.local_status = local_status;
+	}
+
+	public String getReadCount() {
+		return readCount;
+	}
+
+	public void setReadCount(String readCount) {
+		this.readCount = readCount;
 	}
 	
 	
