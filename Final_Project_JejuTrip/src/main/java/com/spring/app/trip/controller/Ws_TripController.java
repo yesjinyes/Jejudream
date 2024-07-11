@@ -23,8 +23,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.app.trip.common.FileManager;
 import com.spring.app.trip.domain.CompanyVO;
+import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.MemberVO;
+import com.spring.app.trip.domain.PlayVO;
 import com.spring.app.trip.service.Ws_TripService;
 
 import oracle.jdbc.proxy.annotation.Post;
@@ -460,6 +462,14 @@ public class Ws_TripController {
 		if(loginuser != null && loginuser.getUserid().equals("admin")) {
 			// 로그인한 유저가 개인 유저이면서 그 아이디가 관리자 아이디라면
 			mav.setViewName("mypage/admin/mypageMain.tiles1");
+			
+			int PlayCount = service.getTotalPlayCount(); // 페이징 처리시 보여주는 순번을 나타내기 위한 것임.
+			int FoodstoreCount = service.getTotalFoodstoreCount(); // 페이징 처리시 보여주는 순번을 나타내기 위한 것임.
+			int lodgingCount = service.getTotalLodgingCount(); // 페이징 처리시 보여주는 순번을 나타내기 위한 것임.
+			mav.addObject("lodging_cnt",lodgingCount);
+			mav.addObject("foodstore_cnt",FoodstoreCount);
+			mav.addObject("play_cnt",PlayCount);
+			
 		}
 		else if(loginuser != null && !loginuser.getUserid().equals("admin")) {
 			// 로그인한 유저가 개인 유저이면서 그 아이디가 일반 회원의 아이디라면
@@ -944,6 +954,177 @@ public class Ws_TripController {
 		}
 		
 		return jsonArr.toString(); 	
+	}
+	
+	// 페이징 처리한 숙소 리스트 가져오기
+	@ResponseBody
+	@PostMapping(value="/LodgingListJSON.trip", produces="text/plain;charset=UTF-8") 
+	public String LodgingListJSON(HttpServletRequest request) {
+
+		String currentShowPageNo = request.getParameter("currentShowPageNo"); 
+		
+		if(currentShowPageNo == null) {
+			currentShowPageNo = "1";
+		}
+		
+		
+		int sizePerPage = 5; // 한 페이지당 5개의 댓글을 보여줄 것임.
+		
+		// **** 가져올 게시글의 범위를 구한다.(공식임!!!) **** 
+		/*
+		     currentShowPageNo      startRno     endRno
+		    --------------------------------------------
+		         1 page        ===>    1           10
+		         2 page        ===>    11          20
+		         3 page        ===>    21          30
+		         4 page        ===>    31          40
+		         ......                ...         ...
+		 */
+		int startRno = ((Integer.parseInt(currentShowPageNo) - 1) * sizePerPage) + 1; // 시작 행번호 
+		int endRno = startRno + sizePerPage - 1; // 끝 행번호
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("startRno", String.valueOf(startRno));
+		paraMap.put("endRno", String.valueOf(endRno));
+		
+		List<LodgingVO> lodgingList = service.select_lodging(paraMap); // 숙소  테이블에서 기본적인 정보 목록을 가져온다.
+		int totalCount = service.getTotalLodgingCount(); // 페이징 처리시 보여주는 순번을 나타내기 위한 것임.
+		
+		JSONArray jsonArr = new JSONArray(); // [] 
+		if(lodgingList != null) {
+			for(LodgingVO lodging : lodgingList) {
+				JSONObject jsonObj = new JSONObject();      
+				jsonObj.put("lodging_code", lodging.getLodging_code());
+				jsonObj.put("lodging_name", lodging.getLodging_name());
+				jsonObj.put("lodging_tell", lodging.getLodging_tell());
+				jsonObj.put("lodging_address", lodging.getLodging_address());
+				jsonObj.put("totalCount", totalCount);   // 페이징 처리시 보여주는 순번을 나타내기 위한 것임.
+				jsonObj.put("sizePerPage", sizePerPage); // 페이징 처리시 보여주는 순번을 나타내기 위한 것임. 
+				
+				jsonArr.put(jsonObj);
+			}// end of for-----------------------
+		}
+		
+		
+		return jsonArr.toString(); // "[{"seq":1, "fk_userid":"seoyh","name":서영학,"content":"첫번째 댓글입니다. ㅎㅎㅎ","regdate":"2024-06-18 15:36:31"}]"
+		                           // 또는
+		                           // "[]"		
+		
+	}
+	
+	// 페이징 처리한 숙소 리스트 가져오기
+	@ResponseBody
+	@PostMapping(value="/FoodstoreJSON.trip", produces="text/plain;charset=UTF-8") 
+	public String FoodstoreJSON(HttpServletRequest request) {
+
+		String currentShowPageNo = request.getParameter("currentShowPageNo"); 
+		
+		if(currentShowPageNo == null) {
+			currentShowPageNo = "1";
+		}
+		
+		
+		int sizePerPage = 5; // 한 페이지당 5개의 댓글을 보여줄 것임.
+		
+		// **** 가져올 게시글의 범위를 구한다.(공식임!!!) **** 
+		/*
+		     currentShowPageNo      startRno     endRno
+		    --------------------------------------------
+		         1 page        ===>    1           10
+		         2 page        ===>    11          20
+		         3 page        ===>    21          30
+		         4 page        ===>    31          40
+		         ......                ...         ...
+		 */
+		int startRno = ((Integer.parseInt(currentShowPageNo) - 1) * sizePerPage) + 1; // 시작 행번호 
+		int endRno = startRno + sizePerPage - 1; // 끝 행번호
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("startRno", String.valueOf(startRno));
+		paraMap.put("endRno", String.valueOf(endRno));
+		
+		List<FoodstoreVO> foodstoreList = service.select_foodstore(paraMap); // 맛집  테이블에서 기본적인 정보 목록을 가져온다.
+		int totalCount = service.getTotalFoodstoreCount(); // 페이징 처리시 보여주는 순번을 나타내기 위한 것임.
+		
+		JSONArray jsonArr = new JSONArray(); // [] 
+		if(foodstoreList != null) {
+			for(FoodstoreVO foodstore : foodstoreList) {
+				JSONObject jsonObj = new JSONObject();      
+				
+				jsonObj.put("food_store_code", foodstore.getFood_store_code());
+				jsonObj.put("food_name", foodstore.getFood_name());
+				jsonObj.put("food_mobile", foodstore.getFood_mobile());
+				jsonObj.put("food_address", foodstore.getFood_address());
+				
+				jsonObj.put("totalCount", totalCount);   // 페이징 처리시 보여주는 순번을 나타내기 위한 것임.
+				jsonObj.put("sizePerPage", sizePerPage); // 페이징 처리시 보여주는 순번을 나타내기 위한 것임. 
+				
+				jsonArr.put(jsonObj);
+			}// end of for-----------------------
+		}
+		
+		
+		return jsonArr.toString(); // "[{"seq":1, "fk_userid":"seoyh","name":서영학,"content":"첫번째 댓글입니다. ㅎㅎㅎ","regdate":"2024-06-18 15:36:31"}]"
+		                           // 또는
+		                           // "[]"		
+		
+	}
+	
+	// 페이징 처리한 숙소 리스트 가져오기
+	@ResponseBody
+	@PostMapping(value="/PlayJSON.trip", produces="text/plain;charset=UTF-8") 
+	public String PlayJSON(HttpServletRequest request) {
+
+		String currentShowPageNo = request.getParameter("currentShowPageNo"); 
+		
+		if(currentShowPageNo == null) {
+			currentShowPageNo = "1";
+		}
+		
+		
+		int sizePerPage = 5; // 한 페이지당 5개의 댓글을 보여줄 것임.
+		
+		// **** 가져올 게시글의 범위를 구한다.(공식임!!!) **** 
+		/*
+		     currentShowPageNo      startRno     endRno
+		    --------------------------------------------
+		         1 page        ===>    1           10
+		         2 page        ===>    11          20
+		         3 page        ===>    21          30
+		         4 page        ===>    31          40
+		         ......                ...         ...
+		 */
+		int startRno = ((Integer.parseInt(currentShowPageNo) - 1) * sizePerPage) + 1; // 시작 행번호 
+		int endRno = startRno + sizePerPage - 1; // 끝 행번호
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("startRno", String.valueOf(startRno));
+		paraMap.put("endRno", String.valueOf(endRno));
+		
+		List<PlayVO> playList = service.select_play(paraMap); //즐길거리  테이블에서 기본적인 정보 목록을 가져온다.
+		int totalCount = service.getTotalPlayCount(); // 페이징 처리시 보여주는 순번을 나타내기 위한 것임.
+		
+		JSONArray jsonArr = new JSONArray(); // [] 
+		if(playList != null) {
+			for(PlayVO play : playList) {
+				JSONObject jsonObj = new JSONObject();      
+				jsonObj.put("play_code", play.getPlay_code());
+				jsonObj.put("play_name", play.getPlay_name());
+				jsonObj.put("play_mobile", play.getPlay_mobile());
+				jsonObj.put("play_address", play.getPlay_address());
+				
+				jsonObj.put("totalCount", totalCount);   // 페이징 처리시 보여주는 순번을 나타내기 위한 것임.
+				jsonObj.put("sizePerPage", sizePerPage); // 페이징 처리시 보여주는 순번을 나타내기 위한 것임. 
+				
+				jsonArr.put(jsonObj);
+			}// end of for-----------------------
+		}
+		
+		
+		return jsonArr.toString(); // "[{"seq":1, "fk_userid":"seoyh","name":서영학,"content":"첫번째 댓글입니다. ㅎㅎㅎ","regdate":"2024-06-18 15:36:31"}]"
+		                           // 또는
+		                           // "[]"		
+		
 	}
 	
 }

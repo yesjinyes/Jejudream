@@ -295,4 +295,69 @@
 		order by line_month asc
 	</select>
 	
+	<select id="select_lodging" resultType="com.spring.app.trip.domain.LodgingVO">
+		SELECT lodging_code, lodging_name, lodging_tell, lodging_address
+		FROM 
+		(
+		    SELECT rownum AS RNO
+		         , lodging_code, lodging_name, lodging_tell, lodging_address
+		    FROM
+		    (
+		        select lodging_code, lodging_name, lodging_tell, lodging_address
+		        from tbl_lodging
+		        where status = 1
+		        order by lodging_name asc
+		    )V
+		) T
+		where RNO between #{startRno} and #{endRno}
+	</select>
+	
+	<select id="getTotalLodgingCount" resultType="Integer">
+		select count(*)
+		from tbl_lodging
+		where status = 1
+	</select>
+	
+	<select id="select_foodstore" resultType="com.spring.app.trip.domain.FoodstoreVO">
+		SELECT food_store_code, food_name, food_mobile, food_address
+		FROM 
+		(
+		    SELECT rownum AS RNO
+		         , food_store_code, food_name, food_mobile, food_address
+		    FROM
+		    (
+		        select food_store_code, food_name, food_mobile, food_address
+		        from tbl_food_store
+		        order by food_name asc
+		    )V
+		) T
+		where RNO between #{startRno} and #{endRno}
+	</select>
+	
+	<select id="getTotalFoodstoreCount" resultType="Integer">
+		select count(*)
+		from tbl_food_store
+	</select>
+	
+	<select id="select_play" resultType="com.spring.app.trip.domain.PlayVO">
+		SELECT play_code, play_name, play_mobile, play_address
+		FROM 
+		(
+		    SELECT rownum AS RNO
+		         , play_code, play_name, play_mobile, play_address
+		    FROM
+		    (
+		        select play_code, play_name, play_mobile, play_address
+		        from tbl_play
+		        order by play_name asc
+		    )V
+		) T
+		where RNO between #{startRno} and #{endRno}
+	</select>
+	
+	<select id="getTotalPlayCount" resultType="Integer">
+		select count(*)
+		from tbl_play
+	</select>
+	
 </mapper>

@@ -11,8 +11,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import com.spring.app.trip.domain.CompanyVO;
+import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.MemberVO;
+import com.spring.app.trip.domain.PlayVO;
 
 @Component
 @Repository
@@ -222,6 +224,48 @@ public class Ws_TripDAO_imple implements Ws_TripDAO {
 	public List<Map<String, String>> get_month_reservation_chart(String choice_year) {
 		List<Map<String,String>> mapList = sqlsession.selectList("ws_trip.get_month_reservation_chart",choice_year);
 		return mapList;
+	}
+	
+	// 숙소  테이블에서 기본적인 정보 목록을 가져온다.
+	@Override
+	public List<LodgingVO> select_lodging(Map<String, String> paraMap) {
+		List<LodgingVO> lodgingList = sqlsession.selectList("ws_trip.select_lodging",paraMap);
+		return lodgingList;
+	}
+	
+	// tbl_lodging 테이블에서 status가 1인 모든 숙소의 개수를 읽어온다.
+	@Override
+	public int getTotalLodgingCount() {
+		int totalCount = sqlsession.selectOne("ws_trip.getTotalLodgingCount");
+		return totalCount;
+	}
+	
+	// 맛집  테이블에서 기본적인 정보 목록을 가져온다.
+	@Override
+	public List<FoodstoreVO> select_foodstore(Map<String, String> paraMap) {
+		List<FoodstoreVO> foodstore = sqlsession.selectList("ws_trip.select_foodstore",paraMap);
+		return foodstore;
+	}
+	
+	// tbl_food_store 테이블에 있는 모든 맛집의 개수를 알아온다.
+	@Override
+	public int getTotalFoodstoreCount() {
+		int totalCount = sqlsession.selectOne("ws_trip.getTotalFoodstoreCount");
+		return totalCount;
+	}
+	
+	//즐길거리  테이블에서 기본적인 정보 목록을 가져온다.
+	@Override
+	public List<PlayVO> select_play(Map<String, String> paraMap) {
+		List<PlayVO> playList = sqlsession.selectList("ws_trip.select_play",paraMap);
+		return playList;
+	}
+	
+	// tbl_play 테이블에 있는 모든 즐길거리 개수를 알아온다.
+	@Override
+	public int getTotalPlayCount() {
+		int totalCount = sqlsession.selectOne("ws_trip.getTotalPlayCount");
+		return totalCount;
 	}
 
 }
