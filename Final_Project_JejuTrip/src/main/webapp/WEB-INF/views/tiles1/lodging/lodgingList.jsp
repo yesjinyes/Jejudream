@@ -131,6 +131,24 @@ $(document).ready(function(){
     
     $("input:text[name='datepicker']").change( (e)=>{
     	
+    	const id = $(e.target).attr('id');
+    	// alert(id);
+    	
+    	if(id == "fromDate"){
+    		
+    		const d1 = $("input#fromDate").val();
+    		// alert(d1);
+    		$("input:hidden[name='check_in']").val(d1);
+    		
+    	}
+    	else if (id == "toDate"){
+    		
+    		const d2 = $("input#toDate").val();
+    		// alert(d2);
+    		$("input:hidden[name='check_out']").val(d2);
+    	}
+    	
+    	
     });
     
 	// 정렬 버튼
@@ -465,7 +483,7 @@ $(document).ready(function(){
 		const frm = document.goDetail;
 	
 		frm.lodging_code.value = lodging_code;
-		frm.method = "post";
+		frm.method = "get";
 		frm.action = "<%= ctxPath%>/lodgingDetail.trip";
 		
 		frm.submit();
