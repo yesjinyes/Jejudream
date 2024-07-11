@@ -118,6 +118,13 @@ div#pageBar a {
 		
 	} // end of function goSearch() -------------------
 	
+	
+	// 게시판 상세보기
+	function goView(seq) {
+		location.href = "<%=ctxPath%>/community/viewBoard.trip?seq=" + seq;
+	}
+	
+	
 </script>
 
 
@@ -249,45 +256,6 @@ div#pageBar a {
 				</tr>
 			</c:if>
 		
-			<%--
-			<tr>
-				<td align="center">5</td>
-				<td>제주도 여행 코스 추천해 주세요</td>
-				<td align="center">김다영</td>
-				<td align="center">2024-07-09 16:48</td>
-				<td align="center">2</td>
-			</tr>
-			<tr>
-				<td align="center">4</td>
-				<td>뚜벅이를 위한 버스 투어가 있을까요? <span style="color: #ff5000; font-size: 1rem; font-weight: bold;">[10]</span></td>
-				<td align="center">김다영</td>
-				<td align="center">2024-07-09 16:48</td>
-				<td align="center">14</td>
-			</tr>
-			<tr>
-				<td align="center">3</td>
-				<td>제주도 해수욕장 파라솔 관련 문의</td>
-				<td align="center">김다영</td>
-				<td align="center">2024-07-09 16:48</td>
-				<td align="center">1</td>
-			</tr>
-			<tr>
-				<td align="center">2</td>
-				<td>안내 책자를 받고 싶어요</td>
-				<td align="center">김다영</td>
-				<td align="center">2024-07-09 16:48</td>
-				<td align="center">5</td>
-			</tr>
-			<tr>
-				<td align="center">1</td>
-				<td>제주도 도민들이 인정하는 관광지&nbsp;
-					<i class="fa-regular fa-image" style="color: green; font-size: 1rem;"></i>
-				</td>
-				<td align="center">김다영</td>
-				<td align="center">2024-07-09 16:48</td>
-				<td align="center">7</td>
-			</tr>
-			--%>
 		</tbody>
 	</table>
 	

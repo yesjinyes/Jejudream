@@ -1007,4 +1007,12 @@ public class Dy_TripController {
 		return mav;
 	}
 	
+	
+	// 게시판 상세 페이지 요청
+	@GetMapping("community/viewBoard.trip")
+	public String viewBoard() {
+		
+		return "community/viewBoard.tiles1";
+	}
+	
 }
