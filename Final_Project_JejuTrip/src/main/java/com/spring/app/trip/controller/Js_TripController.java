@@ -180,8 +180,11 @@ public class Js_TripController {
 	
 	
 	
-	@PostMapping("/lodgingDetail.trip")
+	@GetMapping("/lodgingDetail.trip")
 	public ModelAndView lodingDetail(ModelAndView mav, HttpServletRequest request, LodgingVO lvo) {
+		
+		
+		
 		
 		String lodgingCode = lvo.getLodging_code();
 		
