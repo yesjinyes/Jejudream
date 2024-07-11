@@ -833,14 +833,6 @@ public class Dy_TripController {
 	}
 	
 	
-	// 커뮤니티 전체 페이지 요청
-	@GetMapping("community/allBoard.trip")
-	public String allBoard() {
-		
-		return "community/allBoard";
-	}
-	
-	
 	// 커뮤니티 자유게시판 페이지 요청
 	@GetMapping("community/freeBoard.trip")
 	public ModelAndView freeBoard(ModelAndView mav, HttpServletRequest request) {
@@ -980,7 +972,8 @@ public class Dy_TripController {
 		mav.addObject("sizePerPage", sizePerPage);
 
 
-		mav.setViewName("community/freeBoard");
+//		mav.setViewName("community/freeBoard");
+		mav.setViewName("community/freeBoard.tiles1");
 		
 		return mav;
 	}

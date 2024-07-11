@@ -3,6 +3,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <% String ctxPath = request.getContextPath(); %>    
 
+<link rel="stylesheet" type="text/css" href="<%= ctxPath%>/resources/css/community/community_main.css" />
+
 <style type="text/css">
 div.container {
 	background-color: none;
@@ -15,6 +17,10 @@ table#freeBoard {
 
 table#freeBoard > thead {
 	background-color: #f2f2f2;
+}
+
+table#freeBoard > tbody > tr {
+	font-weight: normal;
 }
 
 input#boardSearch {
@@ -53,6 +59,7 @@ div#pageBar > ul li {
 div#pageBar > ul li:hover {
 	font-weight: bold;
 	color: black;
+	cursor: pointer;
 }
 
 div#pageBar a {
@@ -65,6 +72,17 @@ div#pageBar a {
 
 	$(document).ready(function(){
 
+		// 커뮤니티 카테고리 탭 
+		$('input[name="category"]').change(function(e) {
+	    	if($(e.target).val() == "") {
+	    		location.href = "<%=ctxPath%>/communityMain.trip";
+	    		
+	    	} else if($(e.target).val() == "1") {
+	    		location.href = "<%=ctxPath%>/community/freeBoard.trip";
+	    	}
+	    });
+		
+		
 		// 글제목 hover 이벤트
 		$("span.subject").hover(function(e) { // mouseover
 			$(e.target).addClass("subjectStyle");
@@ -73,10 +91,73 @@ div#pageBar a {
 			$(e.target).removeClass("subjectStyle");
 			
 		});
+
+		
+		// 게시판 검색
+		$("input:text[name='searchWord']").bind("keyup", function(e) {
+			if(e.keyCode == 13) {
+				goSearch();
+			}
+		});
+
+		// 검색 시 검색 조건, 검색어 값 유지시키기
+		if(${not empty requestScope.paraMap}) {
+			
+			$("select[name='searchType']").val("${requestScope.paraMap.searchType}");
+			$("input:text[name='searchWord']").val("${requestScope.paraMap.searchWord}");
+		}
 		
 	});// end of $(document).ready(function(){})-------------------
 	
+	
+	// 게시판 검색
+	function goSearch() {
+		
+		const frm = document.searchFrm;
+		frm.submit();
+		
+	} // end of function goSearch() -------------------
+	
 </script>
+
+
+
+<!-- === 상단 카테고리 탭 === -->
+<div id="category" class="d-flex justify-content-between">
+   
+   	<h2>커뮤니티</h2>
+   	
+	<div class="tabs">
+		<input type="radio" id="radio-1" name="category" value="" />
+		<label class="tab" for="radio-1">커뮤니티 전체</label>
+		
+		<input type="radio" id="radio-2" name="category" value="1" checked />
+		<label class="tab" for="radio-2">자유게시판</label>
+		
+		<input type="radio" id="radio-3" name="category" value="2" />
+		<label class="tab" for="radio-3">숙박</label>
+		
+		<input type="radio" id="radio-4" name="category" value="3" />
+		<label class="tab" for="radio-4">관광지,체험</label>
+		
+		<input type="radio" id="radio-5" name="category" value="4" />
+		<label class="tab" for="radio-5">맛집</label>
+		
+		<input type="radio" id="radio-6" name="category" value="5" />
+		<label class="tab" for="radio-6">구인</label>
+		<span class="glider"></span>
+	</div>
+	<%--
+	<div class="search">
+		<input type="text" id="inputSearch" placeholder="검색어 입력">
+		<img id="imgSearch" src="<%= ctxPath%>/resources/images/community/search.png">
+	</div>
+	--%>
+	
+	<div style="width: 7%;">
+		<button type="button" id="writeBtn" class="btn" onclick="location.href='<%=ctxPath%>/community/addBoard.trip'">글쓰기</button>
+	</div>
+</div>
 
 
 <div class="container" style="margin: 3% auto; width: 100%; height: 700px;">
@@ -90,7 +171,7 @@ div#pageBar a {
 			</select>
 			
 			<input type="text" id="boardSearch" class="mr-3" name="searchWord" />
-			<button type="button" id="searchBtn" class="btn">
+			<button type="button" id="searchBtn" class="btn" onclick="goSearch()">
 				<i class="fa-solid fa-magnifying-glass"></i>&nbsp;검색
 			</button>
 		</div>
@@ -108,7 +189,7 @@ div#pageBar a {
 		</thead>
 		
 		<tbody>
-			<c:if test="${not empty requestScope.freeBoardList}">\
+			<c:if test="${not empty requestScope.freeBoardList}">
 				<c:forEach var="boardvo" items="${requestScope.freeBoardList}" varStatus="status">
 					<tr>
 						<td align="center">
@@ -121,7 +202,7 @@ div#pageBar a {
 							<c:if test="${empty boardvo.fileName}">
 							
 								<c:if test="${boardvo.commentCount > 0}">
-									<span onclick="goView('${boardvo.seq}')">
+									<span class="subject" onclick="goView('${boardvo.seq}')">
 										${boardvo.subject}&nbsp;
 										<span style="color: #ff5000; font-size: 1rem; font-weight: bold;">
 											[${boardvo.commentCount}]
@@ -130,14 +211,14 @@ div#pageBar a {
 								</c:if>
 								
 								<c:if test="${boardvo.commentCount == 0}">
-									<span onclick="goView('${boardvo.seq}')">${boardvo.subject}</span>
+									<span class="subject" onclick="goView('${boardvo.seq}')">${boardvo.subject}</span>
 								</c:if>
 							</c:if>
 							
 							<%-- 첨부파일이 있는 경우 --%>
-							<c:if test="${not empty boardvo.fildName}">
+							<c:if test="${not empty boardvo.fileName}">
 								<c:if test="${boardvo.commentCount > 0}">
-									<span onclick="goView('${boardvo.seq}')">
+									<span class="subject" onclick="goView('${boardvo.seq}')">
 										${boardvo.subject}&nbsp;
 										<i class="fa-regular fa-image" style="color: green; font-size: 1rem;"></i>
 										&nbsp;
@@ -148,21 +229,21 @@ div#pageBar a {
 								</c:if>
 								
 								<c:if test="${boardvo.commentCount == 0}">
-									<span onclick="goView('${boardvo.seq}')">
+									<span class="subject" onclick="goView('${boardvo.seq}')">
 										${boardvo.subject}&nbsp;
 										<i class="fa-regular fa-image" style="color: green; font-size: 1rem;"></i>
 									</span>
 								</c:if>
 							</c:if>
 						</td>
-						<td>${boardvo.name}</td>
-						<td>${boardvo.regDate}</td>
-						<td>${boardvo.readCount}</td>
+						<td align="center">${boardvo.name}</td>
+						<td align="center">${boardvo.regDate}</td>
+						<td align="center">${boardvo.readCount}</td>
 					</tr>
 				</c:forEach>
 			</c:if>
 			
-			<c:if test="${empty requestScope.boardList}">
+			<c:if test="${empty requestScope.freeBoardList}">
 				<tr>
 					<td colspan="5" style="text-align: center;">데이터가 없습니다.</td>
 				</tr>
@@ -213,6 +294,7 @@ div#pageBar a {
 	<div id="pageBar" class="text-center mb-5" style="width: 80%; margin: 0 auto;">
 		${requestScope.pageBar}
 	</div>
+
 </div>
 
 	
