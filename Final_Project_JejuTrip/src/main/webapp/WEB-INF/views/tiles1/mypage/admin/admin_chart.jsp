@@ -534,8 +534,8 @@
         <ul>
             <li class="list">
                 <a href="<%= ctxPath%>/requiredLogin_goMypage.trip">
-                    <span class="icon"><ion-icon name="bed-outline"></ion-icon></span>
-                    <span class="title">예약내역</span>
+                    <span class="icon"><ion-icon name="list-outline"></ion-icon></span>
+                    <span class="title">등록 컨텐츠</span>
                 </a>
             </li>
             <li class="list">
