@@ -309,7 +309,6 @@ $(document).ready(function() {
     
    
      $(document).on('click', '.search', function() {
-        	
     	 searchWord = $(this).parent().find('input[name="searchWord"]').val();
          console.log("searchWord",searchWord);
          const frm = document.totalPlayFrm;
@@ -319,7 +318,6 @@ $(document).ready(function() {
 
      
      $("input:text[name='searchWord']").bind("keydown", function(e){
-         
          if(e.keyCode == 13){ // 엔터
             
         	 searchWord = $(this).parent().find('input[name="searchWord"]').val();
@@ -404,7 +402,7 @@ function goAddSchedule(playCode) {
 
 
 function contentPlay(currentShowPageNo) {
-	
+	goTop();
 	
 	$("input:hidden[name='currentShowPageNo']").val(currentShowPageNo);
     const formData = $("form[name='totalPlayFrm']").serialize(); //totalPlayFrm 폼에 담았던  데이터들을 전체 ~~ 
@@ -423,9 +421,9 @@ function contentPlay(currentShowPageNo) {
                     v_html += "      <div class='container_card'>";
                     v_html += "        <div class='front' style='background-image: url(<%= ctxPath %>/resources/images/play/" + item.play_main_img + ")'>";
                     v_html += "          <div class='inner_front'>";
-                    v_html += "            <p style='font-size: 23px;font-weight: bold;'>" + item.play_name + "</p>";
+                    v_html += "            <p style='font-size: 20px;font-weight: bold;'>" + item.play_name + "</p>";
                     v_html += "            <span style=' color:#786b94;font-size: 15px;'>" + item.play_category + "</span>";
-                    v_html += "         <input type='hidden' name='play_code' value='" + item.play_code + "'/>"; // 문자열 내부 따옴표 수정
+                    v_html += "         <input type='hidden' name='play_code' value='" + item.play_code + "'/>"; 
 
                     v_html += "          </div>";
                     v_html += "        </div>";
@@ -531,9 +529,9 @@ function goTop() {
     
     <div class="container">
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <ul class="list-group" style="border-radius: 20px;">
-                    <li class="list-group-item d-flex justify-content-between align-items-center" style="margin-top: 230px;">
+                    <li class="list-group-item d-flex justify-content-between align-items-center" style="margin-top: 240px;">
                         <input type="hidden" name="total" value=""/>
                         <label for="total" style="font-weight: bold;">전체</label>
                         <span class="badge badge-pill" style="background:#ff8000; color:#fff;">14</span>
@@ -556,7 +554,7 @@ function goTop() {
                 </ul>
             </div>
             
-            <div class="col-md-9 py-3">
+            <div class="col-md-10 py-3">
                 <div class="row py-8">
                     <div id="tabArea" class="tabArea1 text-center" style="display: flex; width:100%;margin:3% auto 6%; ">
                         <div class="areaMap" style="display: flex;">
@@ -570,7 +568,7 @@ function goTop() {
                             <div class="areamap mx-2" style="width: 20%;">
                                 <img src="<%= ctxPath %>/resources/images/areamap_city.png" />
                                 <div>
-                                    <input name="local_status" id="area02" type="checkbox" class="are_map" value="제주 시내">
+                                    <input name="local_status" id="area02" type="checkbox" class="are_map" value="제주시 시내">
                                     <label for="area02" class="label_chk">제주시 시내</label>
                                 </div>
                             </div>
@@ -613,7 +611,7 @@ function goTop() {
                     </div>
                 </div>
                 <div class="row">
-                    <div class="sort-filter main" style="display: flex; justify-content:space-between; width: 98%; margin-bottom: 20px;">
+                    <div class="sort-filter main" style="display: flex; justify-content:space-between; width: 98%; margin-bottom: 20px;margin-left: 3%;">
                         <div>
                             <button type="button" onclick="" class="btn btn-outline-warning btn-sm" value="">추천순</button>
                             <button type="button" onclick="" class="btn btn-outline-warning btn-sm" value="NEW">최신등록순</button>
@@ -634,13 +632,6 @@ function goTop() {
                     <div style="display: flex; margin-bottom: 50px;">
           				<div id="pageBar" style="margin: auto; text-align: center;"></div>
        				</div>  
-       				
-       				  
-                    <div style="display: flex;">
-                        <div style="margin: 20px 0 20px auto;">
-                            <button class="btn btn-info" onclick="goTop()">맨위로가기</button>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

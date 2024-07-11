@@ -82,6 +82,22 @@ public class Hs_TripService_imple implements Hs_TripService {
 	}
 
 
+
+	//리뷰수정하기
+	@Override
+	public int updateReview(Map<String, String> paraMap) {
+		int n = dao.updateReview(paraMap);
+		return n;
+	}
+
+	//리뷰삭제하기
+	@Override
+	public int reviewDel(String review_code) {
+		int n = dao.reviewDel(review_code);
+		return n;
+	}
+
+
 	
 
 }

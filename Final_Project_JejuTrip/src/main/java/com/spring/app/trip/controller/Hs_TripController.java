@@ -79,7 +79,7 @@ public class Hs_TripController {
 				// System.out.println("~~~ 확인용 webapp 의 절대경로 => " + root); 
 				// ~~~ 확인용 webapp 의 절대경로 => C:\NCS\workspace_spring_framework\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\board\
 				
-				String path = root + "resources"+File.separator+"files";     
+				String path = root + "resources"+File.separator+"images"+File.separator+"play";     
 		        // System.out.println(path);
 		        /* File.separator 는 운영체제에서 사용하는 폴더와 파일의 구분자이다.
 		                            운영체제가 Windows 이라면 File.separator 는  "\" 이고,
@@ -380,15 +380,45 @@ public class Hs_TripController {
 		
 		
 		
+		//리뷰수정하기
+		@ResponseBody
+		@PostMapping(value="play/reviewUpdate.trip",produces="text/plain;charset=UTF-8")
+		public String reviewUpdate (HttpServletRequest request) {
 		
+			String review_code = request.getParameter("review_code");
+			String review_content = request.getParameter("review_content");
+			
+			
+			Map<String, String>paraMap = new HashMap<>();
+			paraMap.put("review_code",review_code);
+			paraMap.put("review_content",review_content);
+			
+			int n = service.updateReview(paraMap);
+			
+			JSONObject jsonObj = new JSONObject();
+			jsonObj.put("n",n);
+
+			return jsonObj.toString();
 		
+		}
 		
+		//리뷰삭제하기
+		@ResponseBody
+		@PostMapping(value="play/reviewDel.trip",produces="text/plain;charset=UTF-8")
+		public String reviewDel (HttpServletRequest request) {
+			
+			String review_code = request.getParameter("review_code");
+			
+			int n = service.reviewDel(review_code);
+
+		    JSONObject jsonObj = new JSONObject(); 
+		    jsonObj.put("n", n);
+	         
+	        return jsonObj.toString();
+			
+		}
 		
-		
-		
-		
-		
-		
+	
 		
 		
 		

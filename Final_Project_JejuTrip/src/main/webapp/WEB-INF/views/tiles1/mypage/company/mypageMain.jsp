@@ -32,7 +32,7 @@
     <div class="navigation">
         <ul>
             <li class="list active">
-                <a href="#">
+                <a href="<%= ctxPath%>/requiredLogin_goMypage.trip">
                     <span class="icon"><ion-icon name="bed-outline"></ion-icon></span>
                     <span class="title">예약내역</span>
                 </a>

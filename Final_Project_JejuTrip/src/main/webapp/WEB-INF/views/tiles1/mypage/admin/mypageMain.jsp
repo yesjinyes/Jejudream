@@ -32,7 +32,7 @@
     <div class="navigation">
         <ul>
             <li class="list active">
-                <a href="#">
+                <a href="<%= ctxPath%>/requiredLogin_goMypage.trip">
                     <span class="icon"><ion-icon name="bed-outline"></ion-icon></span>
                     <span class="title">예약내역</span>
                 </a>
@@ -44,7 +44,7 @@
                 </a>
             </li>
             <li class="list">
-                <a href="<%= ctxPath%>/cash_points.trip">
+                <a href="<%= ctxPath%>/admin_chart.trip">
                     <span class="icon"><ion-icon name="bar-chart-outline"></ion-icon></ion-icon></span>
                     <span class="title">통계</span>
                 </a>

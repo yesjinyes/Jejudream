@@ -31,40 +31,68 @@
             });
         });
         
-        $("tr").bind("click",function(e){
-        	const lodgingCode = $(e.target).parent().next().val();
-        	if(Number(lodgingCode) > 0){
-        		open_modal(lodgingCode);	
-        	}
+        $("tbody").bind("click",function(e){
+        	const userid = $(e.target).parents().children(0).html();
+        	detail_user(userid);
         });
         
     }); // end of $(document).ready(function(){
     	
-    function open_modal(lodgingCode){
+    function detail_user(userid){
     	
     	$.ajax({
-			url:"<%= ctxPath%>/selectRegisterHotelJSON.trip",
-			data:{"lodging_code":lodgingCode}, 
+			url:"<%= ctxPath%>/selectUserJSON.trip",
+			data:{"userid":userid}, 
 			type:"post",
 			dataType:"json",
 			success:function(json){
-				let v_html = `<div style="margin-bottom:5px;">숙소명 : \${json.lodging_name}</div>`;
-				v_html += `<div style="margin-bottom:5px;">숙소구분 : \${json.lodging_category}</div>`;
-				v_html += `<div style="margin-bottom:5px;">위치 구분 : \${json.local_status}</div>`;
-				v_html += `<div style="margin-bottom:5px;">주소 : \${json.lodging_address}</div>`;
-				v_html += `<div style="margin-bottom:5px;">전화번호 : \${json.lodging_tell}</div>`;
-				v_html += `<div style="margin-bottom:5px;">상세설명 : \${json.lodging_content}</div>`;
-				v_html += `<img src="<%=ctxPath%>/resources/images/lodginglist/\${json.main_img}" style="width:100%; margin-bottom:20px;"/>`;
-				if(json.status == '0'){
-					v_html += `<div style="margin-bottom:5px;">처리상태 : <span style="color:blue; font-weight:bold;">처리중</span></div>`;
+				v_html = ``;
+				if(json.type == "member"){
+				
+					v_html += `<div style="margin-bottom:5px;">아이디 : \${json.userid}</div>`;
+					v_html += `<div style="margin-bottom:5px;">이름 : \${json.user_name}</div>`;
+					v_html += `<div style="margin-bottom:5px;">전화번호 : \${json.mobile}</div>`;
+					v_html += `<div style="margin-bottom:5px;">이메일 : \${json.email}</div>`;
+					v_html += `<div style="margin-bottom:5px;">주소 : \${json.address}</div>`;
+					v_html += `<div style="margin-bottom:5px;">상세주소 : \${json.detail_address}</div>`;
+					v_html += `<div style="margin-bottom:5px;">생년월일 : \${json.birthday}</div>`;
+					v_html += `<div style="margin-bottom:5px;">성별 : \${json.gender}</div>`;
+					v_html += `<div style="margin-bottom:5px;">가입일자 : \${json.registerday}</div>`;
+					
+					if(json.idle == '0'){
+						v_html += `<div style="margin-bottom:5px;">휴면유무 : <span style="color:green; font-weight:bold">정상</span></div>`;	
+					}
+					else{
+						v_html += `<div style="margin-bottom:5px;">휴면유무 : <span style="color:red; font-weight:bold">휴면</span></div>`;
+					}
+					if(json.status == '1'){
+						v_html += `<div style="margin-bottom:5px;">탈퇴유무 : <span style="color:green; font-weight:bold">정상</span></div>`;	
+					}
+					else{
+						v_html += `<div style="margin-bottom:5px;">탈퇴유무 : <span style="color:red; font-weight:bold">탈퇴</span></div>`;
+					}
 				}
-				else if(json.status == '1'){
-					v_html += `<div style="margin-bottom:5px;">처리상태 : <span style="color:green; font-weight:bold;">승인</span></div>`;
+				else{
+					v_html += `<div style="margin-bottom:5px;">아이디 : \${json.companyid}</div>`;
+					v_html += `<div style="margin-bottom:5px;">기업명 : \${json.company_name}</div>`;
+					v_html += `<div style="margin-bottom:5px;">전화번호 : \${json.mobile}</div>`;
+					v_html += `<div style="margin-bottom:5px;">이메일 : \${json.email}</div>`;
+					v_html += `<div style="margin-bottom:5px;">가입일자 : \${json.registerday}</div>`;
+					
+					if(json.idle == '0'){
+						v_html += `<div style="margin-bottom:5px;">휴면유무 : <span style="color:green; font-weight:bold">정상</span></div>`;	
+					}
+					else{
+						v_html += `<div style="margin-bottom:5px;">휴면유무 : <span style="color:red; font-weight:bold">휴면</span></div>`;
+					}
+					if(json.status == '1'){
+						v_html += `<div style="margin-bottom:5px;">탈퇴유무 : <span style="color:green; font-weight:bold">정상</span></div>`;	
+					}
+					else{
+						v_html += `<div style="margin-bottom:5px;">탈퇴유무 : <span style="color:red; font-weight:bold">탈퇴</span></div>`;
+					}
 				}
-				else if(json.status == '2'){
-					v_html += `<div style="margin-bottom:5px;">처리상태 : <span style="color:red; font-weight:bold;">반려</span></div>`;
-					v_html += `<div style="margin-bottom:5px;">반려사유 : \${json.feedback_msg}</div>`;
-				}
+				
 			    $("div.modal-body").html(v_html);
 			},
 			error: function(request, status, error){
@@ -73,6 +101,7 @@
 		}); 
     	
     	$('#modal_showDetail').modal('show'); // 모달창 보여주기
+    	
     }
     
 	function goViewMemberList(currentShowPageNo){
@@ -89,7 +118,7 @@
 				let v_html = "";
 				if(json.length > 0){
 					$.each(json, function(index, item){
-					    v_html += "<tr>";
+					    v_html += "<tr class='click'>";
 					    v_html += "<th>"+item.userid+"</th>";
 						v_html += "<td>"+item.user_name+"</td>";
 						v_html += "<td>"+item.mobile+"</td>";
@@ -255,7 +284,7 @@
 				let v_html = "";
 				if(json.length > 0){
 					$.each(json, function(index, item){
-					    v_html += "<tr>";
+					    v_html += "<tr class='click'>";
 					    v_html += "<th>"+item.companyid+"</th>";
 						v_html += "<td>"+item.company_name+"</td>";
 						v_html += "<td>"+item.mobile+"</td>";
@@ -424,7 +453,7 @@
                 </a>
             </li>
             <li class="list">
-                <a href="<%= ctxPath%>/cash_points.trip">
+                <a href="<%= ctxPath%>/admin_chart.trip">
                     <span class="icon"><ion-icon name="bar-chart-outline"></ion-icon></ion-icon></span>
                     <span class="title">통계</span>
                 </a>

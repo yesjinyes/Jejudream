@@ -105,4 +105,13 @@ where parent_code = #{parent_code}
 </select>
  
  
+<update id="updateReview" parameterType="HashMap">
+	update tbl_review set review_content = #{review_content} , registerday = default where review_code = #{review_code}
+</update> 
+ 
+<delete id="reviewDel" parameterType="String">
+	delete from tbl_review where review_code = #{review_code}
+</delete> 
+ 
+ 
 </mapper>
