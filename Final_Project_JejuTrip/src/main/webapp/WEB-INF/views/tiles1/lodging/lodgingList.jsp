@@ -60,24 +60,13 @@ $(document).ready(function(){
     const month = String(today.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
     const day = String(today.getDate()).padStart(2, '0');
     
-    fetchFilteredData(currentShowPageNo, currentSort);
     
-    
-    $('input#datepicker').keyup( (e)=>{
-        // 생년월일 input태그가 text 타입인데 키보드로 문자를 입력하려고할때 막아야한다 마우스클릭으로만 가능하게끔
-            $(e.target).val("").next().show(); // 에러메시지 표현
-
-    }); // end of $('input#datepicker').keyup( (e)=>{})
-    
-   
-       
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    // **** 아래거는 jsp파일에 주석처리된 투숙날짜달력에 적용되는 태그로서 시작일자 종료일자를 세팅해주게끔 해주는 것이다!!! 유용할듯 ******    
+    setDatePickers();
+ // **** 동기적으로 실행하기 위해서 document.ready 안에다가 함수선언했음  ******    
 
     // === 전체 datepicker 옵션 일괄 설정하기 ===  
     //     한번의 설정으로 $("input#fromDate"), $('input#toDate')의 옵션을 모두 설정할 수 있다.
-    $(function() {
+    function setDatePickers() {
 	    //모든 datepicker에 대한 공통 옵션 설정
 	    $.datepicker.setDefaults({
 	         dateFormat: 'yy-mm-dd' //Input Display Format 변경
@@ -110,23 +99,39 @@ $(document).ready(function(){
 	    $('input#toDate').datepicker('setDate', '+1D'); //(-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, +1M:한달후, +1Y:일년후)
 	    
 	    $('input#toDate').datepicker('option', 'minDate', '+1D');
-    });
-   
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	    
+	}
+ 	    
+    fetchFilteredData(currentShowPageNo, currentSort);
+    
+    let fromDate = $("input:text[id='fromDate']").val();
+    let toDate = $("input#toDate").val();
+    
+ // setTimeout을 사용하여 datepicker 설정 후 값을 가져오도록 함
+    setTimeout(function() {
+    	fromDate = $("input:text[id='fromDate']").val();
+    	toDate = $("input#toDate").val();
+        
+        // alert('fromDate > ' + fromDate);
+        // alert('toDate > ' + toDate);
+    }, 100); // 100ms 딜레이를 주어 datepicker 설정이 완료되도록 함
+    
 
-    $('input#datepicker').bind("change", (e)=> {
-    // 생년월일에 입력되어진값이 변경되었다면 에러메시지를 지워야한다
-
-        if($(e.target).val() != "" ){
-        // 정상적이지않으면 자동으로 값이 ""로 된다! 그렇기때문에 올바른값을 검사하는 기준이 된다
-            $(e.target).next().hide();
+    
+    $("input:text[name='datepicker']").keyup( (e)=>{
+        // input태그가 text 타입인데 키보드로 문자를 입력하려고할때 막아야한다 마우스클릭으로만 가능하게끔
+            e.preventDefault(); // 입력막기
+        	alert("마우스 클릭으로만 날짜를 입력하세요!"); // 에러메시지 표현
             
-        }// 생년월일에 마우스로 달력에 있는 날짜를 선택한 경우 이벤트 처리 한것 
+            $("input#fromDate").val(fromDate);
+            $("input#toDate").val(toDate);
 
-
-    }); // end of $('input#datepicker').bind("change", (e)=> {})
+    }); // end of $('input#datepicker').keyup( (e)=>{})
     
     
+    $("input:text[name='datepicker']").change( (e)=>{
+    	
+    });
     
 	// 정렬 버튼
 	const sortButton = $("button.sort");
@@ -317,10 +322,10 @@ $(document).ready(function(){
     });
  	// 검색 버튼 클릭 시 데이터 가져오기 끝 
     
-	
+    
 }); // end of $(document).ready(function(){})
 
-
+	
 
 	// ajax로 실시간 반영되는 숙소리스트 함수
 	function fetchFilteredData(currentShowPageNo, sort) {
@@ -466,7 +471,9 @@ $(document).ready(function(){
 		frm.submit();
 		
 	} // end of function goDetail(lodging_code) 
-
+	
+	
+	
 </script>
 
 
@@ -486,7 +493,7 @@ $(document).ready(function(){
 				            <div class="value-text">
 				                <div class="date-container">
 				                    <span class="date-pick">
-				                        <input class="datepicker" style="cursor: pointer;" type="text" id="fromDate" name="fromDate" value="" placeholder="입실일 선택">
+				                        <input class="datepicker" style="cursor: pointer;" type="text" id="fromDate" name="datepicker" value="" placeholder="입실일 선택">
 				                    </span>
 				                </div>
 				            </div>
@@ -496,7 +503,7 @@ $(document).ready(function(){
 				            <div class="value-text">
 				                <div class="date-container">
 				                    <span class="date-pick">
-				                        <input class="datepicker" style="cursor: pointer;" type="text" id="toDate" name="toDate" value="" placeholder="퇴실일 선택">
+				                        <input class="datepicker" style="cursor: pointer;" type="text" id="toDate" name="datepicker" value="" placeholder="퇴실일 선택">
 				                    </span>
 				                </div>
 				            </div>
@@ -660,6 +667,8 @@ $(document).ready(function(){
           	<input type="hidden" name="str_local" /> 
           	<input type="hidden" name="searchWord" />
           	<input type="hidden" name="currentShowPageNo" />
+          	<input type="hidden" name="check_in" />
+          	<input type="hidden" name="check_out" />
           	<input type="hidden" name="sort" />
           </form>
           

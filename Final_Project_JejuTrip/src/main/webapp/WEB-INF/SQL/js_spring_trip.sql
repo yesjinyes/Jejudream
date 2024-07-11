@@ -552,8 +552,134 @@ WHERE R.fk_lodging_code || ' ' || R.room_name NOT IN(SELECT fk_lodging_code || '
                                                 HAVING count(*) = 3);
 
 
+-------------------------------------------------------
+ 숙소코드  객실명   객실개수   예약개수    객실개수 - 예약개수
+-------------------------------------------------------
+ 
+ SELECT A.lodging_code, A.room_name, A.room_stock, 
+       NVL(B.RESERVATION_CNT, 0) AS RESERVATION_CNT,
+       CASE WHEN A.room_stock - NVL(B.RESERVATION_CNT, 0) >= 1 THEN '예약가능'
+       ELSE '예약종료' END AS RESERVATION_STATE
+ FROM 
+ (
+  SELECT L.lodging_code, D.room_name, D.room_stock
+  FROM tbl_lodging L JOIN tbl_room_detail D
+  ON L.lodging_code = D.fk_lodging_code 
+ ) A
+ LEFT JOIN
+ (
+  SELECT D.fk_lodging_code, D.room_name, COUNT(*) AS RESERVATION_CNT 
+  FROM tbl_room_detail D JOIN tbl_reservation RSV
+  ON D.room_detail_code = RSV.fk_room_detail_code
+  WHERE RSV.check_in BETWEEN '2024-07-08' AND '2024-07-09'
+  GROUP BY D.fk_lodging_code, D.room_name
+ ) B
+ ON A.lodging_code || A.room_name = B.fk_lodging_code || B.room_name;
+
+
+SELECT distinct lodging_code
+FROM 
+(
+SELECT A.lodging_code, A.room_name, A.room_stock, 
+       NVL(B.RESERVATION_CNT, 0) AS RESERVATION_CNT,
+       CASE WHEN A.room_stock - NVL(B.RESERVATION_CNT, 0) >= 1 THEN '예약가능'
+       ELSE '예약종료' END AS RESERVATION_STATE
+ FROM 
+ (
+  SELECT L.lodging_code, D.room_name, D.room_stock
+  FROM tbl_lodging L JOIN tbl_room_detail D
+  ON L.lodging_code = D.fk_lodging_code 
+ ) A
+ LEFT JOIN
+ (
+  SELECT D.fk_lodging_code, D.room_name, COUNT(*) AS RESERVATION_CNT 
+  FROM tbl_room_detail D JOIN tbl_reservation RSV
+  ON D.room_detail_code = RSV.fk_room_detail_code
+  WHERE RSV.check_in BETWEEN '2024-07-08' AND '2024-07-09'
+  GROUP BY D.fk_lodging_code, D.room_name
+ ) B
+ ON A.lodging_code || A.room_name = B.fk_lodging_code || B.room_name
+) V
+WHERE V.RESERVATION_STATE = '예약가능'
+order by 1 asc;
+
+
+
+
 
 /////////////////////////////////////////////////////////
 
+create table tbl_board
+    (seq           number                not null    -- 글번호
+    ,fk_userid     varchar2(20)          not null    -- 사용자ID
+    ,name          varchar2(20)          not null    -- 글쓴이 
+    ,subject       Nvarchar2(200)        not null    -- 글제목
+    --,content     Nvarchar2(2000)       not null    -- 글내용
+    ,content       clob                  not null    -- 글내용   CLOB(4GB 까지 저장 가능한 데이터 타입) 타입
+    ,pw            varchar2(20)          not null    -- 글암호
+    ,readCount     number default 0      not null    -- 글조회수
+    ,regDate       date default sysdate  not null    -- 글쓴시간
+    ,status        number(1) default 1   not null    -- 글삭제여부   1:사용가능한 글,  0:삭제된글
+    ,commentCount  number default 0      not null    -- 댓글의 개수 
+    ,fileName       varchar2(255)                    -- WAS(톰캣)에 저장될 파일명(2024062609291535243254235235234.png)                                       
+    ,orgFilename    varchar2(255)                    -- 진짜 파일명(강아지.png)  // 사용자가 파일을 업로드 하거나 파일을 다운로드 할때 사용되어지는 파일명 
+    ,fileSize       number                           -- 파일크기  
+    ,category       number                           -- 어떤 카테고리(자유게시판, 스탭구해요 등등)의 글인지
+    
+    ,constraint PK_tbl_board_seq primary key(seq)
+    ,constraint FK_tbl_board_fk_userid foreign key(fk_userid) references tbl_member(userid)
+    ,constraint CK_tbl_board_status check( status in(0,1) )
+    );
+    -- Table TBL_BOARD이(가) 생성되었습니다.
+    
+    create sequence boardSeq
+    start with 1
+    increment by 1
+    nomaxvalue
+    nominvalue
+    nocycle
+    nocache;
+    -- Sequence BOARDSEQ이(가) 생성되었습니다.
+    
+    
+    create table tbl_comment
+    (seq           number               not null   -- 댓글번호
+    ,fk_userid     varchar2(20)         not null   -- 사용자ID
+    ,name          varchar2(20)         not null   -- 성명
+    ,content       varchar2(1000)       not null   -- 댓글내용
+    ,regDate       date default sysdate not null   -- 작성일자
+    ,parentSeq     number               not null   -- 원게시물 글번호
+    ,status        number(1) default 1  not null   -- 글삭제여부
+                                                   -- 1 : 사용가능한 글,  0 : 삭제된 글
+                                                   -- 댓글은 원글이 삭제되면 자동적으로 삭제되어야 한다.
+    ,constraint PK_tbl_comment_seq primary key(seq)
+    ,constraint FK_tbl_comment_userid foreign key(fk_userid) references tbl_member(userid)
+    ,constraint FK_tbl_comment_parentSeq foreign key(parentSeq) references tbl_board(seq) on delete cascade
+    ,constraint CK_tbl_comment_status check( status in(1,0) ) 
+    );
+    -- Table TBL_COMMENT이(가) 생성되었습니다.
+    
+    
+    create sequence commentSeq
+    start with 1
+    increment by 1
+    nomaxvalue
+    nominvalue
+    nocycle
+    nocache;
+    -- Sequence COMMENTSEQ이(가) 생성되었습니다.
+
+    select * 
+    from tbl_lodging
+    
+    
+    
         
+    select lodging_code, lodging_name, lodging_address, , lodging_tel, 
+           room_detail_code,room_name, price, check_in, check_out, 
+           min_person, max_person,room_img
+    from tbl_room_detail R
+    join tbl_lodging L
+    on L.lodging_code = R.fk_lodging_code
+    where lodging_code = 5218 and R.room_detail_code = 661;
     

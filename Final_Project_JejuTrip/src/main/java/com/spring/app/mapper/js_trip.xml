@@ -21,7 +21,7 @@
 		<result property="price" column="price" javaType="String" />
 	</resultMap>
 	<select id="lodgingList" parameterType="HashMap" resultMap="lodgingMap">
-	  
+
 	  select rno,  LODGING_NAME, LODGING_ADDRESS, LODGING_CODE, LOCAL_STATUS,
 		   	 LODGING_CATEGORY, MAIN_IMG, REVIEW_DIVISION, price
 	  from
@@ -63,7 +63,7 @@
 		    	'${arr_category[i]}'
 		    </foreach>
 		    </if>
-		    
+
 		    <!-- 지역 구분체크박스를 선택했다면 -->
 		    <if test='arr_local != null'>
 		    and local_status in
@@ -71,21 +71,21 @@
 		    	'${arr_local[i]}'
 		    </foreach>
 		    </if>
-		    
-		    <!-- 검색어를 입력하고 검색버튼을 눌렀다면 -->
+			<!-- 검색어를 입력하고 검색버튼을 눌렀다면 -->
 		    <if test='searchWord != null'>
-		    and lodging_name like '%' || #{searchWord} || '%'
+		    and lower(lodging_name) like '%' || lower(#{searchWord}) || '%'
 			</if>
+		    
 			<if test='sort == ""'>
 			order by lodging_code desc
 			</if>
-			<if test='sort != ""'>
-			order by price #{sort}
+			 <if test='sort != ""'>
+			order by price ${sort}
 			</if>
+			
 		   )V
 		   
-	   )Q join
-	   on V.LODGING_CODE = Q.LODGING_CODE
+	   )Q
 	   where rno between #{startRno} and #{endRno}
 	</select>
 	
@@ -122,7 +122,7 @@
 	    
 	    <!-- 검색어를 입력하고 검색버튼을 눌렀다면 -->
 	    <if test='searchWord != null'>
-	    and lodging_name like '%' || '#{searchWord}' || '%'
+	    and lodging_name like '%' || #{searchWord} || '%'
 		</if>
 	    
 	    <if test='arr_local != null'>
@@ -170,5 +170,37 @@
 	    from tbl_room_detail
 	    where fk_lodging_code = #{lodgingCode}
 	</select>
+	
+	
+	
+	<resultMap type="HashMap" id="ReserveRoomDetail">
+		<result property="lodging_name" column="lodging_name" javaType="String" />
+		<result property="lodging_address" column="lodging_address" javaType="String" />
+		<result property="lodging_code" column="lodging_code" javaType="String" />
+		<result property="lodging_tell" column="lodging_tell" javaType="String" />
+		<result property="room_detail_code" column="room_detail_code" javaType="String" />
+		<result property="room_name" column="room_name" javaType="String" />
+		<result property="price" column="price" javaType="String" />
+		<result property="check_in" column="check_in" javaType="String" />
+		<result property="check_out" column="check_out" javaType="String" />
+		<result property="min_person" column="min_person" javaType="String" />
+		<result property="max_person" column="max_person" javaType="String" />
+		<result property="room_img" column="room_img" javaType="String" />
+	</resultMap>
+	<select id="getReserveRoomDetail" resultMap="ReserveRoomDetail">
+		select lodging_code, lodging_name, lodging_address, lodging_tell, 
+			   room_detail_code,room_name, price, check_in, check_out, 
+           	   min_person, max_person, room_img
+		       from tbl_room_detail R
+		       join tbl_lodging L
+		       on L.lodging_code = R.fk_lodging_code
+		       where lodging_code = #{lodging_code} and R.room_detail_code = #{room_detail_code}
+	</select>
+
+	
+	<insert id="insertReservation" parameterType="HashMap">
+		insert into tbl_reservation (RESERVATION_CODE, FK_USERID, FK_ROOM_DETAIL_CODE, CHECK_IN, CHECK_OUT, RESERVATION_PRICE)
+		values(seq_reserve.nextval, #{userid}, #{room_detail_code}, #{check_in} , #{check_out}, #{price})
+	</insert>
  
 </mapper>
