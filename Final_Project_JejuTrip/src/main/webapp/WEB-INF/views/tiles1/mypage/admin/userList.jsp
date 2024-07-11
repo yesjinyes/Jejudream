@@ -406,8 +406,8 @@
 		
 		// === [맨처음][이전] 만들기 === //
 		if(pageNo != 1) {
-			pageBar_HTML += "<li class='fist_page'><a href='javascript:goViewCompanyList(1)'>[맨처음]</a></li>";
-			pageBar_HTML += "<li class='before_page'><a href='javascript:goViewCompanyList("+(pageNo-1)+")'>[이전]</a></li>"; 
+			pageBar_HTML += "<li class='fist_page'><a href='javascript:goViewCompanyList(1)'>맨처음</a></li>";
+			pageBar_HTML += "<li class='before_page'><a href='javascript:goViewCompanyList("+(pageNo-1)+")'>이전</a></li>"; 
 		}
 		
 		while( !(loop > blockSize || pageNo > totalPage) ) {
@@ -425,8 +425,8 @@
 		
 		// === [다음][마지막] 만들기 === //
 		if(pageNo <= totalPage) {
-			pageBar_HTML += "<li class='next_page_no'><a href='javascript:goViewCompanyList("+pageNo+")'>[다음]</a></li>";
-			pageBar_HTML += "<li class='last_page_no'><a href='javascript:goViewCompanyList("+totalPage+")'>[마지막]</a></li>"; 
+			pageBar_HTML += "<li class='next_page_no'><a href='javascript:goViewCompanyList("+pageNo+")'>다음</a></li>";
+			pageBar_HTML += "<li class='last_page_no'><a href='javascript:goViewCompanyList("+totalPage+")'>마지막</a></li>"; 
 		}
 		
 		pageBar_HTML += "</ul>";		
