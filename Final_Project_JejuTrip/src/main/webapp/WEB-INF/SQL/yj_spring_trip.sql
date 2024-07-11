@@ -282,5 +282,6 @@ select *
 from tbl_review
 order by fk_userid desc;
 
+desc tbl_review
 
 commit;

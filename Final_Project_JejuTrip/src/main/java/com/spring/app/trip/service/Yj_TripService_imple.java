@@ -66,7 +66,7 @@ public class Yj_TripService_imple implements Yj_TripService {
 	@Override
 	public int addFoodstoreReview(ReviewVO reviewvo) {
 		int n = dao.addFoodstoreReview(reviewvo); // 리뷰쓰기(tbl_review 에 insert)
-		//System.out.println("service 에서 n 확인 => " + n);
+		System.out.println("service 에서 n 확인 => " + n);
 		return n;
 	}
 

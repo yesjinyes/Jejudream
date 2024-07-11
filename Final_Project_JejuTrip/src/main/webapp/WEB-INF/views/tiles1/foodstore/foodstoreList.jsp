@@ -633,7 +633,6 @@ span#data {
 		<input type="hidden" name="food_store_code" />
 		<!-- 맛집 랜덤 추천에서 상세 페이지로 이동 -->
 		<input type="hidden" name="random_recommend_code" />
-	
 	</form>
 
 

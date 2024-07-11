@@ -64,7 +64,7 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 	@Override
 	public int addFoodstoreReview(ReviewVO reviewvo) {
 		int n = sqlsession.insert("yj_trip.addFoodstoreReview", reviewvo);
-		//System.out.println("dao 에서 n 확인 => " + n);
+		System.out.println("dao 에서 n 확인 => " + n);
 		return n;
 	}
 

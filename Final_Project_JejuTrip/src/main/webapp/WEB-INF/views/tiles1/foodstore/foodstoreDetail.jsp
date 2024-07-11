@@ -158,7 +158,7 @@ div#reviewList {
 
 	$(document).ready(function() {
 
-		goViewReview(1);
+		goViewReview();
 		
 		// == 리뷰 input 엔터 키 == //
 		$("input:text[name='review_content']").bind("keyup", function(e) {
@@ -184,7 +184,6 @@ div#reviewList {
 	function goAddReview() {
 		
 		const review_content = $("input:text[name='review_content']").val().trim();
-		//console.log("~~확인용 review_content => " + review_content);
 		
 		if(review_content == "") {
 			alert("리뷰 내용을 입력하세요!");
@@ -192,8 +191,6 @@ div#reviewList {
 		}
 		
 		const queryString = $("form[name='addWriteFrm']").serialize();
-		//console.log("!!!확인!!! => " + queryString);
-		// fk_userid=yy6037&review_content=Ajax%20%EC%B2%98%EB%A6%AC&food_store_code=5316&parent_code=5316
 		
 		$.ajax({
 			url:"<%= ctxPath%>/addReview.trip",
@@ -228,54 +225,44 @@ div#reviewList {
 		
 		$.ajax({
 			url:"<%=ctxPath%>/foodstoreReviewList.trip",
-			data:{"parent_code":"${requestScope.foodstorevo.food_store_code}",
-				  "currentShowPageNo":currentShowPageNo},
+			data:{"parent_code":"${requestScope.foodstorevo.food_store_code}"},
 			dataType:"json",
 			success:function(json) {
-				 console.log("리뷰 select 확인 : "+JSON.stringify(json));
+				//console.log("리뷰 select 확인 : "+JSON.stringify(json));
 				
-				
-				let v_html = ``;
-				
+				let v_html = "";
 				if(json.length > 0) {
 					$.each(json, function(index, item){
 						
-						v_html += `<tr>
-			    		       		<td class='review'>\${item.totalCount - (currentShowPageNo - 1) * item.sizePerPage - index}</td>`;
 						
-					    v_html +=  `<td>\${item.review_content}</td>`;    
-					    
-					    
-						v_html +=  `<td class='review'>\${item.fk_userid}</td>    
-						            <td class='review'>\${item.registerday}</td>`;    
-							       
-						           if(${sessionScope.loginuser != null} &&
-						             "${sessionScope.loginuser.userid}" == item.fk_userid) {
-						    	  
-						    	      v_html += `<td class='review'>
-						    	   				     <button class='btn btn-secondary btn-sm btnUpdateReview'>수정</button>
-						    	   				     <input type='hidden' value='\${item.parent_code}'/>
-						    		                 <button class='btn btn-secondary btn-sm btnDeleteReview'>삭제</button>
-						    		                 <input type='hidden' value='\${currentShowPageNo}' class='currentShowPageNo' />
-						    		             </td>`;
-						    		}
-					    
-						 v_html += `</tr>`;           
-
-					});// end of $.each-------------------------
-				}
-				
+						
+						v_html += `<tr>
+									   <td>\${item.index}</td>
+								       <td>\${item.review_content}</td>    
+								       <td>\${item.fk_userid}</td>
+								       <td class='review'>\${item.registerday}</td>`;    
+								       
+								       if(${sessionScope.loginuser != null} &&
+								          "${sessionScope.loginuser.userid}" == item.fk_userid) {
+								    	   
+								    	   v_html += `<td class='review'>
+								    	   				  <button class='btn btn-secondary btn-sm btnUpdateReview'>수정</button>
+								    	   				  <input type='hidden' value='\${item.parent_code}'/>
+								    		              <button class='btn btn-secondary btn-sm btnDeleteReview'>삭제</button>
+								    		          </td>`;
+								       }
+								        
+						v_html += `</tr>`;
+								       
+					});
+				}// end of if(json.length > 0)---------
 				else {
-					v_html += `<tr>
-							       <td colspan='5' class='review'>등록된 리뷰가 없습니다.</td>
-							   </tr>`;
-				}
+			    	   v_html += `<tr>
+			    	   			      <td>작성된 리뷰가 없습니다.</td>
+			    	   			  </tr>`;
+			    }
 				
 				$("tbody#reviewDisplay").html(v_html);
-				
-				// === 페이지바 함수 호출 === //
-				// const totalPage = Math.ceil( json[0].totalCount / json[0].sizePerPage ) // 위에 $.each 의 item 을 알아야 한다. => $.each 가 위에서 끝나니까 json 의 가장 첫번째 값을 잡아줌.
-				// makeReviewPageBar(currentShowPageNo, totalPage);
 				
 			},
 			error: function(request, status, error){
@@ -286,7 +273,7 @@ div#reviewList {
 	}// end of function goViewReview()----------------------
 	
 	// 리뷰 페이지바 함수 만들기 === //
-/*  	function makeReviewPageBar(currentShowPageNo, totalPage) {
+  	function makeReviewPageBar(currentShowPageNo, totalPage) {
 		
 		const blockSize = 7; 
 		
@@ -539,24 +526,17 @@ div#reviewList {
 	                       <th style="width: 10%;">리뷰 내용 </th>
 	                       <td>
 	                          <input type="text" name="review_content" maxlength="1000" style="width: 75%;" />
+	                          <input type="text" style="display: none" />
 	                          <button type="reset" class="btn btn-light btn-sm mr-2 ml-3">취소</button>
 	                     	  <button type="button" class="btn btn-success btn-sm mr-3" onclick="goAddReview()">리뷰등록</button>
 
 	                          <!-- 리뷰에 달리는 원게시물 글번호(즉, 리뷰의 부모글 글번호) -->
-	                          <input type="hidden" name="food_store_code" value="${requestScope.foodstorevo.food_store_code}" />
-			                    <input type="hidden" name="fk_userid" value="${sessionScope.loginuser.userid}" readonly />
+	                          <input type="hidden" name="parent_code" value="${requestScope.foodstorevo.food_store_code}" />
+			                  <input type="hidden" name="fk_userid" value="${sessionScope.loginuser.userid}" readonly />
 	                       </td>
 	                    </tr>
-	                   
-	                    
-	                   <!--  <tr>
-	                     <th colspan="2" style="text-align: right;"> 
-	                        <button type="reset" class="btn btn-light btn-sm mr-2">취소</button>
-	                     	<button type="button" class="btn btn-success btn-sm mr-3" onclick="goAddReview()">리뷰등록</button>
-	                     </th>
-	                    </tr> -->
 					</table>       
-					<input type="hidden" name="parent_code" value="${requestScope.foodstorevo.food_store_code}" />  
+					<%-- <input type="text" name="food_store_code" value="${requestScope.foodstorevo.food_store_code}" />  --%>
 			</form>
 		</c:if>
 

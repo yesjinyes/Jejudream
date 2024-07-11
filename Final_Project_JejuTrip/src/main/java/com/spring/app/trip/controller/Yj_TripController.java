@@ -213,7 +213,7 @@ public class Yj_TripController {
 	@ResponseBody
 	@PostMapping(value="/addReview.trip", produces="text/plain;charset=UTF-8")
 	public String addComment(ReviewVO reviewvo, HttpServletRequest request) {
-
+		
 		int n = 0;
 		
 		try {
@@ -224,11 +224,10 @@ public class Yj_TripController {
 		}
 		
 		JSONObject jsonObj = new JSONObject();
-		
 		jsonObj.put("n", n);
 		jsonObj.put("fk_userid", reviewvo.getFk_userid());
 		
-		System.out.println("### jsonObj 확인 : "+ jsonObj.toString());
+		//System.out.println("### controller 에서 insert 확인 : "+ jsonObj.toString());
 		
 		return jsonObj.toString();
 	}
@@ -241,6 +240,8 @@ public class Yj_TripController {
 	public String foodstoreReviewList(ReviewVO reviewvo, HttpServletRequest request) {
 		
 		String parent_code = request.getParameter("parent_code");
+		// System.out.println("parent_code 확인 =>" + parent_code);
+		
 		
 		// 작성한 리뷰 보이기
 		List<ReviewVO> reviewList = service.getReviewList(parent_code);
@@ -255,6 +256,7 @@ public class Yj_TripController {
 				jsonObj.put("parent_code", rvo.getParent_code());
 				jsonObj.put("review_content", rvo.getReview_content());
 				jsonObj.put("registerday", rvo.getRegisterday());
+				
 				
 				jsonArr.put(jsonObj);
 			}// end of for------------------

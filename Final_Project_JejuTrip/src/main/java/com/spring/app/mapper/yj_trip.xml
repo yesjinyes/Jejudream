@@ -27,35 +27,41 @@
 	</resultMap>
 	<select id="viewFoodstoreList" parameterType="HashMap" resultType="com.spring.app.trip.domain.FoodstoreVO">
 		SELECT rno, food_store_code, local_status, food_name, food_content, food_businesshours, food_mobile
-		     , food_address, food_main_img, review_division, food_category
-		     , filename, orgfilename, filesize
-		FROM
+			 , food_address, food_main_img, review_division, food_category
+			 , filename, orgfilename, filesize
+		FROM 
 		(
-			select rownum as RNO, food_store_code, local_status, food_name, food_content, food_businesshours, food_mobile
-			     , substr(food_address, 0, instr(food_address, ' ', 1, 2)-1) AS food_address
-			     , food_main_img, review_division, food_category
-			     , filename, orgfilename, filesize   
-			from tbl_food_store
-			where 1=1
-		
-			<!-- 카테고리 체크박스 다중선택 -->
-			<if test="arr_category != null">
-				AND food_category IN
-				<foreach collection="arr_category" index="i" open="(" separator="," close=")">
-					'${arr_category[i]}'
-				</foreach>
-			</if>
-			<!-- 지역 체크박스 다중선택 -->
-			<if test="arr_area != null">
-				AND local_status IN
-				<foreach collection="arr_area" index="i" open="(" separator="," close=")">
-					'${arr_area[i]}'
-				</foreach>
-			</if>
-			<!-- 검색 -->
-			<if test="searchWord != ''">
-				AND lower(food_name) like '%'||lower(#{searchWord})||'%'
-			</if>
+			SELECT rownum as RNO, food_store_code, local_status, food_name, food_content, food_businesshours, food_mobile
+			     , food_address, food_main_img, review_division, food_category
+			     , filename, orgfilename, filesize
+			FROM
+			(
+				select food_store_code, local_status, food_name, food_content, food_businesshours, food_mobile
+				     , substr(food_address, 0, instr(food_address, ' ', 1, 2)-1) AS food_address
+				     , food_main_img, review_division, food_category
+				     , filename, orgfilename, filesize   
+				from tbl_food_store
+				where 1=1
+			
+				<!-- 카테고리 체크박스 다중선택 -->
+				<if test="arr_category != null">
+					AND food_category IN
+					<foreach collection="arr_category" index="i" open="(" separator="," close=")">
+						'${arr_category[i]}'
+					</foreach>
+				</if>
+				<!-- 지역 체크박스 다중선택 -->
+				<if test="arr_area != null">
+					AND local_status IN
+					<foreach collection="arr_area" index="i" open="(" separator="," close=")">
+						'${arr_area[i]}'
+					</foreach>
+				</if>
+				<!-- 검색 -->
+				<if test="searchWord != ''">
+					AND lower(food_name) like '%'||lower(#{searchWord})||'%'
+				</if>
+			)V
 		)
 		WHERE rno between #{startRno} and #{endRno}
 		<!-- 오름차순 정렬 -->
@@ -69,6 +75,7 @@
 		<if test="orderType == null">
 			ORDER BY food_store_code
 		</if>
+		
 	</select>
 	
 	
