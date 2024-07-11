@@ -130,6 +130,27 @@ where companyid = 'comkimdy';
 commit;
 
 
+-- 자유게시판 총 게시물 건수 조회하기
+select count(*)
+from tbl_board
+where status = 1 and category = 1
+and lower(subject) like '%' || lower('추천') || '%';
+
+
+
+-- 자유게시판 글 목록 조회하기
+SELECT seq, fk_userid, name, subject, readCount, regDate, commentCount
+FROM
+(
+    select row_number() over(order by seq desc) AS rno
+         , seq, fk_userid, name, subject
+         , readCount, to_char(regDate, 'yyyy-mm-dd hh24:mi') AS regDate
+         , commentCount
+    from tbl_board
+    where status = 1 and category = 1
+    -- and lower(subject) like '%' || lower('추천') || '%'
+) V
+WHERE V.rno between 1 and 10;
 
 
 

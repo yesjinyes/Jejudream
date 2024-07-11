@@ -28,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.spring.app.trip.common.MyUtil;
 import com.spring.app.trip.common.AES256;
 import com.spring.app.trip.common.FileManager;
 import com.spring.app.trip.common.GoogleMail;
@@ -843,7 +844,8 @@ public class Dy_TripController {
 	// 커뮤니티 자유게시판 페이지 요청
 	@GetMapping("community/freeBoard.trip")
 	public ModelAndView freeBoard(ModelAndView mav, HttpServletRequest request) {
-		/*
+		
+		
 		List<BoardVO> freeBoardList = null;
 		
 		// === #69. 글조회수(readCount)증가 (DML문 update)는
@@ -857,13 +859,127 @@ public class Dy_TripController {
 		String searchWord = request.getParameter("searchWord");
 		String str_currentShowPageNo = request.getParameter("currentShowPageNo"); 
 		
+		if(searchType == null) {
+			searchType = "";
+		}
 		
+		if(searchWord == null) {
+			searchWord = "";
+		}
 		
+		if(searchWord != null) {
+			searchWord = searchWord.trim();
+		}
 		
-		freeBoardList = service.getFreeBoardList();
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("searchType", searchType);
+		paraMap.put("searchWord", searchWord);
 		
+		int totalCount = 0;        // 총 게시물 건수
+		int sizePerPage = 10;      // 한 페이지당 보여줄 게시물 건수 
+		int currentShowPageNo = 0; // 현재 보여주는 페이지 번호로서, 초기치로는 1페이지로 설정함. 
+		int totalPage = 0;         // 총 페이지수(웹브라우저상에서 보여줄 총 페이지 개수, 페이지바) 
+		
+		// 총 게시물 건수(totalCount)
+		totalCount = service.getFreeBoardTotalCount(paraMap);
+		
+		totalPage = (int)Math.ceil((double)totalCount / sizePerPage);
+		
+		if(str_currentShowPageNo == null) {
+			// 게시판에 보여지는 초기화면
+			
+			currentShowPageNo = 1;
+			
+		} else {
+			try {
+				currentShowPageNo = Integer.parseInt(str_currentShowPageNo);
+				
+				if(currentShowPageNo < 1 || currentShowPageNo > totalPage) {
+					// get 방식이므로 사용자가 str_currentShowPageNo 에 입력한 값이 0 또는 음수를 입력하여 장난친 경우 
+					// get 방식이므로 사용자가 str_currentShowPageNo 에 입력한 값이 실제 데이터베이스에 존재하는 페이지수 보다 더 큰값을 입력하여 장난친 경우 
+					currentShowPageNo = 1;
+				}
+				
+			} catch (NumberFormatException e) {
+				// get 방식이므로 사용자가 str_currentShowPageNo 에 입력한 값이 숫자가 아닌 문자를 입력하여 장난친 경우 
+				currentShowPageNo = 1; 
+			}
+		}
+		
+		int startRno = ((currentShowPageNo - 1) * sizePerPage) + 1; // 시작 행번호 
+		int endRno = startRno + sizePerPage - 1; // 끝 행번호
+
+		paraMap.put("startRno", String.valueOf(startRno));
+		paraMap.put("endRno", String.valueOf(endRno));
+		
+		// 커뮤니티 자유게시판 리스트 조회하기
+		freeBoardList = service.getFreeBoardList(paraMap);
 		mav.addObject("freeBoardList", freeBoardList);
-		*/
+
+		
+		// 검색 시 검색조건 및 검색어 값 유지시키기
+		if("subject".equals(searchType) ||
+		   "content".equals(searchType) ||
+		   "name".equals(searchType)) {
+			
+			mav.addObject("paraMap", paraMap);
+		}
+		
+		
+
+		// ==== #129. 페이지바 만들기 ==== //
+		int blockSize = 10;
+		
+		int loop = 1;
+		
+		int pageNo = ((currentShowPageNo - 1)/blockSize) * blockSize + 1;
+		
+		String pageBar = "<ul>";
+		String url = "community/freeBoard.jsp";
+
+		// === [맨처음][이전] 만들기 === //
+		if(pageNo != 1) {
+			pageBar += "<li style='width: 4%;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo=1'>◀◀</a></li>";
+			pageBar += "<li style='width: 4%;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+(pageNo-1)+"'>◀</a></li>"; 
+		}
+
+		while( !(loop > blockSize || pageNo > totalPage) ) {
+			
+			if(pageNo == currentShowPageNo) {
+				pageBar += "<li class='font-weight-bold' style='width: 3%; color: #ff5000;'>"+pageNo+"</li>";
+			}
+			else {
+				pageBar += "<li style='width: 3%;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+pageNo+"'>"+pageNo+"</a></li>"; 
+			}
+			
+			loop++;
+			pageNo++;
+		}// end of while------------------------
+
+		// === [다음][마지막] 만들기 === //
+		if(pageNo <= totalPage) {
+			pageBar += "<li style='width: 4%;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+pageNo+"'>▶</a></li>";
+			pageBar += "<li style='width: 4%;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+totalPage+"'>▶▶</a></li>"; 
+		}
+		
+		pageBar += "</ul>";
+
+		mav.addObject("pageBar", pageBar);
+		// ==== #129. 페이지바 만들기 끝 ==== //
+
+		
+		// === #131. 페이징 처리된 후 특정 글제목을 클릭하여 상세내용을 본 이후
+		//           사용자가 "검색된결과목록보기" 버튼을 클릭했을때 돌아갈 페이지를 알려주기 위해
+		//           현재 페이지 주소를 뷰단으로 넘겨준다.
+		String goBackURL = MyUtil.getCurrentURL(request);
+		mav.addObject("goBackURL", goBackURL);
+		
+		// '페이징 처리 시 보여주는 순번'에 필요한 변수들
+		mav.addObject("totalCount", totalCount);
+		mav.addObject("currentShowPageNo", currentShowPageNo);
+		mav.addObject("sizePerPage", sizePerPage);
+
+
 		mav.setViewName("community/freeBoard");
 		
 		return mav;

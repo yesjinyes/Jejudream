@@ -10,7 +10,7 @@ div.container {
 
 table#freeBoard {
 	font-size: 1.2rem;
-	margin-bottom: 20%;
+	margin-bottom: 10%;
 }
 
 table#freeBoard > thead {
@@ -33,20 +33,53 @@ button#searchBtn:hover {
 	color: white;
 }
 
+.subjectStyle {
+	font-weight: bold;
+	cursor: pointer;
+}
 
+div#pageBar > ul {
+	list-style: none;
+}
+
+div#pageBar > ul li {
+	display: inline-block;
+	font-size: 12pt;
+	border: solid 0px red;
+	text-align: center;
+	color: #666666;
+}
+
+div#pageBar > ul li:hover {
+	font-weight: bold;
+	color: black;
+}
+
+div#pageBar a {
+	text-decoration: none !important; /* 페이지바의 a 태그에 밑줄 없애기 */
+}
 
 </style>
 
 <script type="text/javascript">
 
 	$(document).ready(function(){
-	    	
+
+		// 글제목 hover 이벤트
+		$("span.subject").hover(function(e) { // mouseover
+			$(e.target).addClass("subjectStyle");
+			
+		}, function(e) { // mouseout
+			$(e.target).removeClass("subjectStyle");
+			
+		});
+		
 	});// end of $(document).ready(function(){})-------------------
 	
 </script>
 
 
-<div class="container" style="margin: 3% auto; width: 100%; height: 500px;">
+<div class="container" style="margin: 3% auto; width: 100%; height: 700px;">
 
 	<form name="searchFrm">
 		<div class="d-flex mb-5">
@@ -75,6 +108,67 @@ button#searchBtn:hover {
 		</thead>
 		
 		<tbody>
+			<c:if test="${not empty requestScope.freeBoardList}">\
+				<c:forEach var="boardvo" items="${requestScope.freeBoardList}" varStatus="status">
+					<tr>
+						<td align="center">
+							${(requestScope.totalCount) - (requestScope.currentShowPageNo - 1) * (requestScope.sizePerPage) - (status.index)}
+							<%-- >>> 페이징 처리 시 보여주는 순번 공식 <<<
+								데이터개수 - (페이지번호 - 1) * 1페이지당보여줄개수 - 인덱스번호 => 순번  --%>
+						</td>
+						<td>
+							<%-- 첨부파일이 없는 경우 --%>
+							<c:if test="${empty boardvo.fileName}">
+							
+								<c:if test="${boardvo.commentCount > 0}">
+									<span onclick="goView('${boardvo.seq}')">
+										${boardvo.subject}&nbsp;
+										<span style="color: #ff5000; font-size: 1rem; font-weight: bold;">
+											[${boardvo.commentCount}]
+										</span>
+									</span>
+								</c:if>
+								
+								<c:if test="${boardvo.commentCount == 0}">
+									<span onclick="goView('${boardvo.seq}')">${boardvo.subject}</span>
+								</c:if>
+							</c:if>
+							
+							<%-- 첨부파일이 있는 경우 --%>
+							<c:if test="${not empty boardvo.fildName}">
+								<c:if test="${boardvo.commentCount > 0}">
+									<span onclick="goView('${boardvo.seq}')">
+										${boardvo.subject}&nbsp;
+										<i class="fa-regular fa-image" style="color: green; font-size: 1rem;"></i>
+										&nbsp;
+										<span style="color: #ff5000; font-size: 1rem; font-weight: bold;">
+											[${boardvo.commentCount}]
+										</span>
+									</span>
+								</c:if>
+								
+								<c:if test="${boardvo.commentCount == 0}">
+									<span onclick="goView('${boardvo.seq}')">
+										${boardvo.subject}&nbsp;
+										<i class="fa-regular fa-image" style="color: green; font-size: 1rem;"></i>
+									</span>
+								</c:if>
+							</c:if>
+						</td>
+						<td>${boardvo.name}</td>
+						<td>${boardvo.regDate}</td>
+						<td>${boardvo.readCount}</td>
+					</tr>
+				</c:forEach>
+			</c:if>
+			
+			<c:if test="${empty requestScope.boardList}">
+				<tr>
+					<td colspan="5" style="text-align: center;">데이터가 없습니다.</td>
+				</tr>
+			</c:if>
+		
+			<%--
 			<tr>
 				<td align="center">5</td>
 				<td>제주도 여행 코스 추천해 주세요</td>
@@ -112,9 +206,13 @@ button#searchBtn:hover {
 				<td align="center">2024-07-09 16:48</td>
 				<td align="center">7</td>
 			</tr>
-			
+			--%>
 		</tbody>
 	</table>
+	
+	<div id="pageBar" class="text-center mb-5" style="width: 80%; margin: 0 auto;">
+		${requestScope.pageBar}
+	</div>
 </div>
 
 	

@@ -228,14 +228,57 @@
 		where companyid = #{id}
 	</update>
 	
-	
-	<!-- 커뮤니티 자유게시판 리스트 조회하기 -->
-	
-	
 	<!-- 커뮤니티 글 등록 처리하기 -->
 	<insert id="addBoard" parameterType="com.spring.app.trip.domain.BoardVO">
 		insert into tbl_board(seq, fk_userid, name, subject, content, pw, category)
 		values(boardSeq.nextval, #{fk_userid}, #{name}, #{subject}, #{content}, #{pw}, #{category})
 	</insert>
+	
+	
+	<!-- 자유게시판 총 게시물 건수 조회하기 -->
+	<select id="getFreeBoardTotalCount" parameterType="HashMap" resultType="int">
+		select count(*)
+		from tbl_board
+		where status = 1 and category = 1
+		<choose>
+			<when test="searchType == 'subject' and searchWord != ''">
+				and lower(subject) like '%' || lower(#{searchWord}) || '%'
+			</when>
+			<when test="searchType == 'content' and searchWord != ''">
+				and lower(content) like '%' || lower(#{searchWord}) || '%'
+			</when>
+			<when test="searchType == 'name' and searchWord != ''">
+				and lower(name) like '%' || lower(#{searchWord}) || '%'
+			</when>
+		</choose>
+	</select>
+	
+	
+	<!-- 커뮤니티 자유게시판 리스트 조회하기 -->
+	<select id="getFreeBoardList" parameterType="HashMap" resultType="com.spring.app.trip.domain.BoardVO">
+		SELECT seq, fk_userid, name, subject, readCount, regDate, commentCount
+		FROM
+		(
+			select row_number() over(order by seq desc) AS rno
+				 , seq, fk_userid, name, subject
+			     , readCount, to_char(regDate, 'yyyy-mm-dd hh24:mi') AS regDate
+			     , commentCount
+			from tbl_board
+			where status = 1 and category = 1
+			<choose>
+				<when test="searchType == 'subject' and searchWord != ''">
+					and lower(subject) like '%' || lower(#{searchWord}) || '%'
+				</when>
+				<when test="searchType == 'content' and searchWord != ''">
+					and lower(content) like '%' || lower(#{searchWord}) || '%'
+				</when>
+				<when test="searchType == 'name' and searchWord != ''">
+					and lower(name) like '%' || lower(#{searchWord}) || '%'
+				</when>
+			</choose>
+		) V
+		WHERE V.rno between #{startRno} and #{endRno}
+	</select>
+	
 	
 </mapper>

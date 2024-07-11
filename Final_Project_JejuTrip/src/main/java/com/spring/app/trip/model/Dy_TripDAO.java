@@ -69,11 +69,14 @@ public interface Dy_TripDAO {
 
 	// 비밀번호 변경 날짜(lastpwdchangedate)를 현재 날짜로 변경하기
 	int updatePwdChangeDate(Map<String, String> paraMap);
-	
-	// 커뮤니티 자유게시판 리스트 조회하기
-	List<BoardVO> getFreeBoardList();
 
 	// 커뮤니티 글 등록 처리하기
 	int addBoard(BoardVO boardvo);
 
+	// 자유게시판 총 게시물 건수 조회하기
+	int getFreeBoardTotalCount(Map<String, String> paraMap);
+	
+	// 커뮤니티 자유게시판 리스트 조회하기
+	List<BoardVO> getFreeBoardList(Map<String, String> paraMap);
+	
 }

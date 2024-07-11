@@ -410,16 +410,6 @@ public class Dy_TripService_imple implements Dy_TripService {
 	}
 
 	
-	// 커뮤니티 자유게시판 리스트 조회하기
-	@Override
-	public List<BoardVO> getFreeBoardList() {
-		
-		List<BoardVO> list = dao.getFreeBoardList();
-		
-		return list;
-	}
-
-	
 	// 커뮤니티 글 등록 처리하기
 	@Override
 	public int addBoard(BoardVO boardvo) {
@@ -428,5 +418,26 @@ public class Dy_TripService_imple implements Dy_TripService {
 		
 		return n;
 	}
+
+	
+	// 자유게시판 총 게시물 건수 조회하기
+	@Override
+	public int getFreeBoardTotalCount(Map<String, String> paraMap) {
+		
+		int totalCount = dao.getFreeBoardTotalCount(paraMap);
+		
+		return totalCount;
+	}
+
+
+	// 커뮤니티 자유게시판 리스트 조회하기
+	@Override
+	public List<BoardVO> getFreeBoardList(Map<String, String> paraMap) {
+		
+		List<BoardVO> list = dao.getFreeBoardList(paraMap);
+		
+		return list;
+	}
+
 
 }
