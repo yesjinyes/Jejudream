@@ -33,12 +33,12 @@
 		cursor: pointer;
 	}
 	
-	.no-drop {
+	.cmt-no-drop {
 		border: solid 1px #a6a6a6;
 		color: #666;
 	}
 	
-	.dropdown {
+	.cmt-dropdown {
 		border: solid 1px #ff7433;
 		color: #ff7433;
 	}
@@ -104,13 +104,13 @@
 			$("div.comment-info").toggle();
 			
 			if ($("div.comment-info").is(":visible")) {
-	            $(this).removeClass("no-drop");
-	            $(this).addClass("dropdown");
+	            $(this).removeClass("cmt-no-drop");
+	            $(this).addClass("cmt-dropdown");
 	            $("div#cmtDropdownBar > i").removeClass("fa-angle-down");
 	            $("div#cmtDropdownBar > i").addClass("fa-angle-up");
 	        } else {
-	            $(this).removeClass("dropdown");
-	            $(this).addClass("no-drop");
+	            $(this).removeClass("cmt-dropdown");
+	            $(this).addClass("cmt-no-drop");
 	            $("div#cmtDropdownBar > i").removeClass("fa-angle-up");
 	            $("div#cmtDropdownBar > i").addClass("fa-angle-down");
 	        }
@@ -178,7 +178,7 @@
 		</div>
 		
 		<div style="width: 80%; margin: 0 auto;">
-			<div id="cmtInfoBtn" class="no-drop text-center d-flex justify-content-between" style="width: 13%; padding: 0.5%;">
+			<div id="cmtInfoBtn" class="cmt-no-drop text-center d-flex justify-content-between" style="width: 13%; padding: 0.5%;">
 				<div>
 					<i class="fa-solid fa-comment-dots"></i>
 					댓글 쓰기&nbsp;

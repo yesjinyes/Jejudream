@@ -196,6 +196,12 @@ $(document).ready(function() {
 					
 					<c:if test="${sessionScope.loginuser.userid == 'admin'}">
 						<li class="user_menu nav-item mr-3">
+							<a class="nav-link text-center" href="<%=ctxPath%>/admin/foodstoreRegister.trip">
+								<i class="fa-solid fa-utensils"></i>
+								<div>맛집등록</div>
+							</a>
+						</li>
+						<li class="user_menu nav-item mr-3">
 							<a class="nav-link text-center" href="<%=ctxPath%>/screeningRegister.trip">
 								<i class="fa-solid fa-check"></i>
 								<div>신청검토</div>
@@ -203,12 +209,15 @@ $(document).ready(function() {
 						</li>
 					</c:if>
 					
-					<li class="user_menu nav-item mr-3">
-						<a class="nav-link text-center" href="#">
-							<i class="fa-solid fa-cart-shopping"></i>
-							<div>장바구니</div>
-						</a>
-					</li>
+					<c:if test="${empty sessionScope.loginCompanyuser && sessionScope.loginuser.userid != 'admin'}">
+						<li class="user_menu nav-item mr-3">
+							<a class="nav-link text-center" href="#">
+								<i class="fa-solid fa-cart-shopping"></i>
+								<div>장바구니</div>
+							</a>
+						</li>
+					</c:if>
+					
 					<li class="user_menu nav-item">
 						<a class="nav-link text-center" href="<%=ctxPath%>/requiredLogin_goMypage.trip">
 							<i class="fa-solid fa-user"></i>
