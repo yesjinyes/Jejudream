@@ -342,6 +342,13 @@ public class Ws_TripService_imple implements Ws_TripService {
 		return mapList;
 	}
 	
+	// 선택한 월에서 매일의 매출액을 가져와서 차트화 시켜준다.
+	@Override
+	public List<Map<String, String>> get_day_profit_chart(Map<String, String> paraMap) {
+		List<Map<String, String>> mapList = dao.get_day_profit_chart(paraMap);
+		return mapList;
+	}
+	
 	
 
 }
