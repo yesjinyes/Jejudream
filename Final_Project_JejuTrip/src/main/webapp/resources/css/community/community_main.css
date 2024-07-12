@@ -50,6 +50,7 @@ div#category > h2 {
   border-radius: 99px;
   cursor: pointer;
   transition: color 0.15s ease-in;
+  border: solid 0px blue;
 }
 
 input[type=radio] {
@@ -61,30 +62,31 @@ input[id=radio-1]:checked ~ .glider {
 }
 
 input[id=radio-2]:checked ~ .glider {
-  transform: translateX(100%);
+  transform: translateX(calc(100% * 1));
 }
 
 input[id=radio-3]:checked ~ .glider {
-  transform: translateX(200%);
+  transform: translateX(calc(100% * 2));
 }
 
 input[id=radio-4]:checked ~ .glider {
-  transform: translateX(300%);
+  transform: translateX(calc(100% * 3));
 }
 
 input[id=radio-5]:checked ~ .glider {
-  transform: translateX(400%);
+  transform: translateX(calc(100% * 4));
 }
 
 input[id=radio-6]:checked ~ .glider {
-  transform: translateX(500%);
+  transform: translateX(calc(100% * 5));
 }
 
 .glider {
   position: absolute;
   display: flex;
   height: 54px;
-  width: 151px;
+  width: 16.2%;
+  /* width: 151px; */
   background-color: #ffdccc;
   z-index: 1;
   border-radius: 99px;

@@ -29,6 +29,20 @@
 		padding: 5% 2%; 
 	}
 	
+	div#cmtInfoBtn {
+		cursor: pointer;
+	}
+	
+	.no-drop {
+		border: solid 1px #a6a6a6;
+		color: #666;
+	}
+	
+	.dropdown {
+		border: solid 1px #ff7433;
+		color: #ff7433;
+	}
+	
 	div#comment {
 		border-bottom: solid 1px #ccc;
 	}
@@ -49,6 +63,8 @@
 	
 	div#commentPageBar > ul {
 		list-style: none;
+		text-align: center;
+		padding: 0;
 	}
 	
 	div#commentPageBar > ul li {
@@ -68,13 +84,37 @@
 	div#commentPageBar a {
 		text-decoration: none !important; /* 페이지바의 a 태그에 밑줄 없애기 */
 	}
+	
+	form[name='addCommentFrm'] textarea:focus {
+		outline: none;
+	}
+	
+	button#addCommentBtn {
+		border: solid 1px #737373;
+	}
 </style>
 
 <script type="text/javascript">
 	
 	$(document).ready(function() {
 		
+		$("div.comment-info").hide();
 		
+		$("div#cmtInfoBtn").click(function() {
+			$("div.comment-info").toggle();
+			
+			if ($("div.comment-info").is(":visible")) {
+	            $(this).removeClass("no-drop");
+	            $(this).addClass("dropdown");
+	            $("div#cmtDropdownBar > i").removeClass("fa-angle-down");
+	            $("div#cmtDropdownBar > i").addClass("fa-angle-up");
+	        } else {
+	            $(this).removeClass("dropdown");
+	            $(this).addClass("no-drop");
+	            $("div#cmtDropdownBar > i").removeClass("fa-angle-up");
+	            $("div#cmtDropdownBar > i").addClass("fa-angle-down");
+	        }
+		});
 		
 		
 		
@@ -137,7 +177,17 @@
 			<hr>
 		</div>
 		
-		<div class="comment-info mt-3 mb-5" style="width: 80%; margin: 0 auto;">
+		<div style="width: 80%; margin: 0 auto;">
+			<div id="cmtInfoBtn" class="no-drop text-center d-flex justify-content-between" style="width: 13%; padding: 0.5%;">
+				<div>
+					<i class="fa-solid fa-comment-dots"></i>
+					댓글 쓰기&nbsp;
+				</div>
+				<div id="cmtDropdownBar"><i class="fa-solid fa-angle-down"></i></div>
+			</div>
+		</div>
+		
+		<div class="comment-info mb-5" style="width: 80%; margin: 0 auto;">
 			<div id="comment" class="d-flex" style="padding: 1.5% 0">
 				<div style="width: 90%; padding: 1.5% 0">
 					<span class="d-block font-weight-bold mb-2">김라영</span>
@@ -171,8 +221,8 @@
 			
 			<div id="commentPageBar" class="text-center mt-3 mb-5" style="width: 80%; margin: 0 auto;">
 				<ul>
-					<li style='width: 4%;'>◀◀</li>
-					<li style='width: 4%;'>◀</li>
+					<li style='width: 4%; font-size: 0.8rem;'>◀◀</li>
+					<li style='width: 4%; font-size: 0.8rem;'>◀</li>
 					<li class='font-weight-bold' style='width: 3%; color: #ff5000;'>1</li>
 					<li style='width: 3%;'>2</li>
 					<li style='width: 3%;'>3</li>
@@ -183,19 +233,21 @@
 					<li style='width: 3%;'>8</li>
 					<li style='width: 3%;'>9</li>
 					<li style='width: 3%;'>10</li>
-					<li style='width: 4%;'>▶</li>
-					<li style='width: 4%;'>▶▶</li>
+					<li style='width: 4%; font-size: 0.8rem;'>▶</li>
+					<li style='width: 4%; font-size: 0.8rem;'>▶▶</li>
 				</ul>
 			</div>
 			
-			<div style="border: solid 1px #a6a6a6; padding: 1.5% 1%">
-				<span class="d-block mb-2">배인혁</span>
-				<textarea class="mb-2" style="width: 100%; height: 100px; border: none; background-color: rgba(242, 242, 242, 0.3);" placeholder="댓글을 작성해주세요."></textarea>
-				<div style="text-align: right;"><button type="button" class="btn btn-info">등록</button></div>
-			</div>
+			<form name="addCommentFrm">
+				<div style="border: solid 1px #a6a6a6; margin-top: 10%; padding: 1.5% 1%">
+					<span class="d-block mb-2 font-weight-bold">배인혁</span>
+					<textarea class="mb-2" style="width: 100%; height: 100px; border: none; background-color: rgba(242, 242, 242, 0.3);" placeholder="댓글을 작성해주세요."></textarea>
+					<div style="text-align: right;"><button type="button" class="btn" id="addCommentBtn">등록</button></div>
+				</div>
+			</form>
 		</div>
 		
-		<div class="text-center">
+		<div class="text-center" style="margin-top: 10%;">
 			<button type="button" id="addBoardBtn" class="btn btn-success mr-3">전체 목록</button>
 			<button type="button" id="goBackBtn" class="btn btn-secondary">검색된 결과 목록</button>
 		</div>

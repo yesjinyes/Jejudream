@@ -970,9 +970,7 @@ public class Dy_TripController {
 		mav.addObject("totalCount", totalCount);
 		mav.addObject("currentShowPageNo", currentShowPageNo);
 		mav.addObject("sizePerPage", sizePerPage);
-
-
-//		mav.setViewName("community/freeBoard");
+		
 		mav.setViewName("community/freeBoard.tiles1");
 		
 		return mav;
