@@ -35,38 +35,3 @@ order by reservation_date;
 
 select *
 from tbl_reservation;
-
--- 일자별 예약 금액 총합 (숙소 마이페이지에서 통계카테고리 내부에 사용할 sql문)
-WITH A
-AS (
-select room_detail_code
-from tbl_room_detail
-where fk_lodging_code = 5159
-)
-SELECT to_char(R.reservation_date,'yyyy-mm-dd'), sum(R.reservation_price) as day_total_price
-FROM A JOIN tbl_reservation R
-ON A.room_detail_code = R.fk_room_detail_code
-GROUP BY to_char(R.reservation_date,'yyyy-mm-dd');
-
-
-
-
-SELECT food_store_code, food_name, food_mobile, food_address
-FROM 
-(
-    SELECT rownum AS RNO
-         , food_store_code, food_name, food_mobile, food_address
-    FROM
-    (
-        select play_code, play_name, play_mobile, play_address
-        from tbl_play
-        order by play_name asc
-    )V
-) T
-where RNO between 1 and 5;
-
-select count(*)
-from tbl_food_store;
-
-select play_code, play_name, play_mobile, play_address
-from tbl_play;

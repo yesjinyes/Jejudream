@@ -268,31 +268,41 @@
 	<select id="get_year_reservation_hotel_chart" parameterType="String" resultMap="CNT_YEAR_RESERVATION">
 		WITH A
 		AS (
-		select to_char(reservation_date,'yyyy') as reservation_year, count(*) as CNT
-		from tbl_reservation
-		group by to_char(reservation_date,'yyyy')
+		select R.room_detail_code
+		from tbl_lodging L JOIN tbl_room_detail R
+		on L.lodging_code = r.fk_lodging_code
+		<if test="lodging_code != null">
+			where L.fk_companyid = #{lodging_code}
+		</if>
 		)
-		SELECT A.reservation_year, A.CNT
-		FROM A CROSS JOIN (SELECT SUM(CNT) AS TOTAL FROM A) B
-		order by reservation_year
+		SELECT to_char(R.check_in,'yyyy') as reservation_year , count(*) as CNT 
+		FROM A JOIN tbl_reservation R
+		ON A.room_detail_code = R.fk_room_detail_code
+		GROUP BY to_char(R.check_in,'yyyy')
+		ORDER BY 1
 	</select>
 	
 	<resultMap type="HashMap" id="CNT_MONTH_RESERVATION">
-		<result property="line_month" column="line_month" 	javaType="String" />
-		<result property="line_CNT" 	column="line_CNT" 	javaType="String" />
+		<result property="reservation_month" column="reservation_month" 	javaType="String" />
+		<result property="CNT" 				column="CNT" 					javaType="String" />
 	</resultMap>
 	
-	<select id="get_month_reservation_chart" parameterType="String" resultMap="CNT_MONTH_RESERVATION">
+	<select id="get_month_reservation_chart" parameterType="HashMap" resultMap="CNT_MONTH_RESERVATION">
 		WITH A
 		AS (
-		select to_char(reservation_date,'yyyy-mm') as line_month, count(*) as line_CNT
-		from tbl_reservation
-		where reservation_date between #{choice_year}||'-01-01' and #{choice_year}||'-12-31'
-		group by to_char(reservation_date,'yyyy-mm')
+		select R.room_detail_code
+		from tbl_lodging L JOIN tbl_room_detail R
+		on L.lodging_code = r.fk_lodging_code
+		<if test="companyid != null">
+			where L.fk_companyid = #{companyid}
+		</if>
 		)
-		SELECT A.line_month, A.line_CNT
-		FROM A CROSS JOIN (SELECT SUM(line_CNT) AS TOTAL FROM A) B
-		order by line_month asc
+		SELECT to_char(R.check_in,'yyyy-mm') as reservation_month , count(*) as CNT 
+		FROM A JOIN tbl_reservation R
+		ON A.room_detail_code = R.fk_room_detail_code
+		WHERE R.reservation_date between #{choice_year}||'-01-01' and #{choice_year}||'-12-31'
+		GROUP BY to_char(R.check_in,'yyyy-mm')
+		ORDER BY 1
 	</select>
 	
 	<select id="select_lodging" resultType="com.spring.app.trip.domain.LodgingVO">
@@ -358,6 +368,102 @@
 	<select id="getTotalPlayCount" resultType="Integer">
 		select count(*)
 		from tbl_play
+	</select>
+	
+	<resultMap type="HashMap" id="CNT_DAY_RESERVATION">
+		<result property="reservation_day" column="reservation_day" 	javaType="String" />
+		<result property="CNT" 				column="CNT" 					javaType="String" />
+	</resultMap>
+	
+	<select id="get_day_reservation_chart" parameterType="HashMap" resultMap="CNT_DAY_RESERVATION">
+		WITH A
+		AS (
+		select R.room_detail_code
+		from tbl_lodging L JOIN tbl_room_detail R
+		on L.lodging_code = r.fk_lodging_code
+		<if test="companyid != null">
+			where L.fk_companyid = #{companyid}
+		</if>
+		)
+		SELECT to_char(R.check_in,'yyyy-mm-dd') as reservation_day , count(*) as CNT 
+		FROM A JOIN tbl_reservation R
+		ON A.room_detail_code = R.fk_room_detail_code
+		WHERE R.reservation_date between extract(year from sysdate)||'-'||#{choice_month}||'-01' and #{choice_month_last_day}
+		GROUP BY to_char(R.check_in,'yyyy-mm-dd')
+		ORDER BY 1
+	</select>
+	
+	<select id="get_choice_month_last_day" parameterType="String" resultType="String">
+		select to_char(last_day(to_date(extract(year from sysdate)||'-'||#{choice_month}||'-01')),'yyyy-mm-dd') as choice_month_last_day
+		from dual
+	</select>
+	
+	<resultMap type="HashMap" id="profit_year">
+		<result property="year" 	column="year" 	javaType="String" />
+		<result property="profit" 	column="profit" javaType="String" />
+	</resultMap>
+	
+	<select id="get_year_profit_chart" parameterType="HashMap" resultMap="profit_year">
+		WITH A
+		AS (
+		select R.room_detail_code
+		from tbl_lodging L JOIN tbl_room_detail R
+		on L.lodging_code = r.fk_lodging_code
+		<if test="companyid != null">
+			where L.fk_companyid = #{companyid}
+		</if>
+		)
+		SELECT to_char(R.reservation_date,'yyyy') as year, sum(R.reservation_price) as profit
+		FROM A JOIN tbl_reservation R
+		ON A.room_detail_code = R.fk_room_detail_code
+		GROUP BY to_char(R.reservation_date,'yyyy')
+		ORDER BY year
+	</select>
+	
+	<resultMap type="HashMap" id="profit_month">
+		<result property="year" 	column="year" 	javaType="String" />
+		<result property="profit" 	column="profit" javaType="String" />
+	</resultMap>
+	
+	<select id="get_month_profit_chart" parameterType="HashMap" resultMap="profit_month">
+		WITH A
+		AS (
+		select R.room_detail_code
+		from tbl_lodging L JOIN tbl_room_detail R
+		on L.lodging_code = r.fk_lodging_code
+		<if test="companyid != null">
+			where L.fk_companyid = #{companyid}
+		</if>
+		)
+		SELECT to_char(R.reservation_date,'yyyy-mm') as year, sum(R.reservation_price) as profit
+		FROM A JOIN tbl_reservation R
+		ON A.room_detail_code = R.fk_room_detail_code
+		WHERE R.reservation_date between #{choice_year}||'-01-01' and #{choice_year}||'-12-31'
+		GROUP BY to_char(R.reservation_date,'yyyy-mm')
+		ORDER BY year
+	</select>
+	
+	<resultMap type="HashMap" id="profit_day">
+		<result property="day" 	column="day" 	javaType="String" />
+		<result property="profit" 	column="profit" javaType="String" />
+	</resultMap>
+	
+	<select id="get_day_profit_chart" parameterType="HashMap" resultMap="profit_day">
+		WITH A
+		AS (
+		select R.room_detail_code
+		from tbl_lodging L JOIN tbl_room_detail R
+		on L.lodging_code = r.fk_lodging_code
+		<if test="companyid != null">
+			where L.fk_companyid = #{companyid}
+		</if>
+		)
+		SELECT to_char(R.reservation_date,'yyyy-mm-dd') as day, sum(R.reservation_price) as profit
+		FROM A JOIN tbl_reservation R
+		ON A.room_detail_code = R.fk_room_detail_code
+		WHERE R.reservation_date between extract(year from sysdate)||'-'||#{choice_month}||'-01' and #{choice_month_last_day}
+		GROUP BY to_char(R.reservation_date,'yyyy-mm-dd')
+		ORDER BY day
 	</select>
 	
 </mapper>

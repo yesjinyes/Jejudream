@@ -84,9 +84,9 @@
                 </a>
             </li>
             <li class="list">
-                <a href="<%= ctxPath%>/editProfile.trip">
-                    <span class="icon"><ion-icon name="person-outline"></ion-icon></span>
-                    <span class="title">회원정보수정</span>
+                <a href="<%= ctxPath%>/company_chart.trip">
+                    <span class="icon"><ion-icon name="bar-chart-outline"></ion-icon></ion-icon></span>
+                    <span class="title">통계</span>
                 </a>
             </li>
             <li class="list active">

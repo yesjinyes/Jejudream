@@ -35,13 +35,18 @@ public interface Ws_TripDAO {
 	List<Map<String, String>> get_month_login_member_chart(String choice_year);// 매달 가입자 수 통계를 내기 위한 차트 값 가져오기
 	List<Map<String, String>> user_age_group_chart();// 사용자 연령대 차트에 사용할 정보 가져오기
 	List<Map<String, String>> user_gender_chart();// 사용자 성별 차트에 사용할 정보 가져오기
-	List<Map<String, String>> get_year_reservation_hotel_chart();// 매년 호텔 예약건수를 찾아와서 차트화 시켜주기위한 정보 가져오기
-	List<Map<String, String>> get_month_reservation_chart(String choice_year);// 선택한 년도의 매월 예약건수를 가져와서 차트화 시켜준다.
+	List<Map<String, String>> get_year_reservation_hotel_chart(String lodging_code);// 매년 호텔 예약건수를 찾아와서 차트화 시켜주기위한 정보 가져오기
+	List<Map<String, String>> get_month_reservation_chart(Map<String, String> paraMap);// 선택한 년도의 매월 예약건수를 가져와서 차트화 시켜준다.
 	List<LodgingVO> select_lodging(Map<String, String> paraMap);// 숙소  테이블에서 기본적인 정보 목록을 가져온다.
 	int getTotalLodgingCount();// tbl_lodging 테이블에서 status가 1인 모든 숙소의 개수를 읽어온다.
 	List<FoodstoreVO> select_foodstore(Map<String, String> paraMap);// 맛집  테이블에서 기본적인 정보 목록을 가져온다.
 	int getTotalFoodstoreCount();// tbl_food_store 테이블에 있는 모든 맛집의 개수를 알아온다.
 	List<PlayVO> select_play(Map<String, String> paraMap);//즐길거리  테이블에서 기본적인 정보 목록을 가져온다.
 	int getTotalPlayCount();// tbl_play 테이블에 있는 모든 즐길거리 개수를 알아온다.
+	List<Map<String, String>> get_day_reservation_chart(Map<String, String> paraMap);// 선택한 월에서 매일의 예약건수를 가져와서 차트화 시켜준다.
+	String get_last_day(String choice_month);// 내가 선택한 월이 있다면 그 월의 마지막 날을 구해준다.
+	List<Map<String, String>> get_year_profit_chart(String companyid);// 매년 업체수익을 찾아와서 차트화 시켜주기위한 정보 가져오기
+	List<Map<String, String>> get_month_profit_chart(Map<String, String> paraMap);// 선택한 년도의 매월 매출액을 가져와서 차트화 시켜준다.
+	List<Map<String, String>> get_day_profit_chart(Map<String, String> paraMap);// 선택한 월에서 매일의 매출액을 가져와서 차트화 시켜준다.
 
 }
