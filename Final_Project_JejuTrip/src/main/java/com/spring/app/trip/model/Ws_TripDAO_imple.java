@@ -358,5 +358,19 @@ public class Ws_TripDAO_imple implements Ws_TripDAO {
 		List<Map<String, String>> mapList = sqlsession.selectList("ws_trip.get_day_profit_chart_fail",paraMap);
 		return mapList;
 	}
+	
+	// tbl_reservation에서 자기 자신의 기업에 해당하는 모든 예약정보를 가져온다.
+	@Override
+	public int getTotalreservationCount(Map<String, String> paraMap) {
+		int count = sqlsession.selectOne("ws_trip.getTotalreservationCount",paraMap);
+		return count;
+	}
+	
+	// 기업이 소유하고있는 호텔의 총 예약건을 페이징 처리 해서 읽어온다.
+	@Override
+	public List<Map<String, String>> select_company_all_Reservation_paging(Map<String, String> paraMap) {
+		List<Map<String, String>> mapList = sqlsession.selectList("ws_trip.select_company_all_Reservation_paging",paraMap);
+		return mapList;
+	}
 
 }

@@ -1,0 +1,257 @@
+@charset "UTF-8";
+
+.body{
+    display: flex;
+    float: none;
+    width: 100%;
+    justify-content: left;
+}
+
+
+.navigation {
+   position: relative;
+   height: 800px;
+   width: 250px;
+   background: #ff8000;
+}
+
+
+.navigation ul {
+   position: absolute;
+   width: 100%;
+   padding-left: 5px;
+   padding-right: 5px;
+   padding-top: 40px;
+}
+
+.navigation ul li {
+   position: relative;
+   list-style: none;
+   width: 90%;
+   border-radius: 20px 20px;
+}
+
+.navigation ul li.active {
+   background: #ffcccc;/* 고정되어있을때 강조색 [1] */
+}
+
+.navigation ul li a {
+   position: relative;
+   display: block;
+   width: 100%;
+   display: flex;
+   text-decoration: none;
+   color: #fff;
+}
+
+
+
+.navigation ul li a .icon {
+   position: relative;
+   display: block;
+   min-width: 60px;
+   height: 60px;
+   line-height: 70px;
+   text-align: center;
+}
+
+.navigation ul li a .icon ion-icon {
+   position: relative;
+   font-size: 1.5em;
+   z-index: 1;
+}
+
+.navigation ul li a .title {
+   position: relative;
+   display: block;
+   height: 60px;
+   line-height: 60px;
+   white-space: nowrap;
+   font-weight:bold;
+}
+
+#contentFrame{
+   width: 1024px; 
+   padding-bottom: 1%; 
+   margin-left: 2%;
+   border: 1px solid #e6e6e6;
+   /* background: #008000; */
+   
+}
+
+.flex-row {
+	display: flex;
+	flex-direction: row;
+}
+
+.flex-col {
+	display: flex;
+	flex-direction: col;
+}
+
+form.reservationFrm {
+    width:70%;
+    margin:2% auto;
+    border:solid 0px red;
+}
+
+#reservation {
+	width: 100%;
+	border-top: 2px solid black;
+	border-left: 1px solid gray;
+	border-right: 1px solid gray;
+	border-bottom: 1px solid gray;
+	border-radius: 10px 10px;
+    margin:auto;
+}
+
+#top_color{
+padding: 0px 10px 0px 20px; 
+border-bottom: solid 1px #ff8000; 
+background: #ff8000; 
+border-radius: 10px 10px 0px 0px;
+}
+
+li a {
+	color: black;
+}
+
+.reservation li {
+	list-style: none;
+	display: block;
+	float: left;
+	width: 55%;
+	margin: 0 auto;
+	border-right: 1px dotted #c9c7ca;
+	text-align: center;
+}
+
+tr:hover{
+	cursor: pointer;
+}
+
+div.pageBar {
+    width:40%;
+    margin:auto;
+}
+
+div.pageBar > ul{
+    margin:auto;
+    text-align: center;
+    display: flex;
+}
+
+div.pageBar > ul > li {
+    margin:0 4px;
+}
+
+li.fist_page > a,
+li.last_page_no > a{
+    display: inline-block;
+    border-radius: 8px;
+    text-decoration: none;
+    padding-top:5px;
+    text-align:center;
+    width: 60px;
+    height: 30px;
+    border:solid 1px orange;
+    background-color: orange;
+    color:white;
+    font-size:10pt;
+}
+
+li.fist_page > a:hover,
+li.last_page_no > a:hover{
+    border:solid 1px orange;
+    background-color: rgb(255, 255, 255);
+    color:orange;
+    transition:0.3s;
+}
+
+li.before_page > a,
+li.next_page_no > a{
+    display: inline-block;
+    border-radius: 8px;
+    text-decoration: none;
+    padding-top:5px;
+    text-align:center;
+    width: 60px;
+    height: 30px;
+    border:solid 1px orange;
+    background-color: rgb(255, 255, 255);
+    color:orange;
+    font-size:10pt;
+}
+
+li.before_page > a:hover,
+li.next_page_no > a:hover{
+    border:solid 1px orange;
+    background-color: orange;
+    color:rgb(255, 255, 255);
+    transition:0.3s;
+}
+
+li.this_page_no {
+    display: inline-block;
+    border-radius: 8px;
+    text-decoration: none;
+    padding-top:5px;
+    text-align:center;
+    width: 30px;
+    height: 30px;
+    border:solid 1px orange;
+    background-color: orange;
+    color:rgb(250, 250, 250);
+    font-size:10pt;
+}
+
+li.choice_page_no > a {
+    display: inline-block;
+    border-radius: 8px;
+    text-decoration: none;
+    padding-top:5px;
+    text-align:center;
+    width: 30px;
+    height: 30px;
+    border:solid 1px orange;
+    background-color: rgb(248, 248, 248);
+    color:orange;
+    font-size:10pt;
+}
+
+li.choice_page_no > a:hover{
+    border:solid 1px orange;
+    background-color: orange;
+    color:rgb(255, 255, 255);
+    transition:0.3s;
+}
+
+input.success_btn {
+	margin-left:5px;
+	border:solid 1px orange;
+	background-color: orange;
+	color: white;
+	border-radius: 8px;
+}
+
+input.success_btn:hover {
+	border:solid 1px orange;
+	background-color: white;
+	color: orange;
+	transition:0.3s;
+}
+
+input.fail_btn {
+	margin-left:5px;
+	border:solid 1px rgb(255, 147, 147);
+	background-color: rgb(255, 147, 147);
+	color: white;
+	border-radius: 8px;
+}
+
+input.fail_btn:hover {
+	border:solid 1px rgb(255, 147, 147);
+	background-color: white;
+	color: rgb(255, 147, 147);
+	transition:0.3s;
+}

@@ -10,7 +10,7 @@
     $(document).ready(function(){
     	
     	goViewMemberList(1); // 페이징 처리 한 멤버 리스트
-    	goViewCompanyList(1); // 페이징 처리 한 멤버 리스트
+    	goViewCompanyList(1); // 페이징 처리 한 기업 리스트
     	
         const list = document.querySelectorAll('.list');
 

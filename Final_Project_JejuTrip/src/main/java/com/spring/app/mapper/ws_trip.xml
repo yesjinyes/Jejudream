@@ -487,14 +487,14 @@
 		JOIN tbl_member M
 		ON V.fk_userid = M.userid
 		where fk_companyid = #{companyid}
-		order by to_char(reservation_date,'yyyy-mm-dd HH24:mi:ss')
+		order by to_number(V.reservation_code) desc
 	</select>
 	
 	<select id="select_reservation_Count" parameterType="HashMap" resultType="String">
 		<![CDATA[
 		select to_char(count(*)) as count
 		from tbl_reservation
-		where fk_room_detail_code = #{room_detail_code} and check_in >= #{check_in} and check_out <= #{check_out}
+		where status = 1 and fk_room_detail_code = #{room_detail_code} and check_in >= #{check_in} and check_out <= #{check_out}
 		]]> 
 	</select>
 	
@@ -634,6 +634,60 @@
 		WHERE R.status = 2 and R.reservation_date between extract(year from sysdate)||'-'||#{choice_month}||'-01' and #{choice_month_last_day}
 		GROUP BY to_char(R.reservation_date,'yyyy-mm-dd')
 		ORDER BY day
+	</select>
+	
+	<select id="getTotalreservationCount" parameterType="String" resultType="Integer">
+		select count(*) as count
+		from tbl_lodging L JOIN tbl_room_detail R
+		on L.lodging_code = R.fk_lodging_code
+		JOIN tbl_reservation V
+		ON R.room_detail_code = V.fk_room_detail_code
+		JOIN tbl_member M
+		ON V.fk_userid = M.userid
+		where fk_companyid = #{companyid}
+		<if test="status != null">
+			and V.status = #{status}
+		</if>
+		order by to_number(V.reservation_code) desc
+	</select>
+	
+	<resultMap type="HashMap" id="reservation_map_paging">
+		<result property="lodging_name" 	column="lodging_name" 	javaType="String" />
+		<result property="user_name" 		column="user_name" javaType="String" />
+		<result property="room_detail_code" column="room_detail_code" javaType="String" />
+		<result property="check_in" 		column="check_in" javaType="String" />
+		<result property="check_out" 		column="check_out" javaType="String" />
+		<result property="room_stock" 		column="room_stock" javaType="String" />
+		<result property="status" 			column="status" javaType="String" />
+		<result property="reservation_code" column="reservation_code" javaType="String" />
+		<result property="room_name" column="room_name" javaType="String" />
+	</resultMap>
+	
+	<select id="select_company_all_Reservation_paging" parameterType="String" resultMap="reservation_map_paging">
+		SELECT lodging_name, user_name, room_detail_code, check_in, check_out, room_stock, status, reservation_code, room_name
+		FROM 
+		(
+		    SELECT rownum AS RNO
+		         ,lodging_name, user_name, room_detail_code, check_in, check_out, room_stock, status, reservation_code, room_name
+		    FROM
+		    (
+		        select L.lodging_name, M.user_name, R.room_detail_code, to_char(V.check_in,'yyyy-mm-dd') as check_in, to_char(V.check_out,'yyyy-mm-dd') as check_out, R.room_stock, V.status, V.reservation_code, R.room_name
+				from tbl_lodging L JOIN tbl_room_detail R
+				on L.lodging_code = R.fk_lodging_code
+				JOIN tbl_reservation V
+				ON R.room_detail_code = V.fk_room_detail_code
+				JOIN tbl_member M
+				ON V.fk_userid = M.userid
+				<if test="companyid != null">
+					where L.fk_companyid = #{companyid}
+					<if test="status != null">
+						and V.status = #{status}
+					</if>
+				</if>
+				order by to_number(V.reservation_code) desc
+		    )V
+		) T
+		where RNO between #{startRno} and #{endRno}
 	</select>
 	
 </mapper>

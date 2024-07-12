@@ -56,5 +56,7 @@ public interface Ws_TripService {
 	List<Map<String, String>> get_month_profit_chart_fail(Map<String, String> paraMap);// 선택한 년도의 매월 취소금액을 가져와서 차트화 시켜준다.
 	List<Map<String, String>> get_day_profit_chart_success(Map<String, String> paraMap);// 선택한 월에서 매일의 승인된 매출액을 가져와서 차트화 시켜준다.
 	List<Map<String, String>> get_day_profit_chart_fail(Map<String, String> paraMap);// 선택한 월에서 매일의 취소금액을 가져와서 차트화 시켜준다.
+	int getTotalreservationCount(Map<String, String> paraMap);// tbl_reservation에서 자기 자신의 기업에 해당하는 모든 예약정보를 가져온다.
+	List<Map<String, String>> select_company_all_Reservation_paging(Map<String, String> paraMap);// 기업이 소유하고있는 호텔의 총 예약건을 페이징 처리 해서 읽어온다.
 
 }

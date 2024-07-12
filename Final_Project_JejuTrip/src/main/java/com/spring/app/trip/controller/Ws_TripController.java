@@ -484,7 +484,6 @@ public class Ws_TripController {
 			// 기업이 소유하고있는 호텔의 총 예약건을 읽어온다.
 			List<Map<String,String>> reservationList = service.select_company_all_Reservation(loginCompanyuser.getCompanyid());
 
-			List<Map<String,String>> reservationCount = new ArrayList<>();
 			int all_reservation = 0;
 			int ready_reservation = 0;
 			int success_reservation = 0;
@@ -501,20 +500,11 @@ public class Ws_TripController {
 				else if(reservationMap.get("status").equals("2")) {
 					++fail_reservation;
 				}
-				// 예약일자마다의 객실 잔여석을 알아오기 위함이다.
-				String Count = service.select_reservation_Count(reservationMap);
-				int remain = Integer.parseInt(reservationMap.get("room_stock")) - Integer.parseInt(Count);
-				Map<String,String> map = new HashMap<>();
-				map.put("count", Count);
-				map.put("remain", String.valueOf(remain));
-				reservationCount.add(map);
 			}
 			mav.addObject("all_reservation",all_reservation);
 			mav.addObject("ready_reservation",ready_reservation);
 			mav.addObject("success_reservation",success_reservation);
 			mav.addObject("fail_reservation",fail_reservation);
-			mav.addObject("reservationList",reservationList);
-			mav.addObject("reservationCount",reservationCount);
 			mav.setViewName("mypage/company/mypageMain.tiles1");
 		}
 		
@@ -1463,4 +1453,76 @@ public class Ws_TripController {
 		
 		return jsonArr.toString(); 	
 	}
+	
+	// 페이징 처리한 숙소예약신청 리스트 가져오기
+	@ResponseBody
+	@PostMapping(value="/reservationListJSON.trip", produces="text/plain;charset=UTF-8") 
+	public String reservationListJSON(HttpServletRequest request) {
+
+		String currentShowPageNo = request.getParameter("currentShowPageNo"); 
+		
+		if(currentShowPageNo == null) {
+			currentShowPageNo = "1";
+		}
+		
+		
+		int sizePerPage = 5; // 한 페이지당 5개의 댓글을 보여줄 것임.
+		
+		// **** 가져올 게시글의 범위를 구한다.(공식임!!!) **** 
+		/*
+		     currentShowPageNo      startRno     endRno
+		    --------------------------------------------
+		         1 page        ===>    1           10
+		         2 page        ===>    11          20
+		         3 page        ===>    21          30
+		         4 page        ===>    31          40
+		         ......                ...         ...
+		 */
+		int startRno = ((Integer.parseInt(currentShowPageNo) - 1) * sizePerPage) + 1; // 시작 행번호 
+		int endRno = startRno + sizePerPage - 1; // 끝 행번호
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("startRno", String.valueOf(startRno));
+		paraMap.put("endRno", String.valueOf(endRno));
+		paraMap.put("companyid", request.getParameter("companyid"));
+		paraMap.put("status", request.getParameter("status"));
+		// 기업이 소유하고있는 호텔의 총 예약건을 페이징 처리 해서 읽어온다.
+		List<Map<String,String>> reservationList = service.select_company_all_Reservation_paging(paraMap);
+		int totalCount = service.getTotalreservationCount(paraMap); // 페이징 처리시 보여주는 순번을 나타내기 위한 것임.
+		
+		JSONArray jsonArr = new JSONArray(); // [] 
+		if(reservationList != null) {
+			for(Map<String,String> reservationMap : reservationList) {
+				JSONObject jsonObj = new JSONObject(); 
+				
+				// 예약일자마다의 객실 잔여석을 알아오기 위함이다.
+				String count = service.select_reservation_Count(reservationMap);
+				int remain = Integer.parseInt(reservationMap.get("room_stock")) - Integer.parseInt(count);
+				
+				jsonObj.put("lodging_name", reservationMap.get("lodging_name"));
+				jsonObj.put("user_name", reservationMap.get("user_name"));
+				jsonObj.put("room_detail_code", reservationMap.get("room_detail_code"));
+				jsonObj.put("check_in", reservationMap.get("check_in"));
+				jsonObj.put("check_out", reservationMap.get("check_out"));
+				jsonObj.put("room_stock", reservationMap.get("room_stock"));
+				jsonObj.put("status", reservationMap.get("status"));
+				jsonObj.put("reservation_code", reservationMap.get("reservation_code"));
+				jsonObj.put("room_name", reservationMap.get("room_name"));
+				jsonObj.put("count", count);
+				jsonObj.put("remain", remain);
+				
+				jsonObj.put("totalCount", totalCount);   // 페이징 처리시 보여주는 순번을 나타내기 위한 것임.
+				jsonObj.put("sizePerPage", sizePerPage); // 페이징 처리시 보여주는 순번을 나타내기 위한 것임. 
+				
+				jsonArr.put(jsonObj);
+			}// end of for-----------------------
+		}
+		
+		
+		return jsonArr.toString(); // "[{"seq":1, "fk_userid":"seoyh","name":서영학,"content":"첫번째 댓글입니다. ㅎㅎㅎ","regdate":"2024-06-18 15:36:31"}]"
+		                           // 또는
+		                           // "[]"		
+		
+	}
+	
 }

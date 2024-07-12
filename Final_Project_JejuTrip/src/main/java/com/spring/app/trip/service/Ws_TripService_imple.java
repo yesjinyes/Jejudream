@@ -405,6 +405,20 @@ public class Ws_TripService_imple implements Ws_TripService {
 		return mapList;
 	}
 	
+	// tbl_reservation에서 자기 자신의 기업에 해당하는 모든 예약정보를 가져온다.
+	@Override
+	public int getTotalreservationCount(Map<String, String> paraMap) {
+		int count = dao.getTotalreservationCount(paraMap);
+		return count;
+	}
+	
+	// 기업이 소유하고있는 호텔의 총 예약건을 페이징 처리 해서 읽어온다.
+	@Override
+	public List<Map<String, String>> select_company_all_Reservation_paging(Map<String, String> paraMap) {
+		List<Map<String, String>> mapList = dao.select_company_all_Reservation_paging(paraMap);
+		return mapList;
+	}
+	
 	
 
 }
