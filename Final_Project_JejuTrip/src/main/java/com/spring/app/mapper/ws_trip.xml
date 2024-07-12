@@ -398,12 +398,12 @@
 		from dual
 	</select>
 	
-	<resultMap type="HashMap" id="profit_year">
-		<result property="year" 	column="year" 	javaType="String" />
-		<result property="profit" 	column="profit" javaType="String" />
+	<resultMap type="HashMap" id="profit_year_all">
+		<result property="year" 		column="year" 	javaType="String" />
+		<result property="all_profit" 	column="all_profit" javaType="String" />
 	</resultMap>
 	
-	<select id="get_year_profit_chart" parameterType="HashMap" resultMap="profit_year">
+	<select id="get_year_profit_chart" parameterType="HashMap" resultMap="profit_year_all">
 		WITH A
 		AS (
 		select R.room_detail_code
@@ -413,19 +413,19 @@
 			where L.fk_companyid = #{companyid}
 		</if>
 		)
-		SELECT to_char(R.reservation_date,'yyyy') as year, sum(R.reservation_price) as profit
+		SELECT to_char(R.reservation_date,'yyyy') as year, sum(R.reservation_price) as all_profit
 		FROM A JOIN tbl_reservation R
 		ON A.room_detail_code = R.fk_room_detail_code
 		GROUP BY to_char(R.reservation_date,'yyyy')
 		ORDER BY year
 	</select>
 	
-	<resultMap type="HashMap" id="profit_month">
+	<resultMap type="HashMap" id="profit_month_all">
 		<result property="year" 	column="year" 	javaType="String" />
-		<result property="profit" 	column="profit" javaType="String" />
+		<result property="profit_all" 	column="profit_all" javaType="String" />
 	</resultMap>
 	
-	<select id="get_month_profit_chart" parameterType="HashMap" resultMap="profit_month">
+	<select id="get_month_profit_chart" parameterType="HashMap" resultMap="profit_month_all">
 		WITH A
 		AS (
 		select R.room_detail_code
@@ -435,7 +435,7 @@
 			where L.fk_companyid = #{companyid}
 		</if>
 		)
-		SELECT to_char(R.reservation_date,'yyyy-mm') as year, sum(R.reservation_price) as profit
+		SELECT to_char(R.reservation_date,'yyyy-mm') as year, sum(R.reservation_price) as profit_all
 		FROM A JOIN tbl_reservation R
 		ON A.room_detail_code = R.fk_room_detail_code
 		WHERE R.reservation_date between #{choice_year}||'-01-01' and #{choice_year}||'-12-31'
@@ -462,6 +462,176 @@
 		FROM A JOIN tbl_reservation R
 		ON A.room_detail_code = R.fk_room_detail_code
 		WHERE R.reservation_date between extract(year from sysdate)||'-'||#{choice_month}||'-01' and #{choice_month_last_day}
+		GROUP BY to_char(R.reservation_date,'yyyy-mm-dd')
+		ORDER BY day
+	</select>
+	
+	<resultMap type="HashMap" id="reservation_map">
+		<result property="lodging_name" 	column="lodging_name" 	javaType="String" />
+		<result property="user_name" 		column="user_name" javaType="String" />
+		<result property="room_detail_code" column="room_detail_code" javaType="String" />
+		<result property="check_in" 		column="check_in" javaType="String" />
+		<result property="check_out" 		column="check_out" javaType="String" />
+		<result property="room_stock" 		column="room_stock" javaType="String" />
+		<result property="status" 			column="status" javaType="String" />
+		<result property="reservation_code" column="reservation_code" javaType="String" />
+		<result property="room_name" column="room_name" javaType="String" />
+	</resultMap>
+	
+	<select id="select_company_all_Reservation" parameterType="String" resultMap="reservation_map">
+		select L.lodging_name, M.user_name, R.room_detail_code, to_char(V.check_in,'yyyy-mm-dd') as check_in, to_char(V.check_out,'yyyy-mm-dd') as check_out, R.room_stock, V.status, V.reservation_code, R.room_name
+		from tbl_lodging L JOIN tbl_room_detail R
+		on L.lodging_code = R.fk_lodging_code
+		JOIN tbl_reservation V
+		ON R.room_detail_code = V.fk_room_detail_code
+		JOIN tbl_member M
+		ON V.fk_userid = M.userid
+		where fk_companyid = #{companyid}
+		order by to_char(reservation_date,'yyyy-mm-dd HH24:mi:ss')
+	</select>
+	
+	<select id="select_reservation_Count" parameterType="HashMap" resultType="String">
+		<![CDATA[
+		select to_char(count(*)) as count
+		from tbl_reservation
+		where fk_room_detail_code = #{room_detail_code} and check_in >= #{check_in} and check_out <= #{check_out}
+		]]> 
+	</select>
+	
+	<resultMap type="HashMap" id="profit_year_success">
+		<result property="year" 			column="year" 	javaType="String" />
+		<result property="success_profit" 	column="success_profit" javaType="String" />
+	</resultMap>
+	
+	<select id="get_year_profit_chart_success" parameterType="HashMap" resultMap="profit_year_success">
+		WITH A
+		AS (
+		select R.room_detail_code
+		from tbl_lodging L JOIN tbl_room_detail R
+		on L.lodging_code = r.fk_lodging_code
+		<if test="companyid != null">
+			where L.fk_companyid = #{companyid}
+		</if>
+		)
+		SELECT to_char(R.reservation_date,'yyyy') as year, sum(R.reservation_price) as success_profit
+		FROM A JOIN tbl_reservation R
+		ON A.room_detail_code = R.fk_room_detail_code
+		WHERE status = 1
+		GROUP BY to_char(R.reservation_date,'yyyy')
+		ORDER BY year
+	</select>
+	
+	<resultMap type="HashMap" id="profit_year_fail">
+		<result property="year" 			column="year" 	javaType="String" />
+		<result property="fail_profit" 	column="fail_profit" javaType="String" />
+	</resultMap>
+	
+	<select id="get_year_profit_chart_fail" parameterType="HashMap" resultMap="profit_year_fail">
+		WITH A
+		AS (
+		select R.room_detail_code
+		from tbl_lodging L JOIN tbl_room_detail R
+		on L.lodging_code = r.fk_lodging_code
+		<if test="companyid != null">
+			where L.fk_companyid = #{companyid}
+		</if>
+		)
+		SELECT to_char(R.reservation_date,'yyyy') as year, sum(R.reservation_price) as fail_profit
+		FROM A JOIN tbl_reservation R
+		ON A.room_detail_code = R.fk_room_detail_code
+		WHERE status = 2
+		GROUP BY to_char(R.reservation_date,'yyyy')
+		ORDER BY year
+	</select>
+	
+	<resultMap type="HashMap" id="profit_month_success">
+		<result property="year" 			column="year" 	javaType="String" />
+		<result property="profit_success" 	column="profit_success" javaType="String" />
+	</resultMap>
+	
+	<select id="get_month_profit_chart_succeess" parameterType="HashMap" resultMap="profit_month_success">
+		WITH A
+		AS (
+		select R.room_detail_code
+		from tbl_lodging L JOIN tbl_room_detail R
+		on L.lodging_code = r.fk_lodging_code
+		<if test="companyid != null">
+			where L.fk_companyid = #{companyid}
+		</if>
+		)
+		SELECT to_char(R.reservation_date,'yyyy-mm') as year, sum(R.reservation_price) as profit_success
+		FROM A JOIN tbl_reservation R
+		ON A.room_detail_code = R.fk_room_detail_code
+		WHERE R.status = 1 and R.reservation_date between #{choice_year}||'-01-01' and #{choice_year}||'-12-31'
+		GROUP BY to_char(R.reservation_date,'yyyy-mm')
+		ORDER BY year
+	</select>
+	
+	<resultMap type="HashMap" id="profit_month_fail">
+		<result property="year" 		column="year" 	javaType="String" />
+		<result property="profit_fail" 	column="profit_fail" javaType="String" />
+	</resultMap>
+	
+	<select id="get_month_profit_chart_fail" parameterType="HashMap" resultMap="profit_month_fail">
+		WITH A
+		AS (
+		select R.room_detail_code
+		from tbl_lodging L JOIN tbl_room_detail R
+		on L.lodging_code = r.fk_lodging_code
+		<if test="companyid != null">
+			where L.fk_companyid = #{companyid}
+		</if>
+		)
+		SELECT to_char(R.reservation_date,'yyyy-mm') as year, sum(R.reservation_price) as profit_fail
+		FROM A JOIN tbl_reservation R
+		ON A.room_detail_code = R.fk_room_detail_code
+		WHERE R.status = 2 and R.reservation_date between #{choice_year}||'-01-01' and #{choice_year}||'-12-31'
+		GROUP BY to_char(R.reservation_date,'yyyy-mm')
+		ORDER BY year
+	</select>
+	
+	<resultMap type="HashMap" id="profit_day_success">
+		<result property="day" 				column="day" 	javaType="String" />
+		<result property="profit_success" 	column="profit_success" javaType="String" />
+	</resultMap>
+	
+	<select id="get_day_profit_chart_success" parameterType="HashMap" resultMap="profit_day_success">
+		WITH A
+		AS (
+		select R.room_detail_code
+		from tbl_lodging L JOIN tbl_room_detail R
+		on L.lodging_code = r.fk_lodging_code
+		<if test="companyid != null">
+			where L.fk_companyid = #{companyid}
+		</if>
+		)
+		SELECT to_char(R.reservation_date,'yyyy-mm-dd') as day, sum(R.reservation_price) as profit_success
+		FROM A JOIN tbl_reservation R
+		ON A.room_detail_code = R.fk_room_detail_code
+		WHERE R.status = 1 and R.reservation_date between extract(year from sysdate)||'-'||#{choice_month}||'-01' and #{choice_month_last_day}
+		GROUP BY to_char(R.reservation_date,'yyyy-mm-dd')
+		ORDER BY day
+	</select>
+	
+	<resultMap type="HashMap" id="profit_day_fail">
+		<result property="day" 				column="day" 	javaType="String" />
+		<result property="profit_fail" 		column="profit_fail" javaType="String" />
+	</resultMap>
+	
+	<select id="get_day_profit_chart_fail" parameterType="HashMap" resultMap="profit_day_fail">
+		WITH A
+		AS (
+		select R.room_detail_code
+		from tbl_lodging L JOIN tbl_room_detail R
+		on L.lodging_code = r.fk_lodging_code
+		<if test="companyid != null">
+			where L.fk_companyid = #{companyid}
+		</if>
+		)
+		SELECT to_char(R.reservation_date,'yyyy-mm-dd') as day, sum(R.reservation_price) as profit_fail
+		FROM A JOIN tbl_reservation R
+		ON A.room_detail_code = R.fk_room_detail_code
+		WHERE R.status = 2 and R.reservation_date between extract(year from sysdate)||'-'||#{choice_month}||'-01' and #{choice_month_last_day}
 		GROUP BY to_char(R.reservation_date,'yyyy-mm-dd')
 		ORDER BY day
 	</select>

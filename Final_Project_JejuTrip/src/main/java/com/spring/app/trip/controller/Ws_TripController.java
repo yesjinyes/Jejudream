@@ -3,6 +3,7 @@ package com.spring.app.trip.controller;
 
 import java.io.File;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -478,6 +479,42 @@ public class Ws_TripController {
 		}
 		else {
 			// 로그인한 유저가 기업 유저라면
+			CompanyVO loginCompanyuser = (CompanyVO)session.getAttribute("loginCompanyuser");
+			
+			// 기업이 소유하고있는 호텔의 총 예약건을 읽어온다.
+			List<Map<String,String>> reservationList = service.select_company_all_Reservation(loginCompanyuser.getCompanyid());
+
+			List<Map<String,String>> reservationCount = new ArrayList<>();
+			int all_reservation = 0;
+			int ready_reservation = 0;
+			int success_reservation = 0;
+			int fail_reservation = 0;
+			for(Map<String,String> reservationMap : reservationList) {
+				
+				++all_reservation;
+				if(reservationMap.get("status").equals("0")) {
+					++ready_reservation;
+				}
+				else if(reservationMap.get("status").equals("1")) {
+					++success_reservation;
+				}
+				else if(reservationMap.get("status").equals("2")) {
+					++fail_reservation;
+				}
+				// 예약일자마다의 객실 잔여석을 알아오기 위함이다.
+				String Count = service.select_reservation_Count(reservationMap);
+				int remain = Integer.parseInt(reservationMap.get("room_stock")) - Integer.parseInt(Count);
+				Map<String,String> map = new HashMap<>();
+				map.put("count", Count);
+				map.put("remain", String.valueOf(remain));
+				reservationCount.add(map);
+			}
+			mav.addObject("all_reservation",all_reservation);
+			mav.addObject("ready_reservation",ready_reservation);
+			mav.addObject("success_reservation",success_reservation);
+			mav.addObject("fail_reservation",fail_reservation);
+			mav.addObject("reservationList",reservationList);
+			mav.addObject("reservationCount",reservationCount);
 			mav.setViewName("mypage/company/mypageMain.tiles1");
 		}
 		
@@ -1211,21 +1248,46 @@ public class Ws_TripController {
 	public String get_year_profit_chart(HttpServletRequest request) {
 		
 		String companyid = request.getParameter("companyid");
-		List<Map<String,String>> mapList = service.get_year_profit_chart(companyid);// 매년 업체수익을 찾아와서 차트화 시켜주기위한 정보 가져오기
-		
+		List<Map<String,String>> mapList_all = service.get_year_profit_chart(companyid);// 매년 총업체수익을 찾아와서 차트화 시켜주기위한 정보 가져오기
+		List<Map<String,String>> mapList_success = service.get_year_profit_chart_success(companyid);// 매년 승인된 업체수익을 찾아와서 차트화 시켜주기위한 정보 가져오기
+		List<Map<String,String>> mapList_fail = service.get_year_profit_chart_fail(companyid);// 매년 취소 업체수익을 찾아와서 차트화 시켜주기위한 정보 가져오기
 		JSONArray jsonArr = new JSONArray();
 		for(int i=2015;i<=2024;i++) {
 			JSONObject jsonObj = new JSONObject();
-			boolean is_exist = false;
-			for(Map<String,String> map : mapList) {
+			boolean is_exist_all = false;
+			boolean is_exist_success = false;
+			boolean is_exist_fail = false;
+			for(Map<String,String> map : mapList_all) {
 				if(map.get("year").equals(String.valueOf(i))) {
-					is_exist = true;
+					is_exist_all = true;
 					
-					jsonObj.put("profit", map.get("profit"));
+					jsonObj.put("all_profit", map.get("all_profit"));
 				}
 			}
-			if(!is_exist) {
-				jsonObj.put("profit", "0");
+			if(!is_exist_all) {
+				jsonObj.put("all_profit", "0");
+			}
+			///////////////////////////////////////////////////////
+			for(Map<String,String> map : mapList_success) {
+				if(map.get("year").equals(String.valueOf(i))) {
+					is_exist_success = true;
+					
+					jsonObj.put("success_profit", map.get("success_profit"));
+				}
+			}
+			if(!is_exist_success) {
+				jsonObj.put("success_profit", "0");
+			}
+			///////////////////////////////////////////////////////
+			for(Map<String,String> map : mapList_fail) {
+				if(map.get("year").equals(String.valueOf(i))) {
+					is_exist_fail = true;
+					
+					jsonObj.put("fail_profit", map.get("fail_profit"));
+				}
+			}
+			if(!is_exist_fail) {
+				jsonObj.put("fail_profit", "0");
 			}
 			jsonArr.put(jsonObj);
 		}
@@ -1245,14 +1307,18 @@ public class Ws_TripController {
 		Map<String,String> paraMap = new HashMap<>();
 		paraMap.put("choice_year", choice_year);
 		paraMap.put("companyid", companyid);
-		List<Map<String,String>> mapList = service.get_month_profit_chart(paraMap);// 선택한 년도의 매월 매출액을 가져와서 차트화 시켜준다.
+		List<Map<String,String>> mapList_all = service.get_month_profit_chart(paraMap);// 선택한 년도의 매월 매출액을 가져와서 차트화 시켜준다.
+		List<Map<String,String>> mapList_success = service.get_month_profit_chart_succeess(paraMap);// 선택한 년도의 매월 승인매출액을 가져와서 차트화 시켜준다.
+		List<Map<String,String>> mapList_fail = service.get_month_profit_chart_fail(paraMap);// 선택한 년도의 매월 취소금액을 가져와서 차트화 시켜준다.
 
 		JSONArray jsonArr = new JSONArray();
 		String str_i = "";
 		for(int i=1;i<=12;i++) {
 			JSONObject jsonObj = new JSONObject();
-			boolean is_exist = false;
-			for(Map<String,String> map : mapList) {
+			boolean is_exist_all = false;
+			boolean is_exist_success = false;
+			boolean is_exist_fail = false;
+			for(Map<String,String> map : mapList_all) {
 				if(i<10) {
 					str_i = "0"+i;
 				}
@@ -1260,13 +1326,50 @@ public class Ws_TripController {
 					str_i = String.valueOf(i);
 				}
 				if(map.get("year").equals(choice_year+"-"+str_i)) {
-					is_exist = true;
-					jsonObj.put("profit", map.get("profit"));
+					is_exist_all = true;
+					jsonObj.put("profit_all", map.get("profit_all"));
 				}
 			}
-			if(!is_exist) {
-				jsonObj.put("profit", "0");
+			if(!is_exist_all) {
+				jsonObj.put("profit_all", "0");
 			}
+			
+			/////////////////////////////////////////////////////////////////
+			
+			for(Map<String,String> map : mapList_success) {
+				if(i<10) {
+					str_i = "0"+i;
+				}
+				else {
+					str_i = String.valueOf(i);
+				}
+				if(map.get("year").equals(choice_year+"-"+str_i)) {
+					is_exist_success = true;
+					jsonObj.put("profit_success", map.get("profit_success"));
+				}
+			}
+			if(!is_exist_success) {
+				jsonObj.put("profit_success", "0");
+			}
+			
+			/////////////////////////////////////////////////////////////////
+			
+			for(Map<String,String> map : mapList_fail) {
+				if(i<10) {
+					str_i = "0"+i;
+				}
+				else {
+					str_i = String.valueOf(i);
+				}
+				if(map.get("year").equals(choice_year+"-"+str_i)) {
+					is_exist_fail = true;
+					jsonObj.put("profit_fail", map.get("profit_fail"));
+				}
+			}
+			if(!is_exist_fail) {
+				jsonObj.put("profit_fail", "0");
+			}
+			
 			jsonArr.put(jsonObj);
 		}
 		
@@ -1291,7 +1394,9 @@ public class Ws_TripController {
 		paraMap.put("choice_month_last_day",choice_month_last_day);
 		paraMap.put("choice_month", choice_month);
 		paraMap.put("companyid", companyid);
-		List<Map<String,String>> mapList = service.get_day_profit_chart(paraMap);// 선택한 월에서 매일의 매출액을 가져와서 차트화 시켜준다.
+		List<Map<String,String>> mapList_all = service.get_day_profit_chart(paraMap);// 선택한 월에서 매일의 매출액을 가져와서 차트화 시켜준다.
+		List<Map<String,String>> mapList_success = service.get_day_profit_chart_success(paraMap);// 선택한 월에서 매일의 승인된 매출액을 가져와서 차트화 시켜준다.
+		List<Map<String,String>> mapList_fail = service.get_day_profit_chart_fail(paraMap);// 선택한 월에서 매일의 취소금액을 가져와서 차트화 시켜준다.
 
 		int day = Integer.parseInt(choice_month_last_day.substring(8));
 		JSONArray jsonArr = new JSONArray();
@@ -1299,8 +1404,10 @@ public class Ws_TripController {
 		for(int i=1;i<=day;i++) {
 			JSONObject jsonObj = new JSONObject();
 			jsonObj.put("day", i);
-			boolean is_exist = false;
-			for(Map<String,String> map : mapList) {
+			boolean is_exist_all = false;
+			boolean is_exist_success = false;
+			boolean is_exist_fail = false;
+			for(Map<String,String> map : mapList_all) {
 				if(i<10) {
 					str_i = "0"+i;
 				}
@@ -1308,12 +1415,48 @@ public class Ws_TripController {
 					str_i = String.valueOf(i);
 				}
 				if(map.get("day").equals(choice_month_last_day.substring(0,8)+str_i)) {
-					is_exist = true;
+					is_exist_all = true;
 					jsonObj.put("profit", map.get("profit"));
 				}
 			}
-			if(!is_exist) {
+			if(!is_exist_all) {
 				jsonObj.put("profit", "0");
+			}
+			
+			////////////////////////////////////////////////////////////////////////////
+			
+			for(Map<String,String> map : mapList_success) {
+				if(i<10) {
+					str_i = "0"+i;
+				}
+				else {
+					str_i = String.valueOf(i);
+				}
+				if(map.get("day").equals(choice_month_last_day.substring(0,8)+str_i)) {
+					is_exist_success = true;
+					jsonObj.put("profit_success", map.get("profit_success"));
+				}
+			}
+			if(!is_exist_success) {
+				jsonObj.put("profit_success", "0");
+			}
+			
+			//////////////////////////////////////////////////////////////////////////////
+			
+			for(Map<String,String> map : mapList_fail) {
+				if(i<10) {
+					str_i = "0"+i;
+				}
+				else {
+					str_i = String.valueOf(i);
+				}
+				if(map.get("day").equals(choice_month_last_day.substring(0,8)+str_i)) {
+					is_exist_fail = true;
+					jsonObj.put("profit_fail", map.get("profit_fail"));
+				}
+			}
+			if(!is_exist_fail) {
+				jsonObj.put("profit_fail", "0");
 			}
 			jsonArr.put(jsonObj);
 		}

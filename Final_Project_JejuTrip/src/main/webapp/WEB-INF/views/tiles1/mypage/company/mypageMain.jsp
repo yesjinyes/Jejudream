@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <% String ctxPath = request.getContextPath(); %>
 <link rel="stylesheet" href="<%=ctxPath%>/resources/css/mypage/mypageMain.css"/>
 <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
@@ -73,32 +74,32 @@
 			<div class="liblock">
 				<ul class="reservation flex-col" style="margin-top: 15px;">
 					<li>
-						<strong style="font-size: 18px">예약접수중 <br><br></strong> 
+						<strong style="font-size: 18px">예약전체 <br><br></strong> 
 						 <a href="#" class="count">
-						 	<span id="reservation_reception" style="color: ff8000; font-weight: bold; font-size: 30px;" >${requestScope.orderStat.processingCnt }0</span>
+						 	<span id="reservation_reception" style="color: ff8000; font-weight: bold; font-size: 30px;" >${requestScope.all_reservation}</span>
 						 	<span style="color: gray; font-weight: bold;">건</span>
 					 	 </a>
 					</li>
 					
 					<li>
-						<strong style="font-size: 18px">예약확정 <br><br></strong> 
+						<strong style="font-size: 18px">예약승인대기 <br><br></strong> 
 						<a href="#" class="count">
-							<span id="reservation_confirmed"  style="color: ff8000; font-weight: bold; font-size: 30px;">${requestScope.orderStat.shippedOutCnt }0</span>
+							<span id="reservation_confirmed"  style="color: ff8000; font-weight: bold; font-size: 30px;">${requestScope.ready_reservation}</span>
 							<span style="color: gray; font-weight: bold;">건</span>
 						</a>
 					</li>
 					
 					<li>
-						<strong style="font-size: 18px">여행완료 <br><br></strong>
+						<strong style="font-size: 18px">예약확정 <br><br></strong>
 						<a href="#" class="count">
-							<span id="trip_complete" style="color: ff8000; font-weight: bold; font-size: 30px;">${requestScope.orderStat.inDeliveryCnt }0</span>
+							<span id="trip_complete" style="color: ff8000; font-weight: bold; font-size: 30px;">${requestScope.success_reservation}</span>
 							<span style="color: gray; font-weight: bold;">건</span>
 						</a>
 					</li>
 					
 					<li><strong style="font-size: 18px">예약취소 <br><br></strong>
 						 <a href="#" class="count">
-						 	<span id="cancel_Reservation" style="color: ff8000; font-weight: bold; font-size: 30px;">${requestScope.orderStat.deliveredCnt }0</span>
+						 	<span id="cancel_Reservation" style="color: ff8000; font-weight: bold; font-size: 30px;">${requestScope.fail_reservation}</span>
 					 		<span style="color: gray; font-weight: bold;">건</span>
 					 	</a>
 					</li>
@@ -117,39 +118,59 @@
 		 <!-- Nav tabs -->
 			<ul class="nav nav-tabs">
 			  <li class="nav-item">
-			    <a class="nav-link active" data-toggle="tab" href="#home">예약내역</a>
+			    <a class="nav-link active" data-toggle="tab" href="#all_reservation">전체예약내역</a>
 			  </li>
 			  <li class="nav-item">
-			    <a class="nav-link" data-toggle="tab" href="#menu1">취소내역</a>
+			    <a class="nav-link" data-toggle="tab" href="#ready_reservation_success">예약승인대기목록</a>
 			  </li>
-			  
+			  <li class="nav-item">
+			    <a class="nav-link" data-toggle="tab" href="#reservation_success">예약승인목록</a>
+			  </li>
+			  <li class="nav-item">
+			    <a class="nav-link" data-toggle="tab" href="#reservation_quit">예약취소목록</a>
+			  </li>
 			</ul>
 			
 			<!-- Tab panes -->
 			<div class="tab-content">
-			  <div class="tab-pane container active" id="home">
+			  <div class="tab-pane container active" id="all_reservation">
 				<table class="table table-hover">
 				  <thead>
 				    <tr>
-				      <th>#</th>
-				      <th>예약일</th>
-				      <th>상품정보</th>
-				      <th>금액</th>
+				      <th>예약번호</th>
+				      <th>숙소명</th>
+				      <th>룸타입</th>
+				      <th>고객명</th>
+				      <th>체크인</th>
+				      <th>체크아웃</th>
 				      <th>예약상태</th>
 				    </tr>
 				  </thead>
 				  <tbody>
-				    <tr>
-				      <th>1</th>
-				      <td>Mark</td>
-				      <td>Otto</td>
-				      <td>5,000</td>
-				      <td>예약완료</td>
-				    </tr>
+					  <c:forEach var="reservation" items="${requestScope.reservationList}">
+						  <tr>
+						      <th>${reservation.lodging_name}</th>
+						      <td>${reservation.user_name}</td>
+						      <td>${reservation.room_name}</td>
+						      <td>${reservation.user_name}</td>
+						      <td>${reservation.check_in}</td>
+						      <td>${reservation.check_out}</td>
+						      <c:if test="${reservation.status == '0'}">
+						      		<td><span style="color:blue; font-weight:bold;">승인대기</span></td>
+						      </c:if>
+						      <c:if test="${reservation.status == '1'}">
+						      		<td><span style="color:green; font-weight:bold;">승인</span></td>
+						      </c:if>
+						      <c:if test="${reservation.status == '2'}">
+						      		<td><span style="color:red; font-weight:bold;">취소</span></td>
+						      </c:if>
+						      
+						  </tr>
+					  </c:forEach>
 				  </tbody>
 				</table>
 			</div>
-			  <div class="tab-pane container fade" id="menu1">
+			  <div class="tab-pane container fade" id="ready_reservation_success">
 					<table class="table table-hover">
 				 		 <thead>
 						    <tr>
@@ -161,13 +182,102 @@
 						    </tr>
 						  </thead>
 			    		 <tbody>
+						    <c:forEach var="reservation" items="${requestScope.reservationList}">
+								  <c:if test="${reservation.status == '0' }">
+								  	<tr>
+									      <th>${reservation.lodging_name}</th>
+									      <td>${reservation.user_name}</td>
+									      <td>${reservation.room_name}</td>
+									      <td>${reservation.user_name}</td>
+									      <td>${reservation.check_in}</td>
+									      <td>${reservation.check_out}</td>
+									      <c:if test="${reservation.status == '0'}">
+									      		<td><span style="color:blue; font-weight:bold;">승인대기</span></td>
+									      </c:if>
+									      <c:if test="${reservation.status == '1'}">
+									      		<td><span style="color:green; font-weight:bold;">승인</span></td>
+									      </c:if>
+									      <c:if test="${reservation.status == '2'}">
+									      		<td><span style="color:red; font-weight:bold;">취소</span></td>
+									      </c:if>
+								      
+								  	</tr>
+								  </c:if>
+							</c:forEach>
+						 </tbody>
+					</table>
+				</div>
+				<div class="tab-pane container fade" id="reservation_success">
+					<table class="table table-hover">
+				 		 <thead>
 						    <tr>
-						      <th>1</th>
-						      <td>Mark</td>
-						      <td>Otto</td>
-						      <td>5,000</td>
-						      <td>취소완료</td>
+						      <th>#</th>
+						      <th>예약일</th>
+						      <th>상품정보</th>
+						      <th>금액</th>
+						      <th>예약상태</th>
 						    </tr>
+						  </thead>
+			    		 <tbody>
+						    <c:forEach var="reservation" items="${requestScope.reservationList}">
+								  <c:if test="${reservation.status == '1' }">
+								  	<tr>
+									      <th>${reservation.lodging_name}</th>
+									      <td>${reservation.user_name}</td>
+									      <td>${reservation.room_name}</td>
+									      <td>${reservation.user_name}</td>
+									      <td>${reservation.check_in}</td>
+									      <td>${reservation.check_out}</td>
+									      <c:if test="${reservation.status == '0'}">
+									      		<td><span style="color:blue; font-weight:bold;">승인대기</span></td>
+									      </c:if>
+									      <c:if test="${reservation.status == '1'}">
+									      		<td><span style="color:green; font-weight:bold;">승인</span></td>
+									      </c:if>
+									      <c:if test="${reservation.status == '2'}">
+									      		<td><span style="color:red; font-weight:bold;">취소</span></td>
+									      </c:if>
+								      
+								  	</tr>
+								  </c:if>
+							</c:forEach>
+						 </tbody>
+					</table>
+				</div>
+				<div class="tab-pane container fade" id="reservation_quit">
+					<table class="table table-hover">
+				 		 <thead>
+						    <tr>
+						      <th>#</th>
+						      <th>예약일</th>
+						      <th>상품정보</th>
+						      <th>금액</th>
+						      <th>예약상태</th>
+						    </tr>
+						  </thead>
+			    		 <tbody>
+						    <c:forEach var="reservation" items="${requestScope.reservationList}">
+								  <c:if test="${reservation.status == '2' }">
+								  	<tr>
+									      <th>${reservation.lodging_name}</th>
+									      <td>${reservation.user_name}</td>
+									      <td>${reservation.room_name}</td>
+									      <td>${reservation.user_name}</td>
+									      <td>${reservation.check_in}</td>
+									      <td>${reservation.check_out}</td>
+									      <c:if test="${reservation.status == '0'}">
+									      		<td><span style="color:blue; font-weight:bold;">승인대기</span></td>
+									      </c:if>
+									      <c:if test="${reservation.status == '1'}">
+									      		<td><span style="color:green; font-weight:bold;">승인</span></td>
+									      </c:if>
+									      <c:if test="${reservation.status == '2'}">
+									      		<td><span style="color:red; font-weight:bold;">취소</span></td>
+									      </c:if>
+								      
+								  	</tr>
+								  </c:if>
+							</c:forEach>
 						 </tbody>
 					</table>
 				</div>
