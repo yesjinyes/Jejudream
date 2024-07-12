@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.app.trip.common.FileManager;
+import com.spring.app.trip.domain.LikeVO;
 import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.domain.PlayVO;
 import com.spring.app.trip.domain.ReviewVO;
@@ -276,7 +277,7 @@ public class Hs_TripController {
 			
 			PlayVO playvo = service.goAddSchedule(play_code);
 			
-			
+
 			mav.addObject("playvo", playvo);
 			mav.setViewName("play/goAddSchedule.tiles1");
 			
@@ -582,8 +583,44 @@ public class Hs_TripController {
 		
 		
 		
-		
-		
+		@ResponseBody
+		@PostMapping(value =("play/playLike.trip"),produces="text/plain;charset=UTF-8")
+		 public String playLike(HttpServletRequest request, HttpServletResponse response) throws Exception {
+			
+			String parent_code = request.getParameter("parent_code");
+			String fk_userid = request.getParameter("fk_userid");
+			String like_division_R = "C";
+			int n = 0;
+			System.out.println("parent_code"+parent_code);
+			System.out.println("fk_userid"+fk_userid);
+			
+			Map<String, String> paraMap = new HashMap<>();
+			paraMap.put("parent_code", parent_code);
+			paraMap.put("fk_userid", fk_userid);
+			paraMap.put("like_division_R", like_division_R);
+			
+			List<LikeVO> check = service.checkLike(paraMap); 
+			
+			if(check.size() == 0) {
+				n = service.likeAdd(paraMap);  // 좋아요 업데이트
+		        System.out.println("컨트롤 좋아요 업데이트");
+			}
+			else {
+				service.likeDel(paraMap);  // 좋아요 지우기
+		        System.out.println("컨트롤 좋아요 지움");
+		        n=0;
+		        
+			}
+			
+			System.out.println("n"+n);
+			
+		    JSONObject jsonObj = new JSONObject(); 
+		    jsonObj.put("n", n);
+	         
+	        return jsonObj.toString();
+			
+
+		}
 		
 		
 		

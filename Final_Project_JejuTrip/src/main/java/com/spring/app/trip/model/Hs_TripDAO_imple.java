@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
+import com.spring.app.trip.domain.LikeVO;
 import com.spring.app.trip.domain.PlayVO;
 import com.spring.app.trip.domain.ReviewVO;
 @Component
@@ -112,6 +113,24 @@ public class Hs_TripDAO_imple implements Hs_TripDAO {
 	public int delView(Map<String, String> paraMap) {
 		int n = sqlsession.delete("hs_trip.delView",paraMap);
 		return n;
+	}
+
+	@Override
+	public List<LikeVO> checkLike(Map<String, String> paraMap) {
+		List<LikeVO> checkLike = sqlsession.selectList("hs_trip.checkLike",paraMap);
+		return checkLike;
+	}
+
+	@Override
+	public int likeAdd(Map<String, String> paraMap) {
+		int n = sqlsession.insert("hs_trip.likeAdd",paraMap);
+		return n;
+	}
+
+	@Override
+	public void likeDel(Map<String, String> paraMap) {
+		sqlsession.delete("hs_trip.likeDel",paraMap);
+		
 	}
 
 

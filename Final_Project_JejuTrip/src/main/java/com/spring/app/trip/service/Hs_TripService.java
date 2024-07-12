@@ -3,6 +3,7 @@ package com.spring.app.trip.service;
 import java.util.List;
 import java.util.Map;
 
+import com.spring.app.trip.domain.LikeVO;
 import com.spring.app.trip.domain.PlayVO;
 import com.spring.app.trip.domain.ReviewVO;
 
@@ -33,6 +34,17 @@ public interface Hs_TripService {
 	int editEnd(PlayVO playvo); //즐길거리 수정
 
 	int delPlay(Map<String, String> paraMap); //글삭제(첨부파일이 있는경우)
+
+	List<LikeVO> checkLike(Map<String, String> paraMap); //좋아요를 했는지 알아오기
+
+	int likeAdd(Map<String, String> paraMap);
+
+	void likeDel(Map<String, String> paraMap);
+
+	
+
+	
+
 
 	
 

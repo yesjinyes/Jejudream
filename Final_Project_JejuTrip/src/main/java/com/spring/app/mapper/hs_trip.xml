@@ -154,8 +154,20 @@ WHERE RNO between #{startRno} and #{endRno}
 	delete from tbl_play where play_code = #{play_code}
 </delete>
 
+ <select id="checkLike" parameterType="HashMap" resultType="com.spring.app.trip.domain.LikeVO">
+  select fk_userid,parent_code,like_division_R
+  from tbl_like
+  where fk_userid = #{fk_userid} and parent_code = #{parent_code}
+ </select>
  
+<insert id="likeAdd" parameterType="HashMap">
+ insert into tbl_like (fk_userid,parent_code, like_division_R)
+ 			   values (#{fk_userid},#{parent_code},#{like_division_R})
+ </insert>
  
+ <delete id="likeDel" parameterType="HashMap">
+ delete from tbl_like where fk_userid = #{fk_userid} and parent_code = #{parent_code}
+ </delete>
  
  
  
