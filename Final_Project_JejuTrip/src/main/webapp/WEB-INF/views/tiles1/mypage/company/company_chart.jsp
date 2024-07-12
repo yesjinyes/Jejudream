@@ -145,10 +145,14 @@
     		dataType:"json",
     		success:function(json){
     			
-   				const line_data = [];   
+   				const year_data_all = []; 
+   				const year_data_success = [];
+   				const year_data_fail = [];
    				$.each(json, function(index, item){       
 			    	 
-			    	 line_data.push(Number(item.profit));
+			    	 year_data_all.push(Number(item.all_profit));
+			    	 year_data_success.push(Number(item.success_profit));
+			    	 year_data_fail.push(Number(item.fail_profit));
 			    	 
 			    });          
    				
@@ -210,8 +214,14 @@
 			    	        }
 			    	    },
 			    	    series: [{
-			    	        name: '매출액',
-			    	        data: line_data
+			    	        name: '총결제금액',
+			    	        data: year_data_all
+			    	    },{
+			    	    	name: '매출금액',
+			    	    	data: year_data_success
+			    	    },{
+			    	    	name: '취소금액',
+			    	    	data: year_data_fail
 			    	    }]
 			    	});
 			     
@@ -403,11 +413,14 @@
     		dataType:"json",
     		success:function(json){
     			console.log(JSON.stringify(json));
-   				const line_data = [];   
-			    
+   				const month_data_all = [];   
+   				const month_data_success = [];  
+   				const month_data_fail = [];  
    				$.each(json, function(index, item){       
 			    	 
-			    	 line_data.push(Number(item.profit));
+   					month_data_all.push(Number(item.profit_all));
+   					month_data_success.push(Number(item.profit_success));
+   					month_data_fail.push(Number(item.profit_fail));
 			    	 
 			    });    
 			     ////////////////////////////////////////////////////////////////////////////////////////
@@ -470,8 +483,14 @@
 			    	        }
 			    	    },
 			    	    series: [{
-			    	        name: '매출액',
-			    	        data: line_data
+			    	        name: '총결제금액',
+			    	        data: month_data_all
+			    	    },{
+			    	    	name: '매출금액',
+			    	    	data: month_data_success
+			    	    },{
+			    	    	name: '취소금액',
+			    	    	data: month_data_fail
 			    	    }]
 			    	});
 			     
@@ -493,17 +512,21 @@
     		dataType:"json",
     		success:function(json){
     			console.log(JSON.stringify(json));
-   				const line_data = [];   
+   				const day_data_all = [];
+   				const day_data_success = [];
+   				const day_data_fail = [];
 			    const day = [];
    				$.each(json, function(index, item){       
 			    	 
-			    	 line_data.push(Number(item.profit));
-			    	 day.push(item.day);
+   					day_data_all.push(Number(item.profit));
+   					day_data_success.push(Number(item.profit_success));
+   					day_data_fail.push(Number(item.profit_fail));
+			    	day.push(item.day);
 			    	 
 			    });    
 			     ////////////////////////////////////////////////////////////////////////////////////////
 			     
-			     <%-- ===== 월별 매출액 통계 차트 시작 ===== --%>
+			     <%-- ===== 일별 매출액 통계 차트 시작 ===== --%>
 			    
 			     Highcharts.setOptions({
 
@@ -548,12 +571,18 @@
 			    	        }
 			    	    },
 			    	    series: [{
-			    	        name: '매출액',
-			    	        data: line_data
+			    	        name: '총결제금액',
+			    	        data: day_data_all
+			    	    },{
+			    	    	name: '매출금액',
+			    	    	data: day_data_success
+			    	    },{
+			    	    	name: '취소금액',
+			    	    	data: day_data_fail
 			    	    }]
 			    	});
 			     
-			     <%-- ===== 월별 매출액 통계 차트 끝 ===== --%>
+			     <%-- ===== 일별 매출액 통계 차트 끝 ===== --%>
 				     
     			
     		},

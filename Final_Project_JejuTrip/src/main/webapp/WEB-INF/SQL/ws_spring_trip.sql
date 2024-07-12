@@ -11,27 +11,33 @@ create user final_orauser2 identified by gclass default tablespace users;
 grant connect, resource, create view, unlimited tablespace to final_orauser2;
 -- Grant을(를) 성공했습니다.
 
-WITH A
-AS (
-select to_char(reservation_date,'yyyy-mm') as reservation_year, count(*) as CNT
-from tbl_reservation
-where reservation_date between '2023-01-01' and '2023-12-31'
-group by to_char(reservation_date,'yyyy-mm')
-)
-SELECT A.reservation_year, A.CNT
-FROM A CROSS JOIN (SELECT SUM(CNT) AS TOTAL FROM A) B
-order by reservation_year;
+SELECT lodging_name, user_name, room_detail_code, check_in, check_out, room_stock, status, reservation_code, room_name
+FROM 
+(
+    SELECT rownum AS RNO
+         ,lodging_name, user_name, room_detail_code, check_in, check_out, room_stock, status, reservation_code, room_name
+    FROM
+    (
+        select L.lodging_name, M.user_name, R.room_detail_code, to_char(V.check_in,'yyyy-mm-dd') as check_in, to_char(V.check_out,'yyyy-mm-dd') as check_out, R.room_stock, V.status, V.reservation_code, R.room_name
+		from tbl_lodging L JOIN tbl_room_detail R
+		on L.lodging_code = R.fk_lodging_code
+		JOIN tbl_reservation V
+		ON R.room_detail_code = V.fk_room_detail_code
+		JOIN tbl_member M
+		ON V.fk_userid = M.userid
+		where fk_companyid = 'kakao'
+		order by to_number(V.reservation_code) desc
+    )V
+) T
+where RNO between 6 and 10
 
 
-WITH A
-AS (
-select to_char(reservation_date,'yyyy-mm') as reservation_date, count(*) as CNT
-from tbl_reservation
-group by to_char(reservation_date,'yyyy-mm')
-)
-SELECT A.reservation_date, A.CNT, TO_CHAR( ROUND((A.CNT / B.TOTAL) * 100, 1), '990.0') AS PERCNTAGE
-FROM A CROSS JOIN (SELECT SUM(CNT) AS TOTAL FROM A) B
-order by reservation_date;
-
-select *
-from tbl_reservation;
+select L.lodging_name, M.user_name, R.room_detail_code, to_char(V.check_in,'yyyy-mm-dd') as check_in, to_char(V.check_out,'yyyy-mm-dd') as check_out, R.room_stock, V.status, V.reservation_code, R.room_name
+from tbl_lodging L JOIN tbl_room_detail R
+on L.lodging_code = R.fk_lodging_code
+JOIN tbl_reservation V
+ON R.room_detail_code = V.fk_room_detail_code
+JOIN tbl_member M
+ON V.fk_userid = M.userid
+where fk_companyid = 'kakao'
+order by to_number(V.reservation_code) desc

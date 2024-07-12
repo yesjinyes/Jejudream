@@ -349,6 +349,76 @@ public class Ws_TripService_imple implements Ws_TripService {
 		return mapList;
 	}
 	
+	// 기업이 소유하고있는 호텔의 총 예약건을 읽어온다.
+	@Override
+	public List<Map<String, String>> select_company_all_Reservation(String companyid) {
+		List<Map<String, String>> mapList = dao.select_company_all_Reservation(companyid);
+		return mapList;
+	}
+	
+	// 예약일자마다의 객실 잔여석을 알아오기 위함이다.
+	@Override
+	public String select_reservation_Count(Map<String, String> reservationMap) {
+		String count = dao.select_reservation_Count(reservationMap);
+		return count;
+	}
+	
+	// 매년 승인된 업체수익을 찾아와서 차트화 시켜주기위한 정보 가져오기
+	@Override
+	public List<Map<String, String>> get_year_profit_chart_success(String companyid) {
+		List<Map<String, String>> mapList = dao.get_year_profit_chart_success(companyid);
+		return mapList;
+	}
+	
+	// 매년 취소 업체수익을 찾아와서 차트화 시켜주기위한 정보 가져오기
+	@Override
+	public List<Map<String, String>> get_year_profit_chart_fail(String companyid) {
+		List<Map<String, String>> mapList = dao.get_year_profit_chart_fail(companyid);
+		return mapList;
+	}
+	
+	// 선택한 년도의 매월 승인매출액을 가져와서 차트화 시켜준다.
+	@Override
+	public List<Map<String, String>> get_month_profit_chart_succeess(Map<String, String> paraMap) {
+		List<Map<String,String>> mapList = dao.get_month_profit_chart_succeess(paraMap);
+		return mapList;
+	}
+	
+	// 선택한 년도의 매월 취소금액을 가져와서 차트화 시켜준다.
+	@Override
+	public List<Map<String, String>> get_month_profit_chart_fail(Map<String, String> paraMap) {
+		List<Map<String,String>> mapList = dao.get_month_profit_chart_fail(paraMap);
+		return mapList;
+	}
+
+	// 선택한 월에서 매일의 승인된 매출액을 가져와서 차트화 시켜준다.
+	@Override
+	public List<Map<String, String>> get_day_profit_chart_success(Map<String, String> paraMap) {
+		List<Map<String, String>> mapList = dao.get_day_profit_chart_success(paraMap);
+		return mapList;
+	}
+	
+	// 선택한 월에서 매일의 취소금액을 가져와서 차트화 시켜준다.
+	@Override
+	public List<Map<String, String>> get_day_profit_chart_fail(Map<String, String> paraMap) {
+		List<Map<String, String>> mapList = dao.get_day_profit_chart_fail(paraMap);
+		return mapList;
+	}
+	
+	// tbl_reservation에서 자기 자신의 기업에 해당하는 모든 예약정보를 가져온다.
+	@Override
+	public int getTotalreservationCount(Map<String, String> paraMap) {
+		int count = dao.getTotalreservationCount(paraMap);
+		return count;
+	}
+	
+	// 기업이 소유하고있는 호텔의 총 예약건을 페이징 처리 해서 읽어온다.
+	@Override
+	public List<Map<String, String>> select_company_all_Reservation_paging(Map<String, String> paraMap) {
+		List<Map<String, String>> mapList = dao.select_company_all_Reservation_paging(paraMap);
+		return mapList;
+	}
+	
 	
 
 }
