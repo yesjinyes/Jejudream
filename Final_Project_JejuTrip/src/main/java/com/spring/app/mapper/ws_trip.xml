@@ -442,4 +442,28 @@
 		GROUP BY to_char(R.reservation_date,'yyyy-mm')
 		ORDER BY year
 	</select>
+	
+	<resultMap type="HashMap" id="profit_day">
+		<result property="day" 	column="day" 	javaType="String" />
+		<result property="profit" 	column="profit" javaType="String" />
+	</resultMap>
+	
+	<select id="get_day_profit_chart" parameterType="HashMap" resultMap="profit_day">
+		WITH A
+		AS (
+		select R.room_detail_code
+		from tbl_lodging L JOIN tbl_room_detail R
+		on L.lodging_code = r.fk_lodging_code
+		<if test="companyid != null">
+			where L.fk_companyid = #{companyid}
+		</if>
+		)
+		SELECT to_char(R.reservation_date,'yyyy-mm-dd') as day, sum(R.reservation_price) as profit
+		FROM A JOIN tbl_reservation R
+		ON A.room_detail_code = R.fk_room_detail_code
+		WHERE R.reservation_date between extract(year from sysdate)||'-'||#{choice_month}||'-01' and #{choice_month_last_day}
+		GROUP BY to_char(R.reservation_date,'yyyy-mm-dd')
+		ORDER BY day
+	</select>
+	
 </mapper>

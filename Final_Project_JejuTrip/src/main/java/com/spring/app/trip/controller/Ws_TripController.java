@@ -1273,4 +1273,51 @@ public class Ws_TripController {
 		return jsonArr.toString(); 	
 	}
 	
+	// 선택한 월의 일별 매출액을 가져와서 차트화 시켜준다.
+	@ResponseBody
+	@GetMapping(value="/get_day_profit_chart.trip", produces="text/plain;charset=UTF-8") 
+	public String get_day_profit_chart(HttpServletRequest request) {
+		
+		String choice_month = request.getParameter("choice_month");
+		
+		if(Integer.parseInt(choice_month)<10) {
+			choice_month = "0"+choice_month;
+		}
+		String companyid = request.getParameter("companyid");
+		
+		String choice_month_last_day = service.get_last_day(choice_month); // 내가 선택한 월이 있다면 그 월의 마지막 날을 구해준다.
+		
+		Map<String,String> paraMap = new HashMap<>();
+		paraMap.put("choice_month_last_day",choice_month_last_day);
+		paraMap.put("choice_month", choice_month);
+		paraMap.put("companyid", companyid);
+		List<Map<String,String>> mapList = service.get_day_profit_chart(paraMap);// 선택한 월에서 매일의 매출액을 가져와서 차트화 시켜준다.
+
+		int day = Integer.parseInt(choice_month_last_day.substring(8));
+		JSONArray jsonArr = new JSONArray();
+		String str_i = "";
+		for(int i=1;i<=day;i++) {
+			JSONObject jsonObj = new JSONObject();
+			jsonObj.put("day", i);
+			boolean is_exist = false;
+			for(Map<String,String> map : mapList) {
+				if(i<10) {
+					str_i = "0"+i;
+				}
+				else {
+					str_i = String.valueOf(i);
+				}
+				if(map.get("day").equals(choice_month_last_day.substring(0,8)+str_i)) {
+					is_exist = true;
+					jsonObj.put("profit", map.get("profit"));
+				}
+			}
+			if(!is_exist) {
+				jsonObj.put("profit", "0");
+			}
+			jsonArr.put(jsonObj);
+		}
+		
+		return jsonArr.toString(); 	
+	}
 }

@@ -295,5 +295,12 @@ public class Ws_TripDAO_imple implements Ws_TripDAO {
 		List<Map<String, String>> mapList = sqlsession.selectList("ws_trip.get_month_profit_chart",paraMap);
 		return mapList;
 	}
+	
+	// 선택한 월에서 매일의 매출액을 가져와서 차트화 시켜준다.
+	@Override
+	public List<Map<String, String>> get_day_profit_chart(Map<String, String> paraMap) {
+		List<Map<String, String>> mapList = sqlsession.selectList("ws_trip.get_day_profit_chart",paraMap);
+		return mapList;
+	}
 
 }

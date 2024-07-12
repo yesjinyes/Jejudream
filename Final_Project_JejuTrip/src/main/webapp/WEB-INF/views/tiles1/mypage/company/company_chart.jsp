@@ -19,6 +19,7 @@
         choice_month_reservation($("select[name='choice_year_to_month_reservation']").val());
         choice_day_reservation($("select[name='choice_month_to_day_reservation']").val());
         choice_month_profit($("select[name='choice_year_to_month_profit']").val());
+        choice_day_profit($("select[name='choice_month_to_day_profit']").val());
         
 		$("select[name='choice_year_to_month_reservation']").bind("change",function(e){
 			choice_month_reservation($(e.target).val());
@@ -30,6 +31,10 @@
 		
 		$("select[name='choice_year_to_month_profit']").bind("change",function(e){
 			choice_month_profit($(e.target).val());
+		});
+		
+		$("select[name='choice_month_to_day_profit']").bind("change",function(e){
+			choice_day_profit($(e.target).val());
 		});
 		
         function activeLink() {
@@ -442,6 +447,84 @@
 			    	            '11',
 			    	            '12'
 			    	        ],
+			    	        crosshair: true
+			    	    },
+			    	    yAxis: {
+			    	        title: {
+			    	            useHTML: true,
+			    	            text: ''
+			    	        }
+			    	    },
+			    	    tooltip: {
+			    	        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+			    	        pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+			    	            '<td style="padding:0"><b>{point.y}원</b></td></tr>',
+			    	        footerFormat: '</table>',
+			    	        shared: true,
+			    	        useHTML: true
+			    	    },
+			    	    plotOptions: {
+			    	        column: {
+			    	            pointPadding: 0.2,
+			    	            borderWidth: 0
+			    	        }
+			    	    },
+			    	    series: [{
+			    	        name: '매출액',
+			    	        data: line_data
+			    	    }]
+			    	});
+			     
+			     <%-- ===== 월별 매출액 통계 차트 끝 ===== --%>
+				     
+    			
+    		},
+    		error: function(request, status, error){
+    			alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+    	    }
+		});
+    }
+	
+	function choice_day_profit(choice_month){
+    	$.ajax({
+			url:"<%= ctxPath%>/get_day_profit_chart.trip",
+			data:{"choice_month":choice_month,"companyid":"${sessionScope.loginCompanyuser.companyid}"},
+    		async:false, 
+    		dataType:"json",
+    		success:function(json){
+    			console.log(JSON.stringify(json));
+   				const line_data = [];   
+			    const day = [];
+   				$.each(json, function(index, item){       
+			    	 
+			    	 line_data.push(Number(item.profit));
+			    	 day.push(item.day);
+			    	 
+			    });    
+			     ////////////////////////////////////////////////////////////////////////////////////////
+			     
+			     <%-- ===== 월별 매출액 통계 차트 시작 ===== --%>
+			    
+			     Highcharts.setOptions({
+
+					lang: {
+						thousandsSep: ','
+					}
+
+				});
+			     
+			     Highcharts.chart('day_profit_chart_div', {
+			    	    chart: {
+			    	        type: 'column'
+			    	    },
+			    	    title: {
+			    	        text: '2024년 매월 일별 매출액 통계'
+			    	    },
+			    	    subtitle: {
+			    	        text: ''
+			    	    },
+			    	    xAxis: {
+			    	        categories: day,
 			    	        crosshair: true
 			    	    },
 			    	    yAxis: {

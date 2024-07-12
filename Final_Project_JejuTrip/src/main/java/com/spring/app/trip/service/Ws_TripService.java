@@ -47,5 +47,6 @@ public interface Ws_TripService {
 	String get_last_day(String choice_month);// 내가 선택한 월이 있다면 그 월의 마지막 날을 구해준다.
 	List<Map<String, String>> get_year_profit_chart(String companyid);// 매년 업체수익을 찾아와서 차트화 시켜주기위한 정보 가져오기
 	List<Map<String, String>> get_month_profit_chart(Map<String, String> paraMap);// 선택한 년도의 매월 매출액을 가져와서 차트화 시켜준다.
+	List<Map<String, String>> get_day_profit_chart(Map<String, String> paraMap);// 선택한 월에서 매일의 매출액을 가져와서 차트화 시켜준다.
 
 }
