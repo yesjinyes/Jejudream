@@ -41,9 +41,9 @@ public class Js_TripService_imple implements Js_TripService {
    
    // 숙소리스트에 표현할 편의시설 목록 구해오기
    @Override
-   public List<String> getConvenientList() {
+   public List<String> getConvenientList(String lodging_code) {
 	   
-	   List<String> convenientList = dao.getConvenientList();
+	   List<String> convenientList = dao.getConvenientList(lodging_code);
 	   
 	   return convenientList;
 	   
@@ -63,14 +63,13 @@ public class Js_TripService_imple implements Js_TripService {
 
 	// 숙소의 객실 정보 가져오기
 	@Override
-	public List<Map<String, String>> getRoomDetail(String lodgingCode) {
+	public List<Map<String, String>> getRoomDetail(Map<String, String> dateSendMap) {
 		
-		List<Map<String, String>> roomDetailList = dao.getRoomDetail(lodgingCode);
+		List<Map<String, String>> roomDetailList = dao.getRoomDetail(dateSendMap);
 		
 		return roomDetailList;
 		
 	} // end of public List<Map<String, String>> getRoomDetail(String lodgingCode) { 
-
 
 	
 	// 결제페이지에서 예약하려하는 객실정보 가져오기 
@@ -84,6 +83,17 @@ public class Js_TripService_imple implements Js_TripService {
 	}// end of public RoomDetailVO getRoomDetail(Map<String, String> paraMap) {
 
 	
+	// 예약결과 예약번호 표현을 위한 채번해오기
+	@Override
+	public String getReservationNum() {
+		
+		String num = dao.getReservationNum();
+		
+		return num;
+		
+	} // end of public String getReservationNum() {
+	
+	
 	// 결제 후 예약테이블에 insert 하기
 	@Override
 	public int insertReservation(Map<String, String> paraMap) {
@@ -93,4 +103,40 @@ public class Js_TripService_imple implements Js_TripService {
 		return n;
 		
 	} // end of public int insertReservation(Map<String, String> paraMap) {
+
+
+	
+	// 예약완료된 정보 가져오기
+	@Override
+	public Map<String, String> getReservationInfo(Map<String, String> paraMap) {
+		
+		Map<String, String> resultMap = dao.getReservationInfo(paraMap);
+		
+		return resultMap;
+		
+	} // end of public Map<String, String> getReservationInfo(Map<String, String> paraMap) {
+
+
+	// 댓글 페이징 처리를 위한 토탈 카운트 구해오기
+	@Override
+	public int getCommentTotalCount(String lodging_code) {
+		
+		int totalCount = dao.getCommentTotalCount(lodging_code); 
+		
+		return totalCount;
+		
+	} // end of public int getCommentTotalCount(String lodging_code) {
+
+
+	// 리뷰리스트 가져오기
+	@Override
+	public List<Map<String, String>> getCommentList_Paging(Map<String, String> paraMap) {
+		
+		List<Map<String, String>> reviewList = dao.getCommentList_Paging(paraMap);
+		
+		return reviewList;
+	}// end of public List<Map<String, String>> getCommentList_Paging(Map<String, String> paraMap) { 
+
+	
+	
 }   

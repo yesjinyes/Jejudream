@@ -30,8 +30,8 @@
 		   		 LODGING_CATEGORY, MAIN_IMG, REVIEW_DIVISION, price
 		  from
 		  (
-		  	select LODGING_NAME, LODGING_ADDRESS, LODGING_CODE, LOCAL_STATUS,
-	                 LODGING_CATEGORY, MAIN_IMG, REVIEW_DIVISION , price
+		  	select L.LODGING_NAME, L.LODGING_ADDRESS, L.LODGING_CODE, L.LOCAL_STATUS,
+	                 L.LODGING_CATEGORY, L.MAIN_IMG, L.REVIEW_DIVISION , P.price
 	          from tbl_lodging L join 
 	          (
 	          select fk_lodging_code , min(price) as price
@@ -44,8 +44,8 @@
 	          select fk_lodging_code
 	          from 
 	          tbl_lodging_convenient V
-	          join tbl_convenient A
-	          on V.fk_convenient_code = A.convenient_code
+	          join tbl_convenient F
+	          on V.fk_convenient_code = F.convenient_code
 	         <if test='arr_convenient != null'>
 		      and convenient_name in
 			  <foreach collection="arr_convenient" index="i" open="(" separator="," close=")">
@@ -53,8 +53,36 @@
 		      </foreach>
 		      </if>
 		      group by fk_lodging_code
-	          )C
-	          on L.lodging_code = C.fk_lodging_code
+	          )E
+	          on L.lodging_code = E.fk_lodging_code
+	          join
+	          (
+	          	SELECT distinct lodging_code, RESERVATION_STATE
+				FROM 
+				(
+				SELECT A.lodging_code, A.room_name, A.room_stock, max_person,
+				       NVL(B.RESERVATION_CNT, 0) AS RESERVATION_CNT,
+				       CASE WHEN A.room_stock - NVL(B.RESERVATION_CNT, 0) >= 1 THEN '예약가능'
+				       ELSE '예약종료' END AS RESERVATION_STATE
+				 FROM 
+				 (
+				  SELECT L.lodging_code, D.room_name, D.room_stock, max_person
+				  FROM tbl_lodging L JOIN tbl_room_detail D
+				  ON L.lodging_code = D.fk_lodging_code 
+				 ) A
+				 LEFT JOIN
+				 (
+				  SELECT D.fk_lodging_code, D.room_name, COUNT(*) AS RESERVATION_CNT 
+				  FROM tbl_room_detail D JOIN tbl_reservation RSV
+				  ON D.room_detail_code = RSV.fk_room_detail_code
+				  WHERE RSV.check_in BETWEEN #{check_in} AND #{check_out}
+				  GROUP BY D.fk_lodging_code, D.room_name
+				 ) B
+				 ON A.lodging_code || A.room_name = B.fk_lodging_code || B.room_name
+				) C
+				WHERE C.RESERVATION_STATE = '예약가능' and max_person >= #{people}
+	          )D
+	          on L.lodging_code = D.lodging_code
 	          where status = 1 
 		   	<!-- 숙소 구분체크박스를 선택했다면 -->
 			<if test='arr_category != null'>
@@ -83,11 +111,12 @@
 			order by price ${sort}
 			</if>
 			
-		   )V
+		   )W
 		   
 	   )Q
 	   where rno between #{startRno} and #{endRno}
 	</select>
+	
 	
 	
 	<!-- 숙소리스트에서 조건에 따른 숙소 개수 구해오기 -->
@@ -99,8 +128,8 @@
           select fk_lodging_code
           from 
           tbl_lodging_convenient V
-          join tbl_convenient A
-          on V.fk_convenient_code = A.convenient_code
+          join tbl_convenient N
+          on V.fk_convenient_code = N.convenient_code
          <if test='arr_convenient != null'>
 	      and convenient_name in
 		  <foreach collection="arr_convenient" index="i" open="(" separator="," close=")">
@@ -108,9 +137,36 @@
 	      </foreach>
 	      </if>
 	      group by fk_lodging_code
-          )C
-          on L.lodging_code = C.fk_lodging_code
-	      
+          )T
+          on L.lodging_code = T.fk_lodging_code
+          join
+          (
+          	SELECT distinct lodging_code, RESERVATION_STATE
+			FROM 
+			(
+			SELECT A.lodging_code, A.room_name, A.room_stock, max_person,
+			       NVL(B.RESERVATION_CNT, 0) AS RESERVATION_CNT,
+			       CASE WHEN A.room_stock - NVL(B.RESERVATION_CNT, 0) >= 1 THEN '예약가능'
+			       ELSE '예약종료' END AS RESERVATION_STATE
+			 FROM 
+			 (
+			  SELECT L.lodging_code, D.room_name, D.room_stock, max_person
+			  FROM tbl_lodging L JOIN tbl_room_detail D
+			  ON L.lodging_code = D.fk_lodging_code 
+			 ) A
+			 LEFT JOIN
+			 (
+			  SELECT D.fk_lodging_code, D.room_name, COUNT(*) AS RESERVATION_CNT 
+			  FROM tbl_room_detail D JOIN tbl_reservation RSV
+			  ON D.room_detail_code = RSV.fk_room_detail_code
+			  WHERE RSV.check_in BETWEEN #{check_in} AND #{check_out}
+			  GROUP BY D.fk_lodging_code, D.room_name
+			 ) B
+			 ON A.lodging_code || A.room_name = B.fk_lodging_code || B.room_name
+			) C
+			WHERE C.RESERVATION_STATE = '예약가능' and max_person >= #{people}
+          )D
+          on L.lodging_code = D.lodging_code
 	    where status = 1 
 	    
 		<if test='arr_category != null'>
@@ -137,7 +193,14 @@
 	
 	<!-- 숙소리스트에 표현할 편의시설 목록 구해오기 -->
 	<select id="getConvenientList" resultType="String">
-		select convenient_name from tbl_convenient
+		select convenient_name from tbl_convenient C
+		<if test='lodging_code != ""'>
+			join tbl_lodging_convenient LC
+		    on LC.fk_convenient_code = C.convenient_code
+		    join tbl_lodging L
+		    on L.lodging_code = LC.fk_lodging_code
+		    where lodging_code = #{lodging_code}
+		</if>
 	</select>
 	
 	
@@ -152,23 +215,38 @@
 	
 	<!--  한 숙소에 대한 객실리스트 select 해오기  -->
 	<resultMap type="HashMap" id="RoomDetail">
+		<result property="lodging_code" column="lodging_code" javaType="String" />
 		<result property="room_detail_code" column="room_detail_code" javaType="String" />
-		<result property="fk_lodging_code" column="fk_lodging_code" javaType="String" />
 		<result property="room_name" column="room_name" javaType="String" />
 		<result property="price" column="price" javaType="String" />
-		<result property="check_in" column="check_in" javaType="String" />
-		<result property="check_out" column="check_out" javaType="String" />
-		<result property="room_stock" column="room_stock" javaType="String" />
+		<result property="remaining_qty" column="remaining_qty" javaType="String" />
 		<result property="min_person" column="min_person" javaType="String" />
 		<result property="max_person" column="max_person" javaType="String" />
 		<result property="room_img" column="room_img" javaType="String" />
 	</resultMap>
-	<select id="getRoomDetail" resultMap="RoomDetail">
-		select room_detail_code, fk_lodging_code, room_name, price, 
-	    check_in, check_out, room_stock, min_person, max_person,
-	    room_img
-	    from tbl_room_detail
-	    where fk_lodging_code = #{lodgingCode}
+	<select id="getRoomDetail" resultMap="RoomDetail" parameterType="HashMap">
+	
+		SELECT A.lodging_code, A.room_detail_code, A.room_name, A.price,
+               A.room_stock - NVL(B.RESERVATION_CNT, 0) AS remaining_qty,
+               A.min_person, A.max_person, A.room_img
+			 FROM 
+			 (
+			  SELECT L.lodging_code, D.room_name, D.room_stock, min_person, max_person, 
+                     price, room_detail_code, room_img   
+			  FROM tbl_lodging L JOIN tbl_room_detail D
+			  ON L.lodging_code = D.fk_lodging_code 
+              where lodging_code = #{lodging_code}
+              ) A
+			 LEFT JOIN
+			 (
+			  SELECT D.fk_lodging_code, D.room_name, COUNT(*) AS RESERVATION_CNT 
+			  FROM tbl_room_detail D JOIN tbl_reservation RSV
+			  ON D.room_detail_code = RSV.fk_room_detail_code
+			  WHERE RSV.check_in <![CDATA[<=]]> #{check_in} AND RSV.check_out <![CDATA[>=]]> #{check_out}
+			  GROUP BY D.fk_lodging_code, D.room_name
+			 ) B
+			 ON A.lodging_code || A.room_name = B.fk_lodging_code || B.room_name
+			 where max_person <![CDATA[>=]]> #{people}
 	</select>
 	
 	
@@ -181,8 +259,8 @@
 		<result property="room_detail_code" column="room_detail_code" javaType="String" />
 		<result property="room_name" column="room_name" javaType="String" />
 		<result property="price" column="price" javaType="String" />
-		<result property="check_in" column="check_in" javaType="String" />
-		<result property="check_out" column="check_out" javaType="String" />
+		<result property="check_inTime" column="check_in" javaType="String" />
+		<result property="check_outTime" column="check_out" javaType="String" />
 		<result property="min_person" column="min_person" javaType="String" />
 		<result property="max_person" column="max_person" javaType="String" />
 		<result property="room_img" column="room_img" javaType="String" />
@@ -197,10 +275,95 @@
 		       where lodging_code = #{lodging_code} and R.room_detail_code = #{room_detail_code}
 	</select>
 
+
+	<select id="getReservationNum" resultType="String">
+		select seq_reserve.nextval
+		from dual
+	</select>
 	
 	<insert id="insertReservation" parameterType="HashMap">
 		insert into tbl_reservation (RESERVATION_CODE, FK_USERID, FK_ROOM_DETAIL_CODE, CHECK_IN, CHECK_OUT, RESERVATION_PRICE)
-		values(seq_reserve.nextval, #{userid}, #{room_detail_code}, #{check_in} , #{check_out}, #{price})
+		values(#{num}, #{userid}, #{room_detail_code}, #{check_in} , #{check_out}, #{totalPrice})
 	</insert>
+	
+	
+	
+	<resultMap type="HashMap" id="reservationInfo">
+		<result property="reservation_code" column="reservation_code" javaType="String" />
+		<result property="reservation_price" column="reservation_price" javaType="String" />
+		<result property="check_in" column="check_in" javaType="String" />
+		<result property="check_out" column="check_out" javaType="String" />
+		<result property="leftdays" column="leftdays" javaType="String" />
+		<result property="room_detail_code" column="room_detail_code" javaType="String" />
+		<result property="room_name" column="room_name" javaType="String" />
+		<result property="check_intime" column="check_intime" javaType="String" />
+		<result property="check_outtime" column="check_outtime" javaType="String" />
+		<result property="min_person" column="min_person" javaType="String" />
+		<result property="max_person" column="max_person" javaType="String" />
+		<result property="lodging_code" column="lodging_code" javaType="String" />
+		<result property="lodging_category" column="lodging_category" javaType="String" />
+		<result property="lodging_name" column="lodging_name" javaType="String" />
+		<result property="lodging_tell" column="lodging_tell" javaType="String" />
+		<result property="lodging_address" column="lodging_address" javaType="String" />
+	</resultMap>
+	<select id="getReservationInfo" parameterType="HashMap" resultMap="reservationInfo">
+		select reservation_code, reservation_price, check_in, check_out,
+          	   leftdays, room_detail_code, room_name, check_intime, check_outtime,
+               min_person, max_person, lodging_code, lodging_category, lodging_name, 
+               lodging_tell, lodging_address
+			   from 
+		   	   (
+		   		select reservation_code, fk_room_detail_code, reservation_price, 
+		   			   to_char(check_in, 'yyyy-mm-dd') as check_in, to_char(check_out, 'yyyy-mm-dd') as check_out 
+		        	   check_in - to_date(to_char(sysdate, 'yyyy-mm-dd') , 'yyyy-mm-dd')  as leftdays
+		        from tbl_reservation
+		        where reservation_code = #{reservation_code}    
+		       )RSV join 
+		       (
+		   		select room_detail_code, fk_lodging_code, room_name, check_in as check_intime, check_out as check_outtime, min_person, max_person
+		   		from tbl_room_detail
+		   		where room_detail_code = #{room_detail_code}
+		       )R
+		       on RSV.fk_room_detail_code = R.room_detail_code
+		       join
+		       (
+		   		select lodging_code, lodging_category, lodging_name, lodging_tell, lodging_address 
+		   		from tbl_lodging
+		   		where lodging_code = #{lodging_code}
+		       )L
+		       on R.fk_lodging_code = L.lodging_code
+	
+	</select>
+	
+	
+	
+	<select id="getCommentTotalCount" parameterType="String" resultType="int">
+		select count(*) from tbl_review
+     	where parent_code = #{lodging_code}
+	</select>
+	
+	
+	<resultMap type="HashMap" id="reviewList">
+		<result property="rno" column="rno" javaType="String" />
+		<result property="review_code" column="review_code" javaType="String" />
+		<result property="fk_userid" column="fk_userid" javaType="String" />
+		<result property="user_name" column="user_name" javaType="String" />
+		<result property="parent_code" column="parent_code" javaType="String" />
+		<result property="review_content" column="review_content" javaType="String" />
+		<result property="registerday" column="registerday" javaType="String" />
+	</resultMap>
+	<select id="getCommentList_Paging" parameterType="HashMap" resultMap="reviewList">
+		select rno, review_code, fk_userid, user_name,
+			   parent_code, review_content, registerday
+		from
+	    (
+	    select row_number() over(order by review_code desc) as rno, review_code, 
+	           fk_userid, user_name, parent_code, review_content, R.registerday
+	    from tbl_member M join tbl_review R
+	    on M.userid = R.fk_userid
+	    where R.parent_code = #{lodging_code}
+	    )V
+	    where rno between #{startRno} and #{endRno}
+	</select>
  
 </mapper>

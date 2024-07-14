@@ -674,12 +674,180 @@ create table tbl_board
     
     
     
-        
-    select lodging_code, lodging_name, lodging_address, , lodging_tel, 
-           room_detail_code,room_name, price, check_in, check_out, 
-           min_person, max_person,room_img
-    from tbl_room_detail R
-    join tbl_lodging L
-    on L.lodging_code = R.fk_lodging_code
-    where lodging_code = 5218 and R.room_detail_code = 661;
+    -------------------------------------------------------
+     숙소코드  객실명   객실개수   예약개수    객실개수 - 예약개수
+    -------------------------------------------------------
+     
+     SELECT A.lodging_code, A.room_name, A.room_stock, 
+           NVL(B.RESERVATION_CNT, 0) AS RESERVATION_CNT,
+           CASE WHEN A.room_stock - NVL(B.RESERVATION_CNT, 0) >= 1 THEN '예약가능'
+           ELSE '예약종료' END AS RESERVATION_STATE
+     FROM 
+     (
+      SELECT L.lodging_code, D.room_name, D.room_stock
+      FROM tbl_lodging L JOIN tbl_room_detail D
+      ON L.lodging_code = D.fk_lodging_code 
+     ) A
+     LEFT JOIN
+     (
+      SELECT D.fk_lodging_code, D.room_name, COUNT(*) AS RESERVATION_CNT 
+      FROM tbl_room_detail D JOIN tbl_reservation RSV
+      ON D.room_detail_code = RSV.fk_room_detail_code
+      WHERE RSV.check_in BETWEEN '2024-07-08' AND '2024-07-09'
+      GROUP BY D.fk_lodging_code, D.room_name
+     ) B
+     ON A.lodging_code || A.room_name = B.fk_lodging_code || B.room_name;
     
+    
+    select count(*)
+	    from tbl_lodging 
+    
+    SELECT distinct lodging_code, RESERVATION_STATE
+    FROM 
+    (
+    SELECT A.lodging_code, A.room_name, A.room_stock, 
+           NVL(B.RESERVATION_CNT, 0) AS RESERVATION_CNT,
+           CASE WHEN A.room_stock - NVL(B.RESERVATION_CNT, 0) >= 1 THEN '예약가능'
+           ELSE '예약종료' END AS RESERVATION_STATE
+     FROM 
+     (
+      SELECT L.lodging_code, D.room_name, D.room_stock
+      FROM tbl_lodging L JOIN tbl_room_detail D
+      ON L.lodging_code = D.fk_lodging_code 
+     ) A
+     LEFT JOIN
+     (
+      SELECT D.fk_lodging_code, D.room_name, COUNT(*) AS RESERVATION_CNT 
+      FROM tbl_room_detail D JOIN tbl_reservation RSV
+      ON D.room_detail_code = RSV.fk_room_detail_code
+      WHERE RSV.check_in BETWEEN '2024-07-08' AND '2024-07-09'
+      GROUP BY D.fk_lodging_code, D.room_name
+     ) B
+     ON A.lodging_code || A.room_name = B.fk_lodging_code || B.room_name
+    ) V
+    WHERE V.RESERVATION_STATE = '예약가능'
+    order by 1 asc;
+    
+
+   
+    select convenient_name
+    from tbl_convenient C join tbl_lodging_convenient LC
+    on LC.fk_convenient_code = C.convenient_code
+    join tbl_lodging L
+    on L.lodging_code = LC.fk_lodging_code
+    where lodging_code = 5219;
+    
+    select *
+	    from tbl_lodging L
+	    join
+          (
+          select fk_lodging_code
+          from 
+          tbl_lodging_convenient V
+          join tbl_convenient N
+          on V.fk_convenient_code = N.convenient_code
+	      group by fk_lodging_code
+          )T
+          on L.lodging_code = T.fk_lodging_code
+          join
+          (
+          	SELECT distinct lodging_code, RESERVATION_STATE
+			FROM 
+			(
+			SELECT A.lodging_code, A.room_name, A.room_stock, max_person,
+			       NVL(B.RESERVATION_CNT, 0) AS RESERVATION_CNT,
+			       CASE WHEN A.room_stock - NVL(B.RESERVATION_CNT, 0) >= 1 THEN '예약가능'
+			       ELSE '예약종료' END AS RESERVATION_STATE, 
+                   A.room_stock-NVL(B.RESERVATION_CNT, 0) AS 잔여객실
+			 FROM 
+			 (
+			  SELECT L.lodging_code, D.room_name, D.room_stock, max_person
+			  FROM tbl_lodging L JOIN tbl_room_detail D
+			  ON L.lodging_code = D.fk_lodging_code 
+              where fk_companyid = 'kakao'
+			 ) A
+			 LEFT JOIN
+			 (
+			  SELECT D.fk_lodging_code, D.room_name, COUNT(*) AS RESERVATION_CNT 
+			  FROM tbl_room_detail D JOIN tbl_reservation RSV
+			  ON D.room_detail_code = RSV.fk_room_detail_code
+			  -- WHERE RSV.check_in <= '2024-07-11' AND RSV.check_out >= '2024-07-12'
+			  GROUP BY D.fk_lodging_code, D.room_name
+			 ) B
+			 ON A.lodging_code || A.room_name = B.fk_lodging_code || B.room_name
+			) C
+			WHERE C.RESERVATION_STATE = '예약가능' and max_person >= 5
+          )D
+          on L.lodging_code = D.lodging_code
+	    where status = 1 
+ 
+        
+	select * from tbl_lodging;   
+    select * from tbl_reservation;
+    select * from tbl_room_detail;
+   
+   select reservation_code, reservation_price, check_in, check_out,
+          leftdays, room_detail_code, room_name, check_intime, check_outtime,
+          min_person, max_person, lodging_code, lodging_category, lodging_name, 
+          lodging_tell, lodging_address
+   from 
+   (
+   select reservation_code, fk_room_detail_code, reservation_price, check_in, check_out, 
+          check_in - to_date(to_char(sysdate, 'yyyy-mm-dd') , 'yyyy-mm-dd')  as leftdays
+   from tbl_reservation
+   where reservation_code = 16    
+   )RSV join 
+   (
+   select room_detail_code, fk_lodging_code, room_name, check_in as check_intime, check_out as check_outtime, min_person, max_person
+   from tbl_room_detail
+   where room_detail_code = 571
+   )R
+   on RSV.fk_room_detail_code = R.room_detail_code
+   join
+   (
+   select lodging_code, lodging_category, lodging_name, lodging_tell, lodging_address 
+   from tbl_lodging
+   where lodging_code = 5201
+    )L
+    on R.fk_lodging_code = L.lodging_code
+    
+    select *
+    from tbl_food_store
+    
+    select food_store_code, local_status, food_name, food_content, food_businesshours, food_mobile
+				 , food_address, food_main_img, review_division, food_category
+			from (
+			    select food_store_code, local_status, food_name, food_content, food_businesshours, food_mobile
+					 , food_address, food_main_img, review_division, food_category
+			    from tbl_food_store
+                where local_status = '제주 시내'
+			    order by DBMS_RANDOM.RANDOM
+			)
+            where rownum =1
+     
+     select * from tbl_review;
+     
+     select * from user_sequences;       
+            
+     select count(*) from tbl_review
+     where parent_code = 5214;      
+     
+     select rno, review_code, fk_userid, user_name,
+            parent_code, review_content, R.registerday
+     from
+     (
+     select row_number() over(order by review_code desc) as rno, review_code, 
+            fk_userid, user_name, parent_code, review_content, R.registerday
+     from tbl_member M join tbl_review R
+     on M.userid = R.fk_userid
+     where R.parent_code = 5214;
+     )
+     
+     insert into tbl_review (review_code, fk_userid, parent_code, review_content, review_division_r) 
+     values(SEQ_REVIEW.nextval, 'kudi03628', 5214, '이거 쓸시간에 여행가고싶네', 'A');
+     
+     insert into tbl_review (review_code, fk_userid, parent_code, review_content, review_division_r) 
+     values(SEQ_REVIEW.nextval, 'kudi02', 5214, '으아아아아악', 'A');
+     
+     commit;       
+            
