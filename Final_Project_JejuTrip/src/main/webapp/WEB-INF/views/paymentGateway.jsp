@@ -14,9 +14,10 @@ $(document).ready(function() {
 	
 	if(window.opener && !window.opener.closed){
 		
-		
-        const paymentTotalPrice = $(window.opener.document).find("input#form_price").val();
-        // alert("확인용 결제금액 : "+paymentTotalPrice);
+		/*
+        const paymentTotalPrice = $(window.opener.document).find("input#totalPrice").val();
+         alert("확인용 결제금액 : "+paymentTotalPrice);
+		*/
 		
 		const roomname = $(window.opener.document).find("div#room").text();
 		// alert("확인용 객실명 : "+roomname);

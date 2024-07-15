@@ -674,12 +674,331 @@ create table tbl_board
     
     
     
-        
-    select lodging_code, lodging_name, lodging_address, , lodging_tel, 
-           room_detail_code,room_name, price, check_in, check_out, 
-           min_person, max_person,room_img
-    from tbl_room_detail R
-    join tbl_lodging L
-    on L.lodging_code = R.fk_lodging_code
-    where lodging_code = 5218 and R.room_detail_code = 661;
+    -------------------------------------------------------
+     숙소코드  객실명   객실개수   예약개수    객실개수 - 예약개수
+    -------------------------------------------------------
+     
+     SELECT A.lodging_code, A.room_name, A.room_stock, 
+           NVL(B.RESERVATION_CNT, 0) AS RESERVATION_CNT,
+           CASE WHEN A.room_stock - NVL(B.RESERVATION_CNT, 0) >= 1 THEN '예약가능'
+           ELSE '예약종료' END AS RESERVATION_STATE
+     FROM 
+     (
+      SELECT L.lodging_code, D.room_name, D.room_stock
+      FROM tbl_lodging L JOIN tbl_room_detail D
+      ON L.lodging_code = D.fk_lodging_code 
+     ) A
+     LEFT JOIN
+     (
+      SELECT D.fk_lodging_code, D.room_name, COUNT(*) AS RESERVATION_CNT 
+      FROM tbl_room_detail D JOIN tbl_reservation RSV
+      ON D.room_detail_code = RSV.fk_room_detail_code
+      WHERE RSV.check_in BETWEEN '2024-07-08' AND '2024-07-09'
+      GROUP BY D.fk_lodging_code, D.room_name
+     ) B
+     ON A.lodging_code || A.room_name = B.fk_lodging_code || B.room_name;
     
+    
+    select count(*)
+	    from tbl_lodging 
+    
+    SELECT distinct lodging_code, RESERVATION_STATE
+    FROM 
+    (
+    SELECT A.lodging_code, A.room_name, A.room_stock, 
+           NVL(B.RESERVATION_CNT, 0) AS RESERVATION_CNT,
+           CASE WHEN A.room_stock - NVL(B.RESERVATION_CNT, 0) >= 1 THEN '예약가능'
+           ELSE '예약종료' END AS RESERVATION_STATE
+     FROM 
+     (
+      SELECT L.lodging_code, D.room_name, D.room_stock
+      FROM tbl_lodging L JOIN tbl_room_detail D
+      ON L.lodging_code = D.fk_lodging_code 
+     ) A
+     LEFT JOIN
+     (
+      SELECT D.fk_lodging_code, D.room_name, COUNT(*) AS RESERVATION_CNT 
+      FROM tbl_room_detail D JOIN tbl_reservation RSV
+      ON D.room_detail_code = RSV.fk_room_detail_code
+      WHERE RSV.check_in BETWEEN '2024-07-08' AND '2024-07-09'
+      GROUP BY D.fk_lodging_code, D.room_name
+     ) B
+     ON A.lodging_code || A.room_name = B.fk_lodging_code || B.room_name
+    ) V
+    WHERE V.RESERVATION_STATE = '예약가능'
+    order by 1 asc;
+    
+
+   
+    select convenient_name
+    from tbl_convenient C join tbl_lodging_convenient LC
+    on LC.fk_convenient_code = C.convenient_code
+    join tbl_lodging L
+    on L.lodging_code = LC.fk_lodging_code
+    where lodging_code = 5219;
+    
+    select *
+	    from tbl_lodging L
+	    join
+          (
+          select fk_lodging_code
+          from 
+          tbl_lodging_convenient V
+          join tbl_convenient N
+          on V.fk_convenient_code = N.convenient_code
+	      group by fk_lodging_code
+          )T
+          on L.lodging_code = T.fk_lodging_code
+          join
+          (
+          	SELECT distinct lodging_code, RESERVATION_STATE
+			FROM 
+			(
+			SELECT A.lodging_code, A.room_name, A.room_stock, max_person,
+			       NVL(B.RESERVATION_CNT, 0) AS RESERVATION_CNT,
+			       CASE WHEN A.room_stock - NVL(B.RESERVATION_CNT, 0) >= 1 THEN '예약가능'
+			       ELSE '예약종료' END AS RESERVATION_STATE, 
+                   A.room_stock-NVL(B.RESERVATION_CNT, 0) AS 잔여객실
+			 FROM 
+			 (
+			  SELECT L.lodging_code, D.room_name, D.room_stock, max_person
+			  FROM tbl_lodging L JOIN tbl_room_detail D
+			  ON L.lodging_code = D.fk_lodging_code 
+              where fk_companyid = 'kakao'
+			 ) A
+			 LEFT JOIN
+			 (
+			  SELECT D.fk_lodging_code, D.room_name, COUNT(*) AS RESERVATION_CNT 
+			  FROM tbl_room_detail D JOIN tbl_reservation RSV
+			  ON D.room_detail_code = RSV.fk_room_detail_code
+			  -- WHERE RSV.check_in <= '2024-07-11' AND RSV.check_out >= '2024-07-12'
+			  GROUP BY D.fk_lodging_code, D.room_name
+			 ) B
+			 ON A.lodging_code || A.room_name = B.fk_lodging_code || B.room_name
+			) C
+			WHERE C.RESERVATION_STATE = '예약가능' and max_person >= 5
+          )D
+          on L.lodging_code = D.lodging_code
+	    where status = 1 
+ 
+        
+	select * from tbl_lodging;   
+    select * from tbl_reservation;
+    select * from tbl_room_detail;
+   
+   select reservation_code, reservation_price, check_in, check_out,
+          leftdays, room_detail_code, room_name, check_intime, check_outtime,
+          min_person, max_person, lodging_code, lodging_category, lodging_name, 
+          lodging_tell, lodging_address
+   from 
+   (
+   select reservation_code, fk_room_detail_code, reservation_price, check_in, check_out, 
+          check_in - to_date(to_char(sysdate, 'yyyy-mm-dd') , 'yyyy-mm-dd')  as leftdays
+   from tbl_reservation
+   where reservation_code = 16    
+   )RSV join 
+   (
+   select room_detail_code, fk_lodging_code, room_name, check_in as check_intime, check_out as check_outtime, min_person, max_person
+   from tbl_room_detail
+   where room_detail_code = 571
+   )R
+   on RSV.fk_room_detail_code = R.room_detail_code
+   join
+   (
+   select lodging_code, lodging_category, lodging_name, lodging_tell, lodging_address 
+   from tbl_lodging
+   where lodging_code = 5201
+    )L
+    on R.fk_lodging_code = L.lodging_code
+    
+    select *
+    from tbl_food_store
+    
+    select food_store_code, local_status, food_name, food_content, food_businesshours, food_mobile
+				 , food_address, food_main_img, review_division, food_category
+			from (
+			    select food_store_code, local_status, food_name, food_content, food_businesshours, food_mobile
+					 , food_address, food_main_img, review_division, food_category
+			    from tbl_food_store
+                where local_status = '제주 시내'
+			    order by DBMS_RANDOM.RANDOM
+			)
+            where rownum =1
+     
+     select * from tbl_review;
+     
+     select * from user_sequences;       
+            
+     select count(*) from tbl_review
+     where parent_code = 5214;      
+     
+     select rno, review_code, fk_userid, user_name,
+            parent_code, review_content, registerday
+     from
+     (
+     select row_number() over(order by review_code desc) as rno, review_code, 
+            fk_userid, user_name, parent_code, review_content, R.registerday
+     from tbl_member M join tbl_review R
+     on M.userid = R.fk_userid
+     where R.parent_code = 5214
+     )V
+     where rno between 1 and 6;
+     
+     
+     insert into tbl_review (review_code, fk_userid, parent_code, review_content, review_division_r) 
+     values(SEQ_REVIEW.nextval, 'kudi03628', 5214, '이거 쓸시간에 여행가고싶네', 'A');
+     
+     insert into tbl_review (review_code, fk_userid, parent_code, review_content, review_division_r) 
+     values(SEQ_REVIEW.nextval, 'kudi02', 5214, '으아아아아악', 'A');
+     
+     commit;       
+     select * from tbl_lodging
+     select * from tbl_play
+     select * from tbl_food_store
+     select * from tbl_reservation
+     
+     
+    
+     
+     
+     
+     
+     select count(*) as chk
+     from tbl_reservation R
+     join tbl_room_detail D
+     on R.fk_room_detail_code = D.room_detail_code
+     where status = 1 and fk_lodging_code = 5214 and fk_userid = 'kudi03628';
+     
+     
+   CREATE TABLE tbl_like (
+   fk_userid VARCHAR2(20) NOT NULL,         /* 아이디 */
+   parent_code VARCHAR2(20) NOT NULL,       /* 부모일련번호 */
+   like_division_R VARCHAR2(10)             /* 좋아요구분 A,B,C */
+    ,constraint  PK_tbl_like_userid primary key(fk_userid,parent_code)    
+    ,constraint  FK_tbl_like_userid foreign key(fk_userid) references tbl_member(userid) on delete cascade
+);
+
+
+    
+    
+    -- *** 캘린더 대분류(내캘린더, 사내캘린더  분류) ***
+    create table tbl_calendar_large_category 
+    (lgcatgono   number(3) not null      -- 캘린더 대분류 번호
+    ,lgcatgoname varchar2(50) not null   -- 캘린더 대분류 명
+    ,constraint PK_tbl_calendar_large_category primary key(lgcatgono)
+    );
+    -- Table TBL_CALENDAR_LARGE_CATEGORY이(가) 생성되었습니다.
+    
+    insert into tbl_calendar_large_category(lgcatgono, lgcatgoname)
+    values(1, '나의 일정');
+    
+    insert into tbl_calendar_large_category(lgcatgono, lgcatgoname)
+    values(2, '공유받은 일정');
+    
+    -- *** 캘린더 소분류 *** 
+    -- (예: 내캘린더중 점심약속, 내캘린더중 저녁약속, 내캘린더중 운동, 내캘린더중 휴가, 내캘린더중 여행, 내캘린더중 출장 등등) 
+    -- (예: 사내캘린더중 플젝주제선정, 사내캘린더중 플젝요구사항, 사내캘린더중 DB모델링, 사내캘린더중 플젝코딩, 사내캘린더중 PPT작성, 사내캘린더중 플젝발표 등등) 
+    create table tbl_calendar_small_category 
+    (smcatgono    number(8) not null      -- 캘린더 소분류 번호
+    ,fk_lgcatgono number(3) not null      -- 캘린더 대분류 번호
+    ,smcatgoname  varchar2(400) not null  -- 캘린더 소분류 명
+    ,fk_userid    varchar2(40) not null   -- 캘린더 소분류 작성자 유저아이디
+    ,constraint PK_tbl_calendar_small_category primary key(smcatgono)
+    ,constraint FK_small_category_fk_lgcatgono foreign key(fk_lgcatgono) 
+                references tbl_calendar_large_category(lgcatgono) on delete cascade
+    ,constraint FK_small_category_fk_userid foreign key(fk_userid) references tbl_member(userid)            
+    );
+    -- Table TBL_CALENDAR_SMALL_CATEGORY이(가) 생성되었습니다.
+    
+    
+    create sequence seq_smcatgono
+    start with 1
+    increment by 1
+    nomaxvalue
+    nominvalue
+    nocycle
+    nocache;
+    -- Sequence SEQ_SMCATGONO이(가) 생성되었습니다.
+    
+    
+    select *
+    from tbl_calendar_small_category
+    order by smcatgono desc;
+    
+    
+    -- *** 캘린더 일정 *** 
+    create table tbl_calendar_schedule 
+    (scheduleno    number                 -- 일정관리 번호
+    ,startdate     date                   -- 시작일자
+    ,enddate       date                   -- 종료일자
+    ,subject       varchar2(400)          -- 제목
+    ,color         varchar2(50)           -- 색상
+    ,place         varchar2(200)          -- 장소
+    ,joinuser      varchar2(4000)         -- 공유자   
+    ,content       varchar2(4000)         -- 내용
+    ,parent_code   varchar2(20)           -- 부모코드(숙소,맛집,즐길거리)
+    ,schedule_divison varchar2(10)        -- A == 숙소, B == 맛집, C==즐길거리
+    ,fk_smcatgono  number(8)              -- 캘린더 소분류 번호
+    ,fk_lgcatgono  number(3)              -- 캘린더 대분류 번호
+    ,fk_userid     varchar2(40) not null  -- 캘린더 일정 작성자 유저아이디
+    ,constraint PK_schedule_scheduleno primary key(scheduleno)
+    ,constraint FK_schedule_fk_smcatgono foreign key(fk_smcatgono) 
+                references tbl_calendar_small_category(smcatgono) on delete cascade
+    ,constraint FK_schedule_fk_lgcatgono foreign key(fk_lgcatgono) 
+                references tbl_calendar_large_category(lgcatgono) on delete cascade   
+    ,constraint FK_schedule_fk_userid foreign key(fk_userid) references tbl_member(userid) 
+    );
+    -- Table TBL_CALENDAR_SCHEDULE이(가) 생성되었습니다.
+    
+    drop table tbl_calendar_schedule;
+    
+    alter table tbl_calendar_schedule drop constraint FK_schedule_fk_smcatgono;
+    
+    
+    create sequence seq_scheduleno
+    start with 1
+    increment by 1
+    nomaxvalue
+    nominvalue
+    nocycle
+    nocache;
+    -- Sequence SEQ_SCHEDULENO이(가) 생성되었습니다.
+    
+    select *
+    from tbl_calendar_schedule 
+    order by scheduleno desc;
+    
+    
+    -- 일정 상세 보기 (<< 이건 예시테이블임 조회가 안됨)
+    select SD.scheduleno
+         , to_char(SD.startdate,'yyyy-mm-dd hh24:mi') as startdate
+         , to_char(SD.enddate,'yyyy-mm-dd hh24:mi') as enddate  
+         , SD.subject
+         , SD.color
+         , nvl(SD.place,'-') as place
+         , nvl(SD.joinuser,'공유자가 없습니다.') as joinuser
+         , nvl(SD.content,'') as content
+         , SD.fk_smcatgono
+         , SD.fk_lgcatgono
+         , SD.fk_userid
+         , M.name
+         , SC.smcatgoname
+    from tbl_calendar_schedule SD 
+    JOIN tbl_member M
+    ON SD.fk_userid = M.userid
+    JOIN tbl_calendar_small_category SC
+    ON SD.fk_smcatgono = SC.smcatgono
+    where SD.scheduleno = 21;
+    
+    
+    insert into tbl_member(userid, pwd, name, email, mobile, postcode, address, detailaddress, extraaddress, gender, birthday, coin, point, registerday, lastpwdchangedate, status, idle, gradelevel)  
+    values('leesunsin', '9695b88a59a1610320897fa84cb7e144cc51f2984520efb77111d94b402a8382', '이순신', '2IjrnBPpI++CfWQ7CQhjIw==', 'fCQoIgca24/q72dIoEVMzw==', '15864', '경기 군포시 오금로 15-17', '101동 202호', ' (금정동)', '1', '1995-10-04', 0, 0, default, default, default, default, default);
+    -- 1 행 이(가) 삽입되었습니다.
+    
+    commit;
+    
+    select *
+    from tbl_member
+    where name = '이순신';
+
+    ------------- >>>>>>>> 일정관리(풀캘린더) 끝 <<<<<<<< -------------

@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%
     String ctxPath = request.getContextPath();
     //    /JejuDream
@@ -10,12 +12,44 @@
 
 .mini_image{
 
-	width: 100px; 
-	height: 100px;
-	/*margin: auto;*/
+	width: 140px; 
+	height: 140px;
+	border-radius: 5px; /* 모서리 둥글게 */
+    margin-right: 10px;
   	object-fit: cover;
 
 }
+
+.row {
+    margin-bottom: 10px;
+}
+        
+        
+.total {
+    font-weight: bold;
+    font-size: 20px;
+}
+.btn {
+    width: 100%;
+}
+        
+
+#lodgingInfo, #userinfo, #reserveinfo {
+    border: solid 1px #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    background-color: #f9f9f9;
+}
+
+
+
+.payArea {
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #ffffff;
+}
+
 
 
 
@@ -26,15 +60,6 @@
 
 $(document).ready(function(){
 	
-	
-
-
-
-
-
-
-
-
 
 });
 
@@ -69,7 +94,6 @@ function goReserveInsert(){
 	const frm = document.reserveData;
 	
 	
-	
 	$.ajax({
 		url:"JSONreserveInsert.trip",
 		type:"post",
@@ -81,10 +105,13 @@ function goReserveInsert(){
 				
 				alert('예약 테이블 insert 성공');
 				
+				
+				frm.reservation_code.value = json.num;
 				frm.method = "post";
 				frm.action = "<%= ctxPath%>/reserveResult.trip";
 				
 				frm.submit();
+				
 			}
 			else{
 				
@@ -106,118 +133,91 @@ function goReserveInsert(){
 
 
 </script>
-
-<div class="container mt-3" >
-	
-	<c:set var="reserve_info" value="${requestScope.reserve_info}"></c:set>
-	
-    <div class="h3 text-center mb-4">숙소 예약정보</div>
-    
-    <div style="display : flex;">
-        <div class="px-4" style="width: 55%;">
-            <label class="h4">숙소정보</label>
-            <div id="lodgingInfo" style="border: solid 1px black;">
-                
-				<div style="width: 85%; display : flex;">
-					<a href="">
-		                	<img class="mini_image" src="<%= ctxPath%>/resources/images/lodginglist/room/${reserve_info.room_img}"/>
-		            </a>
-		            <div style="align-self: center;">
-                    	<div class="mb-1 font12" class="lodging_name">${reserve_info.lodging_name}</div>
-	                    <div class="mb-1 font12" id="room" class="room_name">${reserve_info.room_name}</div>
-	                    <div class="font12" class="check_people">${reserve_info.min_person}인 기준, 최대 ${reserve_info.max_person}인</div>
-	                    <input type="hidden" id="hidelodging_code" value="${reserve_info.lodging_code} }" />
-	                </div>
+<div class="container my-3">
+        <c:set var="reserve_info" value="${requestScope.reserve_info}"></c:set>
+        
+        <div class="row">
+            <div class="col-md-7">
+                <label class="h4">숙소정보</label>
+                <div id="lodgingInfo">
+                    <div class="d-flex">
+                        <a href="<%= ctxPath%>/lodgingDetail.trip?lodging_code=${reserve_info.lodging_code}">
+                            <img class="mini_image" src="<%= ctxPath%>/resources/images/lodginglist/room/${reserve_info.room_img}"/>
+                        </a>
+                        <div class="ml-3" style="align-content: center;">
+                            <div class="mb-1 lodging_name">${reserve_info.lodging_name}</div>
+                            <div class="mb-1 room_name" id="room">${reserve_info.room_name}</div>
+                            <div class="mb-1 check_people">${reserve_info.min_person}인 기준, 최대 ${reserve_info.max_person}인</div>
+                            <div>입실시간 : ${reserve_info.check_inTime}  / 퇴실시간 : ${reserve_info.check_outTime}</div>
+                            <input type="hidden" id="hidelodging_code" value="${reserve_info.lodging_code}" />
+                        </div>
+                    </div>
+                    <div class="my-2" id="lodging_address">주소 : ${reserve_info.lodging_address}</div>
+                    <div class="mb-1" id="lodging_tell">연락처 : ${reserve_info.lodging_tell}</div>
                 </div>
-                    
-                
-                
+
+                <label class="h4 mt-3">예약자 정보</label>
+                <div id="userinfo">
+                    <c:if test="${not empty sessionScope.loginuser}">
+                        <c:set var="loginuser" value="${sessionScope.loginuser}"></c:set>
+                        <div>
+                            <div class="mb-1 user_name">예약자 성명 : ${loginuser.user_name}</div>
+                            <div class="mb-1 email">예약자 이메일 : ${loginuser.email}</div>
+                            <div class="mobile">예약자 연락처 : ${fn:substring(loginuser.mobile, 0, 3)}-${fn:substring(loginuser.mobile, 3, 7)}-${fn:substring(loginuser.mobile, 7, 12)}</div>
+                        </div>
+                    </c:if>
+                </div>
+
+                <div>
+                    <label class="h4 mt-3">예약 신청정보</label>
+                    <div id="reserveinfo">
+                        <div class="mb-1">체크인 날짜 : ${reserve_info.check_in}</div>
+                        <div class="mb-1">체크아웃 날짜 : ${reserve_info.check_out}</div>
+                        <div>총 숙박일 : ${reserve_info.days}박 <fmt:formatNumber var="outday" value="${reserve_info.days}"/>${outday + 1}일</div>
+                    </div>
+                </div>
             </div>
 
-            <label class="h4">예약자 정보</label>
-          	<div id="userinfo" style="border: solid 1px black;">
-          		<c:if test="${not empty sessionScope.loginuser}">
-          			<c:set var="loginuser" value="${sessionScope.loginuser}"></c:set>
-          			<div style="align-self: center;">
-                    	<div class="mb-1 font12" class="user_name">${loginuser.user_name}</div>
-	                    <div class="mb-1 font12" class="email">${loginuser.email}</div>
-	                    <div class="font12" class="mobile">${loginuser.mobile}</div>
-	                </div>
-          			
-          		</c:if>
-          	</div>
-
-            
-            <div>
-            	<label class="h4 mt-4">숙소 상세정보</label>
-            	
-                <div class="mb-1 font12" id="lodging_address">주소 : ${reserve_info.lodging_address}</div>
-				<div class="mb-1 font12" id="lodging_tell">연락처 : ${reserve_info.lodging_tell}</div>
-	            
-            </div>
-           
-
-            
-
-        </div>
-
-
-
-        
-        
-        <div class="p-3 payArea" style="width: 45%;">
-            
-            
-
-            <%-- 여기는 총가격이 보여지는 곳입니다.--%>
-            <div>
-                <div class="row mb-1">
-                    
-                </div>
-                
-                <div class="row mb-1">
-                    
-                </div>
-                <div class="row mb-1">
-                   
-                </div>
-              
-                <div class="row mb-1">
-                   
-                </div>
-                
-                
-				<br>
-				
-                <div class="row h4 mt-3">
-                    <div class="col-lg-4 pt-1">
-                        	총 결제비용
+            <div class="col-md-5">
+                <label class="h4">결제 정보</label>
+                <div class="payArea">
+                    <div class="row mb-1">
+                        <div class="col-6">1박 기준 가격</div>
+                        <div class="col-6 text-right"><fmt:formatNumber value="${reserve_info.price}" pattern="#,###"/> 원</div>
                     </div>
-                    <div class="col-lg-8 text-right">
-                    	
-                    	<span id="price" >${reserve_info.price}</span>
-                        <input type="hidden" id="price" value="${reserve_info.price}"/>
-                        
-                        
+                    <div class="row mb-1">
+                        <div class="col-6">총 숙박일</div>
+                        <div class="col-6 text-right">${reserve_info.days} 박 <fmt:formatNumber var="outday" value="${reserve_info.days}"/> ${outday + 1} 일</div>
+                    </div>
+                    <div class="row mb-1">
+                        <div class="col-6">1박 기준 가격 X 총 숙박일</div>
+                        <div class="col-6 text-right"><fmt:formatNumber value="${reserve_info.price}" pattern="#,###"/> X ${reserve_info.days} 일</div>
                     </div>
                     
+                    <hr width="100%" color="#ff9900" size="3">
+                    
+                    <div class="row mt-3">
+                        <div class="col-6">총 결제비용</div>
+                        <div class="col-6 text-right total"><fmt:formatNumber value="${reserve_info.totalPrice}" pattern="#,###"/> 원</div>
+                    </div>
+                    <div class="row mt-5 justify-content-center">
+                        <div class="col-md-8">
+                            <button id="paymentSubmit" type="button" class="btn btn-lg btn-warning" onclick="goPayment()">결제하기</button>
+                        </div>
+                    </div>
                 </div>
-				<div class="mt-3" align="center">
-               		<button id="paymentSubmit" type="button" class="btn btn-lg btn-dark form-control" style="width: 70%;" onclick="goPayment()">결제하기</button>
-           		</div>
-                
-
             </div>
         </div>
     </div>
-    
-</div>
 
 <form name="reserveData">
 	<input type="hidden" name="room_detail_code" value="${reserve_info.room_detail_code}"/>
 	<input type="hidden" name="lodging_code" value="${reserve_info.lodging_code}"/>
 	<input type="hidden" name="userid" value="${sessionScope.loginuser.userid}" />
-	<input type="hidden" name="price" value="${reserve_info.price}"/>
-	<input type="hidden" name="check_in" value="2024-07-11"/>
-	<input type="hidden" name="check_out" value="2024-07-12"/>
+	<input type="hidden" name="price" value="${reserve_info.price}" />
+	<input type="hidden" name="totalPrice" value="${reserve_info.totalPrice}"/>
+	<input type="hidden" name="check_in" value="${reserve_info.check_in}"/>
+	<input type="hidden" name="check_out" value="${reserve_info.check_out}"/>
+	<input type="hidden" name="days" value="${reserve_info.days}"/>
+	<input type="hidden" name="reservation_code" value=""/>
 </form>

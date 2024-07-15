@@ -390,3 +390,115 @@ CREATE TABLE tbl_add_img (
 
 
 
+/* 좋아요 테이블 생성 */
+CREATE TABLE tbl_like (
+   fk_userid VARCHAR2(20) NOT NULL,         /* 아이디 */
+   parent_code VARCHAR2(20) NOT NULL,       /* 부모일련번호 */
+   like_division_R VARCHAR2(10)             /* 좋아요구분 A,B,C */
+    ,constraint  PK_tbl_like_userid primary key(fk_userid,parent_code)    
+    ,constraint  FK_tbl_like_userid foreign key(fk_userid) references tbl_member(userid) on delete cascade
+);
+
+-- *** 캘린더 대분류(내캘린더, 사내캘린더  분류) ***
+    create table tbl_calendar_large_category 
+    (lgcatgono   number(3) not null      -- 캘린더 대분류 번호
+    ,lgcatgoname varchar2(50) not null   -- 캘린더 대분류 명
+    ,constraint PK_tbl_calendar_large_category primary key(lgcatgono)
+    );
+    -- Table TBL_CALENDAR_LARGE_CATEGORY이(가) 생성되었습니다.
+    
+    insert into tbl_calendar_large_category(lgcatgono, lgcatgoname)
+    values(1, '나의 일정');
+    
+    insert into tbl_calendar_large_category(lgcatgono, lgcatgoname)
+    values(2, '공유받은 일정');
+    
+    -- *** 캘린더 소분류 *** 
+    -- (예: 내캘린더중 점심약속, 내캘린더중 저녁약속, 내캘린더중 운동, 내캘린더중 휴가, 내캘린더중 여행, 내캘린더중 출장 등등) 
+    -- (예: 사내캘린더중 플젝주제선정, 사내캘린더중 플젝요구사항, 사내캘린더중 DB모델링, 사내캘린더중 플젝코딩, 사내캘린더중 PPT작성, 사내캘린더중 플젝발표 등등) 
+    create table tbl_calendar_small_category 
+    (smcatgono    number(8) not null      -- 캘린더 소분류 번호
+    ,fk_lgcatgono number(3) not null      -- 캘린더 대분류 번호
+    ,smcatgoname  varchar2(400) not null  -- 캘린더 소분류 명
+    ,fk_userid    varchar2(40) not null   -- 캘린더 소분류 작성자 유저아이디
+    ,constraint PK_tbl_calendar_small_category primary key(smcatgono)
+    ,constraint FK_small_category_fk_lgcatgono foreign key(fk_lgcatgono) 
+                references tbl_calendar_large_category(lgcatgono) on delete cascade
+    ,constraint FK_small_category_fk_userid foreign key(fk_userid) references tbl_member(userid)            
+    );
+    -- Table TBL_CALENDAR_SMALL_CATEGORY이(가) 생성되었습니다.
+    
+    
+    create sequence seq_smcatgono
+    start with 1
+    increment by 1
+    nomaxvalue
+    nominvalue
+    nocycle
+    nocache;
+    -- Sequence SEQ_SMCATGONO이(가) 생성되었습니다.
+    
+    
+    select *
+    from tbl_calendar_small_category
+    order by smcatgono desc;
+    
+    
+    -- *** 캘린더 일정 *** 
+    create table tbl_calendar_schedule 
+    (scheduleno    number                 -- 일정관리 번호
+    ,startdate     date                   -- 시작일자
+    ,enddate       date                   -- 종료일자
+    ,subject       varchar2(400)          -- 제목
+    ,color         varchar2(50)           -- 색상
+    ,place         varchar2(200)          -- 장소
+    ,joinuser      varchar2(4000)         -- 공유자   
+    ,content       varchar2(4000)         -- 내용
+    ,parent_code   varchar2(20)           -- 부모코드(숙소,맛집,즐길거리)
+    ,schedule_divison varchar2(10)        -- A == 숙소, B == 맛집, C==즐길거리
+    ,fk_smcatgono  number(8)              -- 캘린더 소분류 번호
+    ,fk_lgcatgono  number(3)              -- 캘린더 대분류 번호
+    ,fk_userid     varchar2(40) not null  -- 캘린더 일정 작성자 유저아이디
+    ,constraint PK_schedule_scheduleno primary key(scheduleno)
+    ,constraint FK_schedule_fk_smcatgono foreign key(fk_smcatgono) 
+                references tbl_calendar_small_category(smcatgono) on delete cascade
+    ,constraint FK_schedule_fk_lgcatgono foreign key(fk_lgcatgono) 
+                references tbl_calendar_large_category(lgcatgono) on delete cascade   
+    ,constraint FK_schedule_fk_userid foreign key(fk_userid) references tbl_member(userid) 
+    );
+    -- Table TBL_CALENDAR_SCHEDULE이(가) 생성되었습니다.
+    
+    create sequence seq_scheduleno
+    start with 1
+    increment by 1
+    nomaxvalue
+    nominvalue
+    nocycle
+    nocache;
+    -- Sequence SEQ_SCHEDULENO이(가) 생성되었습니다.
+    
+    select *
+    from tbl_calendar_schedule 
+    order by scheduleno desc;
+    
+    
+    -- 일정 상세 보기 (<< 이건 예시테이블임 조회가 안됨)
+    select SD.scheduleno
+         , to_char(SD.startdate,'yyyy-mm-dd hh24:mi') as startdate
+         , to_char(SD.enddate,'yyyy-mm-dd hh24:mi') as enddate  
+         , SD.subject
+         , SD.color
+         , nvl(SD.place,'-') as place
+         , nvl(SD.joinuser,'공유자가 없습니다.') as joinuser
+         , nvl(SD.content,'') as content
+         , SD.fk_smcatgono
+         , SD.fk_lgcatgono
+         , SD.fk_userid
+         , M.user_name
+         , SC.smcatgoname
+    from tbl_calendar_schedule SD 
+    JOIN tbl_member M
+    ON SD.fk_userid = M.userid
+    JOIN tbl_calendar_small_category SC
+    ON SD.fk_smcatgono = SC.smcatgono;
+

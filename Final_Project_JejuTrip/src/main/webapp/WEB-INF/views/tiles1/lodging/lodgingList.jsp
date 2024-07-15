@@ -100,9 +100,9 @@ $(document).ready(function(){
 	    
 	    $('input#toDate').datepicker('option', 'minDate', '+1D');
 	    
-	}
+	} // end of function setDatePickers() {}
  	    
-    fetchFilteredData(currentShowPageNo, currentSort);
+    
     
     let fromDate = $("input:text[id='fromDate']").val();
     let toDate = $("input#toDate").val();
@@ -112,6 +112,13 @@ $(document).ready(function(){
     	fromDate = $("input:text[id='fromDate']").val();
     	toDate = $("input#toDate").val();
         
+    	const frm = document.filterForm;
+    	
+    	frm.check_in.value = fromDate;
+    	frm.check_out.value = toDate;
+    	
+    	fetchFilteredData(currentShowPageNo, currentSort);
+    	
         // alert('fromDate > ' + fromDate);
         // alert('toDate > ' + toDate);
     }, 100); // 100ms 딜레이를 주어 datepicker 설정이 완료되도록 함
@@ -134,23 +141,43 @@ $(document).ready(function(){
     	const id = $(e.target).attr('id');
     	// alert(id);
     	
-    	if(id == "fromDate"){
-    		
-    		const d1 = $("input#fromDate").val();
-    		// alert(d1);
-    		$("input:hidden[name='check_in']").val(d1);
-    		
-    	}
-    	else if (id == "toDate"){
-    		
-    		const d2 = $("input#toDate").val();
-    		// alert(d2);
-    		$("input:hidden[name='check_out']").val(d2);
-    	}
+    	let d1 = $("input#fromDate").val();
+    	let d2 = $("input#toDate").val();
     	
+    	const frm = document.filterForm;
     	
-    });
+    	if (d1 >= d2) {
+    	    
+    		let date1 = new Date(d1);
+            
+    		date1.setDate(date1.getDate() + 1); // d1의 다음 날로 설정
+            
+    		d2 = date1.toISOString().split('T')[0]; // 'yyyy-mm-dd' 형식으로 변환
+
+            $("input#toDate").val(d2);
+    		
+            frm.check_in.value = $("input#fromDate").val();
+            frm.check_out.value = $("input#toDate").val();
+        }
+    	else {
+        	
+        	if (id === "fromDate") {
+        	      
+                frm.check_in.value = d1;
+                
+            } else if (id === "toDate") {
+            
+                frm.check_out.value = d2;
+                
+            }
+        	
+        }
+    	
+    	fetchFilteredData(currentShowPageNo, currentSort);
+    	
+    }); // end of  $("input:text[name='datepicker']").change( (e)=>{})
     
+   
 	// 정렬 버튼
 	const sortButton = $("button.sort");
 	
@@ -283,8 +310,6 @@ $(document).ready(function(){
     	
     	// console.log(str_convenient);
     	
-    	
-    	
     	const frm = document.filterForm;
 		
 		frm.str_convenient.value = str_convenient;
@@ -292,8 +317,6 @@ $(document).ready(function(){
         fetchFilteredData(currentShowPageNo, frm.sort.value);
         
     }); // end of $("input:checkbox[name='lodging_category']").on('change', function() {})
-    
-    
     
     
  	// 지역 구분 체크박스 change 이벤트 리스너 
@@ -323,6 +346,43 @@ $(document).ready(function(){
     
     
     
+    // 인원수 잘못된 키보드 입력시 
+    $("input#people").bind("keydown", function(e){
+    
+    	const num = $(e.target).val();
+    	
+    	if(num < 1){
+    		
+    		alert('인원을 올바르게 입력하세요!');
+    		
+    		$("input#people").val("2");
+    		
+    		return false;
+    		
+    	} // end of if 
+    	
+    }); // end of $("input#people").bind("keydown", function(e){}) 
+    
+    
+ 	// 인원수 변경시 데이터 가져오기
+ 	$("input#people").change(function(){
+ 		
+ 		let people = $("input#people").val();
+ 		
+ 		if(people >= 1){
+ 			
+ 			const frm = document.filterForm;
+ 			
+ 			frm.people.value = people;
+ 	    	
+ 			fetchFilteredData(currentShowPageNo, frm.sort.value);
+ 			
+ 		} // end of if
+ 		
+ 	}); // end of $("input#people").change(function(){
+    
+    
+ 		
     
     // 검색 버튼 클릭 시 데이터 가져오기 시작
     $("input:text[name='inputWord']").bind("keydown", function(e){
@@ -344,9 +404,9 @@ $(document).ready(function(){
 }); // end of $(document).ready(function(){})
 
 	
-
 	// ajax로 실시간 반영되는 숙소리스트 함수
 	function fetchFilteredData(currentShowPageNo, sort) {
+		
 	
 		$("input:hidden[name='currentShowPageNo']").val(currentShowPageNo);
 		
@@ -432,6 +492,7 @@ $(document).ready(function(){
 	
 	// 페이지바 호출하는 함수
 	function makePageBar(currentPageNo, totalPage, sort){
+		
 	    const blockSize = 5;
 	    let loop = 1;
 	    let pageNo = Math.floor((currentPageNo - 1)/blockSize) * blockSize + 1;
@@ -468,7 +529,6 @@ $(document).ready(function(){
 		
 		const searchWord = $("input:text[name='inputWord']").val();
 		
-		
 		const frm = document.filterForm;
 		
 		frm.searchWord.value = searchWord;
@@ -478,11 +538,28 @@ $(document).ready(function(){
 	} // end of function goSearch()
 	
 	
+	// 상세페이지로 보내주는 함수
 	function goDetail(lodging_code){
+		
+		
+		const checkIn = $("input:text[id='fromDate']").val();
+		const checkOut = $("input:text[id='toDate']").val();
+		let people = $("input#people").val();
+		
+		if(people == ""){
+			people = 2;	
+		}
+		
+		// alert(checkIn);
+		// alert(checkOut);
 		
 		const frm = document.goDetail;
 	
 		frm.lodging_code.value = lodging_code;
+		frm.detail_check_in.value = checkIn;
+		frm.detail_check_out.value = checkOut;
+		frm.detail_people.value = people;
+		
 		frm.method = "get";
 		frm.action = "<%= ctxPath%>/lodgingDetail.trip";
 		
@@ -505,33 +582,33 @@ $(document).ready(function(){
             	<div class="tab_check" style="display: flex;">
 			    	<div class="date_wrap mt-3">
 			    		
-			    		<h3>숙소 체크인</h3>
-				        <div class="date_checkin" >
+			    		<h3>숙소 체크인 일정</h3>
+				        <div class="fromDate">
 				            <label>체크인</label>
-				            <div class="value-text">
+				            <div>
 				                <div class="date-container">
 				                    <span class="date-pick">
-				                        <input class="datepicker" style="cursor: pointer;" type="text" id="fromDate" name="datepicker" value="" placeholder="입실일 선택">
+				                        <input class="datepicker" style="cursor: pointer;" type="text" id="fromDate" name="datepicker" value="${requestScope.dateSendMap.detail_check_in}" placeholder="입실일 선택">
 				                    </span>
 				                </div>
 				            </div>
 				        </div>
-				        <div class="date_checkout">
+				        <div class="toDate">
 				            <label>체크아웃</label>
-				            <div class="value-text">
+				            <div>
 				                <div class="date-container">
 				                    <span class="date-pick">
-				                        <input class="datepicker" style="cursor: pointer;" type="text" id="toDate" name="datepicker" value="" placeholder="퇴실일 선택">
+				                        <input class="datepicker" style="cursor: pointer;" type="text" id="toDate" name="datepicker" value="${requestScope.dateSendMap.detail_check_out}" placeholder="퇴실일 선택">
 				                    </span>
 				                </div>
 				            </div>
 				        </div>
 				        <div class="people">
 				            <label>인원</label>
-				            <div class="value-text">
+				            <div>
 				                <div class="people-container">
 				                    <span class="people-pick">
-				                        <input type="text" id="people" style="cursor: pointer;" name="people" value="" placeholder="인원 선택">
+				                        <input type="number" min="2" max="10" id="people" style="cursor: pointer; width:100px;" name="people" value="${requestScope.dateSendMap.detail_people}" placeholder="인원 선택">
 				                    </span>
 				                </div>
 				            </div>
@@ -580,6 +657,7 @@ $(document).ready(function(){
                         </c:forEach>
                         
                     </li>
+                    
                     
                     <li class="nav-item">
                     	<h4>숙소 가격범위</h4>
@@ -685,6 +763,7 @@ $(document).ready(function(){
           	<input type="hidden" name="str_local" /> 
           	<input type="hidden" name="searchWord" />
           	<input type="hidden" name="currentShowPageNo" />
+          	<input type="hidden" name="people" />
           	<input type="hidden" name="check_in" />
           	<input type="hidden" name="check_out" />
           	<input type="hidden" name="sort" />
@@ -693,6 +772,9 @@ $(document).ready(function(){
           
           <form name="goDetail">
           	<input type="hidden" name="lodging_code" />
+          	<input type="hidden" name="detail_check_in" />
+          	<input type="hidden" name="detail_check_out" />
+          	<input type="hidden" name="detail_people" />
           </form>
           
  
