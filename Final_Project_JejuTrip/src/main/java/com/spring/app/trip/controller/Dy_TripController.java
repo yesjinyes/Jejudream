@@ -1020,8 +1020,8 @@ public class Dy_TripController {
 		String root = session.getServletContext().getRealPath("/");
 		String path = root + "resources" + File.separator + "images" + File.separator + "community";
 
-		System.out.println("~~~ 확인용 path => " + path);
-		//  ~~~ 확인용 path => C:\NCS\workspace_spring_framework\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\board\resources\photo_upload
+//		System.out.println("~~~ 확인용 path => " + path);
+		// ~~~ 확인용 path => C:\NCS\workspace_spring_framework\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\Final_Project_JejuTrip\resources\images\community
 	
 		File dir = new File(path);
 		
@@ -1033,8 +1033,8 @@ public class Dy_TripController {
 			String filename = request.getHeader("file-name"); // 파일명(문자열)을 받는다 - 일반 원본파일명
 			// 네이버 스마트에디터를 사용한 파일업로드 시 싱글파일업로드와 다르게 멀티파일업로드는 파일명이 header 속에 담겨져 넘어오게 되어 있다.
 			 
-			System.out.println(">>> 확인용 filename ==> " + filename);
-			// >>> 확인용 filename ==> berkelekle%EB%8B%A8%EA%B0%80%EB%9D%BC%ED%8F%AC%EC%9D%B8%ED%8A%B803.jpg 
+//			System.out.println(">>> 확인용 filename ==> " + filename);
+			// >>> 확인용 filename ==> %EA%B0%88%EC%B9%98%EC%9D%8C%EC%8B%9D%EC%A0%90%20%EA%B6%81%EC%84%9C%EC%B2%B4.jpg 
 	        
 			InputStream is = request.getInputStream(); // is는 네이버 스마트 에디터를 사용하여 사진첨부하기 된 이미지 파일
 

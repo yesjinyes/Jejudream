@@ -91,7 +91,7 @@
 		text-decoration: none !important; /* 페이지바의 a 태그에 밑줄 없애기 */
 	}
 	
-	form[name='addCommentFrm'] textarea:focus {
+	div.comment-info textarea:focus {
 		outline: none;
 	}
 	
@@ -298,6 +298,12 @@
 					</div>
 				</form>
 			</c:if>
+			
+			<c:if test="${empty sessionScope.loginuser && empty sessionScope.loginCompanyuser}">
+				<div style="border: solid 1px #a6a6a6; margin-top: 10%; padding: 1.5% 1%">
+					<textarea class="mb-2" style="width: 100%; height: 100px; border: none; background-color: rgba(242, 242, 242, 0.3);" placeholder="댓글을 작성하려면 로그인하세요." onclick="javascript:location.href='<%=ctxPath%>/login.trip'" readonly></textarea>
+				</div>
+			</c:if>
 		</div>
 		
 		<div style="width: 80%; margin: 7% auto;">
@@ -313,7 +319,7 @@
 			<c:if test="${requestScope.boardvo.category == '자유게시판'}">
 				<button type="button" class="btn btn-success mr-3" onclick="javascript:location.href='<%=ctxPath%>/community/freeBoard.trip'">전체 목록</button>
 			</c:if>
-			<button type="button" class="btn btn-secondary">검색된 결과 목록</button>
+			<button type="button" class="btn btn-secondary" onclick="javascript:location.href='<%=ctxPath%>${requestScope.goBackURL}'">검색된 결과 목록</button>
 		</div>
 	
 	</div>
