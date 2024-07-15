@@ -248,8 +248,8 @@
 		</div>
 		
 		<div class="text-center" style="margin-top: 10%;">
-			<button type="button" id="addBoardBtn" class="btn btn-success mr-3">전체 목록</button>
-			<button type="button" id="goBackBtn" class="btn btn-secondary">검색된 결과 목록</button>
+			<button type="button" class="btn btn-success mr-3">전체 목록</button>
+			<button type="button" class="btn btn-secondary">검색된 결과 목록</button>
 		</div>
 	
 	</div>
