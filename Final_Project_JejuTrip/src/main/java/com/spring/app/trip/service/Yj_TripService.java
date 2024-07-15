@@ -28,6 +28,15 @@ public interface Yj_TripService {
 	// == 맛집 리뷰 쓰기 == //
 	int addFoodstoreReview(ReviewVO reviewvo);
 
+	// == 작성한 리뷰 보이기 == //
+	List<ReviewVO> getReviewList(String parent_code);
+
+	// == 리뷰 수정하기 == //
+	int updateReview(Map<String, String> paraMap);
+
+	// == 리뷰 삭제하기 == //
+	int deleteReview(Map<String, String> paraMap);
+
 
 
 	

@@ -64,7 +64,30 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 	@Override
 	public int addFoodstoreReview(ReviewVO reviewvo) {
 		int n = sqlsession.insert("yj_trip.addFoodstoreReview", reviewvo);
-		//System.out.println("dao 에서 n 확인 => " + n);
+		return n;
+	}
+
+
+	// == 작성한 리뷰 보이기 == //
+	@Override
+	public List<ReviewVO> getReviewList(String parent_code) {
+		List<ReviewVO> reviewList = sqlsession.selectList("yj_trip.getReviewList", parent_code);
+		return reviewList;
+	}
+
+
+	// === 리뷰 수정하기 === //
+	@Override
+	public int updateReview(Map<String, String> paraMap) {
+		int n = sqlsession.update("yj_trip.updateReview", paraMap);
+		return n;
+	}
+
+
+	// == 리뷰 삭제하기 == //
+	@Override
+	public int deleteReview(String review_code) {
+		int n = sqlsession.delete("yj_trip.deleteReview", review_code);
 		return n;
 	}
 
