@@ -155,4 +155,32 @@ WHERE V.rno between 1 and 10;
 
 
 
+-- 검색 조건이 있을 시 글 1개 조회하기
+SELECT previousseq, previoussubject
+     , seq, fk_userid, name, subject, content, readCount, regDate, pw
+     , nextseq, nextsubject
+     , fileName, orgFilename, fileSize, category
+FROM
+(
+    select lag(seq, 1) over(order by seq desc) AS previousseq
+         , lag(subject, 1) over(order by seq desc) AS previoussubject
+         , seq, fk_userid, name, subject, content, readCount
+         , to_char(regDate, 'yyyy-mm-dd hh24:mi') as regDate, pw
+         , lead(seq, 1) over(order by seq desc) AS nextseq
+         , lead(subject, 1) over(order by seq desc) AS nextsubject
+         , fileName, orgFilename, fileSize
+         , decode(category, '1', '자유게시판'
+                          , '2', '숙박'
+                          , '3', '관광지, 체험'
+                          , '4', '맛집'
+                          , '5', '구인') AS category
+    from tbl_board
+    where status = 1
+    -- and lower(subject) like '%' || lower('추천') || '%'
+) V
+WHERE V.seq = 1;
+
+
+
+
 

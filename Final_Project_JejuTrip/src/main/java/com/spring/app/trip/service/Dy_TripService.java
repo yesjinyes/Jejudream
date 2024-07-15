@@ -69,4 +69,10 @@ public interface Dy_TripService {
 
 	// 자유게시판 총 게시물 건수 조회하기
 	int getFreeBoardTotalCount(Map<String, String> paraMap);
+
+	// 글 조회수 증가와 함께 글 1개 조회하기
+	BoardVO getViewBoard(Map<String, String> paraMap);
+
+	// 글 조회수 증가 없이 단순히 글 1개만 조회하기
+	BoardVO getViewBoard_no_increase_readCount(Map<String, String> paraMap);
 }

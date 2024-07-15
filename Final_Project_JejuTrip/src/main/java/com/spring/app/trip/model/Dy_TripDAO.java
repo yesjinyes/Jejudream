@@ -78,5 +78,11 @@ public interface Dy_TripDAO {
 	
 	// 커뮤니티 자유게시판 리스트 조회하기
 	List<BoardVO> getFreeBoardList(Map<String, String> paraMap);
+
+	// 글 1개 조회하기
+	BoardVO getViewBoard(Map<String, String> paraMap);
+
+	// 글 조회수 1 증가하기
+	int increase_readCount(String seq);
 	
 }

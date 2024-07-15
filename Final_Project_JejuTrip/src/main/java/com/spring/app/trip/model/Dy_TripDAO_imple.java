@@ -283,6 +283,26 @@ public class Dy_TripDAO_imple implements Dy_TripDAO {
 		
 		return list;
 	}
+
+
+	// 글 1개 조회하기
+	@Override
+	public BoardVO getViewBoard(Map<String, String> paraMap) {
+
+		BoardVO boardvo = sqlsession.selectOne("dy_trip.getViewBoard", paraMap);
+		
+		return boardvo;
+	}
+
+
+	// 글 조회수 1 증가하기
+	@Override
+	public int increase_readCount(String seq) {
+
+		int n = sqlsession.update("dy_trip.increase_readCount", seq);
+		
+		return n;
+	}
 	
 
 }

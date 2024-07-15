@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -27,6 +29,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 import com.spring.app.trip.common.MyUtil;
 import com.spring.app.trip.common.AES256;
@@ -34,6 +38,7 @@ import com.spring.app.trip.common.FileManager;
 import com.spring.app.trip.common.GoogleMail;
 import com.spring.app.trip.common.Sha256;
 import com.spring.app.trip.domain.BoardVO;
+import com.spring.app.trip.domain.CompanyVO;
 import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.service.Dy_TripService;
@@ -837,7 +842,6 @@ public class Dy_TripController {
 	@GetMapping("community/freeBoard.trip")
 	public ModelAndView freeBoard(ModelAndView mav, HttpServletRequest request) {
 		
-		
 		List<BoardVO> freeBoardList = null;
 		
 		// === #69. 글조회수(readCount)증가 (DML문 update)는
@@ -846,7 +850,7 @@ public class Dy_TripController {
 		//          이것을 하기 위해서는 session 을 사용하여 처리하면 된다.
 		HttpSession session = request.getSession();
 		session.setAttribute("readCountPermission", "yes");
-
+		
 		String searchType = request.getParameter("searchType");
 		String searchWord = request.getParameter("searchWord");
 		String str_currentShowPageNo = request.getParameter("currentShowPageNo"); 
@@ -931,8 +935,8 @@ public class Dy_TripController {
 
 		// === [맨처음][이전] 만들기 === //
 		if(pageNo != 1) {
-			pageBar += "<li style='width: 4%;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo=1'>◀◀</a></li>";
-			pageBar += "<li style='width: 4%;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+(pageNo-1)+"'>◀</a></li>"; 
+			pageBar += "<li style='width: 4%; font-size: 0.8rem;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo=1'>◀◀</a></li>";
+			pageBar += "<li style='width: 4%; font-size: 0.8rem;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+(pageNo-1)+"'>◀</a></li>"; 
 		}
 
 		while( !(loop > blockSize || pageNo > totalPage) ) {
@@ -950,8 +954,8 @@ public class Dy_TripController {
 
 		// === [다음][마지막] 만들기 === //
 		if(pageNo <= totalPage) {
-			pageBar += "<li style='width: 4%;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+pageNo+"'>▶</a></li>";
-			pageBar += "<li style='width: 4%;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+totalPage+"'>▶▶</a></li>"; 
+			pageBar += "<li style='width: 4%; font-size: 0.8rem;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+pageNo+"'>▶</a></li>";
+			pageBar += "<li style='width: 4%; font-size: 0.8rem;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+totalPage+"'>▶▶</a></li>"; 
 		}
 		
 		pageBar += "</ul>";
@@ -1007,10 +1011,160 @@ public class Dy_TripController {
 	
 	
 	// 게시판 상세 페이지 요청
-	@GetMapping("community/viewBoard.trip")
-	public String viewBoard() {
+	@RequestMapping("community/viewBoard.trip")
+	public ModelAndView viewBoard(ModelAndView mav, HttpServletRequest request,
+								  @RequestParam(defaultValue="") String seq,
+								  @RequestParam(defaultValue="") String goBackURL,
+								  @RequestParam(defaultValue="") String searchType,
+								  @RequestParam(defaultValue="") String searchWord) {
+
 		
-		return "community/viewBoard.tiles1";
+		Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);
+		// redirect 되어서 넘어온 데이터가 있는지 꺼내본다.
+
+		if(inputFlashMap != null) { // redirect 되어서 넘어온 데이터가 있다면
+			
+			@SuppressWarnings("unchecked") // 경고 표시를 하지 말라는 뜻이다.
+			Map<String, String> redirect_map = (Map<String, String>) inputFlashMap.get("redirect_map");
+			// "redirect_map" 값은  /view_2.action 에서  redirectAttr.addFlashAttribute("키", 밸류값); 을 할 때 준 "키" 이다. 
+			// "키" 값을 주어서 redirect 되어서 넘어온 데이터를 꺼내어 온다.
+			// "키" 값을 주어서 redirect 되어서 넘어온 데이터의 값은 Map<String, String> 이므로 Map<String, String> 으로 casting 해준다.
+			
+			seq = redirect_map.get("seq");
+			
+			// === #143. 이전글제목, 다음글제목 보기 시작 ===
+			searchType = redirect_map.get("searchType"); // 무조건 영어이므로 URL Decode 필요없음
+			
+			try {
+				searchWord = URLDecoder.decode(redirect_map.get("searchWord"), "UTF-8"); // 한글데이터가 포함되어 있으면 반드시 한글로 복구해 주어야 한다.
+				goBackURL = URLDecoder.decode(redirect_map.get("goBackURL"), "UTF-8"); // 한글데이터가 포함되어 있으면 반드시 한글로 복구해 주어야 한다.
+				
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+			// === #143. 이전글제목, 다음글제목 보기 끝 ===
+			
+		}
+
+		mav.addObject("goBackURL", goBackURL);
+		
+		try {
+			Integer.parseInt(seq);
+		 /* 
+		     "이전글제목" 또는 "다음글제목" 을 클릭하여 특정글을 조회한 후 새로고침(F5)을 한 경우는   
+		         원본이 /view_2.action 을 통해서 redirect 되어진 경우이므로 form 을 사용한 것이 아니라서   
+		     "양식 다시 제출 확인" 이라는 alert 대화상자가 뜨지 않는다. 
+		         그래서  request.getParameter("seq"); 은 null 이 된다. 
+		         즉, 글번호인 seq 가 null 이 되므로 DB 에서 데이터를 조회할 수 없게 된다.     
+		         또한 seq 는 null 이므로 Integer.parseInt(seq); 을 하면  NumberFormatException 이 발생하게 된다. 
+		 */
+
+			HttpSession session = request.getSession();
+			MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
+			CompanyVO loginCompanyuser = (CompanyVO)session.getAttribute("loginCompanyuser");
+			
+			String login_id = null;
+			
+			if(loginuser != null) {
+				login_id = loginuser.getUserid();
+				
+			} else if(loginCompanyuser != null) {
+				login_id = loginCompanyuser.getCompanyid();
+			}
+
+			Map<String, String> paraMap = new HashMap<>();
+			paraMap.put("seq", seq);
+			paraMap.put("login_id", login_id);
+
+			// >>> 글목록에서 검색된 글내용일 경우 이전글제목, 다음글제목은 검색된 결과물 내의 이전글과 다음글이 나오도록 하기 위한 것이다. <<< //
+			paraMap.put("searchType", searchType);
+			paraMap.put("searchWord", searchWord);
+
+			// === #68. !!! 중요 !!! 
+	        //     글 1개를 보여주는 페이지 요청은 select 와 함께 
+			//     DML문(지금은 글조회수 증가인 update문)이 포함되어 있다.
+			//     이럴 경우 웹브라우저에서 페이지 새로고침(F5)을 했을 때 DML문이 실행되어
+			//     매번 글 조회수 증가가 발생한다.
+			//     따라서 웹브라우저에서 페이지 새로고침(F5)을 했을 때는
+			//     단순히 select만 해주고 DML문(지금은 글조회수 증가인 update문)은 
+			//     실행하지 않도록 해 주어야 한다. !!! === //
+
+			// 글목록보기 에서 session.setAttribute("readCountPermission", "yes"); 해두었다.
+			BoardVO boardvo = null;
+
+			if("yes".equals( (String)session.getAttribute("readCountPermission") )) {
+				// 글목록보기인 /freeBoard.trip 페이지를 클릭한 다음에 특정글을 조회해온 경우이다.
+				
+				boardvo = service.getViewBoard(paraMap);
+				// 글 조회수 증가와 함께 글 1개 조회하기
+
+				session.removeAttribute("readCountPermission");
+				// 중요!! session 에 저장된 readCountPermission 을 삭제한다. 
+				
+			} else {
+				// 글목록에서 특정 글제목을 클릭하여 본 상태에서
+			    // 웹브라우저에서 새로고침(F5)을 클릭한 경우이다.
+
+				boardvo = service.getViewBoard_no_increase_readCount(paraMap);
+				// 글 조회수 증가 없이 단순히 글 1개만 조회하기
+
+				if(boardvo == null) {
+					mav.setViewName("redirect:/communityMain.trip");
+					return mav;
+				}
+				
+			}
+			
+			mav.addObject("boardvo", boardvo);
+
+			// === #140. 이전글제목, 다음글제목 보기 ===
+			mav.addObject("paraMap", paraMap);
+			
+			mav.setViewName("community/viewBoard.tiles1");
+			
+		} catch (NumberFormatException e) {
+			mav.setViewName("redirect:/communityMain.trip");
+		}
+		
+		return mav;
+	}
+	
+	
+	@PostMapping("community/viewBoard_2.trip")
+	public ModelAndView viewBoard_2(ModelAndView mav, HttpServletRequest request, RedirectAttributes redirectAttr,
+									@RequestParam(defaultValue="") String seq,
+									@RequestParam(defaultValue="") String goBackURL,
+									@RequestParam(defaultValue="") String searchType,
+									@RequestParam(defaultValue="") String searchWord) {
+		
+		try {
+			searchWord = URLEncoder.encode(searchWord, "UTF-8");
+			goBackURL = URLEncoder.encode(goBackURL, "UTF-8");
+			
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+
+		HttpSession session = request.getSession();
+		session.setAttribute("readCountPermission", "yes");
+		
+		// ==== redirect(GET방식) 시 데이터를 넘길 때 GET 방식이 아닌 POST 방식처럼 데이터를 넘기려면 RedirectAttributes 를 사용하면 된다. 시작 ==== //
+		Map<String, String> redirect_map = new HashMap<>();
+		redirect_map.put("seq", seq);
+		
+		// === #142. 이전글, 다음글 보기 시작 ===
+		redirect_map.put("goBackURL", goBackURL);
+		redirect_map.put("searchType", searchType);
+		redirect_map.put("searchWord", searchWord);
+		// === #142. 이전글, 다음글 보기 끝 ===
+
+		redirectAttr.addFlashAttribute("redirect_map", redirect_map);
+		// redirectAttr.addFlashAttribute("키", 밸류값); 으로 사용하는데 오로지 1개의 데이터만 담을 수 있으므로 여러 개의 데이터를 담으려면 Map 을 사용해야 한다.
+
+		mav.setViewName("redirect:/community/viewBoard.trip");
+		// ==== redirect(GET방식) 시 데이터를 넘길 때 GET 방식이 아닌 POST 방식처럼 데이터를 넘기려면 RedirectAttributes 를 사용하면 된다. 끝 ==== //
+		
+		return mav;
 	}
 	
 }
