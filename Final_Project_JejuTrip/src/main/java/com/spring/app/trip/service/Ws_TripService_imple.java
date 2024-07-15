@@ -419,6 +419,48 @@ public class Ws_TripService_imple implements Ws_TripService {
 		return mapList;
 	}
 	
+	// 업체가 처리한 결과에 따라 reservation테이블에 status값 바꿔주기
+	@Override
+	public int updateReservationStatus(Map<String, String> paraMap) {
+		int result = dao.updateReservationStatus(paraMap);
+		return result;
+	}
+	
+	// 회원의 예약 목록을 가져와서 status별로 카운트를 해준다.
+	@Override
+	public List<String> select_user_all_reservation(String userid) {
+		List<String> user_reservation_status = dao.select_user_all_reservation(userid);
+		return user_reservation_status;
+	}
+	
+	// 개인회원이 한 예약정보를 페이징처리하여 읽어온다.
+	@Override
+	public List<Map<String, String>> select_user_all_Reservation_paging(Map<String, String> paraMap) {
+		List<Map<String, String>> reservationList = dao.select_user_all_Reservation_paging(paraMap);
+		return reservationList;
+	}
+	
+	// tbl_reservation에서 자기 자신의 모든 예약정보를 카운트한다.
+	@Override
+	public int getTotalUserReservationCount(Map<String, String> paraMap) {
+		int count = dao.getTotalUserReservationCount(paraMap);
+		return count;
+	}
+	
+	// 회원의 이메일을 읽어온다.
+	@Override
+	public String get_user_email(String reservation_code) {
+		String email = dao.get_user_email(reservation_code);
+		try {
+			email = aES256.decrypt(email);
+		} catch (UnsupportedEncodingException | GeneralSecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return email;
+	}
+	
+	
 	
 
 }

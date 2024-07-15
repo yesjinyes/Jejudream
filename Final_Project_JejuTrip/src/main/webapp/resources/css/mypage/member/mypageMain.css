@@ -90,7 +90,7 @@
 }
 
 form.reservationFrm {
-    width:80%;
+    width:65%;
     margin:2% auto;
     border:solid 0px red;
 }
@@ -254,12 +254,4 @@ input.fail_btn:hover {
 	background-color: white;
 	color: rgb(255, 147, 147);
 	transition:0.3s;
-}
-
-.img {animation: rotate_image 2s linear infinite;transform-origin: 50% 50%;}
-
-@keyframes rotate_image{
-    100% {
-        transform: rotate(360deg);
-    }
 }
