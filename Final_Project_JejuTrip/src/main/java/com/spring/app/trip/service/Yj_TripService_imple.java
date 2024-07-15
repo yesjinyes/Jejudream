@@ -1,16 +1,13 @@
 package com.spring.app.trip.service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.spring.app.trip.domain.FoodstoreVO;
+import com.spring.app.trip.domain.LikeVO;
 import com.spring.app.trip.domain.ReviewVO;
 import com.spring.app.trip.model.Yj_TripDAO;
 
@@ -91,6 +88,46 @@ public class Yj_TripService_imple implements Yj_TripService {
 	public int deleteReview(Map<String, String> paraMap) {
 		int n = dao.deleteReview(paraMap.get("review_code"));
 		return n;
+	}
+
+
+	// == 리뷰 총 개수 구하기 == //
+	@Override
+	public int getReviewTotalCount(String parent_code) {
+		int n = dao.getReviewTotalCount(parent_code);
+		return n;
+	}
+
+
+	// == 좋아요 총 개수 알아오기 == //
+	@Override
+	public int countLike(Map<String, String> paraMap) {
+		int countLike = dao.countLike(paraMap);
+		return countLike;
+	}
+
+
+	// == 좋아요 여부 알아오기 == //
+	@Override
+	public List<FoodstoreVO> checkLike(Map<String, String> paraMap) {
+		List<FoodstoreVO> checkLike = dao.checkLike(paraMap);
+		System.out.println("checkLike : " + checkLike);
+	    return checkLike;
+	}
+
+
+	// == 좋아요 추가 == //
+	@Override
+	public int addLike(Map<String, String> paraMap) {
+		int n = dao.addLike(paraMap);
+		return n;
+	}
+
+
+	// == 좋아요 취소 == //
+	@Override
+	public void deleteLike(Map<String, String> paraMap) {
+		dao.deleteLike(paraMap);
 	}
 
 	

@@ -176,7 +176,11 @@ textarea {
 
 	$(document).ready(function() {
 
-		goViewReview(1);
+		goLikeDislikeCount(); // 좋아요 개수 띄우기
+		
+		goViewReview(1); // 리뷰 리스트 띄우기
+		
+		///////////////////////////////////////////////////////////////////////////////////////
 		
 		// == 리뷰 input 엔터 키 == //
 		$("textarea[name='review_content']").bind("keyup", function(e) {
@@ -185,7 +189,14 @@ textarea {
 			}
 		});
 		
-		///////////////////////////////////////////////////////////////////////////////////////////////////
+		// == 리뷰 아이콘 클릭 시 리뷰 리스트로 이동 == //
+		const reviewList = document.getElementById("reviewList");
+		
+		$("button#btn-review").click(function() {
+			// alert("리뷰 버튼 클릭");
+			window.scrollBy({top: reviewList.getBoundingClientRect().top, behavior: 'smooth'});
+		});
+
 		
 		// == 리뷰 수정, 완료  == //
 		let origin_review_content = "";
@@ -294,10 +305,60 @@ textarea {
 	
 	//▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒//
 	// Function declaration
+
+	$("button#btnLike").click(function() {
+		
+		alert("좋아요 클릭");
+		
+		
+	});// end of $("button#btnLike").click(function() {})-----------------------
+	
+	
+	
+	// == 좋아요 클릭 기능 == //
+	function golikeAdd(){
+ 		
+		alert("좋아요 버튼 클릭");
+		
+		/* if(${empty sessionScope.loginuser}) {
+			alert("좋아요는 로그인 후 가능합니다.");
+			return; // 종료
+		}
+		else{
+			//로그인을 한 경우라면
+			$.ajax({
+				url:"foodLike.trip",
+				type:"POST",
+				data:{"parent_code":"${requestScope.foodstorevo.food_store_code}",
+					  "fk_userid":"${sessionScope.loginuser.userid}"},
+				dataType:"json", 
+				success:function(json) {
+					if(json.n == 1){
+						alert("좋아요 등록 완료");
+						goLikeDislikeCount();
+					}
+					else{
+						alert("좋아요 취소");
+						goLikeDislikeCount();
+					}
+		        },
+		        error: function(request, status, error){
+		        	alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+		        }
+	    	});// end of $.ajax-------------------------
+		} */
+		
+	}// end of function golikeAdd()---------------------------
+
+
 	
 	// == 내 일정에 추가 == //
 	function addSchedule() {
 		$("#calendarModal").modal("show");
+		
+		
+		
+		
 	}
 	
 
@@ -445,7 +506,7 @@ textarea {
 		$("div#pageBar").html(pageBar_html);
 		
 	}// end of function makeReviewPageBar(currentShowPageNo)------------------ */
-	
+
 	
 	// == 맛집 상세 페이지에서 로그인 페이지로 이동 (리뷰 작성을 위한 것) == //
 	function goLogin() {
@@ -461,6 +522,13 @@ textarea {
 
 
 <div id="container">
+
+	<c:if test="${sessionScope.loginuser.userid == 'admin'}">
+		<div style="width: 90%; margin: 3% auto;text-align: right;">
+			<button type="button" onclick="javascript:location.href='<%= ctxPath%>/editFoodstore.trip?food_store_code=${requestScope.foodstorevo.food_store_code}'" class="btn btn-secondary mr-2">맛집 수정</button>
+			<button type="button" onclick="goDelete()" class="btn btn-danger" >맛집 삭제</button>
+		</div>
+	</c:if>
 	
 	<div class="imgcrop">
 		<img class="imgAdd img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgAdd/${requestScope.foodstorevo.food_name}_add1.jpg" alt="..." />
@@ -512,22 +580,24 @@ textarea {
 				<!-- 아이콘 모음 시작 -->
 				<ul class="list" style="display: flex; margin-left: 8%;">
 					<li class="list-item">
-						<button type="button" class="iconbtn">
+						<!-- <button type="button" class="iconbtn" onclick="golikeAdd()"> -->
+						<button type="button" class="iconbtn" id="btnLike">
 							<div class="item-each">
-								<img class="icon" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_like.png">
+								<img class="icon like" id="like" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_like.png">
+								<%-- <img class="icon likeup" id="likeup" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_likeup.png"> --%>
 							</div>
 							<p class="icon-title">좋아요</p>
 						</button>
-						<p class="count">30</p>
+						<p class="count" id="likeCount"></p>
 					</li>
 					<li class="list-item">
-						<button type="button" class="iconbtn">
+						<button type="button" class="iconbtn" id="btn-review">
 							<div>
 								<img class="icon" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_review2.png">
 							</div>
 							<p class="icon-title">리뷰</p>
 						</button>
-						<p class="count">5</p>
+						<p class="count" id="reviewCount"></p>
 					</li>
 					<li class="list-item">
 						<button type="button" class="iconbtn" onclick="addSchedule()">

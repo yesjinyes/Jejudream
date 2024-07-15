@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import com.spring.app.trip.domain.FoodstoreVO;
+import com.spring.app.trip.domain.LikeVO;
 import com.spring.app.trip.domain.ReviewVO;
 
 @Repository
@@ -89,6 +90,45 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 	public int deleteReview(String review_code) {
 		int n = sqlsession.delete("yj_trip.deleteReview", review_code);
 		return n;
+	}
+
+
+	// == 리뷰 총 개수 구하기 == //
+	@Override
+	public int getReviewTotalCount(String parent_code) {
+		int n = sqlsession.selectOne("yj_trip.getReviewTotalCount", parent_code);
+		return n;
+	}
+
+
+	// == 좋아요 총 개수 알아오기 == //
+	@Override
+	public int countLike(Map<String, String> paraMap) {
+		int countLike = sqlsession.selectOne("yj_trip.countLike",paraMap);
+		return countLike;
+	}
+
+
+	// == 좋아요 여부 알아오기 == //
+	@Override
+	public List<FoodstoreVO> checkLike(Map<String, String> paraMap) {
+		List<FoodstoreVO> checkLike = sqlsession.selectList("yj_trip.checkLike",paraMap);
+		return checkLike;
+	}
+
+
+	// == 좋아요 추가 == //
+	@Override
+	public int addLike(Map<String, String> paraMap) {
+		int n = sqlsession.insert("yj_trip.addLike", paraMap);
+		return n;
+	}
+
+
+	// == 좋아요 취소 == //
+	@Override
+	public void deleteLike(Map<String, String> paraMap) {
+		sqlsession.delete("yj_trip.deleteLike", paraMap);
 	}
 
 
