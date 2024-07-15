@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.spring.app.trip.domain.LikeVO;
+import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.domain.PlayVO;
 import com.spring.app.trip.domain.ReviewVO;
 
@@ -53,6 +54,10 @@ public interface Hs_TripDAO {
 	int countTourism();
 	int countShowing();
 	int countExperience();
+
+	List<MemberVO> searchPlayJoinUserList(String joinUserName);//일행 추가를 위한 유저 ID select
+
+	int registerPlaySchedule_end(Map<String, String> paraMap); //일정추가
 
 	
 

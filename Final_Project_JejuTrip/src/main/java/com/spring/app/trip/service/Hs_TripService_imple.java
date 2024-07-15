@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.spring.app.trip.common.FileManager;
 import com.spring.app.trip.domain.LikeVO;
+import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.domain.PlayVO;
 import com.spring.app.trip.domain.ReviewVO;
 import com.spring.app.trip.model.Hs_TripDAO;
@@ -204,6 +205,20 @@ public class Hs_TripService_imple implements Hs_TripService {
 	@Override
 	public int countExperience() {
 	    return dao.countExperience();
+	}
+	
+	//일행 추가를 위한 유저 ID select
+	@Override
+	public List<MemberVO> searchPlayJoinUserList(String joinUserName) {
+		List<MemberVO> JoinUserList = dao.searchPlayJoinUserList(joinUserName);
+		return JoinUserList;
+	}
+	
+	//일정추가
+	@Override
+	public int registerPlaySchedule_end(Map<String, String> paraMap) {
+		int n = dao.registerPlaySchedule_end(paraMap);
+		return n;
 	}
 	
 	

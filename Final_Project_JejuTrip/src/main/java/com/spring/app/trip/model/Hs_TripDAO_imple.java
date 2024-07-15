@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import com.spring.app.trip.domain.LikeVO;
+import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.domain.PlayVO;
 import com.spring.app.trip.domain.ReviewVO;
 @Component
@@ -156,5 +157,49 @@ public class Hs_TripDAO_imple implements Hs_TripDAO {
 	public int countExperience() {
 	    return sqlsession.selectOne("hs_trip.countExperience");
 	}
+
+	//일행 추가를 위한 유저 ID select
+	@Override
+	public List<MemberVO> searchPlayJoinUserList(String joinUserName) {
+		List<MemberVO> PlayJoinUserList = sqlsession.selectList("hs_trip.searchPlayJoinUserList",joinUserName);
+		return PlayJoinUserList;
+	}
+	
+	//일정추가
+	@Override
+	public int registerPlaySchedule_end(Map<String, String> paraMap) {
+		int n = sqlsession.insert("hs_trip.registerPlaySchedule_end",paraMap);
+		return n;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 }

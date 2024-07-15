@@ -282,6 +282,12 @@ font-size: 17px;
 
 }
 /*-----------------------------------------------------------------------------------------  */
+
+.icon{
+
+width: 30px;
+}
+
 </style>
 
 
@@ -289,12 +295,11 @@ font-size: 17px;
 
 
 $(document).ready(function() {
-  
+	
 	let currentShowPageNo = 1; // currentShowPageNo 초기값
     
 	contentPlay(currentShowPageNo); // 페이지 불러오는 함수
     updateCategoryCount(); // 카테고리별 수량 알아오는 함수
-    
     
     $(".list-group-item").hover(function(e) {
         $(e.target).addClass("moveColor");
@@ -405,10 +410,9 @@ function goAddSchedule(playCode) {
 
 function contentPlay(currentShowPageNo) {
 	goTop();
-	
 	$("input:hidden[name='currentShowPageNo']").val(currentShowPageNo);
     const formData = $("form[name='totalPlayFrm']").serialize(); //totalPlayFrm 폼에 담았던  데이터들을 전체 ~~ 
-
+    
     $.ajax({
         url: "<%= ctxPath %>/playMainJSON.trip",
         data: formData,
@@ -465,6 +469,7 @@ function contentPlay(currentShowPageNo) {
                 v_html += "현재 카테고리 준비중 입니다...";
             }
             $("div#categoryList").html(v_html);
+            
         },
         error: function(request, status, error) {
             alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
@@ -532,9 +537,13 @@ function updateCategoryCount() {
 }
 
 
+
+
 function goTop() {
     $(window).scrollTop(0);
 }
+
+
 
 
 </script>
@@ -631,8 +640,8 @@ function goTop() {
                 <div class="row">
                     <div class="sort-filter main" style="display: flex; justify-content:space-between; width: 98%; margin-bottom: 20px;margin-left: 3%;">
                         <div>
-                            <button type="button" onclick="" class="btn btn-outline-warning btn-sm" value="">추천순</button>
-                            <button type="button" onclick="" class="btn btn-outline-warning btn-sm" value="NEW">최신등록순</button>
+                            <!-- <button type="button" onclick="" class="btn btn-outline-warning btn-sm" value="">추천순</button>
+                            <button type="button" onclick="" class="btn btn-outline-warning btn-sm" value="NEW">최신등록순</button> -->
                             
                             <c:if test="${sessionScope.loginuser.userid == 'admin'}">
                                 <button type="button" onclick="location.href='<%= ctxPath%>/registerPlay.trip'" class="btn btn-outline-info btn-sm">즐길거리 등록</button>

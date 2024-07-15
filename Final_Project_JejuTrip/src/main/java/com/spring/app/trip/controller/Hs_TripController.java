@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -591,8 +592,8 @@ public class Hs_TripController {
 			String fk_userid = request.getParameter("fk_userid");
 			String like_division_R = "C";
 			int n = 0;
-			System.out.println("parent_code"+parent_code);
-			System.out.println("fk_userid"+fk_userid);
+			//System.out.println("parent_code"+parent_code);
+			//System.out.println("fk_userid"+fk_userid);
 			
 			Map<String, String> paraMap = new HashMap<>();
 			paraMap.put("parent_code", parent_code);
@@ -612,7 +613,7 @@ public class Hs_TripController {
 		        
 			}
 			
-			System.out.println("n"+n);
+			//System.out.println("n"+n);
 			
 		    JSONObject jsonObj = new JSONObject(); 
 		    jsonObj.put("n", n);
@@ -675,7 +676,98 @@ public class Hs_TripController {
 		
 		
 		
+		//--------------------------------일정추가 관련 시작-------------------------------------------//
 		
+		// === 공유자를 찾기 위한 특정글자가 들어간 회원명단 불러오기 ===
+		@ResponseBody
+		@RequestMapping(value="/schedule/insertSchedule/searchPlayJoinUserList.trip", produces="text/plain;charset=UTF-8")
+		public String searchPlayJoinUserList(HttpServletRequest request) {
+			
+			String joinUserName = request.getParameter("joinUserName");
+			
+			// 회원명단 불러오기
+			List<MemberVO> joinUserList = service.searchPlayJoinUserList(joinUserName);
+
+			JSONArray jsonArr = new JSONArray();
+			if(joinUserList != null && joinUserList.size() > 0) {
+				for(MemberVO mvo : joinUserList) {
+					JSONObject jsObj = new JSONObject();
+					jsObj.put("userid", mvo.getUserid());
+					jsObj.put("name", mvo.getUser_name());
+					
+					jsonArr.put(jsObj);
+				}
+			}
+			
+			return jsonArr.toString();
+			
+		}
+		
+		
+		// === 일정 등록하기 ===
+		@PostMapping("/schedule/registerPlaySchedule_end.trip")
+		public ModelAndView registerPlaySchedule_end(ModelAndView mav, HttpServletRequest request) throws Throwable {
+			
+			String startdate= request.getParameter("startdate");
+			System.out.println("확인용 startdate => " + startdate);
+		//  확인용 startdate => 20231129140000
+	   	    
+			String enddate = request.getParameter("enddate");
+			
+			
+			String subject = request.getParameter("subject");
+			String fk_lgcatgono= request.getParameter("fk_lgcatgono");
+			String fk_smcatgono = request.getParameter("fk_smcatgono");
+			String color = request.getParameter("color");
+			String place = request.getParameter("place");
+			String joinuser = request.getParameter("joinuser");
+			
+			String content = request.getParameter("content");
+			String fk_userid = request.getParameter("fk_userid");
+			
+	     	System.out.println("확인용 joinuser => " + joinuser);
+	     	System.out.println("확인용 subject => " + subject);
+	     	System.out.println("확인용 fk_lgcatgono => " + fk_lgcatgono);
+	     	System.out.println("확인용 fk_smcatgono => " + fk_smcatgono);
+	     	System.out.println("확인용 color => " + color);
+	     	System.out.println("확인용 place => " + place);
+	     	System.out.println("확인용 content => " + content);
+	     	System.out.println("확인용 fk_userid => " + fk_userid);
+		 // 확인용 joinUser_es =>
+		 // 또는 
+		 // 확인용 joinUser_es => 이순신(leess),아이유1(iyou1),설현(seolh) 	
+			
+			
+			
+			Map<String,String> paraMap = new HashMap<String, String>();
+			paraMap.put("startdate", startdate);
+			paraMap.put("enddate", enddate);
+			paraMap.put("subject", subject);
+			paraMap.put("fk_lgcatgono",fk_lgcatgono);
+			paraMap.put("fk_smcatgono", fk_smcatgono);
+			paraMap.put("color", color);
+			paraMap.put("place", place);
+			
+			paraMap.put("joinuser", joinuser);
+			
+			paraMap.put("content", content);
+			paraMap.put("fk_userid", fk_userid);
+			
+			int n = service.registerPlaySchedule_end(paraMap);
+
+			if(n == 0) {
+				mav.addObject("message", "일정 등록에 실패하였습니다.");
+			}
+			else {
+				mav.addObject("message", "일정 등록에 성공하였습니다.");
+			}
+			
+			mav.addObject("loc", request.getContextPath()+"/index.trip");
+			
+			mav.setViewName("msg");
+			
+			return mav;
+		}
 		
 		
 		
