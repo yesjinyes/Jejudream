@@ -35,6 +35,8 @@ public class Js_TripDAO_imple implements Js_TripDAO {
 		
 		int totalCount = sqlsession.selectOne("js_trip.getLodgingTotalCount", paraMap);
 		
+		// System.out.println("totalCount : " + totalCount);
+		
 		return totalCount;
 		
 	} // end of public int getLodgingTotalCount(Map<String, String> paraMap) {} 
@@ -42,9 +44,9 @@ public class Js_TripDAO_imple implements Js_TripDAO {
 
 	// 숙소리스트에 표현할 편의시설 목록 구해오기
 	@Override
-	public List<String> getConvenientList() {
+	public List<String> getConvenientList(String lodging_code) {
 		
-		List<String> convenientList = sqlsession.selectList("js_trip.getConvenientList");
+		List<String> convenientList = sqlsession.selectList("js_trip.getConvenientList", lodging_code);
 		
 		return convenientList;
 		
@@ -63,9 +65,9 @@ public class Js_TripDAO_imple implements Js_TripDAO {
 
 	// 숙소의 객실 정보 가져오기
 	@Override
-	public List<Map<String, String>> getRoomDetail(String lodgingCode) {
+	public List<Map<String, String>> getRoomDetail(Map<String, String> dateSendMap) {
 		
-		List<Map<String, String>> roomDetailList = sqlsession.selectList("js_trip.getRoomDetail", lodgingCode);
+		List<Map<String, String>> roomDetailList = sqlsession.selectList("js_trip.getRoomDetail", dateSendMap);
 		
 		return roomDetailList;
 		
@@ -84,6 +86,15 @@ public class Js_TripDAO_imple implements Js_TripDAO {
 	} // end of public Map<String, String> getReserveRoomDetail(Map<String, String> paraMap) {
 
 
+	// 예약결과 예약번호 표현을 위한 채번해오기
+	@Override
+	public String getReservationNum() {
+		
+		String num = sqlsession.selectOne("js_trip.getReservationNum");
+		
+		return num;
+	} // end of public String getReservationNum() { 
+	
 	
 	// 결제 후 예약테이블에 insert 하기
 	@Override
@@ -95,4 +106,71 @@ public class Js_TripDAO_imple implements Js_TripDAO {
 		
 	}// end of public int insertReservation(Map<String, String> paraMap) {
 
+
+	
+	// 예약완료된 정보 가져오기
+	@Override
+	public Map<String, String> getReservationInfo(Map<String, String> paraMap) {
+		
+		Map<String, String> resultMap = sqlsession.selectOne("js_trip.getReservationInfo",paraMap);
+		
+		return resultMap;
+		
+	} // end of public Map<String, String> getReservationInfo(Map<String, String> paraMap) {
+
+
+	
+	// 댓글 페이징 처리를 위한 토탈 카운트 구해오기
+	@Override
+	public int getCommentTotalCount(String lodging_code) {
+		
+		int totalCount = sqlsession.selectOne("js_trip.getCommentTotalCount",lodging_code);
+		
+		return totalCount;
+		
+	} // end of public int getCommentTotalCount(String lodging_code) {
+
+
+	
+	// 리뷰리스트 가져오기
+	@Override
+	public List<Map<String, String>> getCommentList_Paging(Map<String, String> paraMap) {
+		
+		List<Map<String, String>> reviewList = sqlsession.selectList("js_trip.getCommentList_Paging", paraMap);
+		
+		return reviewList;
+		
+	} // end of public List<Map<String, String>> getCommentList_Paging(Map<String, String> paraMap) {
+
+	
+	
+	// 숙소상세페이지 이동시에 예약했는지 확인하기
+	@Override
+	public int chkReservation(Map<String, String> chkMap) {
+		
+		int chk = sqlsession.selectOne("js_trip.chkReservation", chkMap);
+		
+		return chk;
+		
+	} // end of 
+
+
+	
+	// 리뷰를 작성했는지 안했는지 확인하기
+	@Override
+	public int chkReview(Map<String, String> chkMap) {
+		
+		int chk = sqlsession.selectOne("js_trip.chkReview", chkMap);
+		
+		return chk;
+		
+	} // end of public int chkReview(Map<String, String> chkMap) {
+
+	
+	
+	
+	
+	
+	
+	
 }

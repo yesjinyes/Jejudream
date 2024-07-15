@@ -19,25 +19,15 @@ FROM
     FROM
     (
         select L.lodging_name, M.user_name, R.room_detail_code, to_char(V.check_in,'yyyy-mm-dd') as check_in, to_char(V.check_out,'yyyy-mm-dd') as check_out, R.room_stock, V.status, V.reservation_code, R.room_name
-		from tbl_lodging L JOIN tbl_room_detail R
-		on L.lodging_code = R.fk_lodging_code
-		JOIN tbl_reservation V
-		ON R.room_detail_code = V.fk_room_detail_code
-		JOIN tbl_member M
-		ON V.fk_userid = M.userid
-		where fk_companyid = 'kakao'
-		order by to_number(V.reservation_code) desc
+        from tbl_lodging L JOIN tbl_room_detail R
+        on L.lodging_code = R.fk_lodging_code
+        JOIN tbl_reservation V
+        ON R.room_detail_code = V.fk_room_detail_code
+        JOIN tbl_member M
+        ON V.fk_userid = M.userid
+        where V.fk_userid = 'kudi02'
+        order by V.reservation_date desc
     )V
 ) T
-where RNO between 6 and 10
+where RNO between 1 and 5;
 
-
-select L.lodging_name, M.user_name, R.room_detail_code, to_char(V.check_in,'yyyy-mm-dd') as check_in, to_char(V.check_out,'yyyy-mm-dd') as check_out, R.room_stock, V.status, V.reservation_code, R.room_name
-from tbl_lodging L JOIN tbl_room_detail R
-on L.lodging_code = R.fk_lodging_code
-JOIN tbl_reservation V
-ON R.room_detail_code = V.fk_room_detail_code
-JOIN tbl_member M
-ON V.fk_userid = M.userid
-where fk_companyid = 'kakao'
-order by to_number(V.reservation_code) desc

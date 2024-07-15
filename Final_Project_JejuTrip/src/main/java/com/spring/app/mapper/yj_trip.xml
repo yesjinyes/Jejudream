@@ -24,38 +24,48 @@
 		<result property="filename" 			column="filename" 			javaType="String" />
 		<result property="orgfilename" 			column="orgfilename" 		javaType="String" />
 		<result property="filesize" 			column="filesize" 			javaType="String" />
+		<result property="readcount" 			column="readcount" 			javaType="String" />
 	</resultMap>
 	<select id="viewFoodstoreList" parameterType="HashMap" resultType="com.spring.app.trip.domain.FoodstoreVO">
 		SELECT rno, food_store_code, local_status, food_name, food_content, food_businesshours, food_mobile
-		     , food_address, food_main_img, review_division, food_category
-		     , filename, orgfilename, filesize
-		FROM
+			 , food_address, food_main_img, review_division, food_category
+			 , filename, orgfilename, filesize
+			 , readcount
+		FROM 
 		(
-			select rownum as RNO, food_store_code, local_status, food_name, food_content, food_businesshours, food_mobile
-			     , substr(food_address, 0, instr(food_address, ' ', 1, 2)-1) AS food_address
-			     , food_main_img, review_division, food_category
-			     , filename, orgfilename, filesize   
-			from tbl_food_store
-			where 1=1
-		
-			<!-- 카테고리 체크박스 다중선택 -->
-			<if test="arr_category != null">
-				AND food_category IN
-				<foreach collection="arr_category" index="i" open="(" separator="," close=")">
-					'${arr_category[i]}'
-				</foreach>
-			</if>
-			<!-- 지역 체크박스 다중선택 -->
-			<if test="arr_area != null">
-				AND local_status IN
-				<foreach collection="arr_area" index="i" open="(" separator="," close=")">
-					'${arr_area[i]}'
-				</foreach>
-			</if>
-			<!-- 검색 -->
-			<if test="searchWord != ''">
-				AND lower(food_name) like '%'||lower(#{searchWord})||'%'
-			</if>
+			SELECT rownum as RNO, food_store_code, local_status, food_name, food_content, food_businesshours, food_mobile
+			     , food_address, food_main_img, review_division, food_category
+			     , filename, orgfilename, filesize
+			     , readcount
+			FROM
+			(
+				select food_store_code, local_status, food_name, food_content, food_businesshours, food_mobile
+				     , substr(food_address, 0, instr(food_address, ' ', 1, 2)-1) AS food_address
+				     , food_main_img, review_division, food_category
+				     , filename, orgfilename, filesize
+				     , readcount
+				from tbl_food_store
+				where 1=1
+			
+				<!-- 카테고리 체크박스 다중선택 -->
+				<if test="arr_category != null">
+					AND food_category IN
+					<foreach collection="arr_category" index="i" open="(" separator="," close=")">
+						'${arr_category[i]}'
+					</foreach>
+				</if>
+				<!-- 지역 체크박스 다중선택 -->
+				<if test="arr_area != null">
+					AND local_status IN
+					<foreach collection="arr_area" index="i" open="(" separator="," close=")">
+						'${arr_area[i]}'
+					</foreach>
+				</if>
+				<!-- 검색 -->
+				<if test="searchWord != ''">
+					AND lower(food_name) like '%'||lower(#{searchWord})||'%'
+				</if>
+			)V
 		)
 		WHERE rno between #{startRno} and #{endRno}
 		<!-- 오름차순 정렬 -->
@@ -69,6 +79,7 @@
 		<if test="orderType == null">
 			ORDER BY food_store_code
 		</if>
+		
 	</select>
 	
 	
@@ -144,6 +155,28 @@
 		values(seq_review.nextval, #{fk_userid}, #{parent_code}, #{review_content}, default, 'B')
 	</insert>
 	
+	<!-- 작성한 리뷰 보이기 -->
+	<select id="getReviewList" parameterType="String" resultType="com.spring.app.trip.domain.ReviewVO">
+		select review_code, fk_userid, parent_code, review_content
+			 , to_char(registerday, 'yyyy-mm-dd') AS registerday
+		from tbl_review
+		where parent_code = #{parent_code}
+		order by review_code desc
+	</select>
+
+	
+	<!-- 리뷰 수정하기 -->
+	<update id="updateReview" parameterType="HashMap">
+		update tbl_review set review_content = #{review_content}, registerday = sysdate
+		where review_code = #{review_code}
+	</update>
+
+	<!-- 리뷰 삭제하기 -->
+	<delete id="deleteReview" parameterType="String">
+		delete from tbl_review
+		where review_code = #{review_code}
+	</delete>
+
 
 
 </mapper>

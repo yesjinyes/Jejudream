@@ -636,7 +636,7 @@
 		ORDER BY day
 	</select>
 	
-	<select id="getTotalreservationCount" parameterType="String" resultType="Integer">
+	<select id="getTotalreservationCount" parameterType="HashMap" resultType="Integer">
 		select count(*) as count
 		from tbl_lodging L JOIN tbl_room_detail R
 		on L.lodging_code = R.fk_lodging_code
@@ -688,6 +688,76 @@
 		    )V
 		) T
 		where RNO between #{startRno} and #{endRno}
+	</select>
+	
+	<update id="updateReservationStatus" parameterType="HashMap">
+		update tbl_reservation set status = #{status} where reservation_code = #{reservation_code}
+	</update>
+	
+	<select id="select_user_all_reservation" parameterType="String" resultType="String">
+		select status
+		from tbl_reservation
+		where fk_userid = #{userid}
+	</select>
+	
+	<resultMap type="HashMap" id="user_reservation_map_paging">
+		<result property="lodging_name" 	column="lodging_name" 	javaType="String" />
+		<result property="user_name" 		column="user_name" javaType="String" />
+		<result property="room_detail_code" column="room_detail_code" javaType="String" />
+		<result property="check_in" 		column="check_in" javaType="String" />
+		<result property="check_out" 		column="check_out" javaType="String" />
+		<result property="room_stock" 		column="room_stock" javaType="String" />
+		<result property="status" 			column="status" javaType="String" />
+		<result property="reservation_code" column="reservation_code" javaType="String" />
+		<result property="room_name" column="room_name" javaType="String" />
+	</resultMap>
+	
+	<select id="select_user_all_Reservation_paging" parameterType="String" resultMap="user_reservation_map_paging">
+		SELECT lodging_name, user_name, room_detail_code, check_in, check_out, room_stock, status, reservation_code, room_name
+		FROM 
+		(
+		    SELECT rownum AS RNO
+		         ,lodging_name, user_name, room_detail_code, check_in, check_out, room_stock, status, reservation_code, room_name
+		    FROM
+		    (
+		        select L.lodging_name, M.user_name, R.room_detail_code, to_char(V.check_in,'yyyy-mm-dd') as check_in, to_char(V.check_out,'yyyy-mm-dd') as check_out, R.room_stock, V.status, V.reservation_code, R.room_name
+				from tbl_lodging L JOIN tbl_room_detail R
+				on L.lodging_code = R.fk_lodging_code
+				JOIN tbl_reservation V
+				ON R.room_detail_code = V.fk_room_detail_code
+				JOIN tbl_member M
+				ON V.fk_userid = M.userid
+				<if test="userid != null">
+					where V.fk_userid = #{userid}
+					<if test="status != null">
+						and V.status = #{status}
+					</if>
+				</if>
+				order by V.reservation_date desc
+		    )V
+		) T
+		where RNO between #{startRno} and #{endRno}
+	</select>
+	
+	<select id="getTotalUserReservationCount" parameterType="HashMap" resultType="Integer">
+		select count(*) as count
+		from tbl_lodging L JOIN tbl_room_detail R
+		on L.lodging_code = R.fk_lodging_code
+		JOIN tbl_reservation V
+		ON R.room_detail_code = V.fk_room_detail_code
+		JOIN tbl_member M
+		ON V.fk_userid = M.userid
+		where V.fk_userid = #{userid}
+		<if test="status != null">
+			and V.status = #{status}
+		</if>
+	</select>
+	
+	<select id="get_user_email" parameterType="String" resultType="String">
+		select M.email
+		from tbl_reservation R JOIN tbl_member M
+		ON R.fk_userid = M.userid
+		where reservation_code = #{reservation_code}
 	</select>
 	
 </mapper>
