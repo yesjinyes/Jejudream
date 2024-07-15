@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.ReviewVO;
@@ -47,7 +50,7 @@ public class Yj_TripController {
 	
 	
 	
-	// == 맛집 메인 페이지 Ajax 처리  == //
+	// == 맛집 리스트 페이지 (Ajax 처리) == //
 	@ResponseBody
 	@GetMapping(value="foodstoreListJSON.trip", produces="text/plain;charset=UTF-8")
 	public String foodstoreListJSON(HttpServletRequest request,
@@ -61,6 +64,10 @@ public class Yj_TripController {
 		
 		// System.out.println("currentShowPageNo 확인 !!" + currentShowPageNo);
 
+		// 조회수 처리
+		//service
+		
+		
 		// 페이징 처리
 		int sizePerPage = 7; //한페이지당 7개의 맛집
 		
@@ -180,9 +187,37 @@ public class Yj_TripController {
 	public ModelAndView foodstoreDetail(ModelAndView mav, HttpServletRequest request,
 										@RequestParam(defaultValue="") String random_recommend_code) {
 	
+		String food_store_code = "";
+		
+/*		// redirect 되어서 넘어온 데이터가 있는지 꺼내어 와본다.
+ 		Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);
+ 		
+ 		if(inputFlashMap != null) {
+ 			// redirect 되어서 넘어온 데이터가 있는 경우
+ 			@SuppressWarnings("unchecked")
+			Map<String, String> redirect_map = (Map<String, String>)inputFlashMap.get("redirect_map");
+ 			food_store_code = redirect_map.get("food_store_code");
+ 		}
+ 		
+ 		else { 
+ 			// redirect 되어서 넘어온 데이터가 아닌 경우 (직접 해온 경우)
+ 			food_store_code = request.getParameter("food_store_code");
+ 			
+ 			
+ 		}
+		
+ 		
+ 		try {
+ 			Integer.parseInt(food_store_code);
+ 			
+ 			
+ 		}
+		
+*/		
+		
 		Map<String, String> paraMap = new HashMap<>();
 		
-		String food_store_code = request.getParameter("food_store_code");
+		food_store_code = request.getParameter("food_store_code");
 		
 //		System.out.println("-------------------------------------------------------");
 //		System.out.println("## 확인용 food_store_code => "+ food_store_code);
@@ -209,19 +244,36 @@ public class Yj_TripController {
 	}
 	
 	
+	// == 상세페이지 조회수 증가 == //
+	@GetMapping("foodstoreDetail_2.trip")
+	public ModelAndView view_2(ModelAndView mav, HttpServletRequest request, RedirectAttributes redirectAttr) {
+		
+		String food_store_code = request.getParameter("food_store_code");
+		System.out.println("~~~~ food_store_code 나와주세요 => "+ food_store_code);
+		
+		HttpSession session = request.getSession();
+		session.setAttribute("readCountPermission", "yes");
+		
+		Map<String, String> redirect_map = new HashMap<>();
+		redirect_map.put("food_store_code", food_store_code);
+		
+		redirectAttr.addFlashAttribute("redirect_map", redirect_map);
+		
+		mav.setViewName("redirect:/foodstoreDetail.trip");
+		
+		return mav;
+	}
+	
+	
 	// == 리뷰 쓰기 == //
 	@ResponseBody
 	@PostMapping(value="/addReview.trip", produces="text/plain;charset=UTF-8")
 	public String addComment(ReviewVO reviewvo, HttpServletRequest request) {
-
-		String parent_code = request.getParameter("parent_code");
-		// System.out.println("확인용 parent_code => " + parent_code);
 		
 		int n = 0;
 		
 		try {
-			n = service.addFoodstoreReview(reviewvo); // 리뷰쓰기, 리뷰 개수 증가
-			// 댓글쓰기(insert) 및 원게시물(tbl_board 테이블)에 댓글의 개수 증가(update 1씩 증가)하기 
+			n = service.addFoodstoreReview(reviewvo); // 리뷰쓰기
 		
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -230,15 +282,95 @@ public class Yj_TripController {
 		JSONObject jsonObj = new JSONObject();
 		jsonObj.put("n", n);
 		jsonObj.put("fk_userid", reviewvo.getFk_userid());
-		jsonObj.put("parent_code", parent_code);
 		
-		// System.out.println("### 확인 : "+ jsonObj.toString());
+		//System.out.println("### controller 에서 insert 확인 : "+ jsonObj.toString());
 		
 		return jsonObj.toString();
-		
 	}
 	
-
+	
+	// == 작성한 리뷰 보이기 == //
+	@ResponseBody
+	@GetMapping(value="/foodstoreReviewList.trip", produces="text/plain;charset=UTF-8")
+	public String foodstoreReviewList(ReviewVO reviewvo, HttpServletRequest request) {
+		
+		String parent_code = request.getParameter("parent_code");
+		// System.out.println("parent_code 확인 =>" + parent_code);
+		
+		List<ReviewVO> reviewList = service.getReviewList(parent_code);
+		
+		JSONArray jsonArr = new JSONArray();
+		
+		if(reviewList != null) {
+			for(ReviewVO rvo : reviewList) {
+				JSONObject jsonObj = new JSONObject();
+				jsonObj.put("review_code", rvo.getReview_code());
+				jsonObj.put("fk_userid", rvo.getFk_userid());
+				jsonObj.put("parent_code", rvo.getParent_code());
+				jsonObj.put("review_content", rvo.getReview_content());
+				jsonObj.put("registerday", rvo.getRegisterday());
+				
+				jsonArr.put(jsonObj);
+			}// end of for------------------
+			
+		}
+		
+		//System.out.println("~~~리뷰 List jsonArr 확인 => "+jsonArr.toString());
+		return jsonArr.toString();
+	}
+	
+	
+	// == 리뷰 수정하기 == //
+	@ResponseBody
+	@PostMapping(value="/updateReview.trip", produces="text/plain;charset=UTF-8")
+	public String updateReview(HttpServletRequest request) {
+		
+		String review_code = request.getParameter("review_code");
+		String review_content = request.getParameter("review_content");
+		
+		// System.out.println("~~~review_content 확인 => "+review_content);
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("review_code", review_code);
+		paraMap.put("review_content", review_content);
+		int n = service.updateReview(paraMap);
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("n", n);
+		
+		return jsonObj.toString(); // "{"n":1}"
+	}
+	
+	
+	// == 리뷰 삭제하기 == //
+	@ResponseBody
+	@PostMapping(value="/deleteReview.trip", produces="text/plain;charset=UTF-8")
+	public String deleteReview(HttpServletRequest request) {
+		
+		String review_code = request.getParameter("review_code");
+		//String parent_code = request.getParameter("parent_code");
+		
+		//System.out.println("글번호(parent_code) 확인 => " + parent_code);
+		
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("review_code", review_code);
+		//paraMap.put("parent_code", parent_code);
+		
+		int n = 0;
+		
+		try {
+			n = service.deleteReview(paraMap);
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("n", n);
+		
+		return jsonObj.toString();		
+	}
+	
 	
 	
 

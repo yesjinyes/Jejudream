@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.spring.app.trip.common.FileManager;
+import com.spring.app.trip.domain.LikeVO;
 import com.spring.app.trip.domain.PlayVO;
 import com.spring.app.trip.domain.ReviewVO;
 import com.spring.app.trip.model.Hs_TripDAO;
@@ -156,6 +157,57 @@ public class Hs_TripService_imple implements Hs_TripService {
 	    return 1; // 모든 작업이 성공적으로 완료되면 1 반환
 
 	}
+	
+	//좋아요를 했는지 알아오기
+	@Override
+	public List<LikeVO> checkLike(Map<String, String> paraMap) {
+		
+		List<LikeVO> checkLike = dao.checkLike(paraMap);  // int로 반환된 좋아요 상태 확인
+	    
+		System.out.println("checkLike : " + checkLike);
+	    return checkLike;
+	}
+	@Override
+	public int likeAdd(Map<String, String> paraMap) {
+		int n = dao.likeAdd(paraMap);
+		return n;
+	}
+	@Override
+	public void likeDel(Map<String, String> paraMap) {
+		dao.likeDel(paraMap);
+	}
+	
+	//좋아요 총수량
+	@Override
+	public int countLike(Map<String, String> paraMap) {
+		int countLike = dao.countLike(paraMap);
+		return countLike;
+	}
+	
+	
+	///////카테고리 count/////////////
+	@Override
+	public int countTotal() {
+	    return dao.countTotal();
+	}
+
+	@Override
+	public int countTourism() {
+	    return dao.countTourism();
+	}
+
+	@Override
+	public int countShowing() {
+	    return dao.countShowing();
+	}
+
+	@Override
+	public int countExperience() {
+	    return dao.countExperience();
+	}
+	
+	
+	
 
 
 	

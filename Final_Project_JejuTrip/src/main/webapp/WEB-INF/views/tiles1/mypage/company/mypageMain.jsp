@@ -9,6 +9,8 @@
 <script type="text/javascript">
     $(document).ready(function(){
     	
+    	$("div.loader").hide();
+    	
     	goViewAllReservationList(1);
     	goViewSendReservationList(1);
     	goViewSuccessReservationList(1);
@@ -32,6 +34,9 @@
                 document.getElementById('contentFrame').src = link;
             });
         });
+        
+        
+        
     }); // end of $(document).ready(function(){
     	
     	
@@ -73,14 +78,14 @@
 						}
 						v_html_all += "<td>"
 						if(item.status == '0'){
-							v_html_all += "<input type='button' class='success_btn' value='승인'/>"
-							v_html_all += "<input type='button' class='fail_btn' value='취소'/>"
+							v_html_all += "<input type='button' class='success_btn' onclick='go_change_reservation_status("+item.reservation_code+",1,"+item.remain+")' value='승인'/>"
+							v_html_all += "<input type='button' class='fail_btn' onclick='go_change_reservation_status("+item.reservation_code+",2)' value='취소'/>"
 						}
 						if(item.status == '1'){
-							v_html_all += "<input type='button' class='fail_btn' value='취소'/>"
+							v_html_all += "<input type='button' class='fail_btn' onclick='go_change_reservation_status("+item.reservation_code+",2)' value='취소'/>"
 						}
 						if(item.status == '2'){
-							v_html_all += "<input type='button' class='success_btn' value='승인'/>"
+							v_html_all += "<input type='button' class='success_btn' onclick='go_change_reservation_status("+item.reservation_code+",1,"+item.remain+")' value='승인'/>"
 						}
 						v_html_all += "</td>"
 				    	v_html_all += "</tr>";
@@ -94,7 +99,6 @@
 				}
 				
 			    $("tbody#all_reservation_tbody").html(v_html_all);
-			    
 			    // === #154. 페이지바 함수 호출  === //
 			    const totalPage = Math.ceil(json[0].totalCount/json[0].sizePerPage); 
 			 // console.log("totalPage : ", totalPage);
@@ -250,8 +254,8 @@
 						v_html_all += "<td style='text-align:center;'>"+item.remain+"</td>";
 						v_html_all += "<td><span style='color:blue; font-weight:bold;'>승인대기</span></td>";
 						v_html_all += "<td>"
-						v_html_all += "<input type='button' class='success_btn' value='승인'/>"
-						v_html_all += "<input type='button' class='fail_btn' value='취소'/>"
+						v_html_all += "<input type='button' class='success_btn' onclick='go_change_reservation_status("+item.reservation_code+",1,"+item.remain+")' value='승인'/>"
+						v_html_all += "<input type='button' class='fail_btn' onclick='go_change_reservation_status("+item.reservation_code+",2)' value='취소'/>"
 						v_html_all += "</td>"
 				    	v_html_all += "</tr>";
 				    	 
@@ -420,7 +424,7 @@
 						v_html_all += "<td style='text-align:center;'>"+item.remain+"</td>";
 						v_html_all += "<td><span style='color:green; font-weight:bold;'>확정</span></td>";
 						v_html_all += "<td>"
-						v_html_all += "<input type='button' class='fail_btn' value='취소'/>"
+						v_html_all += "<input type='button' class='fail_btn' onclick='go_change_reservation_status("+item.reservation_code+",2)' value='취소'/>"
 						v_html_all += "</td>"
 				    	v_html_all += "</tr>";
 				    	 
@@ -589,7 +593,7 @@
 						v_html_all += "<td style='text-align:center;'>"+item.remain+"</td>";
 						v_html_all += "<td><span style='color:red; font-weight:bold;'>취소</span></td>";
 						v_html_all += "<td>"
-						v_html_all += "<input type='button' class='success_btn' value='승인'/>"
+						v_html_all += "<input type='button' class='success_btn' onclick='go_change_reservation_status("+item.reservation_code+",1,"+item.remain+")' value='승인'/>"
 						v_html_all += "</td>"
 				    	v_html_all += "</tr>";
 				    	 
@@ -728,6 +732,74 @@
 		}
 		
 	}// end of function goViewComment(currentShowPageNo)------
+	
+	function go_change_reservation_status(reservation_code,status,remain){
+		if(status == '1'){
+			if(remain == '0'){
+				alert("잔여객실이 남아아있지 않아 예약승인이 불가능합니다.");
+				return;
+			}
+			if(confirm("예약을 승인하시겠습니까?")){
+				$("div.loader").show();
+				$.ajax({
+					url:"<%= ctxPath%>/goChangeReservationStatusJSON.trip",
+					data:{"reservation_code":reservation_code,"status":status},
+					type:"post",
+					dataType:"json",
+					success:function(json){
+						if(json.result == '1'){
+							if(json.email_send_result){
+								alert("메일발송을 성공했습니다.");
+							}
+							else{
+								alert("메일발송을 실패했습니다.");
+							}
+							goViewAllReservationList(1);
+					    	goViewSendReservationList(1);
+					    	goViewSuccessReservationList(1);
+					    	goViewFailReservationList(1);
+							$("div.loader").hide();
+						}
+						else{
+							alert("변경에 실패했습니다.");
+						}
+					},
+					error: function(request, status, error){
+					   alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+					}
+				});
+			}
+		}
+		else if(status == '2'){
+			if(confirm("예약을 취소하시겠습니까?")){
+				$("div.loader").show();
+				$.ajax({
+					url:"<%= ctxPath%>/goChangeReservationStatusJSON.trip",
+					data:{"reservation_code":reservation_code,"status":status},
+					type:"post",
+					dataType:"json",
+					success:function(json){
+						if(json.result == 1){
+							if(json.email_send_result){
+								alert("메일발송을 성공했습니다.");
+							}
+							else{
+								alert("메일발송을 실패했습니다.")
+							}
+							goViewAllReservationList(1);
+					    	goViewSendReservationList(1);
+					    	goViewSuccessReservationList(1);
+					    	goViewFailReservationList(1);
+					    	$("div.loader").hide();
+						}
+					},
+					error: function(request, status, error){
+					   alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+					}
+				});
+			}
+		}
+	};
 </script>
 
 <div class="body">
@@ -922,5 +994,7 @@
 			</div>
 		</div>
 	</form>
-
+	<div style="display: flex; position: absolute; top: 30%; left: 37%; border: solid 0px blue;">
+      <div class="loader" style="margin: auto"><img class="img" src="<%=ctxPath%>/resources/images/logo_circle.png"/></div>
+   </div>
 </div>

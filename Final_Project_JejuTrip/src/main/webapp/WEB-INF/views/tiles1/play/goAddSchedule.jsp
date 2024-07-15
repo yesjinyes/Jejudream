@@ -253,12 +253,16 @@ ul.list li {
   text-align: center;
   font-size: 15pt;
 }
+/*-----------------------------------------------------------------*/
+
 </style>
 
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f42c6cbd2d2060c5c719ee80540fbfbc&libraries=services"></script> 
 <script type="text/javascript">
 
 $(document).ready(function() {
+	
+	goLikeDislikeCount();
 	
 	const today = new Date();
     const year = today.getFullYear();
@@ -280,44 +284,6 @@ $(document).ready(function() {
 	    });
     //------------------------------------------------------------------------ 
 	
-	// --------------------------좋아요 등록하기 --------------------------------- //
-
-	
-	
-	    function golikeAdd(pnum){
-		   
-		   if(${empty sessionScope.loginuser}) {
-		         alert("좋아요는 로그인 후 가능합니다.");
-		         return; // 종료
-		      }
-		   else{//로그인을 한 경우라면
-			   
-			   $.ajax({
-		            url:"<%= ctxPath%>/play/playLike.trip",
-		            type:"post",
-		            data:{"play_code":play_code},
-		            dataType:"json", 
-		            success:function(json) {
-		            // console.log(JSON.stringify(json));
-		                // {"msg":"해당제품에\n 좋아요를 클릭하셨습니다."}
-		                  // 또는
-		                  // {"msg":"이미 좋아요를 클릭하셨기에\n 두번 이상 좋아요는 불가합니다."}
-		                  
-		               // alert(json.msg);
-		                  swal(json.msg);
-		                  goLikeDislikeCount();
-		            },
-		            error: function(request, status, error){
-		               alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
-		            }
-		         });
-			   
-		   }
-		 
-	   }// end of function golikeAdd(pnum}
-    //-----------------------------------------------------------------------
-    
-    
     //리뷰 작성-----------------------------------------------------------------
    
     $("button#btnCommentOK").click(function(){
@@ -703,6 +669,81 @@ function updateMyReview(index,review_code){
 	    
 }
 
+
+//--------------------------좋아요 등록하기 --------------------------------- //
+
+
+
+
+function golikeAdd(){
+ 
+ if(${empty sessionScope.loginuser}) {
+       alert("좋아요는 로그인 후 가능합니다.");
+       return; // 종료
+    }
+ else{//로그인을 한 경우라면
+  
+  $.ajax({
+          url:"<%= ctxPath%>/play/playLike.trip",
+          type:"POST",
+          data:{"parent_code":"${requestScope.playvo.play_code}",
+          	  "fk_userid":"${sessionScope.loginuser.userid}"},
+          dataType:"json", 
+          success:function(json) {
+          	if(json.n == 1){
+          		alert("좋아요 등록 완료");
+          		goLikeDislikeCount();
+          		
+          	}
+          	else{
+          		alert("좋아요 취소");
+          		goLikeDislikeCount()
+          		
+          	}
+
+            
+          },
+          error: function(request, status, error){
+             alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+          }
+       });
+  
+ }
+
+}// end of function golikeAdd(pnum}
+
+
+
+function goLikeDislikeCount(){ // 좋아요, 싫어요 갯수를 보여주도록 하는 것이다.
+	$.ajax({
+        url: "<%= ctxPath %>/countLike.trip",
+        data: {
+            "parent_code": "${requestScope.playvo.play_code}",
+            "fk_userid": "${sessionScope.loginuser.userid}"
+        },
+        dataType: "json",
+        success: function(json) {
+            $("p#likeCount").html(json.countLike);
+            if (json.check) {
+                $("#like").hide();
+                $("#likeup").show();
+            } else {
+                $("#like").show();
+                $("#likeup").hide();
+            }
+        },
+        error: function(request, status, error) {
+            alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+        }
+    });
+	
+}//end of function goLikeDislikeCount()
+
+
+//-----------------------------------------------------------------------
+
+
+
 function goDelete() {
     if (confirm("정말로 이 게시물을 삭제하시겠습니까?")) {
         const frm = document.delFrm;
@@ -727,13 +768,14 @@ function goDelete() {
 	<div style="width: 90%; margin: 3% auto;text-align: right;">
 		<ul class="list" style="display: flex; margin-left: 8%;">
 			<li class="list-item">
-				<button type="button" class="iconbtn">
+				<button type="button" class="iconbtn" onclick="golikeAdd()">
 					<div class="item-each">
-						<img class="icon" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_like.png">
+						<img class="icon like" id="like" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_like.png">
+						<img class="icon likeup" id="likeup" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_likeup.png">
 					</div>
 					<p class="icon-title">좋아요</p>
 				</button>
-				<p class="count">30</p>
+				<p class="count" id="likeCount"></p>
 			</li>
 			<li class="list-item">
 				<button type="button" class="iconbtn">
