@@ -140,7 +140,6 @@ public class Hs_TripDAO_imple implements Hs_TripDAO {
 		return countLike;
 	}
 
-	
 	//카테고리 count
 	public int countTotal() {
 	    return sqlsession.selectOne("hs_trip.countTotal");

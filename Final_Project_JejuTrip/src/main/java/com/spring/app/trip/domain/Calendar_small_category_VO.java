@@ -1,7 +1,6 @@
 package com.spring.app.trip.domain;
 
 public class Calendar_small_category_VO {
-
 	private String smcatgono;     // 캘린더 소분류 번호
 	private String fk_lgcatgono;  // 캘린더 대분류 번호
 	private String smcatgoname;   // 캘린더 소분류 명

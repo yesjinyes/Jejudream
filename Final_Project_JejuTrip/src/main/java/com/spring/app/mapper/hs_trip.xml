@@ -15,7 +15,6 @@
 	 ORDER 	by play_code desc
 </select>
 
-
 <!-- 카테고리별 select용  -->
 <select id="getPlayListByCategory" parameterType="HashMap" resultType="com.spring.app.trip.domain.PlayVO">
     select play_code, play_category, local_status, play_name, play_content, RNO,readCount,
