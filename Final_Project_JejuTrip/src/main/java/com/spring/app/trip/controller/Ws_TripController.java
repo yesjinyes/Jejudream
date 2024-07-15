@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.app.trip.common.FileManager;
+import com.spring.app.trip.common.GoogleMail;
 import com.spring.app.trip.domain.CompanyVO;
 import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.LodgingVO;
@@ -476,6 +477,29 @@ public class Ws_TripController {
 		else if(loginuser != null && !loginuser.getUserid().equals("admin")) {
 			// 로그인한 유저가 개인 유저이면서 그 아이디가 일반 회원의 아이디라면
 			mav.setViewName("mypage/member/mypageMain.tiles1");
+			
+			List<String> user_reservation_status = service.select_user_all_reservation(loginuser.getUserid());// 회원의 예약 목록을 가져와서 status별로 카운트를 해준다.
+			int all_reservation = 0;
+			int ready_reservation = 0;
+			int success_reservation = 0;
+			int fail_reservation = 0;
+			for(String status : user_reservation_status) {
+				
+				++all_reservation;
+				if(status.equals("0")) {
+					++ready_reservation;
+				}
+				else if(status.equals("1")) {
+					++success_reservation;
+				}
+				else if(status.equals("2")) {
+					++fail_reservation;
+				}
+			}
+			mav.addObject("all_reservation",all_reservation);
+			mav.addObject("ready_reservation",ready_reservation);
+			mav.addObject("success_reservation",success_reservation);
+			mav.addObject("fail_reservation",fail_reservation);
 		}
 		else {
 			// 로그인한 유저가 기업 유저라면
@@ -1489,6 +1513,138 @@ public class Ws_TripController {
 		// 기업이 소유하고있는 호텔의 총 예약건을 페이징 처리 해서 읽어온다.
 		List<Map<String,String>> reservationList = service.select_company_all_Reservation_paging(paraMap);
 		int totalCount = service.getTotalreservationCount(paraMap); // 페이징 처리시 보여주는 순번을 나타내기 위한 것임.
+		
+		JSONArray jsonArr = new JSONArray(); // [] 
+		if(reservationList != null) {
+			for(Map<String,String> reservationMap : reservationList) {
+				JSONObject jsonObj = new JSONObject(); 
+				
+				// 예약일자마다의 객실 잔여석을 알아오기 위함이다.
+				String count = service.select_reservation_Count(reservationMap);
+				int remain = Integer.parseInt(reservationMap.get("room_stock")) - Integer.parseInt(count);
+				
+				jsonObj.put("lodging_name", reservationMap.get("lodging_name"));
+				jsonObj.put("user_name", reservationMap.get("user_name"));
+				jsonObj.put("room_detail_code", reservationMap.get("room_detail_code"));
+				jsonObj.put("check_in", reservationMap.get("check_in"));
+				jsonObj.put("check_out", reservationMap.get("check_out"));
+				jsonObj.put("room_stock", reservationMap.get("room_stock"));
+				jsonObj.put("status", reservationMap.get("status"));
+				jsonObj.put("reservation_code", reservationMap.get("reservation_code"));
+				jsonObj.put("room_name", reservationMap.get("room_name"));
+				jsonObj.put("count", count);
+				jsonObj.put("remain", remain);
+				
+				jsonObj.put("totalCount", totalCount);   // 페이징 처리시 보여주는 순번을 나타내기 위한 것임.
+				jsonObj.put("sizePerPage", sizePerPage); // 페이징 처리시 보여주는 순번을 나타내기 위한 것임. 
+				
+				jsonArr.put(jsonObj);
+			}// end of for-----------------------
+		}
+		
+		
+		return jsonArr.toString(); // "[{"seq":1, "fk_userid":"seoyh","name":서영학,"content":"첫번째 댓글입니다. ㅎㅎㅎ","regdate":"2024-06-18 15:36:31"}]"
+		                           // 또는
+		                           // "[]"		
+		
+	}
+	
+	// 페이징 처리한 숙소예약신청 리스트 가져오기
+	@ResponseBody
+	@PostMapping(value="/goChangeReservationStatusJSON.trip", produces="text/plain;charset=UTF-8") 
+	public String goChangeReservationStatusJSON(HttpServletRequest request) {
+
+		String reservation_code = request.getParameter("reservation_code");
+		String status = request.getParameter("status");
+		
+		Map<String,String> paraMap = new HashMap<>();
+		paraMap.put("reservation_code", reservation_code);
+		paraMap.put("status", status);
+		int result = service.updateReservationStatus(paraMap); // 업체가 처리한 결과에 따라 reservation테이블에 status값 바꿔주기
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("result", result);
+		
+		if(result == 1 && status.equals("1")) {
+			String email = service.get_user_email(reservation_code); // 회원의 이메일을 읽어온다.
+			
+			boolean sendMailSuccess = false; // 메일이 정상적으로 전송되었는지 유무를 알아오기 위한 용도
+            
+            GoogleMail mail = new GoogleMail();
+            
+            String r_html = "예약이 정상적으로 승인되었슴둥";
+            
+            try {
+	            mail.send_change_reservation_status(email, r_html);
+	            sendMailSuccess = true;
+	            
+            }catch(Exception e) {
+            	// 메일 전송이 실패한 경우 
+                e.printStackTrace();
+                sendMailSuccess = false; // 메일 전송 실패했음을 기록함.
+            }
+			jsonObj.put("email_send_result", sendMailSuccess);
+		}
+		else if (result == 1 && status.equals("2")) {
+			String email = service.get_user_email(reservation_code); // 회원의 이메일을 읽어온다.
+			
+			boolean sendMailSuccess = false; // 메일이 정상적으로 전송되었는지 유무를 알아오기 위한 용도
+            
+            GoogleMail mail = new GoogleMail();
+            
+            String r_html = "예약 실패했쥬? 또해야하쥬? 킹받쥬? ㅋㅋㄹㅃㅃ 어쩔티비 저쩔냉장고 어쩔공기청정기";
+            
+            try {
+	            mail.send_change_reservation_status(email, r_html);
+	            sendMailSuccess = true;
+	            
+            }catch(Exception e) {
+            	// 메일 전송이 실패한 경우 
+                e.printStackTrace();
+                sendMailSuccess = false; // 메일 전송 실패했음을 기록함.
+            }
+			jsonObj.put("email_send_result", sendMailSuccess);
+		}
+		
+		
+		return jsonObj.toString();
+	}
+	
+	// 페이징 처리한 숙소예약신청 리스트 가져오기
+	@ResponseBody
+	@PostMapping(value="/userReservationListJSON.trip", produces="text/plain;charset=UTF-8") 
+	public String userReservationListJSON(HttpServletRequest request) {
+
+		String currentShowPageNo = request.getParameter("currentShowPageNo"); 
+		
+		if(currentShowPageNo == null) {
+			currentShowPageNo = "1";
+		}
+		
+		
+		int sizePerPage = 5; // 한 페이지당 5개의 댓글을 보여줄 것임.
+		
+		// **** 가져올 게시글의 범위를 구한다.(공식임!!!) **** 
+		/*
+		     currentShowPageNo      startRno     endRno
+		    --------------------------------------------
+		         1 page        ===>    1           10
+		         2 page        ===>    11          20
+		         3 page        ===>    21          30
+		         4 page        ===>    31          40
+		         ......                ...         ...
+		 */
+		int startRno = ((Integer.parseInt(currentShowPageNo) - 1) * sizePerPage) + 1; // 시작 행번호 
+		int endRno = startRno + sizePerPage - 1; // 끝 행번호
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("startRno", String.valueOf(startRno));
+		paraMap.put("endRno", String.valueOf(endRno));
+		paraMap.put("userid", request.getParameter("userid"));
+		paraMap.put("status", request.getParameter("status"));
+		// 개인회원이 한 예약정보를 페이징처리하여 읽어온다.
+		List<Map<String,String>> reservationList = service.select_user_all_Reservation_paging(paraMap);
+		int totalCount = service.getTotalUserReservationCount(paraMap); // 페이징 처리시 보여주는 순번을 나타내기 위한 것임.
 		
 		JSONArray jsonArr = new JSONArray(); // [] 
 		if(reservationList != null) {
