@@ -242,7 +242,7 @@ div#pageBar a {
 								<c:if test="${boardvo.commentCount > 0}">
 									<span class="subject" onclick="goView('${boardvo.seq}')">
 										${boardvo.subject}&nbsp;
-										<i class="fa-regular fa-image" style="color: green; font-size: 1rem;"></i>
+										<i class="fa-solid fa-paperclip" style="color: green; font-size: 1rem;"></i>
 										&nbsp;
 										<span style="color: #ff5000; font-size: 1rem; font-weight: bold;">
 											[${boardvo.commentCount}]
@@ -253,7 +253,7 @@ div#pageBar a {
 								<c:if test="${boardvo.commentCount == 0}">
 									<span class="subject" onclick="goView('${boardvo.seq}')">
 										${boardvo.subject}&nbsp;
-										<i class="fa-regular fa-image" style="color: green; font-size: 1rem;"></i>
+										<i class="fa-solid fa-paperclip" style="color: green; font-size: 1rem;"></i>
 									</span>
 								</c:if>
 							</c:if>

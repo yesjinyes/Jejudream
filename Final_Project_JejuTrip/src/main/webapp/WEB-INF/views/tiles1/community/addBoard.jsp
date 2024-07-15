@@ -34,7 +34,7 @@
 		nhn.husky.EZCreator.createInIFrame({
 		    oAppRef: obj,
 		    elPlaceHolder: "content", // id가 content인 textarea에 에디터를 넣어준다.
-		    sSkinURI: "<%= ctxPath%>/resources/smarteditor/SmartEditor2Skin.html",
+		    sSkinURI: "<%=ctxPath%>/resources/smarteditor/SmartEditor2Skin.html",
 		    htParams : {
 		        // 툴바 사용 여부 (true:사용/ false:사용하지 않음)
 		        bUseToolbar : true,            
@@ -45,7 +45,6 @@
 		    }
 		});
 		<%-- === 스마트 에디터 구현 끝 === --%>
-		
 		
 		<%-- '글암호'에서 엔터 클릭 시 글 등록 --%>
 		$("input:password[name='pw']").keyup(function(e) {
@@ -65,6 +64,7 @@
 		
 	}); // end of $(document).ready(function() {}) ---------------------
 	
+	
 	<%-- === 글 등록하기 === --%>
 	function goAddBoard() {
 
@@ -72,7 +72,6 @@
 		// id가 content인 textarea에 에디터에서 대입
 		obj.getById["content"].exec("UPDATE_CONTENTS_FIELD", []);
 		<%-- === 스마트 에디터 구현 끝 === --%>
-		
 		// 카테고리 유효성 검사
 		const category = $("select[name='category']").val();
 		
@@ -184,6 +183,12 @@
 						<th style="width: 15%;">내용</th>
 						<td>
 							<textarea style="width: 100%; height: 612px;" name="content" id="content"></textarea>
+						</td>
+					</tr>
+					<tr>
+						<th style="width: 15%;">첨부파일</th>
+						<td>
+							<input type="file" name="attach" />
 						</td>
 					</tr>
 					<tr>

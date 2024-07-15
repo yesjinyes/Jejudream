@@ -3,6 +3,8 @@ package com.spring.app.trip.controller;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -1007,6 +1009,50 @@ public class Dy_TripController {
 		mav.setViewName("msg");
 		
 		return mav;
+	}
+	
+	
+	// === 스마트에디터. 드래그앤드롭을 이용한 다중 사진 파일 업로드  ===
+	@PostMapping("image/multiplePhotoUpload.trip")
+	public void multiplePhotoUpload(HttpServletRequest request, HttpServletResponse response) {
+		
+		HttpSession session = request.getSession();
+		String root = session.getServletContext().getRealPath("/");
+		String path = root + "resources" + File.separator + "images" + File.separator + "community";
+
+		System.out.println("~~~ 확인용 path => " + path);
+		//  ~~~ 확인용 path => C:\NCS\workspace_spring_framework\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\board\resources\photo_upload
+	
+		File dir = new File(path);
+		
+		if(!dir.exists()) {
+			dir.mkdirs();
+		}
+		
+		try {
+			String filename = request.getHeader("file-name"); // 파일명(문자열)을 받는다 - 일반 원본파일명
+			// 네이버 스마트에디터를 사용한 파일업로드 시 싱글파일업로드와 다르게 멀티파일업로드는 파일명이 header 속에 담겨져 넘어오게 되어 있다.
+			 
+			System.out.println(">>> 확인용 filename ==> " + filename);
+			// >>> 확인용 filename ==> berkelekle%EB%8B%A8%EA%B0%80%EB%9D%BC%ED%8F%AC%EC%9D%B8%ED%8A%B803.jpg 
+	        
+			InputStream is = request.getInputStream(); // is는 네이버 스마트 에디터를 사용하여 사진첨부하기 된 이미지 파일
+
+			String newFilename = fileManager.doFileUpload(is, filename, path);
+
+			String ctxPath = request.getContextPath(); // /JejuDream
+
+			String strURL = "";
+			strURL += "&bNewLine=true&sFileName=" + newFilename;
+			strURL += "&sFileURL=" + ctxPath + "/resources/images/community/" + newFilename;
+
+			// === 웹브라우저 상에 사진 이미지를 쓰기 === //
+			PrintWriter out = response.getWriter();
+			out.print(strURL);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	
