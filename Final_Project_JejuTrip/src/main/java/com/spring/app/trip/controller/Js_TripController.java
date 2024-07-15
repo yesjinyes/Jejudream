@@ -33,6 +33,7 @@ public class Js_TripController {
 	private Js_TripService service;
 	
 	
+	// 숙소리스트 페이지로 보내주기
 	@GetMapping("/lodgingList.trip")
     public ModelAndView lodgingList(ModelAndView mav, HttpServletRequest request) {
 		
@@ -49,6 +50,7 @@ public class Js_TripController {
     } // end of public ModelAndView lodgingList(ModelAndView mav, HttpServletRequest request) {
 	
 	
+	// 숙소리스트 ajax로 갱신
 	@ResponseBody
 	@GetMapping(value="/updateLodgingList.trip", produces="text/plain;charset=UTF-8")
     public String lodgingList(HttpServletRequest request,
@@ -195,6 +197,7 @@ public class Js_TripController {
 	
 	
 	
+	// 한 숙소에대한 상세페이지
 	@GetMapping("/lodgingDetail.trip")
 	public ModelAndView lodingDetail(ModelAndView mav, HttpServletRequest request, LodgingVO lvo,
 									 @RequestParam(defaultValue = "") String detail_check_in,
@@ -205,25 +208,56 @@ public class Js_TripController {
 		 System.out.println("~~~ 확인용 detail_check_out : " + detail_check_out);
 		 System.out.println("~~~ 확인용 detail_people : " + detail_people);
 		*/
-		String lodgingCode = lvo.getLodging_code();
+		String lodging_code = lvo.getLodging_code();
 		
 		// System.out.println("~~~ 확인용 : " + lodgingCode);
 		
-		LodgingVO lodgingDetail = service.getLodgingDetail(lodgingCode);
+		LodgingVO lodgingDetail = service.getLodgingDetail(lodging_code);
 		// 숙소의 상세정보만 가져오기
 		
 		Map<String,String> dateSendMap = new HashMap<>();
 		
-		dateSendMap.put("lodging_code", lodgingCode);
+		dateSendMap.put("lodging_code", lodging_code);
 		dateSendMap.put("check_in", detail_check_in);
 		dateSendMap.put("check_out", detail_check_out);
 		dateSendMap.put("people", detail_people);
 		
-		List<String> convenientList = service.getConvenientList(lodgingCode);
+		List<String> convenientList = service.getConvenientList(lodging_code);
 		// 한 숙소에대한 편의시설 가져오기 (메소드 재활용)
 		
 		List<Map<String,String>> roomDetailList = service.getRoomDetail(dateSendMap);
 		// 숙소의 객실 정보 가져오기
+		
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
+		
+		if(loginuser != null) {
+			
+			String userid = loginuser.getUserid();
+			
+			Map<String,String> chkMap = new HashMap<>();
+			
+			chkMap.put("lodging_code", lodging_code);
+			chkMap.put("userid",userid);
+			
+			int chkR = service.chkReservation(chkMap); // 숙소상세페이지 이동시에 예약했는지 확인하기 
+			
+			if(chkR > 0) {
+				
+				dateSendMap.put("chkR", String.valueOf(chkR));
+				
+				int chkC = service.chkReview(chkMap); // 리뷰를 작성했는지 안했는지 확인하기
+				
+				if(chkC > 0) {
+					
+					dateSendMap.put("chkC", String.valueOf(chkC));
+					
+				} // end of if 리뷰를 작성했는지 안했는지 chkC > 0
+				
+			} // end of 예약을 했는지 안했는지 chkR > 0
+			
+		} // end of 로그인 했는지 안했는지 if
+		
 		
 		mav.addObject("convenientList", convenientList);
 		mav.addObject("lodgingDetail", lodgingDetail);

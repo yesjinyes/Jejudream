@@ -143,5 +143,34 @@ public class Js_TripDAO_imple implements Js_TripDAO {
 	} // end of public List<Map<String, String>> getCommentList_Paging(Map<String, String> paraMap) {
 
 	
+	
+	// 숙소상세페이지 이동시에 예약했는지 확인하기
+	@Override
+	public int chkReservation(Map<String, String> chkMap) {
+		
+		int chk = sqlsession.selectOne("js_trip.chkReservation", chkMap);
+		
+		return chk;
+		
+	} // end of 
 
+
+	
+	// 리뷰를 작성했는지 안했는지 확인하기
+	@Override
+	public int chkReview(Map<String, String> chkMap) {
+		
+		int chk = sqlsession.selectOne("js_trip.chkReview", chkMap);
+		
+		return chk;
+		
+	} // end of public int chkReview(Map<String, String> chkMap) {
+
+	
+	
+	
+	
+	
+	
+	
 }

@@ -314,7 +314,7 @@
 			   from 
 		   	   (
 		   		select reservation_code, fk_room_detail_code, reservation_price, 
-		   			   to_char(check_in, 'yyyy-mm-dd') as check_in, to_char(check_out, 'yyyy-mm-dd') as check_out 
+		   			   to_char(check_in, 'yyyy-mm-dd') as check_in, to_char(check_out, 'yyyy-mm-dd') as check_out,
 		        	   check_in - to_date(to_char(sysdate, 'yyyy-mm-dd') , 'yyyy-mm-dd')  as leftdays
 		        from tbl_reservation
 		        where reservation_code = #{reservation_code}    
@@ -364,6 +364,22 @@
 	    where R.parent_code = #{lodging_code}
 	    )V
 	    where rno between #{startRno} and #{endRno}
+	</select>
+	
+	
+	<select id="chkReservation" parameterType="HashMap" resultType="int">
+		select count(*) as chk
+     	from tbl_reservation R
+     	join tbl_room_detail D
+     	on R.fk_room_detail_code = D.room_detail_code
+     	where status = 1 and fk_lodging_code = #{lodging_code} and fk_userid = #{userid}
+	</select>
+	
+	
+	<select id="chkReview" parameterType="HashMap" resultType="int">
+		select count(*) as cnt
+     	from tbl_review
+     	where fk_userid = #{userid} and parent_code = #{lodging_code}
 	</select>
  
 </mapper>

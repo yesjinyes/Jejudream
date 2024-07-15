@@ -137,6 +137,31 @@ public class Js_TripService_imple implements Js_TripService {
 		return reviewList;
 	}// end of public List<Map<String, String>> getCommentList_Paging(Map<String, String> paraMap) { 
 
+
+	
+	// 숙소상세페이지 이동시에 예약했는지 확인하기
+	@Override
+	public int chkReservation(Map<String, String> chkMap) {
+		
+		int chk = dao.chkReservation(chkMap);
+		
+		return chk;
+		
+	} // end of public int chkReservation(Map<String, String> chkMap) {
+
+
+	
+	// 리뷰를 작성했는지 안했는지 확인하기
+	@Override
+	public int chkReview(Map<String, String> chkMap) {
+		
+		int chk = dao.chkReview(chkMap);
+		
+		return chk;
+		
+	} // end of public int chkReview(Map<String, String> chkMap) {
+	
+
 	
 	
 }   

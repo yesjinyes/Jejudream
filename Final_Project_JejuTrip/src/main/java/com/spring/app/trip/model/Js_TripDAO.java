@@ -42,6 +42,13 @@ public interface Js_TripDAO {
 	// 리뷰리스트 가져오기
 	List<Map<String, String>> getCommentList_Paging(Map<String, String> paraMap);
 
+	// 숙소상세페이지 이동시에 예약했는지 확인하기
+	int chkReservation(Map<String, String> chkMap);
+
+	
+	// 리뷰를 작성했는지 안했는지 확인하기
+	int chkReview(Map<String, String> chkMap);
+
 	
 
 }

@@ -790,7 +790,9 @@ function makeCommentPageBar(currentShowPageNo, totalPage){
             </div>
 
             <h3>방문자 리뷰</h3>
-            <c:if test="${not empty sessionScope.loginuser}"></c:if>
+            <c:if test="${not empty sessionScope.loginuser and 
+            			  not empty requestScope.dateSendMap.chkR and
+            			  empty requestScope.dateSendMap.chkC}">
             <form name="comment">
             <div id="input-comment">
 		        <div class="input-container" style="display: flex;">
@@ -810,6 +812,7 @@ function makeCommentPageBar(currentShowPageNo, totalPage){
 		        </div>
 		    </div>
 		    </form>
+		    </c:if>
             <div id="comment">
             </div>
             
