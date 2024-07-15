@@ -253,13 +253,16 @@ ul.list li {
   text-align: center;
   font-size: 15pt;
 }
+/*-----------------------------------------------------------------*/
+
 </style>
 
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f42c6cbd2d2060c5c719ee80540fbfbc&libraries=services"></script> 
 <script type="text/javascript">
 
 $(document).ready(function() {
-	$("img#likeup").hide();
+	
+	goLikeDislikeCount();
 	
 	const today = new Date();
     const year = today.getFullYear();
@@ -280,7 +283,6 @@ $(document).ready(function() {
 	        }
 	    });
     //------------------------------------------------------------------------ 
-	
 	
     //리뷰 작성-----------------------------------------------------------------
    
@@ -671,42 +673,73 @@ function updateMyReview(index,review_code){
 //--------------------------좋아요 등록하기 --------------------------------- //
 
 
-    function golikeAdd(){
-	   
-	   if(${empty sessionScope.loginuser}) {
-	         alert("좋아요는 로그인 후 가능합니다.");
-	         return; // 종료
-	      }
-	   else{//로그인을 한 경우라면
-		   
-		   $.ajax({
-	            url:"<%= ctxPath%>/play/playLike.trip",
-	            type:"POST",
-	            data:{"parent_code":"${requestScope.playvo.play_code}",
-	            	  "fk_userid":"${sessionScope.loginuser.userid}"},
-	            dataType:"json", 
-	            success:function(json) {
-	            	if(json.n == 1){
-	            		alert("좋아요 등록 완료");
-	            		$("img#like").hide();
-	            		$("img#likeup").show();
-	            	}
-	            	else{
-	            		alert("좋아요 취소");
-	            		$("img#like").show();
-	            		$("img#likeup").hide();
-	            	}
 
-	              
-	            },
-	            error: function(request, status, error){
-	               alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
-	            }
-	         });
-		   
-	   }
-	 
-   }// end of function golikeAdd(pnum}
+
+function golikeAdd(){
+ 
+ if(${empty sessionScope.loginuser}) {
+       alert("좋아요는 로그인 후 가능합니다.");
+       return; // 종료
+    }
+ else{//로그인을 한 경우라면
+  
+  $.ajax({
+          url:"<%= ctxPath%>/play/playLike.trip",
+          type:"POST",
+          data:{"parent_code":"${requestScope.playvo.play_code}",
+          	  "fk_userid":"${sessionScope.loginuser.userid}"},
+          dataType:"json", 
+          success:function(json) {
+          	if(json.n == 1){
+          		alert("좋아요 등록 완료");
+          		goLikeDislikeCount();
+          		
+          	}
+          	else{
+          		alert("좋아요 취소");
+          		goLikeDislikeCount()
+          		
+          	}
+
+            
+          },
+          error: function(request, status, error){
+             alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+          }
+       });
+  
+ }
+
+}// end of function golikeAdd(pnum}
+
+
+
+function goLikeDislikeCount(){ // 좋아요, 싫어요 갯수를 보여주도록 하는 것이다.
+	$.ajax({
+        url: "<%= ctxPath %>/countLike.trip",
+        data: {
+            "parent_code": "${requestScope.playvo.play_code}",
+            "fk_userid": "${sessionScope.loginuser.userid}"
+        },
+        dataType: "json",
+        success: function(json) {
+            $("p#likeCount").html(json.countLike);
+            if (json.check) {
+                $("#like").hide();
+                $("#likeup").show();
+            } else {
+                $("#like").show();
+                $("#likeup").hide();
+            }
+        },
+        error: function(request, status, error) {
+            alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+        }
+    });
+	
+}//end of function goLikeDislikeCount()
+
+
 //-----------------------------------------------------------------------
 
 
@@ -742,7 +775,7 @@ function goDelete() {
 					</div>
 					<p class="icon-title">좋아요</p>
 				</button>
-				<p class="count">30</p>
+				<p class="count" id="likeCount"></p>
 			</li>
 			<li class="list-item">
 				<button type="button" class="iconbtn">

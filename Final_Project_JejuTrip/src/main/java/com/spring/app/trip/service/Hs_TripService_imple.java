@@ -177,6 +177,35 @@ public class Hs_TripService_imple implements Hs_TripService {
 		dao.likeDel(paraMap);
 	}
 	
+	//좋아요 총수량
+	@Override
+	public int countLike(Map<String, String> paraMap) {
+		int countLike = dao.countLike(paraMap);
+		return countLike;
+	}
+	
+	
+	///////카테고리 count/////////////
+	@Override
+	public int countTotal() {
+	    return dao.countTotal();
+	}
+
+	@Override
+	public int countTourism() {
+	    return dao.countTourism();
+	}
+
+	@Override
+	public int countShowing() {
+	    return dao.countShowing();
+	}
+
+	@Override
+	public int countExperience() {
+	    return dao.countExperience();
+	}
+	
 	
 	
 

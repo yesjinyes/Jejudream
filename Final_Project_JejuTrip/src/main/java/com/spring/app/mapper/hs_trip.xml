@@ -169,6 +169,39 @@ WHERE RNO between #{startRno} and #{endRno}
  delete from tbl_like where fk_userid = #{fk_userid} and parent_code = #{parent_code}
  </delete>
  
+ <select id="countLike" parameterType="HashMap" resultType="int">
+ select count(*)
+ from tbl_like
+ where parent_code = #{parent_code}
+ </select>
+ 
+ <!--카테고리 count  -->
+ <select id="countTotal" resultType="int">
+    SELECT COUNT(*) FROM tbl_play
+</select>
+
+<select id="countTourism" resultType="int">
+    SELECT COUNT(*) FROM tbl_play WHERE play_category = '관광지'
+</select>
+
+<select id="countShowing" resultType="int">
+    SELECT COUNT(*) FROM tbl_play WHERE play_category = '전시회'
+</select>
+
+<select id="countExperience" resultType="int">
+    SELECT COUNT(*) FROM tbl_play WHERE play_category = '체험'
+</select>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
  
  
  

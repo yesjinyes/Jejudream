@@ -132,6 +132,29 @@ public class Hs_TripDAO_imple implements Hs_TripDAO {
 		sqlsession.delete("hs_trip.likeDel",paraMap);
 		
 	}
+	
+	@Override
+	public int countLike(Map<String, String> paraMap) {
+		int countLike = sqlsession.selectOne("hs_trip.countLike",paraMap);
+		return countLike;
+	}
 
+	
+	//카테고리 count
+	public int countTotal() {
+	    return sqlsession.selectOne("hs_trip.countTotal");
+	}
+
+	public int countTourism() {
+	    return sqlsession.selectOne("hs_trip.countTourism");
+	}
+
+	public int countShowing() {
+	    return sqlsession.selectOne("hs_trip.countShowing");
+	}
+
+	public int countExperience() {
+	    return sqlsession.selectOne("hs_trip.countExperience");
+	}
 
 }

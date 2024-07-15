@@ -45,6 +45,15 @@ public interface Hs_TripDAO {
 
 	void likeDel(Map<String, String> paraMap); //좋아요 취소
 
+	int countLike(Map<String, String> paraMap); //좋아요 총수량
+
+	
+	//카테고리 count 
+	int countTotal();
+	int countTourism();
+	int countShowing();
+	int countExperience();
+
 	
 
 	

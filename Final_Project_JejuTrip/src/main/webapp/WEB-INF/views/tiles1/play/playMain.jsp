@@ -291,8 +291,11 @@ font-size: 17px;
 $(document).ready(function() {
   
 	let currentShowPageNo = 1; // currentShowPageNo 초기값
-    contentPlay(currentShowPageNo); // 페이지 불러오는 함수
-
+    
+	contentPlay(currentShowPageNo); // 페이지 불러오는 함수
+    updateCategoryCount(); // 카테고리별 수량 알아오는 함수
+    
+    
     $(".list-group-item").hover(function(e) {
         $(e.target).addClass("moveColor");
     }, function(e) {
@@ -303,14 +306,14 @@ $(document).ready(function() {
     // 카드 클릭 시 play_code 전달 (이벤트 위임 사용)
     $(document).on('click', '.container_card', function() {
         const playCode = $(this).find('input[name="play_code"]').val(); // 클릭된 카드의 play_code 값 가져오기
-        console.log("Play Code: ", playCode); // play_code 확인용 로그
+        //console.log("Play Code: ", playCode); // play_code 확인용 로그
         goAddSchedule(playCode); // play_code를 매개변수로 전달
     });
     
    
      $(document).on('click', '.search', function() {
     	 searchWord = $(this).parent().find('input[name="searchWord"]').val();
-         console.log("searchWord",searchWord);
+         //console.log("searchWord",searchWord);
          const frm = document.totalPlayFrm;
          frm.searchWord.value = searchWord;
          contentPlay(1);
@@ -321,9 +324,10 @@ $(document).ready(function() {
          if(e.keyCode == 13){ // 엔터
             
         	 searchWord = $(this).parent().find('input[name="searchWord"]').val();
-             console.log("searchWord",searchWord);
+             //console.log("searchWord",searchWord);
              const frm = document.totalPlayFrm;
              frm.searchWord.value = searchWord;
+             
              contentPlay(1);
          }
      });
@@ -356,7 +360,7 @@ $(document).ready(function() {
             arr_local.push($(elmt).val());
         });
         const str_local = arr_local.join();
-        console.log("str_local", str_local);
+        //console.log("str_local", str_local);
 
         const frm = document.totalPlayFrm; // frm 으로 제일 아래에 있는 form 가져오고
         frm.str_local.value = str_local;   // 그 form 안에 있는 str_local 에 str_local값을 넣는다
@@ -373,9 +377,7 @@ $(document).ready(function() {
         category = $(this).find('input').val();
         const frm = document.totalPlayFrm;
         frm.category.value = category;
-        
         contentPlay(1);
-       /*  $("div#categoryList").empty(); // 기존 콘텐츠 비우기 */
         
     });
 
@@ -457,7 +459,7 @@ function contentPlay(currentShowPageNo) {
 	        	}  */                
 	            const totalPage = Math.ceil(json[0].totalCount / json[0].sizePerPage);
 	            PageBar(currentShowPageNo, totalPage);
-                
+	            
             }
             else {
                 v_html += "현재 카테고리 준비중 입니다...";
@@ -513,6 +515,22 @@ function PageBar(currentShowPageNo,totalPage){
 	
 }
 
+function updateCategoryCount() {
+    $.ajax({
+        url: "<%= ctxPath %>/getCategoryCount.trip",
+        dataType: "json",
+        success: function(data) {
+            $("span[data-category='total']").html(data.total);
+            $("span[data-category='tourism']").html(data.tourism);
+            $("span[data-category='showing']").html(data.showing);
+            $("span[data-category='experience']").html(data.experience);
+        },
+        error: function(request, status, error) {
+            alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+        }
+    });
+}
+
 
 function goTop() {
     $(window).scrollTop(0);
@@ -530,29 +548,29 @@ function goTop() {
     <div class="container">
         <div class="row">
             <div class="col-md-2">
-                <ul class="list-group" style="border-radius: 20px;">
-                    <li class="list-group-item d-flex justify-content-between align-items-center" style="margin-top: 240px;">
-                        <input type="hidden" name="total" value=""/>
-                        <label for="total" style="font-weight: bold;">전체</label>
-                        <span class="badge badge-pill" style="background:#ff8000; color:#fff;">14</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <input type="hidden" name="tourism" value="관광지"/>
-                        <label for="tourism" style="font-weight: bold;">관광지</label>
-                        <span class="badge badge-pill" style="background:#ff8000; color:#fff;">14</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <input type="hidden" name="showing" value="전시회"/>
-                        <label for="showing" style="font-weight: bold;">전시회</label>
-                        <span class="badge badge-pill" style="background:#ff8000; color:#fff;">2</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <input type="hidden" name="experience" value="체험"/>
-                        <label for="experience" style="font-weight: bold;">체험</label>
-                        <span class="badge badge-pill" style="background:#ff8000; color:#fff;">1</span>
-                    </li>
-                </ul>
-            </div>
+			    <ul class="list-group" style="border-radius: 20px;">
+			        <li class="list-group-item d-flex justify-content-between align-items-center" style="margin-top: 240px;">
+			            <input type="hidden" name="total" value=""/>
+			            <label for="total" style="font-weight: bold;">전체</label>
+			            <span class="badge badge-pill" style="background:#ff8000; color:#fff;" data-category="total">0</span>
+			        </li>
+			        <li class="list-group-item d-flex justify-content-between align-items-center">
+			            <input type="hidden" name="tourism" value="관광지"/>
+			            <label for="tourism" style="font-weight: bold;">관광지</label>
+			            <span class="badge badge-pill" style="background:#ff8000; color:#fff;" data-category="tourism">0</span>
+			        </li>
+			        <li class="list-group-item d-flex justify-content-between align-items-center">
+			            <input type="hidden" name="showing" value="전시회"/>
+			            <label for="showing" style="font-weight: bold;">전시회</label>
+			            <span class="badge badge-pill" style="background:#ff8000; color:#fff;" data-category="showing">0</span>
+			        </li>
+			        <li class="list-group-item d-flex justify-content-between align-items-center">
+			            <input type="hidden" name="experience" value="체험"/>
+			            <label for="experience" style="font-weight: bold;">체험</label>
+			            <span class="badge badge-pill" style="background:#ff8000; color:#fff;" data-category="experience">0</span>
+			        </li>
+			    </ul>
+			</div>
             
             <div class="col-md-10 py-3">
                 <div class="row py-8">
