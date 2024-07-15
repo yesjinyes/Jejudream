@@ -66,7 +66,6 @@ public class Yj_TripService_imple implements Yj_TripService {
 	@Override
 	public int addFoodstoreReview(ReviewVO reviewvo) {
 		int n = dao.addFoodstoreReview(reviewvo); // 리뷰쓰기(tbl_review 에 insert)
-		System.out.println("service 에서 n 확인 => " + n);
 		return n;
 	}
 
@@ -76,6 +75,22 @@ public class Yj_TripService_imple implements Yj_TripService {
 	public List<ReviewVO> getReviewList(String parent_code) {
 		List<ReviewVO> reviewList = dao.getReviewList(parent_code);
 		return reviewList;
+	}
+
+
+	// == 리뷰 수정하기 == //
+	@Override
+	public int updateReview(Map<String, String> paraMap) {
+		int n = dao.updateReview(paraMap);
+		return n;
+	}
+
+
+	// == 리뷰 삭제하기 == //
+	@Override
+	public int deleteReview(Map<String, String> paraMap) {
+		int n = dao.deleteReview(paraMap.get("review_code"));
+		return n;
 	}
 
 	

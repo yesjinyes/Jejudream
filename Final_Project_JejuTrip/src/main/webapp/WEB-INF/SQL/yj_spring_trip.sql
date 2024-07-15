@@ -66,6 +66,8 @@ insert into tbl_food_store(food_store_code, food_category, local_status, food_na
 insert into tbl_food_store(food_store_code, food_category, local_status, food_name, food_content, food_businesshours, food_mobile, food_address, food_main_img, review_division) values(seq_common.nextval, '카페' ,'제주시 서부', '카페데스틸','제주 분위기 낭낭한 감성카페','13:00~20:00','0507-1365-7402','제주특별자치도 제주시 한경면 한경해안로 110','카페데스틸.jpg',default);
 insert into tbl_food_store(food_store_code, food_category, local_status, food_name, food_content, food_businesshours, food_mobile, food_address, food_main_img, review_division) values(seq_common.nextval, '카페' ,'제주시 서부', '레이지펌프','데이트하기 좋은 브런치 맛집','11:00~19:00','0507-1325-8732','제주특별자치도 제주시 애월읍 애월북서길 32','레이지펌프.jpg',default);
 
+
+
 -- 맛집 추가 이미지 테이블 insert
 insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5316', '물꼬해녀의집_add1.jpg' );
 insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5316', '물꼬해녀의집_add2.jpg' );
@@ -131,16 +133,17 @@ select *
 from tbl_food_add_img
 order by FOOD_ADD_CODE;
 
-desc tbl_food_add_img;
+desc tbl_play;
 
 rollback;
 
-UPDATE tbl_food_add_img SET food_add_img='대윤흑돼지 서귀포올레시장점_add1.jpg' WHERE food_add_img = '대윤흑돼지 서귀포올레시장점_add2.jpg';
+UPDATE tbl_food_store SET local_status='제주시 시내' WHERE local_status = '제주 시내';
+UPDATE tbl_food_store SET local_status='서귀포시 시내' WHERE local_status = '서귀포 시내';
 
 delete from tbl_food_add_img where food_add_code = 14;
 commit;
 
-select food_store_code, food_name
+select *
 from tbl_food_store;
 
 delete from tbl_food_store;
@@ -149,10 +152,10 @@ desc tbl_food_store;
 
 commit;
 
-제주 시내
+제주시 시내
 제주시 서부
 제주시 동부
-서귀포 시내
+서귀포시 시내
 서귀포시 동부
 서귀포시 서부
 
@@ -217,7 +220,6 @@ from tbl_food_store;
 select count(*)
 from tbl_food_store;
 
-
 select substr(food_add_img, 0, (food_add_img-3) )
 from tbl_food_add_img
 
@@ -234,10 +236,6 @@ select reverse(substr(reverse(food_add_img),10))
 from tbl_food_add_img
 where food_add_code = 5;
 -- 물꼬해물의집
-
-
-desc tbl_food_store;
-
 
 select I.food_add_img
 FROM 
@@ -280,8 +278,37 @@ desc tbl_review;
 
 select *
 from tbl_review
+where fk_userid = 'yy6037'
 order by to_number(review_code) desc;
 
-desc tbl_review
+delete from tbl_review
+where parent_code = 5316
 
 commit;
+desc tbl_food_store;
+
+
+-------------------------------------------------------------------------
+-- 맛집 조회수
+ALTER TABLE tbl_food_store ADD readcount varchar2(1000) default 0;
+
+update tbl_food_store
+set readcount = readcount + 1
+where food_store_code = '5316';
+
+ALTER TABLE tbl_food_store DROP COLUMN readcount
+
+commit;
+
+select food_store_code, food_name, readcount
+from tbl_food_store;
+
+commit;
+
+
+
+select * from user_tables;
+
+select * from tbl_board;
+
+

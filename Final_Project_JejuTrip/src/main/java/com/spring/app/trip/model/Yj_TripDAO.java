@@ -32,6 +32,12 @@ public interface Yj_TripDAO {
 	// == 작성한 리뷰 보이기 == //
 	List<ReviewVO> getReviewList(String parent_code);
 
+	// === 리뷰 수정하기 === //
+	int updateReview(Map<String, String> paraMap);
+
+	// == 리뷰 삭제하기 == //
+	int deleteReview(String review_code);
+
 	
 
 	

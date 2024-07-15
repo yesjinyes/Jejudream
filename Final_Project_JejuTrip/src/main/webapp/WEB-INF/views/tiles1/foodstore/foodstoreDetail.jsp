@@ -152,23 +152,148 @@ div#reviewList {
   padding: 3%;
 }
 
+form#addReviewFrm {
+  width: 95%;
+  margin: 2% auto 0 auto;
+}
+
+table#review-table {
+  width: 95%;
+  margin: 0 auto;
+}
+
+textarea {
+  width: 80%;
+  height: 100px;
+  margin-top: 1%;
+}
+
+
+
 </style>
 
 <script type="text/javascript">
 
 	$(document).ready(function() {
 
-		goViewReview();
+		goViewReview(1);
 		
 		// == 리뷰 input 엔터 키 == //
-		$("input:text[name='review_content']").bind("keyup", function(e) {
+		$("textarea[name='review_content']").bind("keyup", function(e) {
 			if(e.keyCode == 13) {
 				goAddReview();
 			}
 		});
 		
+		///////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		// == 리뷰 수정, 완료  == //
+		let origin_review_content = "";
+		
+		$(document).on("click", "button.btnUpdateReview", function(e) {
+		
+			const $btn = $(e.target);
+			
+			if($(e.target).text() == "수정"){
+				// alert("리뷰수정");
+			  	// alert($(e.target).parent().parent().children("td:nth-child(1)").text()); // 수정전 리뷰 내용
+
+			  	const $content = $(e.target).parent().parent().children("td:nth-child(2)");
+			  	
+			    origin_review_content = $(e.target).parent().parent().children("td:nth-child(2)").text(); // 수정 전 리뷰 내용
+			    
+			    $content.html(`<input id='review_update' type='text' value='\${origin_review_content}' size='40' />`); // 리뷰 내용을 수정할 수 있도록 input 태그를 만들어 준다.
+			    
+			    $(e.target).text("완료").removeClass("btn-secondary").addClass("btn-info");
+			    $(e.target).next().next().text("취소").removeClass("btn-secondary").addClass("btn-danger"); 
+			    
+			    $(document).on("keyup", "input#review_update", function(e){
+			    	if(e.keyCode == 13){
+			    	    // alert("완료버튼 엔터");
+			    		$btn.click();
+			    	}
+			    }); 
+			}
+			
+			
+			else if($(e.target).text() == "완료") {
+				// alert("리뷰시퀀스 들어올 자리 : "+$(e.target).parent().parent().children("td:nth-child(1)").text());
+				// alert($(e.target).parent().parent().children("td:nth-child(2)").children("input").val()); // 수정 후 리뷰 내용
+				
+				const review_code = $(e.target).parent().parent().children("td:nth-child(1)").text();
+				const review_content = $(e.target).parent().parent().children("td:nth-child(2)").children("input").val(); // 수정 후 리뷰 내용
+				
+				$.ajax({
+					url:"updateReview.trip",
+					type:"post",
+					data:{"review_code":review_code, "review_content":review_content},
+					dataType:"json",
+					success:function(json) {
+						// console.log("~~리뷰 수정 값 들어가나 확인 : "+JSON.stringify(json));
+						
+						//$(e.target).parent().parent().children("td:nth-child(2)").html(content);
+						
+						//const currentShowPageNo = $(e.target).parent().parent().find("input.currentShowPageNo").val(); 
+						
+						goViewReview(); // 작성한 리뷰 불러오기
+						
+						$(e.target).text("수정").removeClass("btn-info").addClass("btn-secondary");
+						$(e.target).next().next().text("삭제").removeClass("btn-danger").addClass("btn-secondary");
+						
+					},
+					error: function(request, status, error){
+						alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+					}
+					
+				});// end of $.ajax({})---------------------------
+				
+			}// end of else if($(e.target).text() == "완료")--------------------
+			
+		});// end of $(document).on("click", "button.btnUpdateReview", function(e)--------------
+		
+				
+		// == 리뷰 수정취소, 삭제 == //			
+		$(document).on("click", "button.btnDeleteReview", function(e) {
+
+			if($(e.target).text() == "취소") {
+				 alert("댓글 수정취소");
+				
+				const $review_content = $(e.target).parent().parent().children("td:nth-child(2)");
+				
+				$review_content.html(`\${origin_review_content}`); // 변수명 지역변수 적용
+				
+				$(e.target).text("삭제").removeClass("btn-danger").addClass("btn-secondary");
+	            $(e.target).prev().prev().text("수정").removeClass("btn-info").addClass("btn-secondary");
+			}
+			
+			else if($(e.target).text() == "삭제") {
+				const review_code = $(e.target).parent().parent().children("td:nth-child(1)").text(); // 삭제할 리뷰번호
+				// alert("삭제할 리뷰번호" + review_code);
+				
+				if(confirm("정말로 삭제하시겠습니까?")) {
+					$.ajax({
+						url:"deleteReview.trip",
+						type:"post",
+						data:{"review_code": review_code},
+						dataType:"json",
+						success:function(json){
+							// console.log("리뷰삭제 =>" + JSON.stringify(json))
+							goViewReview();
+						},
+						error: function(request, status, error){
+							alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+						}
+					});	// end of $.ajax({})---------------	
+				}
+			}
+			
+		});// end of $(document).on("click", "button.btnDeleteReview", function(e)--------
+		
+		
 	});// end of $(document).ready(function() {})-----------------------------
 	
+	//▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒//
+	// Function declaration
 	
 	// == 내 일정에 추가 == //
 	function addSchedule() {
@@ -176,21 +301,17 @@ div#reviewList {
 	}
 	
 
-	////////////////////////////////////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////////////////
-	
-	// Function declaration
 	// == 맛집 리뷰 작성하기 == //
 	function goAddReview() {
 		
-		const review_content = $("input:text[name='review_content']").val().trim();
+		const review_content = $("textarea[name='review_content']").val().trim();
 		
 		if(review_content == "") {
 			alert("리뷰 내용을 입력하세요!");
 			return;
 		}
 		
-		const queryString = $("form[name='addWriteFrm']").serialize();
+		const queryString = $("form[name='addReviewFrm']").serialize();
 		
 		$.ajax({
 			url:"<%= ctxPath%>/addReview.trip",
@@ -202,13 +323,14 @@ div#reviewList {
 	        	// {"food_store_code":"5316","fk_userid":"yy6037","n":1}
 	        	
 	        	if(json.n == 1) {
+	        		alert("리뷰가 등록되었습니다.");
 	        		goViewReview();
 	        	}
 	        	else {
 	        		alert("리뷰 작성 실패");
 	        	}
 	        	
-	        	$("input:text[name='review_content']").val("");
+	        	$("textarea[name='review_content']").val("");
 	        	
 	        },
 	        error: function(request, status, error){
@@ -225,7 +347,8 @@ div#reviewList {
 		
 		$.ajax({
 			url:"<%=ctxPath%>/foodstoreReviewList.trip",
-			data:{"parent_code":"${requestScope.foodstorevo.food_store_code}"},
+			data:{"parent_code":"${requestScope.foodstorevo.food_store_code}"
+				, "currentShowPageNo":currentShowPageNo},
 			dataType:"json",
 			success:function(json) {
 				//console.log("리뷰 select 확인 : "+JSON.stringify(json));
@@ -234,11 +357,9 @@ div#reviewList {
 				if(json.length > 0) {
 					$.each(json, function(index, item){
 						
-						
-						
 						v_html += `<tr>
-									   <td>\${item.index}</td>
-								       <td>\${item.review_content}</td>    
+									   <td style='display: none;'>\${item.review_code}</td>
+								       <td>\${item.review_content}</td>
 								       <td>\${item.fk_userid}</td>
 								       <td class='review'>\${item.registerday}</td>`;    
 								       
@@ -249,6 +370,7 @@ div#reviewList {
 								    	   				  <button class='btn btn-secondary btn-sm btnUpdateReview'>수정</button>
 								    	   				  <input type='hidden' value='\${item.parent_code}'/>
 								    		              <button class='btn btn-secondary btn-sm btnDeleteReview'>삭제</button>
+								    		              <input type='hidden' value='\${currentShowPageNo}' class='currentShowPageNo' />
 								    		          </td>`;
 								       }
 								        
@@ -256,13 +378,18 @@ div#reviewList {
 								       
 					});
 				}// end of if(json.length > 0)---------
-				else {
+				
+				else { // 리뷰가 없을 경우
 			    	   v_html += `<tr>
 			    	   			      <td>작성된 리뷰가 없습니다.</td>
 			    	   			  </tr>`;
 			    }
 				
 				$("tbody#reviewDisplay").html(v_html);
+				
+				//const totalPage = Math.ceil( json[0].totalCount / json[0].sizePerPage);
+				
+				//makeReviewPageBar(currentShowPageNo, totalPage); // 리뷰 페이지바 함수 호출
 				
 			},
 			error: function(request, status, error){
@@ -272,10 +399,11 @@ div#reviewList {
 		
 	}// end of function goViewReview()----------------------
 	
-	// 리뷰 페이지바 함수 만들기 === //
+	
+	// == 리뷰 페이지바 함수 만들기 == //
   	function makeReviewPageBar(currentShowPageNo, totalPage) {
 		
-		const blockSize = 7; 
+		const blockSize = 10; 
 		
 		let loop = 1;
 		
@@ -312,9 +440,8 @@ div#reviewList {
 		pageBar_html += "</ul>";
 		 
 		console.log("pageBar_html 확인 : ", pageBar_html);
-
 		
-		// === #156. 댓글 페이지바 출력하기)
+		// 리뷰 페이지바 출력
 		$("div#pageBar").html(pageBar_html);
 		
 	}// end of function makeReviewPageBar(currentShowPageNo)------------------ */
@@ -518,34 +645,35 @@ div#reviewList {
 			
 		</c:if>
         <c:if test="${not empty sessionScope.loginuser}">
-           <h3>리뷰 작성</h3>
-           <form name="addWriteFrm" id="addWriteFrm" style="margin-top: 20px;">
-	               <table class="table">
-	                    
-	                    <tr style="height: 30px;">
-	                       <th style="width: 10%;">리뷰 내용 </th>
-	                       <td>
-	                          <input type="text" name="review_content" maxlength="1000" style="width: 75%;" />
-	                          <input type="text" style="display: none" />
-	                          <button type="reset" class="btn btn-light btn-sm mr-2 ml-3">취소</button>
-	                     	  <button type="button" class="btn btn-success btn-sm mr-3" onclick="goAddReview()">리뷰등록</button>
+           <h3 style="margin: 0 0 2% 4%;">리뷰 작성</h3>
+           <form name="addReviewFrm" id="addReviewFrm">
+               <table class="table" style="width: 100%;">
+                    <tr style="height: 30px;">
+                       <!-- <th>리뷰 내용 </th> -->
+                       <td>
+                          <textarea name="review_content" placeholder="리뷰 내용을 작성해 주세요."></textarea> 
+                          <input type="text" style="display: none" />
+                          <button type="reset" class="btn btn-light btn-sm mr-2 ml-5">취소</button>
+                     	  <button type="button" class="btn btn-success btn-sm mr-3" onclick="goAddReview()">리뷰등록</button>
 
-	                          <!-- 리뷰에 달리는 원게시물 글번호(즉, 리뷰의 부모글 글번호) -->
-	                          <input type="hidden" name="parent_code" value="${requestScope.foodstorevo.food_store_code}" />
-			                  <input type="hidden" name="fk_userid" value="${sessionScope.loginuser.userid}" readonly />
-	                       </td>
-	                    </tr>
-					</table>       
-					<%-- <input type="text" name="food_store_code" value="${requestScope.foodstorevo.food_store_code}" />  --%>
+                          <!-- 리뷰에 달리는 원게시물 글번호(즉, 리뷰의 부모글 글번호) -->
+                          <input type="hidden" name="parent_code" value="${requestScope.foodstorevo.food_store_code}" />
+		                  <input type="hidden" name="fk_userid" value="${sessionScope.loginuser.userid}" readonly />
+                       </td>
+                    </tr>
+				</table>       
 			</form>
 		</c:if>
 
+		<h3 style="margin: 5% 0 3% 4%;">작성된 리뷰</h3>
+		<c:if test="${empty sessionScope.loginuser}">
+			<p style="margin-left: 4%; color: #a6a6a6;">※ 리뷰 수정, 삭제는 로그인 후에 가능합니다.</p>
+		</c:if>
 		<!-- 리뷰 내용 보여주기 -->
-		<h3 class="mb-4 mt-5">작성된 리뷰</h3>
-		<table class="table" style="margin-bottom: 3%;">
+		<table class="table" id="review-table">
 			<thead>
 				<tr>
-					<th style="width: 6%;">순번</th>
+					<th style="display: none;">review_code</th>
 					<th style="text-align: center;">내용</th>
 					<th style="width: 12%;">작성자 아이디</th>
 					<th style="width: 12%;">작성일자</th>
@@ -564,10 +692,15 @@ div#reviewList {
 	</div>
 	<!-- 리뷰 끝 -->
 	
-	
 </div>
 <!-- container 끝 -->
 
+
+<form name="submitFrm">
+	<input name="readCount" value="${requestScope.readCount}" placeholder="조회수 들어올 자리" />
+
+	<input type="text" name="currentShowPageNo" placeholder="리뷰 페이징...." />
+</form>
 
 
 
