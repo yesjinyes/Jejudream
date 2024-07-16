@@ -26,7 +26,7 @@ public interface Yj_TripService {
 	List<Map<String, String>> viewfoodaddImg(Map<String, String> paraMap);
 
 	// == 좋아요 총 개수 알아오기 == //
-	int countLike(Map<String, String> paraMap);
+	int countFoodlike(Map<String, String> paraMap);
 	
 	// == 좋아요 여부 알아오기 == //
 	List<FoodstoreVO> checkLike(Map<String, String> paraMap);

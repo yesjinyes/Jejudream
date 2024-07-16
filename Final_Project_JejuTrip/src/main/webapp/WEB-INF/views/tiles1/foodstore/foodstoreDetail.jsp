@@ -180,7 +180,7 @@ textarea {
 		
 		goViewReview(1); // 리뷰 리스트 띄우기
 		
-		///////////////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		// == 리뷰 input 엔터 키 == //
 		$("textarea[name='review_content']").bind("keyup", function(e) {
@@ -192,7 +192,7 @@ textarea {
 		// == 리뷰 아이콘 클릭 시 리뷰 리스트로 이동 == //
 		const reviewList = document.getElementById("reviewList");
 		
-		$("button#btn-review").click(function() {
+		$("button#btnReview").click(function() {
 			// alert("리뷰 버튼 클릭");
 			window.scrollBy({top: reviewList.getBoundingClientRect().top, behavior: 'smooth'});
 		});
@@ -256,7 +256,7 @@ textarea {
 						alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
 					}
 					
-				});// end of $.ajax({})---------------------------
+				});// end of $.ajax---------------------------
 				
 			}// end of else if($(e.target).text() == "완료")--------------------
 			
@@ -300,57 +300,81 @@ textarea {
 			
 		});// end of $(document).on("click", "button.btnDeleteReview", function(e)--------
 		
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		// == 좋아요 기능 == //
+		$("button#btnLike").click(function() {
+			// alert("좋아요 버튼 클릭");
+			
+			
+			
+			if(${empty sessionScope.loginuser}) {
+				alert("좋아요는 로그인 후 가능합니다.");
+				
+				location.href = "login.trip";
+				
+				/* var referrer = document.referrer;
+				console.log("이전 페이지 URL: "+referrer); */
+				
+				return; // 종료
+			}
+			else{
+				//로그인을 한 경우라면
+				$.ajax({
+					url:"foodLike.trip",
+					type:"POST",
+					data:{"parent_code":"${requestScope.foodstorevo.food_store_code}",
+						  "fk_userid":"${sessionScope.loginuser.userid}"},
+					dataType:"json", 
+					success:function(json) {
+						if(json.n == 1){
+							alert("좋아요 등록 완료");
+							goLikeDislikeCount();
+						}
+						else{
+							alert("좋아요 취소");
+							goLikeDislikeCount();
+						}
+			        },
+			        error: function(request, status, error){
+			        	alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+			        }
+		    	});// end of $.ajax-------------------------
+			} 
+		});// end of $("button#btnLike").click(function() {})----------------------------
 		
 	});// end of $(document).ready(function() {})-----------------------------
 	
 	//▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒//
 	// Function declaration
 
-	$("button#btnLike").click(function() {
+	// == 좋아요 클릭, 취소 개수 띄우기 == //
+	function goLikeDislikeCount(){
+		$.ajax({
+	        url: "<%= ctxPath %>/countFoodlike.trip",
+	        data: {
+	            "parent_code": "${requestScope.foodstorevo.food_store_code}",
+	            "fk_userid": "${sessionScope.loginuser.userid}"
+	        },
+	        dataType: "json",
+	        success: function(json) {
+	            $("p#likeCount").html(json.countLike);
+	            if (json.check) {
+	                $("#like").hide();
+	                $("#likeup").show();
+	            } else {
+	                $("#like").show();
+	                $("#likeup").hide();
+	            }
+	        },
+	        error: function(request, status, error) {
+	            alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+	        }
+	    });// end of $.ajax---------------------------------------
 		
-		alert("좋아요 클릭");
-		
-		
-	});// end of $("button#btnLike").click(function() {})-----------------------
-	
-	
-	
-	// == 좋아요 클릭 기능 == //
-	function golikeAdd(){
- 		
-		alert("좋아요 버튼 클릭");
-		
-		/* if(${empty sessionScope.loginuser}) {
-			alert("좋아요는 로그인 후 가능합니다.");
-			return; // 종료
-		}
-		else{
-			//로그인을 한 경우라면
-			$.ajax({
-				url:"foodLike.trip",
-				type:"POST",
-				data:{"parent_code":"${requestScope.foodstorevo.food_store_code}",
-					  "fk_userid":"${sessionScope.loginuser.userid}"},
-				dataType:"json", 
-				success:function(json) {
-					if(json.n == 1){
-						alert("좋아요 등록 완료");
-						goLikeDislikeCount();
-					}
-					else{
-						alert("좋아요 취소");
-						goLikeDislikeCount();
-					}
-		        },
-		        error: function(request, status, error){
-		        	alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
-		        }
-	    	});// end of $.ajax-------------------------
-		} */
-		
-	}// end of function golikeAdd()---------------------------
+	}//end of function goLikeDislikeCount()---------------------------------------
 
-
+	
 	
 	// == 내 일정에 추가 == //
 	function addSchedule() {
@@ -359,7 +383,7 @@ textarea {
 		
 		
 		
-	}
+	}// end of function addSchedule()-----------------------------------------
 	
 
 	// == 맛집 리뷰 작성하기 == //
@@ -584,14 +608,14 @@ textarea {
 						<button type="button" class="iconbtn" id="btnLike">
 							<div class="item-each">
 								<img class="icon like" id="like" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_like.png">
-								<%-- <img class="icon likeup" id="likeup" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_likeup.png"> --%>
+								<img class="icon likeup" id="likeup" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_likeup.png">
 							</div>
 							<p class="icon-title">좋아요</p>
 						</button>
 						<p class="count" id="likeCount"></p>
 					</li>
 					<li class="list-item">
-						<button type="button" class="iconbtn" id="btn-review">
+						<button type="button" class="iconbtn" id="btnReview">
 							<div>
 								<img class="icon" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_review2.png">
 							</div>

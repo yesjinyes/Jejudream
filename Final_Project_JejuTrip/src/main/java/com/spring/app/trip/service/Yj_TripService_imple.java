@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.spring.app.trip.domain.FoodstoreVO;
-import com.spring.app.trip.domain.LikeVO;
 import com.spring.app.trip.domain.ReviewVO;
 import com.spring.app.trip.model.Yj_TripDAO;
 
@@ -101,9 +100,9 @@ public class Yj_TripService_imple implements Yj_TripService {
 
 	// == 좋아요 총 개수 알아오기 == //
 	@Override
-	public int countLike(Map<String, String> paraMap) {
-		int countLike = dao.countLike(paraMap);
-		return countLike;
+	public int countFoodlike(Map<String, String> paraMap) {
+		int countFoodlike = dao.countFoodlike(paraMap);
+		return countFoodlike;
 	}
 
 
@@ -111,7 +110,6 @@ public class Yj_TripService_imple implements Yj_TripService {
 	@Override
 	public List<FoodstoreVO> checkLike(Map<String, String> paraMap) {
 		List<FoodstoreVO> checkLike = dao.checkLike(paraMap);
-		System.out.println("checkLike : " + checkLike);
 	    return checkLike;
 	}
 

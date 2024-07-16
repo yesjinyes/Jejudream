@@ -179,16 +179,16 @@
 	</delete>
 
 
-	<!-- 리뷰 총 개수 구하기 -->
-	 <select id="countLike" parameterType="HashMap" resultType="int">
-	 select count(*)
-	 from tbl_like
-	 where parent_code = #{parent_code}
-	 </select>
+	<!-- 좋아요 총 개수 구하기 -->
+	<select id="countFoodlike" parameterType="HashMap" resultType="int">
+		select count(*)
+		from tbl_like
+		where parent_code = #{parent_code}
+	</select>
 	
 	
 	<!-- 좋아요 추가 -->
-	<insert id="likeAdd" parameterType="HashMap">
+	<insert id="addLike" parameterType="HashMap">
 		insert into tbl_like (fk_userid,parent_code, like_division_R)
 		values (#{fk_userid},#{parent_code},#{like_division_R})
 	</insert>

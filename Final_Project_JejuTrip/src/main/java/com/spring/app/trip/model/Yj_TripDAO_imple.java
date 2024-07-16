@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import com.spring.app.trip.domain.FoodstoreVO;
-import com.spring.app.trip.domain.LikeVO;
 import com.spring.app.trip.domain.ReviewVO;
 
 @Repository
@@ -43,8 +42,41 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 		return totalCount;
 	}
 
+	
+	// == 좋아요 총 개수 알아오기 == //
+	@Override
+	public int countFoodlike(Map<String, String> paraMap) {
+		int countFoodlike = sqlsession.selectOne("yj_trip.countFoodlike",paraMap);
+		return countFoodlike;
+	}
+
+
+	// == 좋아요 여부 알아오기 == //
+	@Override
+	public List<FoodstoreVO> checkLike(Map<String, String> paraMap) {
+		List<FoodstoreVO> checkLike = sqlsession.selectList("yj_trip.checkLike",paraMap);
+		return checkLike;
+	}
+
+
+	// == 좋아요 추가 == //
+	@Override
+	public int addLike(Map<String, String> paraMap) {
+		int n = sqlsession.insert("yj_trip.addLike", paraMap);
+		return n;
+	}
+
+
+	// == 좋아요 취소 == //
+	@Override
+	public void deleteLike(Map<String, String> paraMap) {
+		sqlsession.delete("yj_trip.deleteLike", paraMap);
+	}
+	
+	
 	////////////////////////////////////////////////////////////////////////////////////////////////
 
+	
 	// == 맛집 상세 조회하기 == //
 	@Override
 	public FoodstoreVO viewfoodstoreDetail(Map<String, String> paraMap) {
@@ -60,6 +92,9 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 		return addimgList;
 	}
 
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	
 	
 	// == 맛집 리뷰 쓰기 == //
 	@Override
@@ -101,35 +136,7 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 	}
 
 
-	// == 좋아요 총 개수 알아오기 == //
-	@Override
-	public int countLike(Map<String, String> paraMap) {
-		int countLike = sqlsession.selectOne("yj_trip.countLike",paraMap);
-		return countLike;
-	}
-
-
-	// == 좋아요 여부 알아오기 == //
-	@Override
-	public List<FoodstoreVO> checkLike(Map<String, String> paraMap) {
-		List<FoodstoreVO> checkLike = sqlsession.selectList("yj_trip.checkLike",paraMap);
-		return checkLike;
-	}
-
-
-	// == 좋아요 추가 == //
-	@Override
-	public int addLike(Map<String, String> paraMap) {
-		int n = sqlsession.insert("yj_trip.addLike", paraMap);
-		return n;
-	}
-
-
-	// == 좋아요 취소 == //
-	@Override
-	public void deleteLike(Map<String, String> paraMap) {
-		sqlsession.delete("yj_trip.deleteLike", paraMap);
-	}
+	
 
 
 
