@@ -42,8 +42,41 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 		return totalCount;
 	}
 
+	
+	// == 좋아요 총 개수 알아오기 == //
+	@Override
+	public int countFoodlike(Map<String, String> paraMap) {
+		int countFoodlike = sqlsession.selectOne("yj_trip.countFoodlike",paraMap);
+		return countFoodlike;
+	}
+
+
+	// == 좋아요 여부 알아오기 == //
+	@Override
+	public List<FoodstoreVO> checkLike(Map<String, String> paraMap) {
+		List<FoodstoreVO> checkLike = sqlsession.selectList("yj_trip.checkLike",paraMap);
+		return checkLike;
+	}
+
+
+	// == 좋아요 추가 == //
+	@Override
+	public int addLike(Map<String, String> paraMap) {
+		int n = sqlsession.insert("yj_trip.addLike", paraMap);
+		return n;
+	}
+
+
+	// == 좋아요 취소 == //
+	@Override
+	public void deleteLike(Map<String, String> paraMap) {
+		sqlsession.delete("yj_trip.deleteLike", paraMap);
+	}
+	
+	
 	////////////////////////////////////////////////////////////////////////////////////////////////
 
+	
 	// == 맛집 상세 조회하기 == //
 	@Override
 	public FoodstoreVO viewfoodstoreDetail(Map<String, String> paraMap) {
@@ -59,6 +92,9 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 		return addimgList;
 	}
 
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	
 	
 	// == 맛집 리뷰 쓰기 == //
 	@Override
@@ -90,6 +126,17 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 		int n = sqlsession.delete("yj_trip.deleteReview", review_code);
 		return n;
 	}
+
+
+	// == 리뷰 총 개수 구하기 == //
+	@Override
+	public int getReviewTotalCount(String parent_code) {
+		int n = sqlsession.selectOne("yj_trip.getReviewTotalCount", parent_code);
+		return n;
+	}
+
+
+	
 
 
 

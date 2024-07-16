@@ -79,7 +79,6 @@
 		<if test="orderType == null">
 			ORDER BY food_store_code
 		</if>
-		
 	</select>
 	
 	
@@ -155,6 +154,7 @@
 		values(seq_review.nextval, #{fk_userid}, #{parent_code}, #{review_content}, default, 'B')
 	</insert>
 	
+	
 	<!-- 작성한 리뷰 보이기 -->
 	<select id="getReviewList" parameterType="String" resultType="com.spring.app.trip.domain.ReviewVO">
 		select review_code, fk_userid, parent_code, review_content
@@ -171,6 +171,7 @@
 		where review_code = #{review_code}
 	</update>
 
+
 	<!-- 리뷰 삭제하기 -->
 	<delete id="deleteReview" parameterType="String">
 		delete from tbl_review
@@ -178,5 +179,31 @@
 	</delete>
 
 
+	<!-- 좋아요 총 개수 구하기 -->
+	<select id="countFoodlike" parameterType="HashMap" resultType="int">
+		select count(*)
+		from tbl_like
+		where parent_code = #{parent_code}
+	</select>
+	
+	
+	<!-- 좋아요 추가 -->
+	<insert id="addLike" parameterType="HashMap">
+		insert into tbl_like (fk_userid,parent_code, like_division_R)
+		values (#{fk_userid},#{parent_code},#{like_division_R})
+	</insert>
+	
+	<!-- 좋아요 취소 -->
+	<delete id="deleteLike" parameterType="HashMap">
+		delete from tbl_like where fk_userid = #{fk_userid} and parent_code = #{parent_code}
+	</delete>
+	
+	
+	<!-- 좋아요 여부 알아오기 -->
+	<select id="checkLike" parameterType="HashMap" resultType="com.spring.app.trip.domain.LikeVO">
+		select fk_userid,parent_code,like_division_R
+		from tbl_like
+		where fk_userid = #{fk_userid} and parent_code = #{parent_code}
+	</select>
 
 </mapper>

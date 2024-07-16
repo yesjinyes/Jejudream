@@ -165,6 +165,8 @@ $(document).ready(function(){
         }
     });  
 	
+    
+    // 날짜선택이 변경되었다면
     $("input:text[name='datepicker']").change( (e)=>{
     	
     	chk = false;
@@ -195,7 +197,15 @@ $(document).ready(function(){
     	$("input:hidden[name='check_out1']").val(v2);
     	*/
     	
-    });
+    }); // end of $("input:text[name='datepicker']").change( (e)=>{})
+    
+    
+    // 인원선택이 변경되었다면
+    $("input#people").change(function(){
+    	
+    	chk = false;
+    }); 
+    
     
     
     // 재검색 내용으로 바꾸기
@@ -251,16 +261,16 @@ $(document).ready(function(){
         					v_html	+= `<h4 class="pb-2" style="color: navy;">\${Number(item.price).toLocaleString('en')} 원</h4>
         								<div class="mb-2">
                     						<button type="button" name="reservation" class="btn btn-success">예약하기</button>
-                						</div>`;	
+                						</div>
+                						<input type="hidden" name="room_detail_code1" value="\${item.room_detail_code}" />
+                                        <input type="hidden" name="lodging_code1" value="\${item.lodging_code}" />
+                                        <input type="hidden" name="check_in1" value="\${check_in}" />
+                                        <input type="hidden" name="check_out1" value="\${check_out}" />`;	
         					
         				}				
         				
                             v_html += `</div>
-                    			</div>
-                    			<input type="hidden" name="room_detail_code1" value="\${item.room_detail_code}" />
-                            	<input type="hidden" name="lodging_code1" value="\${item.lodging_code}" />
-                            	<input type="hidden" name="check_in1" value="\${check_in}" />
-                            	<input type="hidden" name="check_out1" value="\${check_out}" />`; 
+                    			</div>`; 
                     }); // end of $.each
             		
             		
@@ -296,17 +306,17 @@ $(document).ready(function(){
     	}
     	
     	
-		const room_detail_code = $(e.target).parent().parent().parent().siblings('input:hidden[name="room_detail_code1"]').val();
-		const lodging_code = $(e.target).parent().parent().parent().siblings('input:hidden[name="lodging_code1"]').val();
-		const check_in = $(e.target).parent().parent().parent().siblings('input:hidden[name="check_in1"]').val();
-		const check_out = $(e.target).parent().parent().parent().siblings('input:hidden[name="check_out1"]').val();
+		const room_detail_code = $(e.target).parent().siblings('input:hidden[name="room_detail_code1"]').val();
+		const lodging_code = $(e.target).parent().siblings('input:hidden[name="lodging_code1"]').val();
+		const check_in = $(e.target).parent().siblings('input:hidden[name="check_in1"]').val();
+		const check_out = $(e.target).parent().siblings('input:hidden[name="check_out1"]').val();
 		
-		/*
+		
 		alert(room_detail_code);
 	    alert(lodging_code);
 		alert(check_in);
 		alert(check_out);
-		*/
+		
 		
 		const frm = document.reserve;
 		
@@ -336,7 +346,7 @@ $(document).ready(function(){
 	}); // end of $("textarea#review_content").bind("keydown", function(e){}) 
 	
 	
-	/*
+	
 	// ====== 댓글 수정 ====== //
 	let origin_comment_content = "";
 	
@@ -346,16 +356,18 @@ $(document).ready(function(){
 		
 		if($(e.target).text() == "수정"){
 			
-			const $content = $(e.target).parent().parent().children("td:nth-child(2)");
+			const $content = $(e.target).parent().find("p");
 			// $의 의미 선택자라는 뜻으로 변수명을 특별하게 부여해준것 뿐임
 			
-			origin_comment_content = $(e.target).parent().parent().children("td:nth-child(2)").text();
+			// alert($content);
+			
+			origin_comment_content = $(e.target).parent().find("p").text().trim();
 			// 원래 댓글의 내용
 			
 			$content.html(`<input class='dd' type='text' value='\${origin_comment_content}' size='40' />`); // 댓글내용을 수정할 수 있도록 input 태그를 만들어 준다.
 			
-			$(e.target).text("완료").removeClass("btn-secondary").addClass("btn-info");
-			$(e.target).next().next().text("취소").removeClass("btn-secondary").addClass("btn-danger");
+			$(e.target).text("완료").removeClass("btn-outline-dark").addClass("btn-info");
+			$(e.target).next().next().text("취소").removeClass("btn-outline-danger").addClass("btn-danger");
 			
 			$(document).on("keydown", "input.dd", function(e){
 				
@@ -373,28 +385,34 @@ $(document).ready(function(){
 			// alert('댓글수정완료');
 			// alert($(e.target).next().val()); // 수정해야할 댓글 시퀀스 번호
 			
-			const content = $(e.target).parent().parent().children("td:nth-child(2)").find("input").val();
+			const content = $(e.target).parent().find("input").val();
 			// 수정 후 댓글내용
 			// alert(content);
 			
-			const seq = $(e.target).next().val();
+			const review_code = $(e.target).next().val();
 			
 			$.ajax({
-				url:"${pageContext.request.contextPath}/updateComment.action",
+				url:"${pageContext.request.contextPath}/JSONUpdateComment.trip",
 				type:"post",
-				data:{"seq":seq, 
+				data:{"review_code":review_code, 
 					  "content":content},
 				dataType:"json",
 				success:function(json){
 					
-					// $(e.target).parent().parent().children("td:nth-child(2)").html(content);
-					$(e.target).text("수정").removeClass("btn-info").addClass("btn-secondary");
-					$(e.target).next().next().text("삭제").removeClass("btn-danger").addClass("btn-secondary");
+					if(json.n == "1"){
+						
+						$(e.target).text("수정").removeClass("btn-info").addClass("btn-outline-dark");
+						$(e.target).next().next().text("삭제").removeClass("btn-danger").addClass("btn-outline-danger");
+						
+						const currentShowPageNo = $(e.target).find("input.currentShowPageNo").val();
+						
+						goViewComment(currentShowPageNo); // 페이징 처리한 댓글 읽어오기
+					}
+					else{
+						
+						alert('댓글 수정 실패');
+					}
 					
-					const currentShowPageNo = $(e.target).parent().parent().find("input.currentShowPageNo").val();
-					
-					
-					goViewComment(currentShowPageNo); // 페이징 처리한 댓글 읽어오기
 				},
 				error: function(request, status, error){
 			        alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
@@ -415,16 +433,13 @@ $(document).ready(function(){
 	
 		if($(e.target).text() == "취소"){
 			
-			// alert('댓글수정취소');
-			// alert($(e.target).parent().parent().children("td:nth-child(2)").html()); // 원래태그가 무엇인지 찍어보기		
-			
-			const $content = $(e.target).parent().parent().children("td:nth-child(2)");
+			const $content = $(e.target).parent().find("p");
 			// 선택자를 의미하는 태그 
 			$content.html(`\${origin_comment_content}`);
 			// 밖으로 빼놓은 원래 내용을 태그로 교체해버린다? , 일단 저 변수는 수정버튼 눌렀을때만 값이 들어가게되고, 취소가 나오는경우는 무조건 수정이 눌렸을 경우이기 때문에 가능해진다!
 			
-			$(e.target).text("삭제").removeClass("btn-danger").addClass("btn-secondary");
-            $(e.target).prev().prev().text("수정").removeClass("btn-info").addClass("btn-secondary");
+			$(e.target).text("삭제").removeClass("btn-danger").addClass("btn-outline-danger");
+            $(e.target).prev().prev().text("수정").removeClass("btn-info").addClass("btn-outline-dark");
 			
 		
 		}
@@ -432,16 +447,15 @@ $(document).ready(function(){
 			
 			// alert('댓글삭제');
 			
-			const seq = $(e.target).prev().val(); // 삭제해야할 댓글 시퀀스 번호
+			const review_code = $(e.target).prev().val(); // 삭제해야할 댓글 시퀀스 번호
 			// alert(seq);
 			
 			if(confirm('정말 댓글을 삭제하시겠습니까?')){
 				
 				$.ajax({
-					url:"${pageContext.request.contextPath}/deleteComment.action",
+					url:"${pageContext.request.contextPath}/JSONDeleteComment.trip",
 					type:"post",
-					data:{"seq":seq, 
-						  "parentSeq":"${requestScope.boardvo.seq}"},
+					data:{"review_code":review_code},
 					dataType:"json",
 					success:function(json){
 						
@@ -460,7 +474,7 @@ $(document).ready(function(){
     
 	}); // end of	$(document).on("click", "button.btnDeleteComment", function(e){})
 	
-	*/
+	/**/
 	
 	goViewComment(1);
 	
@@ -494,25 +508,29 @@ function goViewComment(currentShowPageNo){
 					                    <p class="review-content">
 											\${item.review_content}
 					                    </p>
-					                    <span class="review-author">작성일 : \${item.registerday}</span>
-					                </div>`;
+					                    <span class="review-author mr-3">작성일 : \${item.registerday}</span>`;
+					                
 					            
 					
 					if(${sessionScope.loginuser !=null} &&
 					   "${sessionScope.loginuser.userid}" == item.fk_userid){
 						
-						v_html += `<div class="comment-buttons">
-					                	<button type="button" class="btn btn-warning btnUpdateComment">수정</button>
-					                	<button type="button" class="btn btn-danger btnDeleteComment">삭제</button>
-					                	<input type="hidden" name="fk_userid" value='\${item.fk_userid}' />
-										<input type='hidden' value='\${currentShowPageNo}' class='currentShowPageNo' />
-					                </div>`;
+						v_html += `<button type="button" class="btn btn-outline-dark btn-sm btnUpdateComment">수정</button>
+									<input type="hidden" name="review_code" value='\${item.review_code}' />
+					               <button type="button" class="btn btn-outline-danger btn-sm btnDeleteComment">삭제</button>
+					                <input type="hidden" name="fk_userid" value='\${item.fk_userid}' />
+									<input type='hidden' value='\${currentShowPageNo}' class='currentShowPageNo' />`;
 						
 					}// end of if 	
 					
-                  	v_html += "</div>";
+                  	v_html += "</div></div>";
 				
 				}); // end of each
+				
+				const totalPage = Math.ceil(json[0].totalCount / json[0].sizePerPage);
+				// console.log(totalPage);
+				
+				makeCommentPageBar(currentShowPageNo, totalPage);
 				
 			} // end of if
 			else{
@@ -524,11 +542,6 @@ function goViewComment(currentShowPageNo){
 			} // end of else
 			
 			$("div#comment").html(v_html);
-			
-			const totalPage = Math.ceil(json[0].totalCount / json[0].sizePerPage);
-			// console.log(totalPage);
-			
-			makeCommentPageBar(currentShowPageNo, totalPage);
 			
 		},
 		error: function(request, status, error){
@@ -593,6 +606,10 @@ function makeCommentPageBar(currentShowPageNo, totalPage){
 	$("div#pageBar").html(pageBar_HTML);
 
 } // end of function makeCommentPageBar(currentShowPageNo){
+	
+	
+	
+	
 
 </script>
 <style>
@@ -665,15 +682,6 @@ function makeCommentPageBar(currentShowPageNo, totalPage){
     background-color: #ffffff;
 }
 
-.comment-buttons {
-	align-content: center;
-    margin-left: 10px;
-}
-.comment-buttons button {
-    margin-bottom: 5px;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 3px;
 
 }
 .input-container textarea {
@@ -759,12 +767,13 @@ function makeCommentPageBar(currentShowPageNo, totalPage){
                             <div class="mb-2">
                                 <button type="button" name="reservation" class="btn btn-success">예약하기</button>
                             </div>
+                            <input type="hidden" name="room_detail_code1" value="${roomDetail.room_detail_code}"/>
+		                    <input type="hidden" name="lodging_code1" value="${roomDetail.lodging_code}"/>
+		                    <input type="hidden" name="check_in1" value="" />
+		                    <input type="hidden" name="check_out1" value="" />
                         </div>
                     </div>
-                    <input type="hidden" name="room_detail_code1" value="${roomDetail.room_detail_code}"/>
-                    <input type="hidden" name="lodging_code1" value="${roomDetail.lodging_code}"/>
-                    <input type="hidden" name="check_in1" value="" />
-                    <input type="hidden" name="check_out1" value="" />
+                    
                 </c:forEach>
             </div>
 
@@ -801,7 +810,7 @@ function makeCommentPageBar(currentShowPageNo, totalPage){
 		                <br>
 		                <span>${sessionScope.loginuser.user_name}</span>
 		            </div>
-		            <textarea id="review_content" rows="4" placeholder="이용후기를 댓글로 남겨주세요!"></textarea>
+		            <textarea style="width: 50%;" id="review_content" rows="4" placeholder="이용후기를 댓글로 남겨주세요!"></textarea>
 		            <div class="input-buttons" style="align-content: center; margin-left: 1%;">
 		                <button type="button" class="btn btn-warning btn-sm" onclick="goAddWrite()">댓글 작성</button>
 		                <button type="reset" class="btn btn-light btn-sm">댓글쓰기 취소</button>

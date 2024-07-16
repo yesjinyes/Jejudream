@@ -63,5 +63,6 @@ public interface Ws_TripDAO {
 	List<Map<String, String>> select_user_all_Reservation_paging(Map<String, String> paraMap);// 개인회원이 한 예약정보를 페이징처리하여 읽어온다.
 	int getTotalUserReservationCount(Map<String, String> paraMap);// tbl_reservation에서 자기 자신의 모든 예약정보를 카운트한다.
 	String get_user_email(String reservation_code);// 회원의 이메일을 읽어온다.
+	Map<String, String> get_email_map(String reservation_code);// 바우처에 입력할 정보를 가져오기 위해 예약정보등을 가져온다.
 
 }

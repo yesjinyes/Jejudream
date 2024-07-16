@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -1572,7 +1573,24 @@ public class Ws_TripController {
             
             GoogleMail mail = new GoogleMail();
             
-            String r_html = "예약이 정상적으로 승인되었슴둥";
+            Map<String,String> emailMap = service.get_email_map(reservation_code);// 바우처에 입력할 정보를 가져오기 위해 예약정보등을 가져온다.
+    		
+            DecimalFormat df = new DecimalFormat("#,###");
+            
+            System.out.println(request.getContextPath()+"/resources/images/lodginglist/room/"+emailMap.get("room_img"));
+            
+            String r_html = "<div style=\"border:solid 1px black; width:80%; margin:auto;\">";
+            r_html += "<div style=\"font-size:30pt; font-weight:bold; text-align:center;\">"+emailMap.get("lodging_name")+"<span style=\"float:right; font-size:15pt; margin-right: 10px;\">No."+emailMap.get("reservation_code")+"</span></div>";
+            r_html += "<hr>";
+            r_html += "<div><img style=\"width:250px; margin-left:50px;\" src='http://127.0.0.1:9090/JejuDream/resources/images/lodginglist/room/"+emailMap.get("room_img")+"'/></div>";
+            r_html += "<div style=\"font-size:15pt; font-weight:bold; margin-left: 50px; margin-top: 10px;\">ROOM : "+emailMap.get("room_name")+"</div>";
+            r_html += "<div style=\"font-size:15pt; font-weight:bold; margin-left: 50px; margin-top: 10px;\">NAME : "+emailMap.get("user_name")+"</div>";
+            r_html += "<div style=\"font-size:15pt; font-weight:bold; margin-left: 50px; margin-top: 10px;\">TEL : "+emailMap.get("lodging_tell")+"</div>";
+            r_html += "<div style=\"font-size:15pt; font-weight:bold; margin-left: 50px; margin-top: 10px;\">ADDERESS : "+emailMap.get("lodging_address")+"</div>";
+            r_html += "<div style=\"font-size:15pt; font-weight:bold; margin-left: 50px; margin-top: 10px;\">CHECK IN : "+emailMap.get("check_in")+"</div>";
+            r_html += "<div style=\"font-size:15pt; font-weight:bold; margin-left: 50px; margin-top: 10px;\">CHECK OUT : "+emailMap.get("check_out")+"</div>";
+            r_html += "<div style=\"font-size:15pt; font-weight:bold; margin-left: 50px; margin-top: 10px; margin-bottom:10px;\">PRICE : "+df.format(Integer.parseInt(emailMap.get("reservation_price")))+" 원 </div>";
+            r_html += "</div>";
             
             try {
 	            mail.send_change_reservation_status(email, r_html);
@@ -1592,7 +1610,7 @@ public class Ws_TripController {
             
             GoogleMail mail = new GoogleMail();
             
-            String r_html = "예약 실패했쥬? 또해야하쥬? 킹받쥬? ㅋㅋㄹㅃㅃ 어쩔티비 저쩔냉장고 어쩔공기청정기";
+            String r_html = "<div style=\"font-size:15pt; font-weight:bold; margin-left: 50px; margin-top: 10px;\">예약에 실패했습니다 해당 업체로 문의 바랍니다.</div>";
             
             try {
 	            mail.send_change_reservation_status(email, r_html);
@@ -1678,6 +1696,30 @@ public class Ws_TripController {
 		return jsonArr.toString(); // "[{"seq":1, "fk_userid":"seoyh","name":서영학,"content":"첫번째 댓글입니다. ㅎㅎㅎ","regdate":"2024-06-18 15:36:31"}]"
 		                           // 또는
 		                           // "[]"		
+		
+	}
+	
+	@GetMapping("editProfile.trip")
+	public ModelAndView editProfile(ModelAndView mav, HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
+		
+		if(loginuser != null) {
+			mav.setViewName("mypage/member/editProfile.tiles1");
+		}
+		return mav;
+	}
+	
+	// 멤버 정보 수정하기
+	@ResponseBody
+	@PostMapping(value="/memberEditEnd.trip", produces="text/plain;charset=UTF-8") 
+	public String memberEditEnd(MemberVO membervo, HttpServletRequest request) {
+
+		System.out.println(membervo.getUser_name());
+		
+		JSONObject jsonObj = new JSONObject();
+		
+		return jsonObj.toString();
 		
 	}
 	

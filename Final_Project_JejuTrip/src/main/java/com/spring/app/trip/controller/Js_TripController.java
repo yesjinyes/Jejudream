@@ -617,8 +617,62 @@ public class Js_TripController {
 		
 		return jsonArr.toString(); 
 		
-	}// end of public String CommentList(HttpServletRequest request) {} 
+	}// end of public String CommentList(HttpServletRequest request) {} \
 	
+	
+	
+	
+	@ResponseBody
+	@PostMapping(value="/JSONUpdateComment.trip", produces="text/plain;charset=UTF-8")
+	public String JSONUpdateLodgingComment(@RequestParam (value="review_code") String review_code,
+									@RequestParam (value="content") String content) {
+		
+		// System.out.println("~~~ 확인용 : review_code " + review_code);
+		// System.out.println("~~~ 확인용 : content " + content);
+		
+		Map<String, String> paraMap = new HashMap<>();
+		
+		JSONObject jsonObj = new JSONObject();
+		
+		int n = 0;
+		
+		if(review_code !=null && content !=null) {
+			
+			paraMap.put("review_code", review_code);
+			paraMap.put("content", content);
+			
+			// 숙소 상세 댓글 수정하기
+			n = service.updateLodgingComment(paraMap); 
+			
+		} // end of if
+		
+		jsonObj.put("n",n);
+		
+		return jsonObj.toString();
+		
+	} // end of public String JSONUpdateComment
+	
+	
+	@ResponseBody
+	@PostMapping(value="/JSONDeleteComment.trip", produces="text/plain;charset=UTF-8")
+	public String JSONDeleteLodgingComment(@RequestParam (value="review_code") String review_code) {
+		
+		int n = 0;
+		
+		if(review_code !=null) {
+			
+			// 숙소 리뷰 삭제하기
+			n = service.deleteLodgingComment(review_code);
+			
+		}
+		
+		JSONObject jsonObj = new JSONObject();
+		
+		jsonObj.put("n", n);
+		
+		return jsonObj.toString();
+		
+	} // end of public String JSONDeleteLodgingComment(@RequestParam (value="review_code") String review_code) {
 	
 	
 }

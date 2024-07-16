@@ -11,7 +11,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.spring.app.trip.common.FileManager;
+import com.spring.app.trip.domain.Calendar_schedule_VO;
 import com.spring.app.trip.domain.LikeVO;
+import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.domain.PlayVO;
 import com.spring.app.trip.domain.ReviewVO;
 import com.spring.app.trip.model.Hs_TripDAO;
@@ -72,7 +74,6 @@ public class Hs_TripService_imple implements Hs_TripService {
 		int n = dao.addReview(reviewvo);
 		return n;
 	}
-
 
 
 	//리뷰 보여주기
@@ -164,7 +165,7 @@ public class Hs_TripService_imple implements Hs_TripService {
 		
 		List<LikeVO> checkLike = dao.checkLike(paraMap);  // int로 반환된 좋아요 상태 확인
 	    
-		System.out.println("checkLike : " + checkLike);
+		//System.out.println("checkLike : " + checkLike);
 	    return checkLike;
 	}
 	@Override
@@ -204,6 +205,28 @@ public class Hs_TripService_imple implements Hs_TripService {
 	@Override
 	public int countExperience() {
 	    return dao.countExperience();
+	}
+	
+	//일행 추가를 위한 유저 ID select
+	@Override
+	public List<MemberVO> searchPlayJoinUserList(String joinUserName) {
+		List<MemberVO> JoinUserList = dao.searchPlayJoinUserList(joinUserName);
+		return JoinUserList;
+	}
+	
+	//일정추가
+	@Override
+	public int registerPlaySchedule_end(Map<String, String> paraMap) {
+		int n = dao.registerPlaySchedule_end(paraMap);
+		return n;
+	}
+	
+	//일정추가 했는지 알아오기
+	@Override
+	public List<Calendar_schedule_VO> checkSchedule(Map<String, String> paraMap) {
+		List<Calendar_schedule_VO> checkSchedule = dao.checkSchedule(paraMap);
+		//System.out.println("checkSchedule" + checkSchedule);
+		return checkSchedule;
 	}
 	
 	

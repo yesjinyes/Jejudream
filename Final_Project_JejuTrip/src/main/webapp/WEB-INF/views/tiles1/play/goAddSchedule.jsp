@@ -28,7 +28,6 @@
 <style type="text/css">
 
 
-
 body {
     font-family: "Noto Sans KR", sans-serif;
     font-optical-sizing: auto;
@@ -263,6 +262,7 @@ ul.list li {
 $(document).ready(function() {
 	
 	goLikeDislikeCount();
+	goCheckSchedule();
 	
 	const today = new Date();
     const year = today.getFullYear();
@@ -272,16 +272,10 @@ $(document).ready(function() {
     let currentShowPageNo = 1; // currentShowPageNo 초기값
     goReviewListView(currentShowPageNo); // 페이징처리된 리뷰보여주는 함수
 
-    
+
     //모달창 띄우기전 로그인 검사--------------------------------------------------------------- 
     
-	 $(document).on('click', '.addSchedule', function() {
-	        if (${sessionScope.loginuser.userid == null}) {
-	            alert("일정 추가는 로그인 후 이용 가능합니다");
-	        } else {
-	            $('#exampleModal_scrolling_2').modal('show');
-	        }
-	    });
+	
     //------------------------------------------------------------------------ 
 	
     //리뷰 작성-----------------------------------------------------------------
@@ -470,10 +464,210 @@ $(document).ready(function() {
                 map.setCenter(coords);
             }
         });  
+        
+    //--------------------------------------map관련 끝 ---------------------------------------//
+        
+        
+      <%-- // 서브캘린더 종류를 알아와서 select 태그에 넣어주기 
+		$("select.calType").change(function(){
+			var fk_lgcatgono = $("select.calType").val();   // 나의일정 1, 공유일정 2
+			
+			if(fk_lgcatgono != "") { // 선택하세요 가 아니라면
+				$.ajax({
+						url: "<%= ctxPath%>/schedule/selectPlaySmallCategory.trip",
+						data: {"fk_lgcatgono":fk_lgcatgono, 
+							   "fk_userid":"${sessionScope.loginuser.userid}"},
+						dataType: "json",
+						success:function(json){
+							var html ="";
+							if(json.length>0){
+								$.each(json, function(index, item){
+									html+="<option value='"+item.smcatgono+"'>"+item.smcatgoname+"</option>"
+								});
+								$("select.small_category").html(html);
+								$("select.small_category").show();
+							}
+						},
+						error: function(request, status, error){
+				            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+						}
+				});
+			}
+			
+			else {
+				// 선택하세요 이라면
+				$("select.small_category").hide();
+			}
+			
+		});
+		 --%>
 		
+		// 공유자 추가하기
+		$("input#joinUserName").bind("keyup",function(){
+				var joinUserName = $(this).val();
+			//	console.log("확인용 joinUserName : " + joinUserName);
+				$.ajax({
+					url:"<%= ctxPath%>/schedule/insertSchedule/searchPlayJoinUserList.trip",
+					data:{"joinUserName":joinUserName},
+					dataType:"json",
+					success : function(json){
+						var joinUserArr = [];
+				    
+					//  input태그 공유자입력란에 "이" 를 입력해본 결과를 json.length 값이 얼마 나오는지 알아본다. 
+					//	console.log(json.length);
+					
+						if(json.length > 0){
+							
+							$.each(json, function(index,item){
+								var name = item.name;
+								if(name.includes(joinUserName)){ // name 이라는 문자열에 joinUserName 라는 문자열이 포함된 경우라면 true , 
+									                             // name 이라는 문자열에 joinUserName 라는 문자열이 포함되지 않은 경우라면 false 
+								   joinUserArr.push(name+"("+item.userid+")");
+								}
+							});
+							
+							$("input#joinUserName").autocomplete({  // 참조 https://jqueryui.com/autocomplete/#default
+								source:joinUserArr,
+								select: function(event, ui) {       // 자동완성 되어 나온 공유자이름을 마우스로 클릭할 경우 
+									add_joinUser(ui.item.value);    // 아래에서 만들어 두었던 add_joinUser(value) 함수 호출하기 
+									                                // ui.item.value 이  선택한이름 이다.
+									return false;
+						        },
+						        focus: function(event, ui) {
+						            return false;
+						        }
+							}); 
+							
+						}// end of if------------------------------------
+					}// end of success-----------------------------------
+				});
+		});
+		
+
+		// x아이콘 클릭시 공유자 제거하기
+		$(document).on('click','div.displayUserList > span.plusUser > i',function(){
+				var text = $(this).parent().text(); // 이순신(leess/leesunsin@naver.com)
+				
+				var bool = confirm("공유자 목록에서 "+ text +" 님을 삭제하시겠습니까?");
+				
+				if(bool) {
+					$(this).parent().remove();
+				}
+		});
+
+		
+		 $('#fk_lgcatgono').on('change', function() {
+			var fk_lgcatgono = $(this).val();
+	        
+	        if (fk_lgcatgono == "1") {
+	        	$('input#fk_smcatgono').val('3'); 
+	        } else if (fk_lgcatgono == "2") {
+	        	$('input#fk_smcatgono').val('6'); 
+	        } else {
+	        	$('input#fk_smcatgono').val(''); 
+	        }
+		 });
+		
+		// 등록 버튼 클릭
+		$("button#register").click(function(){
+
+			// 일자 유효성 검사 (시작일자가 종료일자 보다 크면 안된다!!)
+			var startDate = $("input#fromDate").val();	
+	    	var sArr = startDate.split("-");
+	    	startDate= "";	
+	    	for(var i=0; i<sArr.length; i++){
+	    		startDate += sArr[i];
+	    	}
+	    	
+	    	var endDate = $("input#fromDate").val();	
+	    	var eArr = endDate.split("-");   
+	     	var endDate= "";
+	     	for(var i=0; i<eArr.length; i++){
+	     		endDate += eArr[i];
+	     	}
+			
+	     	var startHour= $("select#startHour").val();
+	     	var endHour = $("select#endHour").val();
+	     	var startMinute= $("select#startMinute").val();
+	     	var endMinute= $("select#endMinute").val();
+	        
+	     	// 조회기간 시작일자가 종료일자 보다 크면 경고
+	        if (Number(endDate) - Number(startDate) < 0) {
+	         	alert("종료일이 시작일 보다 작습니다."); 
+	         	return;
+	        }
+	        
+	     	// 시작일과 종료일 같을 때 시간과 분에 대한 유효성 검사
+	        else if(Number(endDate) == Number(startDate)) {
+	        	
+	        	if(Number(startHour) > Number(endHour)){
+	        		alert("종료일이 시작일 보다 작습니다."); 
+	        		return;
+	        	}
+	        	else if(Number(startHour) == Number(endHour)){
+	        		if(Number(startMinute) > Number(endMinute)){
+	        			alert("종료일이 시작일 보다 작습니다."); 
+	        			return;
+	        		}
+	        		else if(Number(startMinute) == Number(endMinute)){
+	        			alert("시작일과 종료일이 동일합니다."); 
+	        			return;
+	        		}
+	        	}
+	        }// end of else if---------------------------------
+
+ 			
+	        
+	     	// 캘린더 선택 유무 검사
+			var calType = $("select.calType").val().trim();
+			if(calType==""){
+				alert("캘린더 종류를 선택하세요."); 
+				return;
+			}
+			
+			// 달력 형태로 만들어야 한다.(시작일과 종료일)
+			// 오라클에 들어갈 date 형식(년월일시분초)으로 만들기
+			var sdate = startDate+$("select#startHour").val()+$("select#startMinute").val()+"00";
+			var edate = startDate+$("select#endHour").val()+$("select#endMinute").val()+"00";
+			
+			$("input[name=startdate]").val(sdate);
+			$("input[name=enddate]").val(edate);
+		
+		//	console.log("캘린더 소분류 번호 => " + $("select[name=fk_smcatgono]").val());
+			/*
+			      캘린더 소분류 번호 => 1 OR 캘린더 소분류 번호 => 2 OR 캘린더 소분류 번호 => 3 OR 캘린더 소분류 번호 => 4 
+			*/
+			
+		//  console.log("색상 => " + $("input#color").val());
+			
+			// 공유자 넣어주기
+			var plusUser_elm = document.querySelectorAll("div.displayUserList > span.plusUser");
+			var joinUserArr = new Array();
+			
+			plusUser_elm.forEach(function(item,index,array){
+			//	console.log(item.innerText.trim());
+				/*
+					이순신(leess) 
+					아이유1(iyou1) 
+					설현(seolh) 
+				*/
+				joinUserArr.push(item.innerText.trim());
+			});
+			
+			var joinuser = joinUserArr.join(",");
+		//	console.log("공유자 => " + joinuser);
+			// 이순신(leess),아이유1(iyou1),설현(seolh) 
+			
+			$("input[name=joinuser]").val(joinuser);
+			
+			var frm = document.addSchedulePlayFrm;
+			frm.action="<%= ctxPath%>/schedule/registerPlaySchedule_end.trip";
+			frm.method="post";
+			frm.submit();
+
+		});// end of $("button#register").click(function(){})--------------------
         
-        
-        
+         
         
         
         
@@ -482,6 +676,9 @@ $(document).ready(function() {
         
 });//end of $(document).ready(function() {
 
+	
+	
+	
 // 리뷰 보여주기
  function goReviewListView(currentShowPageNo){
 	  
@@ -583,7 +780,7 @@ $(document).ready(function() {
  }
 
 
-// 특정 제품의 제품후기를 삭제하는 함수
+// 리뷰 삭제하는 함수
 function delMyReview(review_code){
 	   if(confirm("리뷰를 삭제하시겠습니까?")) {
 	         $.ajax({
@@ -614,7 +811,7 @@ function delMyReview(review_code){
 }//end of function delMyReview(review_seq)---------
 
 
-// 특정 제품의 제품후기를 수정하는 함수
+// 리뷰 수정하는 함수
 function updateMyReview(index,review_code){
 		const origin_elmt = $("div#review" + index).html();//원래의 제품후기 엘리먼트   
 		//alert(origin_elmt)
@@ -671,9 +868,6 @@ function updateMyReview(index,review_code){
 
 
 //--------------------------좋아요 등록하기 --------------------------------- //
-
-
-
 
 function golikeAdd(){
  
@@ -742,6 +936,39 @@ function goLikeDislikeCount(){ // 좋아요, 싫어요 갯수를 보여주도록
 
 //-----------------------------------------------------------------------
 
+function goCheckSchedule(){ // 일정추가를 했는지 알아오는것
+	$.ajax({
+        url: "<%= ctxPath %>/checkSchedule.trip",
+        data: {"parent_code": "${requestScope.playvo.play_code}",
+	           "fk_userid": "${sessionScope.loginuser.userid}" },
+        dataType: "json",
+        success: function(json) {
+            if (json.calcheck) {
+            	$("p#addScheduletitle").text("일정 확인");
+                $("#calender").hide();
+                $("#calenderUp").show();
+            } else {
+            	$("p#addScheduletitle").text("일정 추가");
+                $("#calender").show();
+                $("#calenderUp").hide();
+            }
+        },
+        error: function(request, status, error) {
+            alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+        }
+    });
+	
+}//end of function goCheckSchedule()
+
+function goScheduleAdd(){
+	
+    if (${sessionScope.loginuser.userid == null}) {
+        alert("일정 추가는 로그인 후 이용 가능합니다");
+    } else {
+        $('#exampleModal_scrolling_2').modal('show');
+    }
+
+}
 
 
 function goDelete() {
@@ -770,8 +997,8 @@ function goDelete() {
 			<li class="list-item">
 				<button type="button" class="iconbtn" onclick="golikeAdd()">
 					<div class="item-each">
-						<img class="icon like" id="like" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_like.png">
-						<img class="icon likeup" id="likeup" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_likeup.png">
+						<img class="icon like" id="like" src="<%= ctxPath %>/resources/images/foodstore/icon/Like.png">
+						<img class="icon likeup" id="likeup" src="<%= ctxPath %>/resources/images/foodstore/icon/LikeUp.png">
 					</div>
 					<p class="icon-title">좋아요</p>
 				</button>
@@ -796,11 +1023,12 @@ function goDelete() {
 				<p class="count">${requestScope.playvo.readCount}</p>
 			</li>
 			<li class="list-item">
-				<button type="button" class="iconbtn addSchedule">
+				<button type="button" class="iconbtn addSchedule" onclick="goScheduleAdd()">
 					<div>
-						<img class="icon" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_calender.png">
+						<img class="icon" id="calender" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_calender.png">
+						<img class="icon" id="calenderUp" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_calenderUp.png">
 					</div>
-					<p class="icon-title">일정에 추가</p>
+					<p class="icon-title" id="addScheduletitle"></p>
 				</button>
 			</li>
 		</ul>
@@ -877,6 +1105,8 @@ function goDelete() {
 </div><!--컨테이너끝  -->
 
 <!---------------------------------------------모달시작---------------------------------------------------------------------->
+	 
+	 
 	 <form name="addSchedulePlayFrm" enctype="multipart/form-data">
 		<div class="modal fade" id="exampleModal_scrolling_2">
 		  <div class="modal-dialog modal-lg modal-dialog-scrollable">
@@ -891,20 +1121,29 @@ function goDelete() {
 		      
 		      <!-- Modal body -->
 		      <div class="modal-body">
-		      	<input type="text" id="userid" value="${sessionScope.loginuser.userid}"><!--이거 hidden 으로 바꾸기 -->
+                <div class="info_block mt-5 add_calType" >
+                	<label style="font-size: 20px;"> 캘린더 선택</label><br>
+	                <select class="calType schedule" name="fk_lgcatgono" id="fk_lgcatgono">
+						<option value="">선택하세요</option>
+						<option value="1">내 캘린더</option>
+						<option value="2">공유 캘린더</option>
+					</select> &nbsp;
+					<!--여기 조건 검사 하는거 추가해야함  -->
+					<input type="text" name="fk_smcatgono" id="fk_smcatgono"/>
+                </div>
                 
                 <div class="add_date" >
-		            <label style="font-size: 30px;"> 방문 예정일을 선택해 주세요</label>
+		            <label style="font-size: 20px;"> 방문 예정일을 선택해 주세요</label>
 		            <div class="value-text">
 		                <div class="date-container">
 		                    <span class="date-pick">
-		                        <input class="datepicker" style="cursor: pointer;" type="text" id="fromDate" name="fromDate" value="" placeholder="입실일 선택">
+		                        <input class="datepicker" style="cursor: pointer;" type="text" id="fromDate" name="fromDate" value="">
 		                    </span>
 		                </div>
 		            </div>
 		        </div>
 		        <div class="visit_time">
-		        <label style="font-size: 30px;"> 방문 시간을 선택해 주세요</label><br>
+		        	<label style="font-size: 20px;"> 방문 시간을 선택해 주세요</label><br>
 					<select id="startHour" class="schedule"></select> 시
 					<select id="startMinute" class="schedule"></select> 분
 					<select id="endHour" class="schedule"></select> 시
@@ -914,21 +1153,41 @@ function goDelete() {
 					<input type="hidden" name="startdate"/>
 					<input type="hidden" name="enddate"/>
 		        </div>
-		        <div class="info_block mt-3 add_comment" >
-		        	<label style="font-size: 30px;"> 메모</label><br>
-		        	<textarea name="add_comment" id="add_comment" placeholder="추가로 작성하실 내용을 입력해 주세요."></textarea>
+		        <div class="info_block add_comment" >
+		        	<label style="font-size: 20px;"> 메모</label><br>
+		        	<textarea name="content" id="content" placeholder="추가로 작성하실 내용을 입력해 주세요."></textarea>
+		        </div>
+		        
+		        <div class="info_block add_color" >
+		        <label style="font-size: 20px;"> 색상</label><br>
+		        <input type="color" id="color" name="color" value="#009900"/>
+		        </div>
+		        <div class="add_party" >
+		        	<label style="font-size: 20px;"> 일행 추가하기</label><br>
+		        	<input type="text" id="joinUserName" class="form-control" placeholder="일정을 공유할 회원명을 입력하세요"/>
+					<div class="displayUserList"></div>
+					<input type="hidden" name="joinuser"/>
 		        </div>
 		        
 		      </div>
 		      
+		      <input type="hidden" name="fk_userid" value="${sessionScope.loginuser.userid}"><!--이거 hidden 으로 바꾸기 -->
+	      	  <input type="hidden" name="parent_code" value="${requestScope.playvo.play_code}"><!--이거 hidden 으로 바꾸기 -->
+	      	  <input type="hidden" name="review_division" value="${requestScope.playvo.review_division}"><!--이거 hidden 으로 바꾸기 -->
+	      	  <input type="hidden" name="subject" value="${requestScope.playvo.play_name}"><!--이거 hidden 으로 바꾸기 -->
+	      	  <input type="hidden" name="place" value="${requestScope.playvo.play_address}"><!--이거 hidden 으로 바꾸기 -->
+		      
+		      
 		      <!-- Modal footer -->
 		      <div class="modal-footer">
-		        <button type="button" class="btn" style="background: #ff8000; color: #fff;" onclick="#">일정추가</button>
+		        <button type="button" class="btn" id="register" style="background: #ff8000; color: #fff;">일정추가</button>
 		        <button type="button" class="btn btn-danger" data-dismiss="modal">취소</button>
 		      </div>
 		    </div>
 		  </div>
 		</div>
+		<!----------------------------------------------------------------------  -->
+		
 	</form>
 
 

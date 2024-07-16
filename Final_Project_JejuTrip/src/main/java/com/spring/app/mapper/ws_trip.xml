@@ -760,4 +760,28 @@
 		where reservation_code = #{reservation_code}
 	</select>
 	
+	<resultMap type="HashMap" id="send_email_map">
+		<result property="room_name" 			column="room_name" 	javaType="String" />
+		<result property="room_img" 			column="room_img" javaType="String" />
+		<result property="check_in" 			column="check_in" javaType="String" />
+		<result property="check_out" 			column="check_out" javaType="String" />
+		<result property="reservation_price" 	column="reservation_price" javaType="String" />
+		<result property="reservation_code" 	column="reservation_code" javaType="String" />
+		<result property="lodging_name" 		column="lodging_name" javaType="String" />
+		<result property="lodging_tell" 		column="lodging_tell" javaType="String" />
+		<result property="lodging_address" 		column="lodging_address" javaType="String" />
+		<result property="user_name" 			column="user_name" javaType="String" />
+	</resultMap>
+	
+	<select id="get_email_map" parameterType="String" resultMap="send_email_map">
+		select D.room_name, D.room_img, R.check_in||' '||D.check_in as check_in, R.check_out||' '||D.check_out as check_out ,R.reservation_price, R.reservation_code, L.lodging_name, L.lodging_tell, L.lodging_address, M.user_name
+		from tbl_reservation R JOIN tbl_room_detail D
+		on R.fk_room_detail_code = D.room_detail_code
+		JOIN tbl_lodging L
+		on D.fk_lodging_code = L.lodging_code
+		JOIN tbl_member M
+		on R.fk_userid = M.userid 
+		where R.reservation_code = #{reservation_code}
+	</select>
+	
 </mapper>

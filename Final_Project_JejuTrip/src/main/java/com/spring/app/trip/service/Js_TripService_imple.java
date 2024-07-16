@@ -160,6 +160,30 @@ public class Js_TripService_imple implements Js_TripService {
 		return chk;
 		
 	} // end of public int chkReview(Map<String, String> chkMap) {
+
+
+	
+	// 숙소 상세 댓글 수정하기
+	@Override
+	public int updateLodgingComment(Map<String, String> paraMap) {
+		
+		int n = dao.updateLodgingComment(paraMap);
+		
+		return n;
+		
+	} // end of public int updateLodgingComment(Map<String, String> paraMap) { 
+
+
+	
+	// 숙소 리뷰 삭제하기
+	@Override
+	public int deleteLodgingComment(String review_code) {
+		
+		int n = dao.deleteLodgingComment(review_code);
+		
+		return n;
+		
+	} // end of public int deleteLodgingComment(String review_code) {
 	
 
 	

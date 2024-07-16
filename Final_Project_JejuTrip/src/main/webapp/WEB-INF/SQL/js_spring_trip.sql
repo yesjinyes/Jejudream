@@ -820,7 +820,7 @@ create table tbl_board
 			    select food_store_code, local_status, food_name, food_content, food_businesshours, food_mobile
 					 , food_address, food_main_img, review_division, food_category
 			    from tbl_food_store
-                where local_status = '제주 시내'
+                where local_status = '제주시 시내'
 			    order by DBMS_RANDOM.RANDOM
 			)
             where rownum =1
@@ -846,7 +846,7 @@ create table tbl_board
      
      
      insert into tbl_review (review_code, fk_userid, parent_code, review_content, review_division_r) 
-     values(SEQ_REVIEW.nextval, 'kudi03628', 5214, '이거 쓸시간에 여행가고싶네', 'A');
+     values(SEQ_REVIEW.nextval, 'kudi03628', 5214, '저두 갔다왔는데 나름 괜찮았어여', 'A');
      
      insert into tbl_review (review_code, fk_userid, parent_code, review_content, review_division_r) 
      values(SEQ_REVIEW.nextval, 'kudi02', 5214, '으아아아아악', 'A');
@@ -902,7 +902,7 @@ create table tbl_board
     (smcatgono    number(8) not null      -- 캘린더 소분류 번호
     ,fk_lgcatgono number(3) not null      -- 캘린더 대분류 번호
     ,smcatgoname  varchar2(400) not null  -- 캘린더 소분류 명
-    ,fk_userid    varchar2(40) not null   -- 캘린더 소분류 작성자 유저아이디
+    -- ,fk_userid    varchar2(40) not null   -- 캘린더 소분류 작성자 유저아이디
     ,constraint PK_tbl_calendar_small_category primary key(smcatgono)
     ,constraint FK_small_category_fk_lgcatgono foreign key(fk_lgcatgono) 
                 references tbl_calendar_large_category(lgcatgono) on delete cascade
@@ -910,6 +910,19 @@ create table tbl_board
     );
     -- Table TBL_CALENDAR_SMALL_CATEGORY이(가) 생성되었습니다.
     
+    alter table tbl_calendar_small_category drop column fk_userid;
+    alter table tbl_calendar_small_category drop constraint FK_small_category_fk_userid;
+    
+    insert into tbl_calendar_small_category (smcatgono, fk_lgcatgono, smcatgoname) values (seq_smcatgono.nextval, 1 , '숙소');
+    insert into tbl_calendar_small_category (smcatgono, fk_lgcatgono, smcatgoname) values (seq_smcatgono.nextval, 1 , '맛집');
+    insert into tbl_calendar_small_category (smcatgono, fk_lgcatgono, smcatgoname) values (seq_smcatgono.nextval, 1 , '즐길거리');
+    
+    insert into tbl_calendar_small_category (smcatgono, fk_lgcatgono, smcatgoname) values (seq_smcatgono.nextval, 2 , '숙소');
+    insert into tbl_calendar_small_category (smcatgono, fk_lgcatgono, smcatgoname) values (seq_smcatgono.nextval, 2 , '맛집');
+    insert into tbl_calendar_small_category (smcatgono, fk_lgcatgono, smcatgoname) values (seq_smcatgono.nextval, 2 , '즐길거리');
+    commit;
+    
+    select * from tbl_calendar_small_category
     
     create sequence seq_smcatgono
     start with 1
@@ -1002,3 +1015,5 @@ create table tbl_board
     where name = '이순신';
 
     ------------- >>>>>>>> 일정관리(풀캘린더) 끝 <<<<<<<< -------------
+    
+    select * from tbl_food_store;
