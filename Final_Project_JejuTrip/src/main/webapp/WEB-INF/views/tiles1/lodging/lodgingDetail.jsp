@@ -606,6 +606,10 @@ function makeCommentPageBar(currentShowPageNo, totalPage){
 	$("div#pageBar").html(pageBar_HTML);
 
 } // end of function makeCommentPageBar(currentShowPageNo){
+	
+	
+	
+	
 
 </script>
 <style>

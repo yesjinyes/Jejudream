@@ -4,7 +4,24 @@
 <configuration>
 
 	<!--  domain(VO) package (메퍼에서 패키지명을 생략할수있게하려면 여기서 선언해주면된다!) -->
-
+	<typeAliases>
+		
+		<typeAlias type="com.spring.app.trip.domain.BoardVO" alias="BoardVO"/>
+		<typeAlias type="com.spring.app.trip.domain.Calendar_large_category_VO" alias="Calendar_large_category_VO"/>
+		<typeAlias type="com.spring.app.trip.domain.Calendar_schedule_VO" alias="Calendar_schedule_VO"/>
+		<typeAlias type="com.spring.app.trip.domain.Calendar_small_category_VO" alias="Calendar_small_category_VO"/>
+		
+		<typeAlias type="com.spring.app.trip.domain.CommentVO" alias="CommentVO"/>
+		<typeAlias type="com.spring.app.trip.domain.CompanyVO" alias="CompanyVO"/>
+		<typeAlias type="com.spring.app.trip.domain.FoodstoreVO" alias="FoodstoreVO"/>
+		<typeAlias type="com.spring.app.trip.domain.LikeVO" alias="LikeVO"/>
+		<typeAlias type="com.spring.app.trip.domain.LodgingVO" alias="LodgingVO"/>
+		<typeAlias type="com.spring.app.trip.domain.MemberVO" alias="MemberVO"/>
+		<typeAlias type="com.spring.app.trip.domain.PlayVO" alias="PlayVO"/>
+		<typeAlias type="com.spring.app.trip.domain.ReservationVO" alias="ReservationVO"/>
+		<typeAlias type="com.spring.app.trip.domain.ReviewVO" alias="ReviewVO"/>
+		<typeAlias type="com.spring.app.trip.domain.RoomDetailVO" alias="RoomDetailVO"/>
+	</typeAliases>
 
 
 </configuration>
