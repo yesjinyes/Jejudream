@@ -3,6 +3,7 @@ package com.spring.app.trip.model;
 import java.util.List;
 import java.util.Map;
 
+import com.spring.app.trip.domain.Calendar_schedule_VO;
 import com.spring.app.trip.domain.LikeVO;
 import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.domain.PlayVO;
@@ -48,7 +49,6 @@ public interface Hs_TripDAO {
 
 	int countLike(Map<String, String> paraMap); //좋아요 총수량
 
-	
 	//카테고리 count 
 	int countTotal();
 	int countTourism();
@@ -58,6 +58,9 @@ public interface Hs_TripDAO {
 	List<MemberVO> searchPlayJoinUserList(String joinUserName);//일행 추가를 위한 유저 ID select
 
 	int registerPlaySchedule_end(Map<String, String> paraMap); //일정추가
+
+	List<Calendar_schedule_VO> checkSchedule(Map<String, String> paraMap); //일정추가했는지알아오기
+
 
 	
 

@@ -28,7 +28,6 @@
 <style type="text/css">
 
 
-
 body {
     font-family: "Noto Sans KR", sans-serif;
     font-optical-sizing: auto;
@@ -263,6 +262,7 @@ ul.list li {
 $(document).ready(function() {
 	
 	goLikeDislikeCount();
+	goCheckSchedule();
 	
 	const today = new Date();
     const year = today.getFullYear();
@@ -272,16 +272,10 @@ $(document).ready(function() {
     let currentShowPageNo = 1; // currentShowPageNo 초기값
     goReviewListView(currentShowPageNo); // 페이징처리된 리뷰보여주는 함수
 
-    
+
     //모달창 띄우기전 로그인 검사--------------------------------------------------------------- 
     
-	 $(document).on('click', '.addSchedule', function() {
-	        if (${sessionScope.loginuser.userid == null}) {
-	            alert("일정 추가는 로그인 후 이용 가능합니다");
-	        } else {
-	            $('#exampleModal_scrolling_2').modal('show');
-	        }
-	    });
+	
     //------------------------------------------------------------------------ 
 	
     //리뷰 작성-----------------------------------------------------------------
@@ -562,18 +556,30 @@ $(document).ready(function() {
 		});
 
 		
+		 $('#fk_lgcatgono').on('change', function() {
+			var fk_lgcatgono = $(this).val();
+	        
+	        if (fk_lgcatgono == "1") {
+	        	$('input#fk_smcatgono').val('3'); 
+	        } else if (fk_lgcatgono == "2") {
+	        	$('input#fk_smcatgono').val('6'); 
+	        } else {
+	        	$('input#fk_smcatgono').val(''); 
+	        }
+		 });
+		
 		// 등록 버튼 클릭
 		$("button#register").click(function(){
-		
-			/* // 일자 유효성 검사 (시작일자가 종료일자 보다 크면 안된다!!)
-			var startDate = $("input#startDate").val();	
+
+			// 일자 유효성 검사 (시작일자가 종료일자 보다 크면 안된다!!)
+			var startDate = $("input#fromDate").val();	
 	    	var sArr = startDate.split("-");
 	    	startDate= "";	
 	    	for(var i=0; i<sArr.length; i++){
 	    		startDate += sArr[i];
 	    	}
 	    	
-	    	var endDate = $("input#endDate").val();	
+	    	var endDate = $("input#fromDate").val();	
 	    	var eArr = endDate.split("-");   
 	     	var endDate= "";
 	     	for(var i=0; i<eArr.length; i++){
@@ -609,9 +615,10 @@ $(document).ready(function() {
 	        		}
 	        	}
 	        }// end of else if---------------------------------
- */
- 			var startDate = $("input#fromDate").val();
-	        // 캘린더 선택 유무 검사
+
+ 			
+	        
+	     	// 캘린더 선택 유무 검사
 			var calType = $("select.calType").val().trim();
 			if(calType==""){
 				alert("캘린더 종류를 선택하세요."); 
@@ -669,6 +676,9 @@ $(document).ready(function() {
         
 });//end of $(document).ready(function() {
 
+	
+	
+	
 // 리뷰 보여주기
  function goReviewListView(currentShowPageNo){
 	  
@@ -926,6 +936,39 @@ function goLikeDislikeCount(){ // 좋아요, 싫어요 갯수를 보여주도록
 
 //-----------------------------------------------------------------------
 
+function goCheckSchedule(){ // 일정추가를 했는지 알아오는것
+	$.ajax({
+        url: "<%= ctxPath %>/checkSchedule.trip",
+        data: {"parent_code": "${requestScope.playvo.play_code}",
+	           "fk_userid": "${sessionScope.loginuser.userid}" },
+        dataType: "json",
+        success: function(json) {
+            if (json.calcheck) {
+            	$("p#addScheduletitle").text("일정 확인");
+                $("#calender").hide();
+                $("#calenderUp").show();
+            } else {
+            	$("p#addScheduletitle").text("일정 추가");
+                $("#calender").show();
+                $("#calenderUp").hide();
+            }
+        },
+        error: function(request, status, error) {
+            alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+        }
+    });
+	
+}//end of function goCheckSchedule()
+
+function goScheduleAdd(){
+	
+    if (${sessionScope.loginuser.userid == null}) {
+        alert("일정 추가는 로그인 후 이용 가능합니다");
+    } else {
+        $('#exampleModal_scrolling_2').modal('show');
+    }
+
+}
 
 
 function goDelete() {
@@ -980,11 +1023,12 @@ function goDelete() {
 				<p class="count">${requestScope.playvo.readCount}</p>
 			</li>
 			<li class="list-item">
-				<button type="button" class="iconbtn addSchedule">
+				<button type="button" class="iconbtn addSchedule" onclick="goScheduleAdd()">
 					<div>
-						<img class="icon" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_calender.png">
+						<img class="icon" id="calender" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_calender.png">
+						<img class="icon" id="calenderUp" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_calenderUp.png">
 					</div>
-					<p class="icon-title">일정에 추가</p>
+					<p class="icon-title" id="addScheduletitle"></p>
 				</button>
 			</li>
 		</ul>
@@ -1077,20 +1121,15 @@ function goDelete() {
 		      
 		      <!-- Modal body -->
 		      <div class="modal-body">
-		      	<input type="text" name="fk_userid" value="${sessionScope.loginuser.userid}"><!--이거 hidden 으로 바꾸기 -->
-		      	<input type="text" name="parent_code" value="${requestScope.playvo.play_code}"><!--이거 hidden 으로 바꾸기 -->
-		      	<input type="text" name="review_division" value="${requestScope.playvo.review_division}"><!--이거 hidden 으로 바꾸기 -->
-		      	<input type="text" name="subject" value="${requestScope.playvo.play_name}"><!--이거 hidden 으로 바꾸기 -->
-		      	<input type="text" name="place" value="${requestScope.playvo.play_address}"><!--이거 hidden 으로 바꾸기 -->
-                
                 <div class="info_block mt-5 add_calType" >
                 	<label style="font-size: 20px;"> 캘린더 선택</label><br>
-	                <select class="calType schedule" name="fk_lgcatgono">
+	                <select class="calType schedule" name="fk_lgcatgono" id="fk_lgcatgono">
 						<option value="">선택하세요</option>
 						<option value="1">내 캘린더</option>
 						<option value="2">공유 캘린더</option>
 					</select> &nbsp;
-					<input type="text" class="small_category schedule" name="fk_smcatgono" value="즐길거리" >
+					<!--여기 조건 검사 하는거 추가해야함  -->
+					<input type="text" name="fk_smcatgono" id="fk_smcatgono"/>
                 </div>
                 
                 <div class="add_date" >
@@ -1111,8 +1150,8 @@ function goDelete() {
 					<select id="endMinute" class="schedule"></select> 분&nbsp;
 					<input type="checkbox" id="allDay"/>&nbsp;<label for="allDay">종일</label>
 					
-					<input type="text" name="startdate"/>
-					<input type="text" name="enddate"/>
+					<input type="hidden" name="startdate"/>
+					<input type="hidden" name="enddate"/>
 		        </div>
 		        <div class="info_block add_comment" >
 		        	<label style="font-size: 20px;"> 메모</label><br>
@@ -1131,6 +1170,13 @@ function goDelete() {
 		        </div>
 		        
 		      </div>
+		      
+		      <input type="hidden" name="fk_userid" value="${sessionScope.loginuser.userid}"><!--이거 hidden 으로 바꾸기 -->
+	      	  <input type="hidden" name="parent_code" value="${requestScope.playvo.play_code}"><!--이거 hidden 으로 바꾸기 -->
+	      	  <input type="hidden" name="review_division" value="${requestScope.playvo.review_division}"><!--이거 hidden 으로 바꾸기 -->
+	      	  <input type="hidden" name="subject" value="${requestScope.playvo.play_name}"><!--이거 hidden 으로 바꾸기 -->
+	      	  <input type="hidden" name="place" value="${requestScope.playvo.play_address}"><!--이거 hidden 으로 바꾸기 -->
+		      
 		      
 		      <!-- Modal footer -->
 		      <div class="modal-footer">

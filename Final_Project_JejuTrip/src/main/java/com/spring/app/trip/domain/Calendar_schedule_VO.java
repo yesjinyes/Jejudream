@@ -59,7 +59,6 @@ public class Calendar_schedule_VO {
 	public String getPlace() {
 		return place;
 	}
-
 	public void setPlace(String place) {
 		this.place = place;
 	}
@@ -119,5 +118,9 @@ public class Calendar_schedule_VO {
 	public void setSchedule_divison(String schedule_divison) {
 		this.schedule_divison = schedule_divison;
 	}
+	
+	
+	
+	
 
 }

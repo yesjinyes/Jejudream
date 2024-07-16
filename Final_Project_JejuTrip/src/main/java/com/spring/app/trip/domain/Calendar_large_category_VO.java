@@ -11,7 +11,6 @@ public class Calendar_large_category_VO {
 	public String getLgcatgono() {
 		return lgcatgono;
 	}
-	
 	public void setLgcatgono(String lgcatgono) {
 		this.lgcatgono = lgcatgono;
 	}

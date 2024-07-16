@@ -15,7 +15,6 @@
 	 ORDER 	by play_code desc
 </select>
 
-
 <!-- 카테고리별 select용  -->
 <select id="getPlayListByCategory" parameterType="HashMap" resultType="com.spring.app.trip.domain.PlayVO">
     select play_code, play_category, local_status, play_name, play_content, RNO,readCount,
@@ -205,14 +204,18 @@ WHERE RNO between #{startRno} and #{endRno}
  
  
 <insert id="registerPlaySchedule_end" parameterType="HashMap">
-insert into tbl_calendar_schedule(scheduleno, startdate, enddate, subject, color, place, joinuser, content, fk_smcatgono, fk_lgcatgono, fk_userid) 
-    					   values(seq_scheduleno.nextval, to_date(#{startdate}, 'yyyy-mm-ddhh24miss'), to_date(#{enddate}, 'yyyy-mm-ddhh24miss'), 
-    					   		  #{subject}, #{color}, #{place}, #{joinuser}, #{content}, #{fk_smcatgono}, #{fk_lgcatgono}, #{fk_userid})  
+insert into tbl_calendar_schedule(scheduleno, startdate, enddate, subject, color, place, joinuser, content, fk_smcatgono, fk_lgcatgono, fk_userid ,schedule_divison) 
+    					   values(seq_scheduleno.nextval, to_date(#{startdate}, 'yyyymmddhh24miss'), to_date(#{enddate}, 'yyyymmddhh24miss'), 
+    					   		  #{subject}, #{color}, #{place}, #{joinuser}, #{content}, #{fk_smcatgono}, #{fk_lgcatgono}, #{fk_userid} , #{schedule_divison} )  
 
 </insert> 
  
  
- 
+ <select id="checkSchedule" parameterType="HashMap" resultType="com.spring.app.trip.domain.Calendar_schedule_VO">
+  select scheduleno, startdate, enddate, subject, color, place, joinuser, content, fk_smcatgono, fk_lgcatgono, fk_userid ,schedule_divison
+  from tbl_calendar_schedule
+  where fk_userid = #{fk_userid} and parent_code = #{parent_code}
+ </select>
  
  
  
