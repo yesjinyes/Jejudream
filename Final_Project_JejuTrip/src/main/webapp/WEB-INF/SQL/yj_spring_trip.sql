@@ -306,6 +306,7 @@ from tbl_food_store;
 commit;
 
 
+select * from tbl_food_store;
 
 select * from user_tables;
 

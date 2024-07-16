@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.json.JSONArray;
@@ -17,9 +18,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.support.RequestContextUtils;
 
 import com.spring.app.trip.domain.FoodstoreVO;
+import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.domain.ReviewVO;
 import com.spring.app.trip.service.Yj_TripService;
 
@@ -33,7 +34,6 @@ public class Yj_TripController {
 	// == 커뮤니티 메인 페이지 보이기 == //
 	@GetMapping("communityMain.trip")
 	public String communityMain() {
-		
 		return "community/communityMain.tiles1"; 
 	}
 	
@@ -42,9 +42,7 @@ public class Yj_TripController {
 	// == 맛집 메인 페이지 보이기 == //
 	@GetMapping("foodstoreList.trip")
 	public ModelAndView foodstoreList(ModelAndView mav, FoodstoreVO foodstorevo) {
-		
 		mav.setViewName("foodstore/foodstoreList.tiles1");
-		
 		return mav;
 	}
 	
@@ -244,6 +242,106 @@ public class Yj_TripController {
 	}
 	
 	
+	//////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	
+	// == 좋아요 기능 페이지 요청 == //
+/*	@GetMapping("foodLike.trip")
+	public ModelAndView requiredLogin_foodLike(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
+		
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
+		
+		if(loginuser != null) {
+			
+			String message = "좋아요는 로그인 후 사용 가능합니다.";
+			String loc = request.getContextPath() + "/login.trip";
+			
+			mav.addObject("message", message);
+			mav.addObject("loc", loc);
+			
+			mav.setViewName("msg");
+			
+		} else {
+			mav.setViewName("");
+		}
+		
+		return mav;
+	}
+	*/
+	
+	
+	// == 좋아요 기능 처리하기 == //
+	@ResponseBody
+	@PostMapping(value =("foodLike.trip"),produces="text/plain;charset=UTF-8")
+	 public String foodLike(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		String parent_code = request.getParameter("parent_code");
+		String fk_userid = request.getParameter("fk_userid");
+		String like_division_R = "B";
+		
+		// System.out.println("좋아요 버튼 클릭 parent_code"+parent_code);
+		// System.out.println("좋아요 버튼 클릭 fk_userid"+fk_userid);
+		
+		int n = 0;
+
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("parent_code", parent_code);
+		paraMap.put("fk_userid", fk_userid);
+		paraMap.put("like_division_R", like_division_R);
+		
+		List<FoodstoreVO> check = service.checkLike(paraMap); 
+		
+		if(check.size() == 0) {
+			n = service.addLike(paraMap);  // 좋아요 추가
+		}
+		else {
+			service.deleteLike(paraMap);  // 좋아요 지우기
+	        n=0;
+		}
+		
+		//System.out.println("n" + n);
+		
+	    JSONObject jsonObj = new JSONObject(); 
+	    jsonObj.put("n", n);
+         
+        return jsonObj.toString();
+	}
+	
+	
+	// == 좋아요 총 개수 구하기 == //
+	@ResponseBody
+	@GetMapping(value =("countFoodlike.trip"),produces="text/plain;charset=UTF-8")
+	 public String countFoodlike(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		String parent_code = request.getParameter("parent_code");
+	    String fk_userid = request.getParameter("fk_userid");
+
+	    Map<String, String> paraMap = new HashMap<>();
+	    paraMap.put("parent_code", parent_code);
+
+	    // 좋아요 총 개수 알아오기
+	    int countFoodlike = service.countFoodlike(paraMap);
+
+	    JSONObject jsonObj = new JSONObject();
+	    jsonObj.put("countLike", countFoodlike);
+
+	    if (fk_userid != null && !fk_userid.isEmpty()) {
+	        paraMap.put("fk_userid", fk_userid);
+	        
+	        List<FoodstoreVO> check = service.checkLike(paraMap); // 좋아요 했는지 알아오기
+	        jsonObj.put("check", check != null ? check.size() > 0 : false);
+	    } else {
+	        jsonObj.put("check", false);
+	    }
+
+	    return jsonObj.toString();
+	}
+
+	
+	//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	
 	// == 상세페이지 조회수 증가 == //
 	@GetMapping("foodstoreDetail_2.trip")
 	public ModelAndView view_2(ModelAndView mav, HttpServletRequest request, RedirectAttributes redirectAttr) {
@@ -263,6 +361,9 @@ public class Yj_TripController {
 		
 		return mav;
 	}
+	
+	
+	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	
 	// == 리뷰 쓰기 == //
@@ -298,6 +399,7 @@ public class Yj_TripController {
 		// System.out.println("parent_code 확인 =>" + parent_code);
 		
 		List<ReviewVO> reviewList = service.getReviewList(parent_code);
+		//int totalCount = service.getReviewTotalCount(parent_code); // 리뷰 총 개수 구하기
 		
 		JSONArray jsonArr = new JSONArray();
 		
@@ -310,11 +412,12 @@ public class Yj_TripController {
 				jsonObj.put("review_content", rvo.getReview_content());
 				jsonObj.put("registerday", rvo.getRegisterday());
 				
+				//jsonObj.put("totalCount", totalCount);
+				
 				jsonArr.put(jsonObj);
 			}// end of for------------------
 			
 		}
-		
 		//System.out.println("~~~리뷰 List jsonArr 확인 => "+jsonArr.toString());
 		return jsonArr.toString();
 	}
@@ -370,7 +473,6 @@ public class Yj_TripController {
 		
 		return jsonObj.toString();		
 	}
-	
 	
 	
 
