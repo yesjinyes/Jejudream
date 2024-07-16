@@ -516,5 +516,15 @@ public class Dy_TripService_imple implements Dy_TripService {
 	}
 
 
+	// 게시물당 댓글 총 개수 (페이징 처리 시 보여주는 순번을 나타내기 위함)
+	@Override
+	public int getCommentTotalCount(String parentSeq) {
+
+		int totalCount = dao.getCommentTotalCount(parentSeq);
+		
+		return totalCount;
+	}
+
+
 
 }

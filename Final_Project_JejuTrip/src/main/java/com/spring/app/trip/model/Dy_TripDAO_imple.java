@@ -343,6 +343,16 @@ public class Dy_TripDAO_imple implements Dy_TripDAO {
 		
 		return commentList;
 	}
+
+
+	// 게시물당 댓글 총 개수 (페이징 처리 시 보여주는 순번을 나타내기 위함)
+	@Override
+	public int getCommentTotalCount(String parentSeq) {
+
+		int totalCount = sqlsession.selectOne("dy_trip.getCommentTotalCount", parentSeq);
+		
+		return totalCount;
+	}
 	
 
 }

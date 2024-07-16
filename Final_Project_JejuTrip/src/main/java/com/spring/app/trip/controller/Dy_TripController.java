@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -1301,7 +1302,7 @@ public class Dy_TripController {
 
 	// 댓글 목록 불러오기
 	@ResponseBody
-	@PostMapping(value="community/viewComment.trip", produces="text/plain;charset=UTF-8")
+	@GetMapping(value="community/viewComment.trip", produces="text/plain;charset=UTF-8")
 	public String viewComment(@RequestParam(defaultValue = "") String parentSeq,
 							  @RequestParam(defaultValue = "") String currentShowPageNo) {
 		
@@ -1322,10 +1323,27 @@ public class Dy_TripController {
 		List<CommentVO> commentList = service.getViewComment(paraMap);
 		int totalCount = service.getCommentTotalCount(parentSeq); // 페이징 처리 시 보여주는 순번을 나타내기 위함
 
+		JSONArray jsonArr = new JSONArray();
 		
+		if(commentList != null) {
+			
+			for(CommentVO cmtvo : commentList) {
+				
+				JSONObject jsonObj = new JSONObject();
+				jsonObj.put("seq", cmtvo.getSeq());
+				jsonObj.put("fk_userid", cmtvo.getFk_userid());
+				jsonObj.put("name", cmtvo.getName());
+				jsonObj.put("content", cmtvo.getContent());
+				jsonObj.put("regdate", cmtvo.getRegDate());
+				
+				jsonObj.put("totalCount", totalCount); // 페이징 처리 시 보여주는 순번을 나타내기 위함
+				jsonObj.put("sizePerPage", sizePerPage); // 페이징 처리 시 보여주는 순번을 나타내기 위함
+				
+				jsonArr.put(jsonObj);
+			}
+		}
 		
-		
-		return "";
+		return jsonArr.toString();
 	}
 	
 	

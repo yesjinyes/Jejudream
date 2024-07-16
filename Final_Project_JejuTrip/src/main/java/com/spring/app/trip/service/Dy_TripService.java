@@ -86,4 +86,7 @@ public interface Dy_TripService {
 	// 댓글 목록 불러오기
 	List<CommentVO> getViewComment(Map<String, String> paraMap);
 
+	// 게시물당 댓글 총 개수 (페이징 처리 시 보여주는 순번을 나타내기 위함)
+	int getCommentTotalCount(String parentSeq);
+
 }

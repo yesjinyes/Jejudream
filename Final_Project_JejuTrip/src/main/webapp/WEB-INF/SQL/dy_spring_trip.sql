@@ -207,4 +207,19 @@ nocache;
 
 
 
+-- 댓글 목록 조회
+SELECT seq, fk_userid, name, content, regDate
+FROM
+(
+    select row_number() over(order by seq desc) AS rno
+         , seq, fk_userid, name, content, to_char(regDate, 'yyyy-mm-dd hh24:mi') AS regDate
+    from tbl_comment
+    where status = 1 and parentSeq = 5
+) V
+where V.rno between 1 and 5;
+
+
+
+
+
 

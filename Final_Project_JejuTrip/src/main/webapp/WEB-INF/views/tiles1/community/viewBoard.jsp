@@ -113,7 +113,11 @@
 	
 	$(document).ready(function() {
 		
+		goViewComment(1); // 댓글 목록 불러오기
+		
 		$("div.comment-info").hide();
+		
+		$(document).on("div#cmtInfoBtn", "click", function() {})
 		
 		$("div#cmtInfoBtn").click(function() {
 			$("div.comment-info").toggle();
@@ -135,7 +139,7 @@
 		// ===== 댓글 메뉴 =====
 		$("div.options-menu").hide();
 		
-		$("div.more-options > span").click(function(e) {
+		$(document).on("div.more-options > span", "click", function(e) {
 			e.stopPropagation(); // 이벤트 버블링 방지
         	$(this).next("div.options-menu").toggle();
 		});
@@ -230,6 +234,42 @@
 				
 				let v_html = ``;
 				
+				if(json.length > 0) {
+					$.each(json, function(index, item) {
+						
+						v_html += `<div id="comment" class="d-flex" style="padding: 1.5% 0">
+				  					 <div style="width: 90%; padding: 1.5% 0">
+										<div class="mb-2 d-flex align-items-center">
+											<img src="<%=ctxPath%>/resources/images/logo_circle.png" width="30">
+											<span class="font-weight-bold" style="margin-left: 1%; font-size: 1rem;">\${item.name}</span>
+										</div>
+										<span class="d-block mb-2">\${item.content}</span>
+										<span class="d-block mb-2" style="font-size: 0.8rem; color: #8c8c8c;">\${item.regdate}</span>
+										<button type="button" class="btn" style="border: solid 1px #8c8c8c; font-size: 0.8rem; padding: 3px 6px;">답글</button>
+									 </div>`;
+						
+						if(${sessionScope.loginuser != null || sessionScope.loginCompanyuser != null} && 
+							("${sessionScope.loginuser.userid}" == item.fk_userid || "${sessionScope.loginCompanyuser.companyid}" == item.fk_userid)) {
+										 
+							v_html += `  <div class="more-options" style="width: 10%; padding-top: 1.5%; text-align: right;">
+											<span><i class="fa-solid fa-ellipsis-vertical"></i></span>
+											<div class="options-menu">
+												<span class="d-block mb-1">수정</span>
+												<span class="d-block">삭제</span>
+											</div>
+										 </div>`;
+						}
+						
+						v_html += `</div>`;
+						
+					}); // end of $.each() -------------------------------------------------
+				}
+				
+				$("div#commentList").html(v_html);
+				
+				const totalPage = Math.ceil(json[0].totalCount / json[0].sizePerPage);
+				
+				makeCommentPageBar(currentShowPageNo, totalPage);
 			},
 			error: function(request, status, error){
 				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
@@ -237,6 +277,48 @@
 		});
 		
 	} // end of function goViewComment(currentShowPageNo) ------------------
+	
+	
+	// 댓글 페이지바 만들기
+	function makeCommentPageBar(currentShowPageNo, totalPage) {
+		
+		const blockSize = 10;
+		
+		let loop = 1;
+		
+		let pageNo = Math.floor((currentShowPageNo - 1)/blockSize) * blockSize + 1;
+		
+		let pageBar_HTML = "<ul>";
+		
+		// [맨처음][이전] 만들기
+		if(pageNo != 1) {
+			pageBar_HTML += "<li style='width: 4%; font-size: 0.8rem;'><a href='javascript:goViewComment(1)'>◀◀</a></li>";
+			pageBar_HTML += "<li style='width: 4%; font-size: 0.8rem;'><a href='javascript:goViewComment("+ (pageNo-1) + ")'>◀</a></li>";
+		}
+		
+		while(!(loop > blockSize || pageNo > totalPage)) {
+			if(pageNo == currentShowPageNo) {
+				pageBar_HTML += "<li class='font-weight-bold' style='width: 3%; color: #ff5000;'>" + pageNo + "</li>";
+				
+			} else {
+				pageBar_HTML += "<li style='width: 3%;'><a href='javascript:goViewComment(" + pageNo + ")'>" + pageNo + "</a></li>";
+			}
+			
+			loop++;
+			pageNo++;
+		} // end of while() -------------------------
+		
+		// [다음][마지막] 만들기
+		if(pageNo <= totalPage) {
+			pageBar_HTML += "<li style='width: 4%; font-size: 0.8rem;'><a href='javascript:goViewComment("+ pageNo + ")'>▶</a></li>";
+			pageBar_HTML += "<li style='width: 4%; font-size: 0.8rem;'><a href='javascript:goViewComment("+ totalPage + ")'>▶▶</a></li>";
+		}
+
+		pageBar_HTML += "</ul>";
+		
+		$("div#commentPageBar").html(pageBar_HTML);
+		
+	} // end of function makeCommentPageBar(currentShowPageNo, totalPage) --------------
 	
 	
 </script>
@@ -304,7 +386,7 @@
 		
 		<div class="comment-info mb-5" style="width: 80%; margin: 0 auto;">
 			<div id="commentList">
-			
+			<%--
 				<div id="comment" class="d-flex" style="padding: 1.5% 0">
 					<div style="width: 90%; padding: 1.5% 0">
 						<div class="mb-2 d-flex align-items-center">
@@ -341,8 +423,11 @@
 						</div>
 					</div>
 				</div>
-				
-				<div id="commentPageBar" class="text-center mt-3 mb-5" style="width: 80%; margin: 0 auto 10% auto;">
+			 --%>
+			</div>
+
+			<div id="commentPageBar" class="text-center mt-3 mb-5" style="width: 80%; margin: 0 auto 10% auto;">
+			<%--
 					<ul>
 						<li style='width: 4%; font-size: 0.8rem;'>◀◀</li>
 						<li style='width: 4%; font-size: 0.8rem;'>◀</li>
@@ -359,14 +444,12 @@
 						<li style='width: 4%; font-size: 0.8rem;'>▶</li>
 						<li style='width: 4%; font-size: 0.8rem;'>▶▶</li>
 					</ul>
-				</div>
-				
+			 --%>
 			</div>
-			
 			
 			<c:if test="${not empty sessionScope.loginuser || not empty sessionScope.loginCompanyuser}">
 				<form name="addCommentFrm">
-					<div class="mt-5" style="border: solid 1px #a6a6a6; padding: 1.5% 1%">
+					<div class="mt-2" style="border: solid 1px #a6a6a6; padding: 1.5% 1%">
 						<span class="d-block mb-2">
 							<c:if test="${not empty sessionScope.loginuser}">
 								<input type="hidden" name="fk_userid" value="${sessionScope.loginuser.userid}">
@@ -385,7 +468,7 @@
 			</c:if>
 			
 			<c:if test="${empty sessionScope.loginuser && empty sessionScope.loginCompanyuser}">
-				<div style="border: solid 1px #a6a6a6; margin-top: 10%; padding: 1.5% 1%">
+				<div class="mt-3" style="border: solid 1px #a6a6a6; padding: 1.5% 1%">
 					<textarea class="mb-2" style="width: 100%; height: 100px; border: none; background-color: rgba(242, 242, 242, 0.3);" placeholder="댓글을 작성하려면 로그인하세요." onclick="javascript:location.href='<%=ctxPath%>/login.trip'" readonly></textarea>
 				</div>
 			</c:if>

@@ -8,7 +8,7 @@
 <mapper namespace="dy_trip">
 	
 	<!-- 회원가입 처리하기 -->
-	<insert id="memberRegister" parameterType="com.spring.app.trip.domain.MemberVO">
+	<insert id="memberRegister" parameterType="MemberVO">
 		insert into tbl_member(userid, email, pw, user_name, mobile, address, detail_address, birthday, gender)
 		values(#{userid}, #{email}, #{pw}, #{user_name}, #{mobile}, #{address}, #{detail_address}, #{birthday}, #{gender})
 	</insert>
@@ -31,7 +31,7 @@
 	
 	
 	<!-- 로그인 처리하기 (일반회원, 관리자) -->
-	<select id="getLoginMember" parameterType="HashMap" resultType="com.spring.app.trip.domain.MemberVO">
+	<select id="getLoginMember" parameterType="HashMap" resultType="MemberVO">
 		SELECT userid, user_name, pwdchangegap,
 		       NVL(lastlogingap, trunc(months_between(sysdate, registerday))) AS lastlogingap, 
 		       idle, email, mobile, address, detail_address, birthday, gender
@@ -64,7 +64,7 @@
 	
 	
 	<!-- 로그인 처리하기(업체회원) -->
-	<select id="getLoginCompanyMember" parameterType="HashMap" resultType="com.spring.app.trip.domain.CompanyVO">
+	<select id="getLoginCompanyMember" parameterType="HashMap" resultType="CompanyVO">
 		SELECT companyid, company_name, pwdchangegap,
 		       NVL(lastlogingap, trunc(months_between(sysdate, registerday))) AS lastlogingap, 
 		       idle, email, mobile
@@ -158,7 +158,7 @@
 	
 	
 	<!-- === 데이터베이스에 맛집 정보 insert 하기 === -->
-	<insert id="foodstoreRegister" parameterType="com.spring.app.trip.domain.FoodstoreVO">
+	<insert id="foodstoreRegister" parameterType="FoodstoreVO">
 		insert into tbl_food_store(food_store_code, food_category, local_status, food_name, food_content, food_businesshours, food_mobile, food_address, food_main_img, filename, orgfilename, filesize)
 		values(#{food_store_code}, #{food_category}, #{local_status}, #{food_name}, #{food_content}, #{food_businesshours}, #{food_mobile}, #{food_address}, #{fileName}, #{fileName}, #{orgFilename}, #{fileSize})
 	</insert>
@@ -230,14 +230,14 @@
 	
 	
 	<!-- 커뮤니티 글 등록 처리하기 -->
-	<insert id="addBoard" parameterType="com.spring.app.trip.domain.BoardVO">
+	<insert id="addBoard" parameterType="BoardVO">
 		insert into tbl_board(seq, fk_userid, name, subject, content, pw, category)
 		values(boardSeq.nextval, #{fk_userid}, #{name}, #{subject}, #{content}, #{pw}, #{category})
 	</insert>
 	
 	
 	<!-- 커뮤니티 글 등록 처리하기 (첨부 파일이 있는 경우) -->
-	<insert id="addBoard_withFile" parameterType="com.spring.app.trip.domain.BoardVO">
+	<insert id="addBoard_withFile" parameterType="BoardVO">
 		insert into tbl_board(seq, fk_userid, name, subject, content, pw, fileName, orgFilename, fileSize, category)
 		values(boardSeq.nextval, #{fk_userid}, #{name}, #{subject}, #{content}, #{pw}, #{fileName}, #{orgFilename}, #{fileSize}, #{category})
 	</insert>
@@ -263,7 +263,7 @@
 	
 	
 	<!-- 커뮤니티 자유게시판 리스트 조회하기 -->
-	<select id="getFreeBoardList" parameterType="HashMap" resultType="com.spring.app.trip.domain.BoardVO">
+	<select id="getFreeBoardList" parameterType="HashMap" resultType="BoardVO">
 		SELECT seq, fk_userid, name, subject, readCount, regDate, commentCount
 		FROM
 		(
@@ -290,7 +290,7 @@
 	
 	
 	<!-- 검색 조건이 있을 시 글 1개 조회하기 -->
-	<select id="getViewBoard" parameterType="HashMap" resultType="com.spring.app.trip.domain.BoardVO">
+	<select id="getViewBoard" parameterType="HashMap" resultType="BoardVO">
 		SELECT previousseq, previoussubject
 		     , seq, fk_userid, name, subject, content, readCount, regDate, pw
 		     , nextseq, nextsubject
@@ -336,7 +336,7 @@
 	
 	
 	<!-- 댓글 쓰기 -->
-	<insert id="addComment" parameterType="com.spring.app.trip.domain.CommentVO">
+	<insert id="addComment" parameterType="CommentVO">
 		insert into tbl_comment(seq, fk_userid, name, content, parentSeq)
 		values(commentSeq.nextval, #{fk_userid}, #{name}, #{content}, #{parentSeq})
 	</insert>
@@ -350,7 +350,24 @@
 	
 	
 	<!-- 댓글 목록 불러오기 -->
-	<select id="getViewComment" parameterType="HashMap" resultType="">
+	<select id="getViewComment" parameterType="HashMap" resultType="CommentVO">
+		SELECT seq, fk_userid, name, content, regDate
+		FROM
+		(
+		    select row_number() over(order by seq desc) AS rno
+		         , seq, fk_userid, name, content, to_char(regDate, 'yyyy-mm-dd hh24:mi') AS regDate
+		    from tbl_comment
+		    where status = 1 and parentSeq = #{parentSeq}
+		) V
+		where V.rno between #{startRno} and #{endRno}
+	</select>
+	
+	
+	<!-- 게시물당 댓글 총 개수 (페이징 처리 시 보여주는 순번을 나타내기 위함) -->
+	<select id="getCommentTotalCount" parameterType="String" resultType="int">
+		select count(*)
+		from tbl_comment
+		where status = 1 and parentSeq = #{parentSeq}
 	</select>
 	
 	
