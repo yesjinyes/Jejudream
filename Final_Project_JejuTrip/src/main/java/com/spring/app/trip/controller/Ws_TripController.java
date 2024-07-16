@@ -1699,13 +1699,28 @@ public class Ws_TripController {
 		
 	}
 	
-	
-	@RequestMapping("emailSendTest.trip")
-	public ModelAndView emailSendTest(ModelAndView mav) {
+	@GetMapping("editProfile.trip")
+	public ModelAndView editProfile(ModelAndView mav, HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
 		
-		mav.setViewName("mailHtmlSample");
-		
+		if(loginuser != null) {
+			mav.setViewName("mypage/member/editProfile.tiles1");
+		}
 		return mav;
+	}
+	
+	// 멤버 정보 수정하기
+	@ResponseBody
+	@PostMapping(value="/memberEditEnd.trip", produces="text/plain;charset=UTF-8") 
+	public String memberEditEnd(MemberVO membervo, HttpServletRequest request) {
+
+		System.out.println(membervo.getUser_name());
+		
+		JSONObject jsonObj = new JSONObject();
+		
+		return jsonObj.toString();
+		
 	}
 	
 }
