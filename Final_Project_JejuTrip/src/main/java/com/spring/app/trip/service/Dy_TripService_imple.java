@@ -419,6 +419,16 @@ public class Dy_TripService_imple implements Dy_TripService {
 		return n;
 	}
 
+
+	// 커뮤니티 글 등록 처리하기 (첨부 파일이 있는 경우)
+	@Override
+	public int addBoard_withFile(BoardVO boardvo) {
+
+		int n = dao.addBoard_withFile(boardvo);
+		
+		return n;
+	}
+	
 	
 	// 자유게시판 총 게시물 건수 조회하기
 	@Override
@@ -438,6 +448,42 @@ public class Dy_TripService_imple implements Dy_TripService {
 		
 		return list;
 	}
+
+
+	// 글 조회수 증가와 함께 글 1개 조회하기
+	@Override
+	public BoardVO getViewBoard(Map<String, String> paraMap) {
+
+		BoardVO boardvo = dao.getViewBoard(paraMap); // 글 1개 조회하기
+
+		String login_id = paraMap.get("login_id");
+		
+		if(login_id != null &&
+		   boardvo != null && // 글이 존재할 경우(url의 seq에 글 목록에 없는 번호를 입력했을 경우 방지)
+		   !login_id.equals(boardvo.getFk_userid())) {
+			// 글 조회수 증가는 로그인 한 상태에서 다른 사람의 글을 읽을 때만 증가하도록 한다.
+
+			int n = dao.increase_readCount(boardvo.getSeq()); // 글 조회수 1 증가하기
+
+			if(n == 1) {
+				boardvo.setReadCount(String.valueOf(Integer.parseInt(boardvo.getReadCount()) + 1));
+				// boardvo.getReadCount()는 String 타입이므로 덧셈 시 형변환 주의 ★
+			}
+		}
+		
+		return boardvo;
+	}
+
+
+	// 글 조회수 증가 없이 단순히 글 1개만 조회하기
+	@Override
+	public BoardVO getViewBoard_no_increase_readCount(Map<String, String> paraMap) {
+
+		BoardVO boardvo = dao.getViewBoard(paraMap); // 글 1개 조회하기
+		
+		return boardvo;
+	}
+
 
 
 }

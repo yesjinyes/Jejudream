@@ -1,7 +1,5 @@
 package com.spring.app.trip.common;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.renderable.ParameterBlock;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,8 +8,6 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 
-import javax.media.jai.JAI;
-import javax.media.jai.RenderedOp;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 

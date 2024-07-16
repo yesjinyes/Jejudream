@@ -24,6 +24,12 @@
 		font-size: 0.9rem;
 	}
 	
+	span#updateBoard:hover,
+	span#deleteBoard:hover {
+		cursor: pointer;
+		opacity: 0.7;
+	}
+	
 	div#content {
 		border: solid 0px red;
 		padding: 5% 2%; 
@@ -85,12 +91,21 @@
 		text-decoration: none !important; /* 페이지바의 a 태그에 밑줄 없애기 */
 	}
 	
-	form[name='addCommentFrm'] textarea:focus {
+	div.comment-info textarea:focus {
 		outline: none;
 	}
 	
 	button#addCommentBtn {
 		border: solid 1px #737373;
+	}
+	
+	span.move {
+		font-weight: 600;
+	}
+	
+	span.move:hover {
+		cursor: pointer;
+		opacity: 0.7;
 	}
 </style>
 
@@ -117,9 +132,6 @@
 		});
 		
 		
-		
-		
-		
 		// ===== 댓글 메뉴 =====
 		$("div.options-menu").hide();
 		
@@ -140,6 +152,36 @@
 	    
 	}); // end of $(document).ready(function() {}) ---------------------
 	
+	
+	// === 이전글, 다음글 보기 ===
+	function goView(seq) {
+
+    	const goBackURL = "${requestScope.goBackURL}";
+    	
+    	const frm = document.goViewFrm;
+		frm.seq.value = seq;
+		frm.category.value = "${requestScope.boardvo.category}";
+		frm.goBackURL.value = goBackURL;		
+		
+		if(${not empty requestScope.paraMap}) { // 검색 조건이 있을 경우
+			frm.searchType.value = "${requestScope.paraMap.searchType}";
+			frm.searchWord.value = "${requestScope.paraMap.searchWord}";
+		}
+		
+		frm.method = "post";
+		frm.action = "<%=ctxPath%>/community/viewBoard_2.trip";
+		frm.submit();
+		
+	} // end of function goView(seq) -------------------
+	
+	
+	// === 댓글 쓰기 ===
+	function goAddComment() {
+		
+		
+		
+	} // end of function goAddComment() -----------------
+	
 </script>
 
 <div style="background-color: rgba(242, 242, 242, 0.4); border: solid 1px rgba(242, 242, 242, 0.4);">
@@ -151,27 +193,43 @@
 			<div>
 				<hr style="border: 0; height: 2px; background-color: black; margin-bottom: 3%;">
 				<div class="ml-2">
-					<span id="category">자유게시판</span>
-					<h4 class="mt-4 mb-4">제주도 여행 코스 추천해주세요</h4>
+					<span id="category">
+						<c:if test="${requestScope.boardvo.category == 1}">자유게시판</c:if>
+						<c:if test="${requestScope.boardvo.category == 2}">숙박</c:if>
+						<c:if test="${requestScope.boardvo.category == 3}">관광지, 체험</c:if>
+						<c:if test="${requestScope.boardvo.category == 4}">맛집</c:if>
+						<c:if test="${requestScope.boardvo.category == 5}">구인</c:if>
+					</span>
+					<h4 class="mt-4 mb-4">${requestScope.boardvo.subject}</h4>
 					<div class="d-flex justify-content-between" style="font-size: 0.9rem;">
 						<div>
-							<span>작성자 : 김다영</span>&nbsp;&nbsp;|&nbsp;
-							<span>작성일 : 2024-07-10 16:48</span>&nbsp;&nbsp;|&nbsp;
-							<span>조회수 : 3</span>
+							<span>작성자 : ${requestScope.boardvo.name}</span>&nbsp;&nbsp;|&nbsp;
+							<span>작성일 : ${requestScope.boardvo.regDate}</span>&nbsp;&nbsp;|&nbsp;
+							<span>조회수 : ${requestScope.boardvo.readCount}</span>
 						</div>
-						<div class="mr-2 d-flex justify-content-end" style="width: 10%;">
-							<span>수정</span>&nbsp;&nbsp;|&nbsp;&nbsp;
-							<span>삭제</span>
-						</div>
+						<c:if test="${not empty sessionScope.loginuser}">
+							<c:if test="${requestScope.boardvo.fk_userid == sessionScope.loginuser.userid}">
+								<div class="mr-2 d-flex justify-content-end" style="width: 10%;">
+									<span id="updateBoard">수정</span>&nbsp;&nbsp;|&nbsp;&nbsp;
+									<span id="deleteBoard">삭제</span>
+								</div>
+							</c:if>
+						</c:if>
+						<c:if test="${not empty sessionScope.loginCompanyuser}">
+							<c:if test="${requestScope.boardvo.fk_userid == sessionScope.loginCompanyuser.companyid}">
+								<div class="mr-2 d-flex justify-content-end" style="width: 10%;">
+									<span id="updateBoard">수정</span>&nbsp;&nbsp;|&nbsp;&nbsp;
+									<span id="deleteBoard">삭제</span>
+								</div>
+							</c:if>
+						</c:if>
 					</div>
 				</div>
 				<hr>
 			</div>
 			
 			<div id="content">
-				<p><span style="font-size: 12pt;">안녕하세요~! 제주도 여행 코스 추천 부탁드려요</span>&nbsp;</p>
-				<p><span style="font-size: 12pt;">&nbsp;</span></p>
-				<p><span style="font-size: 12pt;">맛집도 같이 소개해주시면 좋아요</span></p>
+				${requestScope.boardvo.content}
 			</div>
 			
 			<hr>
@@ -190,7 +248,10 @@
 		<div class="comment-info mb-5" style="width: 80%; margin: 0 auto;">
 			<div id="comment" class="d-flex" style="padding: 1.5% 0">
 				<div style="width: 90%; padding: 1.5% 0">
-					<span class="d-block font-weight-bold mb-2">김라영</span>
+					<div class="mb-2 d-flex align-items-center">
+						<img src="<%=ctxPath%>/resources/images/logo_circle.png" width="30">
+						<span class="font-weight-bold" style="margin-left: 1%; font-size: 1rem;">김라영</span>
+					</div>
 					<span class="d-block mb-2">저도 궁금합니다.<br>대댓 부탁드려용 🍒</span>
 					<span class="d-block mb-2" style="font-size: 0.8rem; color: #8c8c8c;">2024-07-11 10:36</span>
 					<button type="button" class="btn" style="border: solid 1px #8c8c8c; font-size: 0.8rem; padding: 3px 6px;">답글</button>
@@ -205,7 +266,10 @@
 			</div>
 			<div id="comment" class="d-flex" style="padding: 1.5% 0">
 				<div style="width: 90%; padding: 1.5% 0">
-					<span class="d-block font-weight-bold mb-2">김라영</span>
+					<div class="mb-2 d-flex align-items-center">
+						<img src="<%=ctxPath%>/resources/images/logo_circle.png" width="30">
+						<span class="font-weight-bold" style="margin-left: 1%; font-size: 1rem;">김라영</span>
+					</div>
 					<span class="d-block mb-2">관광지 탭을 참조해보세요!</span>
 					<span class="d-block mb-2" style="font-size: 0.8rem; color: #8c8c8c;">2024-07-11 10:36</span>
 					<button type="button" class="btn" style="border: solid 1px #8c8c8c; font-size: 0.8rem; padding: 3px 6px;">답글</button>
@@ -238,20 +302,61 @@
 				</ul>
 			</div>
 			
-			<form name="addCommentFrm">
+			<c:if test="${not empty sessionScope.loginuser || not empty sessionScope.loginCompanyuser}">
+				<form name="addCommentFrm">
+					<div style="border: solid 1px #a6a6a6; margin-top: 10%; padding: 1.5% 1%">
+						<span class="d-block mb-2">
+							<c:if test="${not empty sessionScope.loginuser}">
+								<input type="hidden" name="fk_userid" value="${sessionScope.loginuser.userid}">
+								<input type="text" class="font-weight-bold" name="name" value="${sessionScope.loginuser.user_name}" style="border: none; background-color: #FAFAFA;" readonly>
+							</c:if>
+							<c:if test="${not empty sessionScope.loginCompanyuser}">
+								<input type="text" name="fk_userid" value="${sessionScope.loginCompanyuser.companyid}">
+								<input type="text" class="font-weight-bold" name="name" value="${sessionScope.loginCompanyuser.company_name}" style="border: none; background-color: #FAFAFA;" readonly>
+							</c:if>
+						</span>
+						<textarea class="mb-2" name="content" style="width: 100%; height: 100px; border: none; background-color: rgba(242, 242, 242, 0.3);" placeholder="댓글을 작성해주세요."></textarea>
+						<input type="hidden" name="parentSeq" value="${requestScope.boardvo.seq}" readonly />
+						<div style="text-align: right;"><button type="button" class="btn" id="addCommentBtn" onclick="goAddComment()">등록</button></div>
+					</div>
+				</form>
+			</c:if>
+			
+			<c:if test="${empty sessionScope.loginuser && empty sessionScope.loginCompanyuser}">
 				<div style="border: solid 1px #a6a6a6; margin-top: 10%; padding: 1.5% 1%">
-					<span class="d-block mb-2 font-weight-bold">배인혁</span>
-					<textarea class="mb-2" style="width: 100%; height: 100px; border: none; background-color: rgba(242, 242, 242, 0.3);" placeholder="댓글을 작성해주세요."></textarea>
-					<div style="text-align: right;"><button type="button" class="btn" id="addCommentBtn">등록</button></div>
+					<textarea class="mb-2" style="width: 100%; height: 100px; border: none; background-color: rgba(242, 242, 242, 0.3);" placeholder="댓글을 작성하려면 로그인하세요." onclick="javascript:location.href='<%=ctxPath%>/login.trip'" readonly></textarea>
 				</div>
-			</form>
+			</c:if>
 		</div>
 		
-		<div class="text-center" style="margin-top: 10%;">
-			<button type="button" id="addBoardBtn" class="btn btn-success mr-3">전체 목록</button>
-			<button type="button" id="goBackBtn" class="btn btn-secondary">검색된 결과 목록</button>
+		<div style="width: 80%; margin: 7% auto;">
+			<c:if test="${not empty requestScope.boardvo.previousseq}">
+				<div class="mb-3"><span class="mr-4">이전글</span><span class="move" onclick="goView('${requestScope.boardvo.previousseq}')">${requestScope.boardvo.previoussubject}</span></div>
+			</c:if>
+			<c:if test="${not empty requestScope.boardvo.nextseq}">
+				<div class="mb-3"><span class="mr-4">다음글</span><span class="move" onclick="goView('${requestScope.boardvo.nextseq}')">${requestScope.boardvo.nextsubject}</span></div>
+			</c:if>
+		</div>
+		
+		<div class="text-center">
+			<c:if test="${requestScope.boardvo.category == 1}">
+				<button type="button" class="btn btn-success mr-3" onclick="javascript:location.href='<%=ctxPath%>/community/freeBoard.trip'">전체 목록</button>
+			</c:if>
+			<button type="button" class="btn btn-secondary" onclick="javascript:location.href='<%=ctxPath%>${requestScope.goBackURL}'">검색된 결과 목록</button>
 		</div>
 	
 	</div>
 
 </div>
+
+
+<%-- === #138. 이전글, 다음글 보기 === --%>
+<form name='goViewFrm'>
+	<input type="hidden" name="seq" />
+	<input type="hidden" name="category" />
+	<input type="hidden" name="goBackURL" />
+	<input type="hidden" name="searchType" />
+	<input type="hidden" name="searchWord" />
+</form>
+
+

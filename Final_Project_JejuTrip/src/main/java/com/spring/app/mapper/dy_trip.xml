@@ -228,10 +228,18 @@
 		where companyid = #{id}
 	</update>
 	
+	
 	<!-- 커뮤니티 글 등록 처리하기 -->
 	<insert id="addBoard" parameterType="com.spring.app.trip.domain.BoardVO">
 		insert into tbl_board(seq, fk_userid, name, subject, content, pw, category)
 		values(boardSeq.nextval, #{fk_userid}, #{name}, #{subject}, #{content}, #{pw}, #{category})
+	</insert>
+	
+	
+	<!-- 커뮤니티 글 등록 처리하기 (첨부 파일이 있는 경우) -->
+	<insert id="addBoard_withFile" parameterType="com.spring.app.trip.domain.BoardVO">
+		insert into tbl_board(seq, fk_userid, name, subject, content, pw, fileName, orgFilename, fileSize, category)
+		values(boardSeq.nextval, #{fk_userid}, #{name}, #{subject}, #{content}, #{pw}, #{fileName}, #{orgFilename}, #{fileSize}, #{category})
 	</insert>
 	
 	
@@ -279,6 +287,52 @@
 		) V
 		WHERE V.rno between #{startRno} and #{endRno}
 	</select>
+	
+	
+	<!-- 검색 조건이 있을 시 글 1개 조회하기 -->
+	<select id="getViewBoard" parameterType="HashMap" resultType="com.spring.app.trip.domain.BoardVO">
+		SELECT previousseq, previoussubject
+		     , seq, fk_userid, name, subject, content, readCount, regDate, pw
+		     , nextseq, nextsubject
+		     , fileName, orgFilename, fileSize, category
+		FROM
+		(
+		    select lag(seq, 1) over(order by seq desc) AS previousseq
+		         , lag(subject, 1) over(order by seq desc) AS previoussubject
+		         , seq, fk_userid, name, subject, content, readCount
+		         , to_char(regDate, 'yyyy-mm-dd hh24:mi') as regDate, pw
+		         , lead(seq, 1) over(order by seq desc) AS nextseq
+		         , lead(subject, 1) over(order by seq desc) AS nextsubject
+		         , fileName, orgFilename, fileSize, category
+		    from tbl_board
+		    where status = 1 and category = #{category}
+    		<choose>
+				<when test="searchType == 'subject' and searchWord != ''">
+					and lower(subject) like '%' || lower(#{searchWord}) || '%'
+				</when>
+				<when test="searchType == 'content' and searchWord != ''">
+					and lower(content) like '%' || lower(#{searchWord}) || '%'
+				</when>
+				<when test="searchType == 'subject_content' and searchWord != ''">
+					and (lower(subject) like '%' || lower(#{searchWord}) || '%' or 
+						 lower(content) like '%' || lower(#{searchWord}) || '%')
+				</when>
+				<when test="searchType == 'name' and searchWord != ''">
+					and lower(name) like '%' || lower(#{searchWord}) || '%'
+				</when>
+				<otherwise></otherwise>
+			</choose>
+		) V
+		WHERE V.seq = #{seq}
+	</select>
+	
+	
+	<!-- 글 조회수 1 증가하기 -->
+	<update id="increase_readCount" parameterType="String">
+		update tbl_board
+		set readCount = readCount + 1
+		where seq = #{seq}
+	</update>
 	
 	
 </mapper>
