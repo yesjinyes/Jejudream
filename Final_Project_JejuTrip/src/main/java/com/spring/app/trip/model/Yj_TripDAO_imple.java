@@ -132,6 +132,7 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 	@Override
 	public int getReviewTotalCount(String parent_code) {
 		int n = sqlsession.selectOne("yj_trip.getReviewTotalCount", parent_code);
+		// System.out.println("리뷰 총 개수 확인 => " + n);
 		return n;
 	}
 

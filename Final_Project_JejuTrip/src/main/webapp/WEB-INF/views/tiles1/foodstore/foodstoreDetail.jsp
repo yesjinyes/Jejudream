@@ -117,6 +117,15 @@ img.icon {
   font-size: 13pt;
 }
 
+button#btnSchedule {
+  border: solid 1px orange;
+  border-radius: 10%;
+  background-color: #ffebcc;
+  margin: 10% 0 0 15%;
+  padding-top: 10%;
+}
+
+
 /* 상세정보 */
 div#storedetail {
   width: 90%;
@@ -179,6 +188,10 @@ textarea {
 		goLikeDislikeCount(); // 좋아요 개수 띄우기
 		
 		goViewReview(1); // 리뷰 리스트 띄우기
+		
+		
+		
+		
 		
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
@@ -267,7 +280,7 @@ textarea {
 		$(document).on("click", "button.btnDeleteReview", function(e) {
 
 			if($(e.target).text() == "취소") {
-				 alert("댓글 수정취소");
+				// alert("댓글 수정취소");
 				
 				const $review_content = $(e.target).parent().parent().children("td:nth-child(2)");
 				
@@ -328,11 +341,11 @@ textarea {
 					dataType:"json", 
 					success:function(json) {
 						if(json.n == 1){
-							alert("좋아요 등록 완료");
+							// alert("좋아요 등록 완료");
 							goLikeDislikeCount();
 						}
 						else{
-							alert("좋아요 취소");
+							// alert("좋아요 취소");
 							goLikeDislikeCount();
 						}
 			        },
@@ -342,6 +355,132 @@ textarea {
 		    	});// end of $.ajax-------------------------
 			} 
 		});// end of $("button#btnLike").click(function() {})----------------------------
+		
+		////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		// == 일정추가 modal 달력 띄우기 == //
+		const today = new Date();
+	    const year = today.getFullYear();
+	    const month = String(today.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
+	    const day = String(today.getDate()).padStart(2, '0');
+	    
+	    
+	    setDatePickers();
+	 // **** 동기적으로 실행하기 위해서 document.ready 안에다가 함수선언했음  ******    
+	
+	    // === 전체 datepicker 옵션 일괄 설정하기 ===  
+	    //     한번의 설정으로 $("input#fromDate"), $('input#toDate')의 옵션을 모두 설정할 수 있다.
+	    function setDatePickers() {
+		    //모든 datepicker에 대한 공통 옵션 설정
+		    $.datepicker.setDefaults({
+		         dateFormat: 'yy-mm-dd' //Input Display Format 변경
+		        ,showOtherMonths: true //빈 공간에 현재월의 앞뒤월의 날짜를 표시
+		        ,showMonthAfterYear:true //년도 먼저 나오고, 뒤에 월 표시
+		        ,changeYear: true //콤보박스에서 년 선택 가능
+		        ,changeMonth: true //콤보박스에서 월 선택 가능                
+		     // ,showOn: "both" //button:버튼을 표시하고,버튼을 눌러야만 달력 표시됨. both:버튼을 표시하고,버튼을 누르거나 input을 클릭하면 달력 표시됨.  
+		     // ,buttonImage: "http://jqueryui.com/resources/demos/datepicker/images/calendar.gif" //버튼 이미지 경로
+		     // ,buttonImageOnly: true //기본 버튼의 회색 부분을 없애고, 이미지만 보이게 함
+		     // ,buttonText: "선택" //버튼에 마우스 갖다 댔을 때 표시되는 텍스트                
+		        ,yearSuffix: "년" //달력의 년도 부분 뒤에 붙는 텍스트
+		        ,monthNamesShort: ['1','2','3','4','5','6','7','8','9','10','11','12'] //달력의 월 부분 텍스트
+		        ,monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'] //달력의 월 부분 Tooltip 텍스트
+		        ,dayNamesMin: ['일','월','화','수','목','금','토'] //달력의 요일 부분 텍스트
+		        ,dayNames: ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'] //달력의 요일 부분 Tooltip 텍스트
+		      ,minDate: "0D" //최소 선택일자(-1D:하루전, -1M:한달전, -1Y:일년전)
+		      ,maxDate: "+1Y" //최대 선택일자(+1D:하루후, -1M:한달후, -1Y:일년후)                    
+		    });
+		 
+		    // input을 datepicker로 선언
+		    $("input#fromDate").datepicker();                    
+		    $("input#toDate").datepicker();
+		        
+		        
+		    // From의 초기값을 오늘 날짜로 설정
+		    $('input#fromDate').datepicker('setDate', 'today'); //(-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, +1M:한달후, +1Y:일년후)
+		    
+		    // To의 초기값을 1일후로 설정
+		    $('input#toDate').datepicker('setDate', '+1D'); //(-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, +1M:한달후, +1Y:일년후)
+		    
+		    $('input#toDate').datepicker('option', 'minDate', '+1D');
+		    
+		} // end of function setDatePickers() {}
+	 	    
+	    
+	    
+	    let fromDate = $("input:text[id='fromDate']").val();
+	    let toDate = $("input#toDate").val();
+	    
+	 // setTimeout을 사용하여 datepicker 설정 후 값을 가져오도록 함
+	    setTimeout(function() {
+	    	fromDate = $("input:text[id='fromDate']").val();
+	    	toDate = $("input#toDate").val();
+	        
+	    	const frm = document.filterForm;
+	    	
+	    	frm.check_in.value = fromDate;
+	    	frm.check_out.value = toDate;
+	    	
+	    	fetchFilteredData(currentShowPageNo, currentSort);
+	    	
+	        // alert('fromDate > ' + fromDate);
+	        // alert('toDate > ' + toDate);
+	    }, 100); // 100ms 딜레이를 주어 datepicker 설정이 완료되도록 함
+	    
+	
+	    
+	    $("input:text[name='datepicker']").keyup( (e)=>{
+	        // input태그가 text 타입인데 키보드로 문자를 입력하려고할때 막아야한다 마우스클릭으로만 가능하게끔
+	            e.preventDefault(); // 입력막기
+	        	alert("마우스 클릭으로만 날짜를 입력하세요!"); // 에러메시지 표현
+	            
+	            $("input#fromDate").val(fromDate);
+	            $("input#toDate").val(toDate);
+	
+	    }); // end of $('input#datepicker').keyup( (e)=>{})
+	    
+	    
+	    $("input:text[name='datepicker']").change( (e)=>{
+	    	
+	    	const id = $(e.target).attr('id');
+	    	// alert(id);
+	    	
+	    	let d1 = $("input#fromDate").val();
+	    	let d2 = $("input#toDate").val();
+	    	
+	    	const frm = document.filterForm;
+	    	
+	    	if (d1 >= d2) {
+	    	    
+	    		let date1 = new Date(d1);
+	            
+	    		date1.setDate(date1.getDate() + 1); // d1의 다음 날로 설정
+	            
+	    		d2 = date1.toISOString().split('T')[0]; // 'yyyy-mm-dd' 형식으로 변환
+	
+	            $("input#toDate").val(d2);
+	    		
+	            frm.check_in.value = $("input#fromDate").val();
+	            frm.check_out.value = $("input#toDate").val();
+	        }
+	    	else {
+	        	
+	        	if (id === "fromDate") {
+	        	      
+	                frm.check_in.value = d1;
+	                
+	            } else if (id === "toDate") {
+	            
+	                frm.check_out.value = d2;
+	                
+	            }
+	        	
+	        }
+	    	
+	    	fetchFilteredData(currentShowPageNo, currentSort);
+	    	
+	    }); // end of  $("input:text[name='datepicker']").change( (e)=>{})
+		
 		
 	});// end of $(document).ready(function() {})-----------------------------
 	
@@ -438,7 +577,9 @@ textarea {
 			success:function(json) {
 				//console.log("리뷰 select 확인 : "+JSON.stringify(json));
 				
-				let v_html = "";
+				let v_html = ""; // 작성한 리뷰
+				let count_html = 0; // 리뷰 총 개수
+
 				if(json.length > 0) {
 					$.each(json, function(index, item){
 						
@@ -460,7 +601,7 @@ textarea {
 								       }
 								        
 						v_html += `</tr>`;
-								       
+						count_html = item.totalCount;     
 					});
 				}// end of if(json.length > 0)---------
 				
@@ -471,6 +612,7 @@ textarea {
 			    }
 				
 				$("tbody#reviewDisplay").html(v_html);
+				$("p#reviewCount").html(count_html);
 				
 				//const totalPage = Math.ceil( json[0].totalCount / json[0].sizePerPage);
 				
@@ -624,22 +766,21 @@ textarea {
 						<p class="count" id="reviewCount"></p>
 					</li>
 					<li class="list-item">
-						<button type="button" class="iconbtn" onclick="addSchedule()">
-							<div>
-								<img class="icon" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_calender.png">
-							</div>
-							<p class="icon-title">일정에 추가</p>
-						</button>
-						<p class="count">30</p>
-					</li>
-					<li class="list-item">
 						<button type="button" class="iconbtn" style="cursor: default;">
 							<div>
 								<img class="icon" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_viewcount.png">
 							</div>
 							<p class="icon-title">조회수</p>
 						</button>
-						<p class="count">128</p>
+						<p class="count" id="readCount">128</p>
+					</li>
+					<li class="list-item">
+						<button type="button" class="iconbtn" id="btnSchedule" onclick="addSchedule()">
+							<div>
+								<img class="icon" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_calender.png">
+							</div>
+							<p class="icon-title" id="addSchedule">일정 추가</p>
+						</button>
 					</li>
 				</ul>
 				<!-- 아이콘 모음 끝-->
@@ -658,28 +799,36 @@ textarea {
 			                    <div class="form-group">
 			                    	<label for="food_name" class="col-form-label">맛집 이름</label>
 			                        <input type="text" class="form-control mb-3" id="food_name" name="food_name" readonly="readonly" value="${requestScope.foodstorevo.food_name}">
+			                        
 			                        <label for="calendar_title" class="col-form-label">일정 제목</label>
 			                        <input type="text" class="form-control mb-3" id="calendar_title" name="calendar_title">
+			                        
 			                        <label for="calendar_content" class="col-form-label">일정 내용</label>
 			                        <input type="text" class="form-control mb-3" id="calendar_content" name="calendar_content">
 			                        
-			                        <label for="taskId" class="col-form-label">시작 일자</label>
-			                        <br>
-			                  <input type="date" id="calendar_start_time" name="calendar_start_time"/>&nbsp; 
-			                  <select id="startHour" class="form-select"></select> 시
-			                  <select id="startMinute" class="form-select"></select> 분
-			                  
-			                  <br>
-			                  <label for="taskId" class="col-form-label">종료 일자</label>
-			                  <br>
-			                  <input type="date" id="calendar_end_time" name="calendar_end_time"/>&nbsp;
-			                  <select id="endHour" class="schedule"></select> 시
-			                  <select id="endMinute" class="schedule"></select> 분&nbsp;
-			                  <input type="checkbox" id="allDay"/>&nbsp;<label for="allDay">종일</label>
-			                  
-			                  <input type="hidden" name="startdate"/>
-			                  <input type="hidden" name="enddate"/>
-			                  <input type="hidden" name="schedule_seq"/>
+			                        <div class="fromDate">
+							            <label>날짜</label>
+							            <div>
+							                <div class="date-container">
+							                    <span class="date-pick">
+							                        <input class="datepicker" style="cursor: pointer;" type="text" id="fromDate" name="datepicker" value="${requestScope.dateSendMap.detail_check_in}" placeholder="입실일 선택">
+							                    </span>
+							                </div>
+							            </div>
+							        </div>
+							      <%--   <div class="toDate">
+							            <label>체크아웃</label>
+							            <div>
+							                <div class="date-container">
+							                    <span class="date-pick">
+							                        <input class="datepicker" style="cursor: pointer;" type="text" id="toDate" name="datepicker" value="${requestScope.dateSendMap.detail_check_out}" placeholder="퇴실일 선택">
+							                    </span>
+							                </div>
+							            </div>
+							        </div> --%>
+					                  <!-- <input type="hidden" name="startdate"/>
+					                  <input type="hidden" name="enddate"/>
+					                  <input type="hidden" name="schedule_seq"/> -->
 			                    </div>
 			                </div>
 			                <div class="modal-footer">
@@ -771,7 +920,9 @@ textarea {
 					<th style="text-align: center;">내용</th>
 					<th style="width: 12%;">작성자 아이디</th>
 					<th style="width: 12%;">작성일자</th>
-					<th style="width: 12%;">수정/삭제</th>
+					<c:if test="${not empty sessionScope.loginuser}">
+						<th style="width: 12%;">수정/삭제</th>
+					</c:if>
 				</tr>
 			</thead>
 			<tbody id="reviewDisplay">

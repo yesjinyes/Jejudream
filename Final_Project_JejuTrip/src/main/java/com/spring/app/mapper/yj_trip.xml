@@ -179,6 +179,14 @@
 	</delete>
 
 
+	<!-- 리뷰 총 개수 구하기  -->
+	<select id="getReviewTotalCount" parameterType="String" resultType="int">
+		select count(*)
+		from tbl_review
+		where parent_code = #{parent_code}
+	</select>
+
+
 	<!-- 좋아요 총 개수 구하기 -->
 	<select id="countFoodlike" parameterType="HashMap" resultType="int">
 		select count(*)

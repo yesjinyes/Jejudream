@@ -242,6 +242,27 @@ public class Yj_TripController {
 	}
 	
 	
+	// == 상세페이지 조회수 증가 == //
+	@GetMapping("foodstoreDetail_2.trip")
+	public ModelAndView view_2(ModelAndView mav, HttpServletRequest request, RedirectAttributes redirectAttr) {
+		
+		String food_store_code = request.getParameter("food_store_code");
+		System.out.println("~~~~ food_store_code 나와주세요 => "+ food_store_code);
+		
+		HttpSession session = request.getSession();
+		session.setAttribute("readCountPermission", "yes");
+		
+		Map<String, String> redirect_map = new HashMap<>();
+		redirect_map.put("food_store_code", food_store_code);
+		
+		redirectAttr.addFlashAttribute("redirect_map", redirect_map);
+		
+		mav.setViewName("redirect:/foodstoreDetail.trip");
+		
+		return mav;
+	}
+	
+	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	
@@ -340,30 +361,6 @@ public class Yj_TripController {
 
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	
-	// == 상세페이지 조회수 증가 == //
-	@GetMapping("foodstoreDetail_2.trip")
-	public ModelAndView view_2(ModelAndView mav, HttpServletRequest request, RedirectAttributes redirectAttr) {
-		
-		String food_store_code = request.getParameter("food_store_code");
-		System.out.println("~~~~ food_store_code 나와주세요 => "+ food_store_code);
-		
-		HttpSession session = request.getSession();
-		session.setAttribute("readCountPermission", "yes");
-		
-		Map<String, String> redirect_map = new HashMap<>();
-		redirect_map.put("food_store_code", food_store_code);
-		
-		redirectAttr.addFlashAttribute("redirect_map", redirect_map);
-		
-		mav.setViewName("redirect:/foodstoreDetail.trip");
-		
-		return mav;
-	}
-	
-	
-	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	
 	// == 리뷰 쓰기 == //
@@ -399,7 +396,8 @@ public class Yj_TripController {
 		// System.out.println("parent_code 확인 =>" + parent_code);
 		
 		List<ReviewVO> reviewList = service.getReviewList(parent_code);
-		//int totalCount = service.getReviewTotalCount(parent_code); // 리뷰 총 개수 구하기
+		
+		int totalCount = service.getReviewTotalCount(parent_code); // 리뷰 총 개수 구하기
 		
 		JSONArray jsonArr = new JSONArray();
 		
@@ -412,14 +410,15 @@ public class Yj_TripController {
 				jsonObj.put("review_content", rvo.getReview_content());
 				jsonObj.put("registerday", rvo.getRegisterday());
 				
-				//jsonObj.put("totalCount", totalCount);
+				jsonObj.put("totalCount", totalCount);
 				
 				jsonArr.put(jsonObj);
 			}// end of for------------------
-			
 		}
+	
 		//System.out.println("~~~리뷰 List jsonArr 확인 => "+jsonArr.toString());
 		return jsonArr.toString();
+		
 	}
 	
 	

@@ -305,11 +305,21 @@ from tbl_food_store;
 
 commit;
 
+select * from tbl_review;
 
 select * from tbl_food_store;
+
+select * from tbl_like;
 
 select * from user_tables;
 
 select * from tbl_board;
+
+
+
+select count(*)
+from tbl_review
+where parent_code = 5316;
+
 
 
