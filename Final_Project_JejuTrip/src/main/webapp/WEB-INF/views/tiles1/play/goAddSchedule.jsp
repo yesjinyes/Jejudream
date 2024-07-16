@@ -6,25 +6,6 @@
     //    /JejuDream
 %>
 
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-<%-- Bootstrap CSS --%>
-<link rel="stylesheet" type="text/css" href="<%= ctxPath%>/resources/bootstrap-4.6.2-dist/css/bootstrap.min.css" > 
-
-<%-- Font Awesome 6 Icons --%>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-
-<%-- Optional JavaScript --%>
-<script type="text/javascript" src="<%= ctxPath%>/resources/js/jquery-3.7.1.min.js"></script>
-<script type="text/javascript" src="<%= ctxPath%>/resources/bootstrap-4.6.2-dist/js/bootstrap.bundle.min.js" ></script>
-
-<%-- jQueryUI CSS 및 JS --%>
-<link rel="stylesheet" type="text/css" href="<%= ctxPath%>/resources/jquery-ui-1.13.1.custom/jquery-ui.min.css" />
-<script type="text/javascript" src="<%= ctxPath%>/resources/jquery-ui-1.13.1.custom/jquery-ui.min.js" ></script>
-
-<link rel='stylesheet prefetch' href='https://fonts.googleapis.com/css?family=Montserrat:300,400,700'>
-
-
 <style type="text/css">
 
 
@@ -92,11 +73,10 @@ div.info_block > input:first-child {
 }
 
 div.info_block > select {
-    display: block;
     width: 100%;
     max-width: 680px;
     height: 50px;
-    margin: 0 auto;
+    margin: 2% auto 3%;
     border-radius: 8px;
     border: solid 1px rgba(15, 19, 42, .1);
     padding: 0 0 0 15px;
@@ -105,7 +85,6 @@ div.info_block > select {
 }
 
 div.info_block > textarea {
-    display: block;
     width: 100%;
     max-width: 680px;
     height: 150px;
@@ -252,6 +231,21 @@ ul.list li {
   text-align: center;
   font-size: 15pt;
 }
+
+.joinUserName{
+	width: 35%;
+	height: calc(1.5em + .75rem + 2px);
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
 /*-----------------------------------------------------------------*/
 
 </style>
@@ -272,12 +266,6 @@ $(document).ready(function() {
     let currentShowPageNo = 1; // currentShowPageNo 초기값
     goReviewListView(currentShowPageNo); // 페이징처리된 리뷰보여주는 함수
 
-
-    //모달창 띄우기전 로그인 검사--------------------------------------------------------------- 
-    
-	
-    //------------------------------------------------------------------------ 
-	
     //리뷰 작성-----------------------------------------------------------------
    
     $("button#btnCommentOK").click(function(){
@@ -327,12 +315,6 @@ $(document).ready(function() {
       });//end of  $("button#btnCommentOK").click(function())--------------
     
       //----------------------------------------------------------------------------------------
-     //댓글 수정 ,완료
-     
-     
-     
-     
-      //------------------------------------------------------------------------------------------------
       
     //달력용--------------------------------------------------------------------
 	 $(function() {
@@ -466,42 +448,7 @@ $(document).ready(function() {
         });  
         
     //--------------------------------------map관련 끝 ---------------------------------------//
-        
-        
-      <%-- // 서브캘린더 종류를 알아와서 select 태그에 넣어주기 
-		$("select.calType").change(function(){
-			var fk_lgcatgono = $("select.calType").val();   // 나의일정 1, 공유일정 2
-			
-			if(fk_lgcatgono != "") { // 선택하세요 가 아니라면
-				$.ajax({
-						url: "<%= ctxPath%>/schedule/selectPlaySmallCategory.trip",
-						data: {"fk_lgcatgono":fk_lgcatgono, 
-							   "fk_userid":"${sessionScope.loginuser.userid}"},
-						dataType: "json",
-						success:function(json){
-							var html ="";
-							if(json.length>0){
-								$.each(json, function(index, item){
-									html+="<option value='"+item.smcatgono+"'>"+item.smcatgoname+"</option>"
-								});
-								$("select.small_category").html(html);
-								$("select.small_category").show();
-							}
-						},
-						error: function(request, status, error){
-				            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
-						}
-				});
-			}
-			
-			else {
-				// 선택하세요 이라면
-				$("select.small_category").hide();
-			}
-			
-		});
-		 --%>
-		
+
 		// 공유자 추가하기
 		$("input#joinUserName").bind("keyup",function(){
 				var joinUserName = $(this).val();
@@ -667,18 +614,9 @@ $(document).ready(function() {
 
 		});// end of $("button#register").click(function(){})--------------------
         
-         
-        
-        
-        
-        
-        
         
 });//end of $(document).ready(function() {
 
-	
-	
-	
 // 리뷰 보여주기
  function goReviewListView(currentShowPageNo){
 	  
@@ -944,13 +882,17 @@ function goCheckSchedule(){ // 일정추가를 했는지 알아오는것
         dataType: "json",
         success: function(json) {
             if (json.calcheck) {
-            	$("p#addScheduletitle").text("일정 확인");
-                $("#calender").hide();
-                $("#calenderUp").show();
+            	$("p#addScheduletitle").text("일정 확인하러가기");
+                $("#addSchedule_btn").hide();
+                $("#checkSchedule_btn").show();
+                
             } else {
             	$("p#addScheduletitle").text("일정 추가");
-                $("#calender").show();
-                $("#calenderUp").hide();
+                $("#addSchedule_btn").show();
+                $("#checkSchedule_btn").hide();
+                
+                
+                
             }
         },
         error: function(request, status, error) {
@@ -995,13 +937,13 @@ function goDelete() {
 	<div style="width: 90%; margin: 3% auto;text-align: right;">
 		<ul class="list" style="display: flex; margin-left: 8%;">
 			<li class="list-item">
-				<button type="button" class="iconbtn" onclick="golikeAdd()">
+				<button type="button" class="iconbtn" onclick="golikeAdd()">	
 					<div class="item-each">
 						<img class="icon like" id="like" src="<%= ctxPath %>/resources/images/foodstore/icon/Like.png">
 						<img class="icon likeup" id="likeup" src="<%= ctxPath %>/resources/images/foodstore/icon/LikeUp.png">
 					</div>
-					<p class="icon-title">좋아요</p>
 				</button>
+					<p class="icon-title">좋아요</p>
 				<p class="count" id="likeCount"></p>
 			</li>
 			<li class="list-item">
@@ -1023,13 +965,15 @@ function goDelete() {
 				<p class="count">${requestScope.playvo.readCount}</p>
 			</li>
 			<li class="list-item">
-				<button type="button" class="iconbtn addSchedule" onclick="goScheduleAdd()">
-					<div>
-						<img class="icon" id="calender" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_calender.png">
-						<img class="icon" id="calenderUp" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_calenderUp.png">
-					</div>
+				<div>
+					<button type="button" class="iconbtn addSchedule" id ="addSchedule_btn" onclick="goScheduleAdd()">
+							<img class="icon" id="calender" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_calender.png">
+					</button>
+					<button type="button" class="iconbtn addSchedule" id ="checkSchedule_btn" onclick="#">
+							<img class="icon" id="calenderUp" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_calenderUp.png">
+					</button>
 					<p class="icon-title" id="addScheduletitle"></p>
-				</button>
+				</div>
 			</li>
 		</ul>
     </div>
@@ -1070,9 +1014,7 @@ function goDelete() {
 		<div id="map" style="width:95%;height:500px;margin: auto; margin-bottom: 50px;"></div>
 		<div id="clickLatlng"></div>
 	</div>
-
-
-
+	
 	<div class="text-left" >
 	    <p class="h4 text-muted">리뷰</p>
 	    <p class="h6" style="color: red">부적절한 게시글을 업로드 시 불이익을 받을 수 있습니다.</p>
@@ -1102,15 +1044,15 @@ function goDelete() {
 	</form>
     
     
-</div><!--컨테이너끝  -->
+</div>
+<!--컨테이너끝  -->
 
-<!---------------------------------------------모달시작---------------------------------------------------------------------->
+<!---------------------------------------------예약하는 모달시작---------------------------------------------------------------------->
 	 
 	 
 	 <form name="addSchedulePlayFrm" enctype="multipart/form-data">
 		<div class="modal fade" id="exampleModal_scrolling_2">
 		  <div class="modal-dialog modal-lg modal-dialog-scrollable">
-		  <!-- .modal-dialog-scrollable을 .modal-dialog에 추가하여 페이지 자체가 아닌 모달 내부에서만 스크롤할 수 있습니다. -->
 		    <div class="modal-content">
 		      
 		      <!-- Modal header -->
@@ -1123,13 +1065,12 @@ function goDelete() {
 		      <div class="modal-body">
                 <div class="info_block mt-5 add_calType" >
                 	<label style="font-size: 20px;"> 캘린더 선택</label><br>
-	                <select class="calType schedule" name="fk_lgcatgono" id="fk_lgcatgono">
+	                <select class="calType schedule" name="fk_lgcatgono" id="fk_lgcatgono" style="display: left;">
 						<option value="">선택하세요</option>
 						<option value="1">내 캘린더</option>
 						<option value="2">공유 캘린더</option>
 					</select> &nbsp;
-					<!--여기 조건 검사 하는거 추가해야함  -->
-					<input type="text" name="fk_smcatgono" id="fk_smcatgono"/>
+					<input type="hidden" name="fk_smcatgono" id="fk_smcatgono"/>
                 </div>
                 
                 <div class="add_date" >
@@ -1157,16 +1098,13 @@ function goDelete() {
 		        	<label style="font-size: 20px;"> 메모</label><br>
 		        	<textarea name="content" id="content" placeholder="추가로 작성하실 내용을 입력해 주세요."></textarea>
 		        </div>
-		        
-		        <div class="info_block add_color" >
-		        <label style="font-size: 20px;"> 색상</label><br>
-		        <input type="color" id="color" name="color" value="#009900"/>
-		        </div>
 		        <div class="add_party" >
 		        	<label style="font-size: 20px;"> 일행 추가하기</label><br>
-		        	<input type="text" id="joinUserName" class="form-control" placeholder="일정을 공유할 회원명을 입력하세요"/>
+		        	<input type="text" id="joinUserName" class="joinUserName" placeholder="일정을 공유할 회원명을 입력하세요"/>
 					<div class="displayUserList"></div>
 					<input type="hidden" name="joinuser"/>
+					 <label style="font-size: 20px;"> 색상</label><br>
+		        	<input type="color" id="color" name="color" value="#009900"/>
 		        </div>
 		        
 		      </div>
@@ -1177,7 +1115,6 @@ function goDelete() {
 	      	  <input type="hidden" name="subject" value="${requestScope.playvo.play_name}"><!--이거 hidden 으로 바꾸기 -->
 	      	  <input type="hidden" name="place" value="${requestScope.playvo.play_address}"><!--이거 hidden 으로 바꾸기 -->
 		      
-		      
 		      <!-- Modal footer -->
 		      <div class="modal-footer">
 		        <button type="button" class="btn" id="register" style="background: #ff8000; color: #fff;">일정추가</button>
@@ -1187,8 +1124,9 @@ function goDelete() {
 		  </div>
 		</div>
 		<!----------------------------------------------------------------------  -->
-		
 	</form>
+	
+	
 
 
 

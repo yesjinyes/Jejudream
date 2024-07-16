@@ -76,61 +76,21 @@ public class Hs_TripController {
 			    
 				HttpSession session = mrequest.getSession(); 
 				String root = session.getServletContext().getRealPath("/"); 
-				
-				// System.out.println("~~~ 확인용 webapp 의 절대경로 => " + root); 
-				// ~~~ 확인용 webapp 의 절대경로 => C:\NCS\workspace_spring_framework\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\board\
-				
 				String path = root + "resources"+File.separator+"images"+File.separator+"play";     
-		        // System.out.println(path);
-		        /* File.separator 는 운영체제에서 사용하는 폴더와 파일의 구분자이다.
-		                            운영체제가 Windows 이라면 File.separator 는  "\" 이고,
-		                            운영체제가 UNIX, Linux, 매킨토시(맥) 이라면  File.separator 는 "/" 이다. 
-		         */
-		                  
-		        // path 가 첨부파일이 저장될 WAS(톰캣)의 폴더가 된다.
-		        //   System.out.println("~~~ 확인용 path => " + path);
-		        //  ~~~ 확인용 path => C:\NCS\workspace_spring_framework\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\board\resources\files 
-		                  
-		        /*
-		             2. 파일첨부를 위한 변수의 설정 및 값을 초기화 한 후 파일 올리기  
-		         */
-		        String newFileName = "";
-		        // WAS(톰캣)의 디스크에 저장될 파일명 
-		         
-		        byte[] bytes = null;
-		        // 첨부파일의 내용물을 담는 것
-		         
-		        long fileSize = 0;
-		        // 첨부파일의 크기 
-		         
-		         
+		        String newFileName = "";  // WAS(톰캣)의 디스크에 저장될 파일명 
+		       
+		        byte[] bytes = null;// 첨부파일의 내용물을 담는 것
+		        long fileSize = 0;// 첨부파일의 크기 
+		        
 		        try {
 		            bytes = attach.getBytes();
 		            // 첨부파일의 내용물을 읽어오는 것
 		            
 		            String originalFilename = attach.getOriginalFilename();
-		            // attach.getOriginalFilename() 이 첨부파일명의 파일명(예: 강아지.png) 이다.
-		            
-		            //   System.out.println("~~~ 확인용 originalFilename => " + originalFilename); 
-		            // ~~~ 확인용 originalFilename => LG_싸이킹청소기_사용설명서.pdf 
-		            
 		            newFileName = fileManager.doFileUpload(bytes, originalFilename, path); 
-		            // 첨부되어진 파일을 업로드 하는 것이다.
-		            
-		            //   System.out.println("~~~ 확인용 newFileName => " + newFileName); 
-		            // ~~~ 확인용 newFileName => 20231124113600755016855987700.pdf 
-		                     
-		                  
-		            /*
-		                3. CommentVO commentvo 에 fileName 값과 orgFilename 값과 fileSize 값을 넣어주기  
-		            */
 		            playvo.setFileName(newFileName);
-		            // WAS(톰캣)에 저장된 파일명(20231124113600755016855987700.pdf)
-		                     
 		            playvo.setOrgFilename(playvo.getPlay_name()+"_main.jpg");
-		            // 게시판 페이지에서 첨부된 파일(LG_싸이킹청소기_사용설명서.pdf)을 보여줄 때 사용.
-		            // 또한 사용자가 파일을 다운로드 할때 사용되어지는 파일명으로 사용.
-		                     
+		            
 		            fileSize = attach.getSize();  // 첨부파일의 크기(단위는 byte임) 
 		            playvo.setFileSize(String.valueOf(fileSize));
 		                     
@@ -144,7 +104,6 @@ public class Hs_TripController {
 			String detail_address = mrequest.getParameter("detail_address");
 			
 			playvo.setPlay_address(address + " " + detail_address);
-			// === 데이터 베이스에 등록하려는 숙소 정보 insert 하기 === // 
 		
 			int n = service.registerPlayEnd(playvo);
 			
@@ -198,11 +157,6 @@ public class Hs_TripController {
 									@RequestParam(defaultValue="") String currentShowPageNo,
 									@RequestParam(defaultValue="") String searchWord) {
 			
-//			System.out.println("str_local"+str_local);
-//			System.out.println("category"+category);
-//			System.out.println("currentShowPageNo"+currentShowPageNo);
-			
-			
 			
 			int sizePerPage = 6; //한페이지당 6개의 글 보여주기
 		    
@@ -227,7 +181,6 @@ public class Hs_TripController {
 		    }
 		    if(!"".equals(str_local)) {
 				String[] arr_local_status = str_local.trim().split("\\,"); // in 절을 사용하기 위해서는 배열로 만든 후 넘겨줘야한다
-				//System.out.println("arr_local_status"+Arrays.toString(arr_local_status));
 				
 				paraMap.put("arr_local_status",arr_local_status);
 			} 
@@ -274,10 +227,9 @@ public class Hs_TripController {
 			
 			String play_code = request.getParameter("play_code");
 			//System.out.println("play_code"+play_code);
-			
-			
 			PlayVO playvo = service.goAddSchedule(play_code);
 			
+
 
 			mav.addObject("playvo", playvo);
 			mav.setViewName("play/goAddSchedule.tiles1");
@@ -371,7 +323,6 @@ public class Hs_TripController {
 		
 					jsonArr.put(jsonObj);
 				}
-				//System.out.println("json" + jsonArr);
 			}
 			return jsonArr.toString();
 		}
@@ -429,11 +380,9 @@ public class Hs_TripController {
 			MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
 			
 			String play_code = request.getParameter("play_code");
-			//System.out.println("play_code " + play_code);
 			
 			try {
 				Integer.parseInt(play_code);
-				//System.out.println("play_code integer" + play_code);
 				
 				if(loginuser != null && !loginuser.getUserid().equals("admin")) {
 					message="관리자만 접근 가능합니다.";
@@ -523,7 +472,6 @@ public class Hs_TripController {
 				mav.addObject("loc", mrequest.getContextPath()+"/goAddSchedule.trip?play_code=" + playvo.getPlay_code());//수정되어진 글을 다시 보여줌
 				
 				mav.setViewName("msg");
-				//  /list.action 페이지로 redirect(페이지이동)해라는 말이다.
 			}
 			else {
 		        String loc = "javascript:history.back()";
@@ -592,8 +540,6 @@ public class Hs_TripController {
 			String fk_userid = request.getParameter("fk_userid");
 			String like_division_R = "C";
 			int n = 0;
-			//System.out.println("parent_code"+parent_code);
-			//System.out.println("fk_userid"+fk_userid);
 			
 			Map<String, String> paraMap = new HashMap<>();
 			paraMap.put("parent_code", parent_code);
@@ -604,11 +550,9 @@ public class Hs_TripController {
 			
 			if(check.size() == 0) {
 				n = service.likeAdd(paraMap);  // 좋아요 업데이트
-		        //System.out.println("컨트롤 좋아요 업데이트");
 			}
 			else {
 				service.likeDel(paraMap);  // 좋아요 지우기
-		       //System.out.println("컨트롤 좋아요 지움");
 		        n=0;
 		        
 			}
@@ -677,17 +621,7 @@ public class Hs_TripController {
 		
 		
 		//--------------------------------일정추가 관련 시작-------------------------------------------//
-		// === 일정관리 시작 페이지 ===
-		@GetMapping("/schedule/scheduleManagement.trip")
-		public ModelAndView requiredLogin_showSchedule(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) { 
-			
-			mav.setViewName("schedule/scheduleManagement.tiles1");
-
-			return mav;
-		}
-		
-		
-		
+	/*	
 		// === 공유자를 찾기 위한 특정글자가 들어간 회원명단 불러오기 ===
 		@ResponseBody
 		@RequestMapping(value="/schedule/insertSchedule/searchPlayJoinUserList.trip", produces="text/plain;charset=UTF-8")
@@ -712,18 +646,14 @@ public class Hs_TripController {
 			return jsonArr.toString();
 			
 		}
-		
+		*/
 		
 		// === 일정 등록하기 ===
 		@PostMapping("/schedule/registerPlaySchedule_end.trip")
 		public ModelAndView registerPlaySchedule_end(ModelAndView mav, HttpServletRequest request) throws Throwable {
 			
 			String startdate= request.getParameter("startdate");
-			System.out.println("확인용 startdate => " + startdate);
-		//  확인용 startdate => 20231129140000
-	   	    
 			String enddate = request.getParameter("enddate");
-			
 			
 			String subject = request.getParameter("subject");
 			String fk_lgcatgono= request.getParameter("fk_lgcatgono");
@@ -736,21 +666,7 @@ public class Hs_TripController {
 			String content = request.getParameter("content");
 			String fk_userid = request.getParameter("fk_userid");
 			String schedule_divison = request.getParameter("review_division");
-			
-	     	System.out.println("확인용 joinuser => " + joinuser);
-	     	System.out.println("확인용 subject => " + subject);
-	     	System.out.println("확인용 fk_lgcatgono => " + fk_lgcatgono);
-	     	System.out.println("확인용 fk_smcatgono => " + fk_smcatgono);
-	     	System.out.println("확인용 color => " + color);
-	     	System.out.println("확인용 place => " + place);
-	     	System.out.println("확인용 content => " + content);
-	     	System.out.println("확인용 fk_userid => " + fk_userid);
-		 // 확인용 joinUser_es =>
-		 // 또는 
-		 // 확인용 joinUser_es => 이순신(leess),아이유1(iyou1),설현(seolh) 	
-			
-			
-			
+			System.out.println("parent_code" + parent_code);
 			Map<String,String> paraMap = new HashMap<String, String>();
 			paraMap.put("startdate", startdate);
 			paraMap.put("enddate", enddate);
@@ -791,9 +707,6 @@ public class Hs_TripController {
 			
 			String parent_code = request.getParameter("parent_code");
 		    String fk_userid = request.getParameter("fk_userid");
-		    
-		    System.out.println("parent_code : " + parent_code);
-		    System.out.println("fk_userid : " + fk_userid);
 
 		    Map<String, String> paraMap = new HashMap<>();
 		    
@@ -805,10 +718,8 @@ public class Hs_TripController {
 		        
 		        List<Calendar_schedule_VO> calcheck = service.checkSchedule(paraMap); // 좋아요를 했는지 알아오는 것 (0 또는 1)
 		        jsonObj.put("calcheck", calcheck != null ? calcheck.size() > 0 : false);
-		        System.out.println("jsonObj.toString()1 : " + jsonObj.toString());
 		    } else {
 		        jsonObj.put("calcheck", false);
-		        System.out.println("jsonObj.toString()2 : " + jsonObj.toString());
 		    }
 
 		    return jsonObj.toString();

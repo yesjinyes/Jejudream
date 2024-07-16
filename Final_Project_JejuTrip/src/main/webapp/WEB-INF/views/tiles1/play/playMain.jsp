@@ -6,44 +6,9 @@
     //    /JejuDream
 %>
 
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-<%-- Bootstrap CSS --%>
-<link rel="stylesheet" type="text/css" href="<%= ctxPath%>/resources/bootstrap-4.6.2-dist/css/bootstrap.min.css" > 
-
-<%-- Font Awesome 6 Icons --%>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-
-<%-- Optional JavaScript --%>
-<script type="text/javascript" src="<%= ctxPath%>/resources/js/jquery-3.7.1.min.js"></script>
-<script type="text/javascript" src="<%= ctxPath%>/resources/bootstrap-4.6.2-dist/js/bootstrap.bundle.min.js" ></script>
-
-<%-- jQueryUI CSS 및 JS --%>
-<link rel="stylesheet" type="text/css" href="<%= ctxPath%>/resources/jquery-ui-1.13.1.custom/jquery-ui.min.css" />
-<script type="text/javascript" src="<%= ctxPath%>/resources/jquery-ui-1.13.1.custom/jquery-ui.min.js" ></script>
-
-<link rel='stylesheet prefetch' href='https://fonts.googleapis.com/css?family=Montserrat:300,400,700'>
 
 
 <style type="text/css">
-
-/*구글 웹 폰트 적용*/
-/* @import url('https://fonts.googleapis.com/css2?family=Dongle&family=Sunflower:wght@300&display=swap');
-
-.inner_back{
-  font-family: "Dongle", sans-serif;
-  font-weight: 300;
-  font-style: normal;
-  font-size: 26px;
-	}
-
-
-.container {
-  font-family: "Dongle", sans-serif;
-  font-weight: 200;
-  font-style: normal;
-  font-size: 25px;
-} */
 
 
 .single-post {
@@ -210,9 +175,6 @@
     color: black;
     
 }
-/* .inner_back::-webkit-scrollbar {
-  display: none;
-} */
 
  .inner_back::-webkit-scrollbar {
     width: 10px;
@@ -284,7 +246,6 @@ font-size: 17px;
 /*-----------------------------------------------------------------------------------------  */
 
 .icon{
-
 width: 30px;
 }
 
@@ -311,8 +272,7 @@ $(document).ready(function() {
     // 카드 클릭 시 play_code 전달 (이벤트 위임 사용)
     $(document).on('click', '.container_card', function() {
         const playCode = $(this).find('input[name="play_code"]').val(); // 클릭된 카드의 play_code 값 가져오기
-        //console.log("Play Code: ", playCode); // play_code 확인용 로그
-        goAddSchedule(playCode); // play_code를 매개변수로 전달
+        goAddSchedule(playCode);
     });
     
    
@@ -385,7 +345,6 @@ $(document).ready(function() {
         contentPlay(1);
         
     });
-
     //================================ 카테고리 클릭 이벤트용 끝 ================================//
     
     
@@ -454,13 +413,6 @@ function contentPlay(currentShowPageNo) {
                     v_html += "      </div>";
                     v_html += "  </div>";
                 });
-                //console.log("json[0].sizePerPage" , json[0].sizePerPage);
-	        	//console.log("json[0].totalCount" , json[0].totalCount);
-	        	//console.log("json[0].currentShowPageNo" , json[0].currentShowPageNo);
-                
-              /*  if( Number(currentShowPageNo) != 1){
-            	   currentShowPageNo =  Number(json[0].currentShowPageNo);
-	        	}  */                
 	            const totalPage = Math.ceil(json[0].totalCount / json[0].sizePerPage);
 	            PageBar(currentShowPageNo, totalPage);
 	            
@@ -535,8 +487,6 @@ function updateCategoryCount() {
         }
     });
 }
-
-
 
 
 function goTop() {
