@@ -228,10 +228,18 @@
 		where companyid = #{id}
 	</update>
 	
+	
 	<!-- 커뮤니티 글 등록 처리하기 -->
 	<insert id="addBoard" parameterType="com.spring.app.trip.domain.BoardVO">
 		insert into tbl_board(seq, fk_userid, name, subject, content, pw, category)
 		values(boardSeq.nextval, #{fk_userid}, #{name}, #{subject}, #{content}, #{pw}, #{category})
+	</insert>
+	
+	
+	<!-- 커뮤니티 글 등록 처리하기 (첨부 파일이 있는 경우) -->
+	<insert id="addBoard_withFile" parameterType="com.spring.app.trip.domain.BoardVO">
+		insert into tbl_board(seq, fk_userid, name, subject, content, pw, fileName, orgFilename, fileSize, category)
+		values(boardSeq.nextval, #{fk_userid}, #{name}, #{subject}, #{content}, #{pw}, #{fileName}, #{orgFilename}, #{fileSize}, #{category})
 	</insert>
 	
 	
@@ -295,14 +303,9 @@
 		         , to_char(regDate, 'yyyy-mm-dd hh24:mi') as regDate, pw
 		         , lead(seq, 1) over(order by seq desc) AS nextseq
 		         , lead(subject, 1) over(order by seq desc) AS nextsubject
-		         , fileName, orgFilename, fileSize
-		         , decode(category, '1', '자유게시판'
-		                          , '2', '숙박'
-		                          , '3', '관광지, 체험'
-		                          , '4', '맛집'
-		                          , '5', '구인') AS category
+		         , fileName, orgFilename, fileSize, category
 		    from tbl_board
-		    where status = 1
+		    where status = 1 and category = #{category}
     		<choose>
 				<when test="searchType == 'subject' and searchWord != ''">
 					and lower(subject) like '%' || lower(#{searchWord}) || '%'

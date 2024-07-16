@@ -993,17 +993,74 @@ public class Dy_TripController {
 	
 	// 커뮤니티 글 등록 처리하기
 	@PostMapping("community/addBoardEnd.trip")
-	public ModelAndView addBoardEnd(ModelAndView mav, BoardVO boardvo, HttpServletRequest request) {
+	public ModelAndView addBoardEnd(ModelAndView mav, BoardVO boardvo, MultipartHttpServletRequest mrequest) {
 		
-		int n = service.addBoard(boardvo);
+		MultipartFile attach = boardvo.getAttach();
+		
+		if(attach != null) {
+			
+			HttpSession session = mrequest.getSession(); 
+			String root = session.getServletContext().getRealPath("/"); 
+			// WAS의 webapp의 절대경로
+			
+			String path = root + "resources" + File.separator + "images" + File.separator + "community";
+			// 첨부파일을 저장할 폴더 경로
+			
+			String newFileName = "";
+			// WAS(톰캣)의 디스크에 저장될 파일명
+			
+			byte[] bytes = null;
+			// 첨부파일의 내용물을 담는 것
+			
+			long fileSize = 0;
+			// 첨부파일의 크기
+			
+			try {
+				bytes = attach.getBytes();
+				// 첨부파일의 내용물을 읽어오는 것
+				
+				String originalFilename = attach.getOriginalFilename();
+
+//				System.out.println("~~~ 확인용 originalFilename => " + originalFilename); 
+	            // ~~~ 확인용 originalFilename => 제주 서부권 관광지 추천 목록.txt
+				
+				newFileName = fileManager.doFileUpload(bytes, originalFilename, path);
+				// 첨부된 파일을 업로드하기
+				
+//				System.out.println("~~~ 확인용 newFileName => " + newFileName);
+				// ~~~ 확인용 newFileName => 20240716144933108266728291000.txt
+				
+				boardvo.setFileName(newFileName);
+				// WAS(톰캣)에 저장될 파일명 (20240716144933108266728291000.txt)
+				
+				boardvo.setOrgFilename(originalFilename);
+				// 게시판 페이지에서 첨부된 파일을 보여줄 때 사용.
+	            // 또한 사용자가 파일을 다운로드 할 때 사용되는 파일명으로 사용.
+				
+				fileSize = attach.getSize(); // 첨부파일의 크기 (단위는 byte이다.)
+				boardvo.setFileSize(String.valueOf(fileSize));
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		int n = 0;
+		
+		if(attach.isEmpty()) { // 파일 첨부가 없는 경우
+			n = service.addBoard(boardvo); // <== 파일첨부가 없는 글쓰기
+			
+		} else { // 파일 첨부가 있는 경우
+			n = service.addBoard_withFile(boardvo);
+		}
 		
 		if(n == 1) {
 			mav.addObject("message", "글 등록이 성공되었습니다.");
-			mav.addObject("loc", request.getContextPath() + "/communityMain.trip");
+			mav.addObject("loc", mrequest.getContextPath() + "/communityMain.trip");
 			
 		} else {
 			mav.addObject("message", "글 등록에 실패하였습니다.\\n메인 페이지로 돌아갑니다.");
-			mav.addObject("loc", request.getContextPath() + "/index.trip");
+			mav.addObject("loc", mrequest.getContextPath() + "/index.trip");
 		}
 		
 		mav.setViewName("msg");
@@ -1060,10 +1117,10 @@ public class Dy_TripController {
 	@RequestMapping("community/viewBoard.trip")
 	public ModelAndView viewBoard(ModelAndView mav, HttpServletRequest request,
 								  @RequestParam(defaultValue="") String seq,
+								  @RequestParam(defaultValue="") String category,
 								  @RequestParam(defaultValue="") String goBackURL,
 								  @RequestParam(defaultValue="") String searchType,
 								  @RequestParam(defaultValue="") String searchWord) {
-
 		
 		Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);
 		// redirect 되어서 넘어온 데이터가 있는지 꺼내본다.
@@ -1077,6 +1134,7 @@ public class Dy_TripController {
 			// "키" 값을 주어서 redirect 되어서 넘어온 데이터의 값은 Map<String, String> 이므로 Map<String, String> 으로 casting 해준다.
 			
 			seq = redirect_map.get("seq");
+			category = redirect_map.get("category");
 			
 			// === #143. 이전글제목, 다음글제목 보기 시작 ===
 			searchType = redirect_map.get("searchType"); // 무조건 영어이므로 URL Decode 필요없음
@@ -1120,6 +1178,7 @@ public class Dy_TripController {
 
 			Map<String, String> paraMap = new HashMap<>();
 			paraMap.put("seq", seq);
+			paraMap.put("category", category);
 			paraMap.put("login_id", login_id);
 
 			// >>> 글목록에서 검색된 글내용일 경우 이전글제목, 다음글제목은 검색된 결과물 내의 이전글과 다음글이 나오도록 하기 위한 것이다. <<< //
@@ -1179,6 +1238,7 @@ public class Dy_TripController {
 	@PostMapping("community/viewBoard_2.trip")
 	public ModelAndView viewBoard_2(ModelAndView mav, HttpServletRequest request, RedirectAttributes redirectAttr,
 									@RequestParam(defaultValue="") String seq,
+									@RequestParam(defaultValue="") String category,
 									@RequestParam(defaultValue="") String goBackURL,
 									@RequestParam(defaultValue="") String searchType,
 									@RequestParam(defaultValue="") String searchWord) {
@@ -1197,6 +1257,7 @@ public class Dy_TripController {
 		// ==== redirect(GET방식) 시 데이터를 넘길 때 GET 방식이 아닌 POST 방식처럼 데이터를 넘기려면 RedirectAttributes 를 사용하면 된다. 시작 ==== //
 		Map<String, String> redirect_map = new HashMap<>();
 		redirect_map.put("seq", seq);
+		redirect_map.put("category", category);
 		
 		// === #142. 이전글, 다음글 보기 시작 ===
 		redirect_map.put("goBackURL", goBackURL);

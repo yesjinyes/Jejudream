@@ -72,6 +72,9 @@ public interface Dy_TripDAO {
 
 	// 커뮤니티 글 등록 처리하기
 	int addBoard(BoardVO boardvo);
+	
+	// 커뮤니티 글 등록 처리하기 (첨부 파일이 있는 경우)
+	int addBoard_withFile(BoardVO boardvo);
 
 	// 자유게시판 총 게시물 건수 조회하기
 	int getFreeBoardTotalCount(Map<String, String> paraMap);
@@ -84,5 +87,6 @@ public interface Dy_TripDAO {
 
 	// 글 조회수 1 증가하기
 	int increase_readCount(String seq);
+
 	
 }

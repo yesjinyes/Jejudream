@@ -113,6 +113,13 @@ div#pageBar a {
 	// 게시판 검색
 	function goSearch() {
 		
+		const searchWord = $("input[name='searchWord']").val().trim();
+		
+		if(searchWord == "") {
+			alert("검색어를 입력하세요!");
+			return;
+		}
+		
 		const frm = document.searchFrm;
 		frm.submit();
 		
@@ -126,6 +133,7 @@ div#pageBar a {
     	
     	const frm = document.goViewFrm;
 		frm.seq.value = seq;
+		frm.category.value = "1";
 		frm.goBackURL.value = goBackURL;		
 
 		if(${not empty requestScope.paraMap}) { // 검색 조건이 있을 경우
@@ -286,6 +294,7 @@ div#pageBar a {
      //        현재 페이지 주소를 뷰단으로 넘겨준다.  --%>
 <form name='goViewFrm'>
 	<input type="hidden" name="seq" />
+	<input type="hidden" name="category" />
 	<input type="hidden" name="goBackURL" />
 	<input type="hidden" name="searchType" />
 	<input type="hidden" name="searchWord" />

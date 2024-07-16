@@ -264,6 +264,16 @@ public class Dy_TripDAO_imple implements Dy_TripDAO {
 		return n;
 	}
 
+
+	// 커뮤니티 글 등록 처리하기 (첨부 파일이 있는 경우)
+	@Override
+	public int addBoard_withFile(BoardVO boardvo) {
+		
+		int n = sqlsession.insert("dy_trip.addBoard_withFile", boardvo);
+		
+		return n;
+	}
+
 	
 	// 자유게시판 총 게시물 건수 조회하기
 	@Override

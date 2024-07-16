@@ -168,17 +168,41 @@ FROM
          , to_char(regDate, 'yyyy-mm-dd hh24:mi') as regDate, pw
          , lead(seq, 1) over(order by seq desc) AS nextseq
          , lead(subject, 1) over(order by seq desc) AS nextsubject
-         , fileName, orgFilename, fileSize
-         , decode(category, '1', '자유게시판'
-                          , '2', '숙박'
-                          , '3', '관광지, 체험'
-                          , '4', '맛집'
-                          , '5', '구인') AS category
+         , fileName, orgFilename, fileSize, category
     from tbl_board
-    where status = 1
+    where status = 1 and category = 1
     -- and lower(subject) like '%' || lower('추천') || '%'
 ) V
-WHERE V.seq = 1;
+WHERE V.seq = 5;
+
+
+
+----- **** 댓글 테이블 생성 **** -----
+create table tbl_comment
+(seq           number               not null   -- 댓글번호
+,fk_userid     varchar2(20)         not null   -- 사용자ID
+,name          varchar2(20)         not null   -- 성명
+,content       varchar2(1000)       not null   -- 댓글내용
+,regDate       date default sysdate not null   -- 작성일자
+,parentSeq     number               not null   -- 원게시물 글번호
+,status        number(1) default 1  not null   -- 글삭제여부
+                                               -- 1 : 사용가능한 글,  0 : 삭제된 글
+                                               -- 댓글은 원글이 삭제되면 자동적으로 삭제되어야 한다.
+,constraint PK_tbl_comment_seq primary key(seq)
+,constraint FK_tbl_comment_userid foreign key(fk_userid) references tbl_member(userid)
+,constraint FK_tbl_comment_parentSeq foreign key(parentSeq) references tbl_board(seq) on delete cascade
+,constraint CK_tbl_comment_status check( status in(1,0) ) 
+);
+-- Table TBL_COMMENT이(가) 생성되었습니다.
+
+create sequence commentSeq
+start with 1
+increment by 1
+nomaxvalue
+nominvalue
+nocycle
+nocache;
+-- Sequence COMMENTSEQ이(가) 생성되었습니다.
 
 
 
