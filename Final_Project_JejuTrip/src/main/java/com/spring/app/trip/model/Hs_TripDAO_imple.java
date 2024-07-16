@@ -6,11 +6,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
+import org.openqa.selenium.devtools.v123.css.model.SelectorList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
+import com.spring.app.trip.domain.Calendar_schedule_VO;
 import com.spring.app.trip.domain.LikeVO;
 import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.domain.PlayVO;
@@ -119,6 +121,7 @@ public class Hs_TripDAO_imple implements Hs_TripDAO {
 	@Override
 	public List<LikeVO> checkLike(Map<String, String> paraMap) {
 		List<LikeVO> checkLike = sqlsession.selectList("hs_trip.checkLike",paraMap);
+		//System.out.println("checkLike_dao" + checkLike);
 		return checkLike;
 	}
 
@@ -169,6 +172,13 @@ public class Hs_TripDAO_imple implements Hs_TripDAO {
 	public int registerPlaySchedule_end(Map<String, String> paraMap) {
 		int n = sqlsession.insert("hs_trip.registerPlaySchedule_end",paraMap);
 		return n;
+	}
+
+	//일정추가했는지 알아오기
+	@Override
+	public List<Calendar_schedule_VO> checkSchedule(Map<String, String> paraMap) {
+		List<Calendar_schedule_VO> checkSchedule = sqlsession.selectList("hs_trip.checkSchedule",paraMap);
+		return checkSchedule;
 	}
 	
 	

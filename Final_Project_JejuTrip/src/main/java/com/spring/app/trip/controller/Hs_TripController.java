@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.app.trip.common.FileManager;
+import com.spring.app.trip.domain.Calendar_schedule_VO;
 import com.spring.app.trip.domain.LikeVO;
 import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.domain.PlayVO;
@@ -676,6 +677,16 @@ public class Hs_TripController {
 		
 		
 		//--------------------------------일정추가 관련 시작-------------------------------------------//
+		// === 일정관리 시작 페이지 ===
+		@GetMapping("/schedule/scheduleManagement.trip")
+		public ModelAndView requiredLogin_showSchedule(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) { 
+			
+			mav.setViewName("schedule/scheduleManagement.tiles1");
+
+			return mav;
+		}
+		
+		
 		
 		// === 공유자를 찾기 위한 특정글자가 들어간 회원명단 불러오기 ===
 		@ResponseBody
@@ -720,9 +731,11 @@ public class Hs_TripController {
 			String color = request.getParameter("color");
 			String place = request.getParameter("place");
 			String joinuser = request.getParameter("joinuser");
+			String parent_code = request.getParameter("parent_code");
 			
 			String content = request.getParameter("content");
 			String fk_userid = request.getParameter("fk_userid");
+			String schedule_divison = request.getParameter("review_division");
 			
 	     	System.out.println("확인용 joinuser => " + joinuser);
 	     	System.out.println("확인용 subject => " + subject);
@@ -744,8 +757,10 @@ public class Hs_TripController {
 			paraMap.put("subject", subject);
 			paraMap.put("fk_lgcatgono",fk_lgcatgono);
 			paraMap.put("fk_smcatgono", fk_smcatgono);
+			paraMap.put("parent_code", parent_code);
 			paraMap.put("color", color);
 			paraMap.put("place", place);
+			paraMap.put("schedule_divison", schedule_divison);
 			
 			paraMap.put("joinuser", joinuser);
 			
@@ -770,7 +785,34 @@ public class Hs_TripController {
 		
 		
 		
-		
+		@ResponseBody
+		@GetMapping(value =("checkSchedule.trip"),produces="text/plain;charset=UTF-8")
+		 public String checkSchedule(HttpServletRequest request, HttpServletResponse response) throws Exception {
+			
+			String parent_code = request.getParameter("parent_code");
+		    String fk_userid = request.getParameter("fk_userid");
+		    
+		    System.out.println("parent_code : " + parent_code);
+		    System.out.println("fk_userid : " + fk_userid);
+
+		    Map<String, String> paraMap = new HashMap<>();
+		    
+		    JSONObject jsonObj = new JSONObject();
+		    paraMap.put("parent_code", parent_code);
+
+		    if (fk_userid != null && !fk_userid.isEmpty()) {
+		        paraMap.put("fk_userid", fk_userid);
+		        
+		        List<Calendar_schedule_VO> calcheck = service.checkSchedule(paraMap); // 좋아요를 했는지 알아오는 것 (0 또는 1)
+		        jsonObj.put("calcheck", calcheck != null ? calcheck.size() > 0 : false);
+		        System.out.println("jsonObj.toString()1 : " + jsonObj.toString());
+		    } else {
+		        jsonObj.put("calcheck", false);
+		        System.out.println("jsonObj.toString()2 : " + jsonObj.toString());
+		    }
+
+		    return jsonObj.toString();
+		}
 		
 		
 		
