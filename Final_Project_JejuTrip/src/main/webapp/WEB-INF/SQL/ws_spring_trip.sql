@@ -11,23 +11,16 @@ create user final_orauser2 identified by gclass default tablespace users;
 grant connect, resource, create view, unlimited tablespace to final_orauser2;
 -- Grant을(를) 성공했습니다.
 
-SELECT lodging_name, user_name, room_detail_code, check_in, check_out, room_stock, status, reservation_code, room_name
-FROM 
-(
-    SELECT rownum AS RNO
-         ,lodging_name, user_name, room_detail_code, check_in, check_out, room_stock, status, reservation_code, room_name
-    FROM
-    (
-        select L.lodging_name, M.user_name, R.room_detail_code, to_char(V.check_in,'yyyy-mm-dd') as check_in, to_char(V.check_out,'yyyy-mm-dd') as check_out, R.room_stock, V.status, V.reservation_code, R.room_name
-        from tbl_lodging L JOIN tbl_room_detail R
-        on L.lodging_code = R.fk_lodging_code
-        JOIN tbl_reservation V
-        ON R.room_detail_code = V.fk_room_detail_code
-        JOIN tbl_member M
-        ON V.fk_userid = M.userid
-        where V.fk_userid = 'kudi02'
-        order by V.reservation_date desc
-    )V
-) T
-where RNO between 1 and 5;
+select D.room_name, D.room_img, R.check_in||' '||D.check_in as check_in, R.check_out||' '||D.check_out as check_out ,R.reservation_price, R.reservation_code, L.lodging_name, L.lodging_tell, L.lodging_address
+from tbl_reservation R JOIN tbl_room_detail D
+on R.fk_room_detail_code = D.room_detail_code
+JOIN tbl_lodging L
+on D.fk_lodging_code = L.lodging_code
+where R.reservation_code = 12;
 
+
+select *
+from tbl_lodging;
+
+select *
+from tbl_room_detail;
