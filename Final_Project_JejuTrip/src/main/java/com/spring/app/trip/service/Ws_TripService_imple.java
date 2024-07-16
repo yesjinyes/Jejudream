@@ -460,6 +460,13 @@ public class Ws_TripService_imple implements Ws_TripService {
 		return email;
 	}
 	
+	// 바우처에 입력할 정보를 가져오기 위해 예약정보등을 가져온다.
+	@Override
+	public Map<String, String> get_email_map(String reservation_code) {
+		Map<String,String> email_map = dao.get_email_map(reservation_code);
+		return email_map;
+	}
+	
 	
 	
 
