@@ -14,6 +14,8 @@ public class Calendar_small_category_VO {
 		this.smcatgono = smcatgono;
 	}
 	
+	
+	
 	public String getFk_lgcatgono() {
 		return fk_lgcatgono;
 	}
