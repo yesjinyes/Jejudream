@@ -335,4 +335,23 @@
 	</update>
 	
 	
+	<!-- 댓글 쓰기 -->
+	<insert id="addComment" parameterType="com.spring.app.trip.domain.CommentVO">
+		insert into tbl_comment(seq, fk_userid, name, content, parentSeq)
+		values(commentSeq.nextval, #{fk_userid}, #{name}, #{content}, #{parentSeq})
+	</insert>
+	
+	
+	<!-- 댓글 쓰기 - 원게시물(tbl_board 테이블) 댓글 개수 증가 -->
+	<update id="updateCommentCount" parameterType="String">
+		update tbl_board set commentcount = commentcount + 1
+		where seq = #{parentSeq}
+	</update>
+	
+	
+	<!-- 댓글 목록 불러오기 -->
+	<select id="getViewComment" parameterType="HashMap" resultType="">
+	</select>
+	
+	
 </mapper>

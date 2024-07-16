@@ -150,6 +150,14 @@
 	        e.stopPropagation();
 	    });
 	    
+	    
+	    // 댓글 내용 엔터 클릭 시 댓글 쓰기
+	    $("textarea[name='content']").keyup(function(e) {
+	    	if(e.keyCode == 13) {
+	    		goAddComment();
+	    	}
+	    });
+	    
 	}); // end of $(document).ready(function() {}) ---------------------
 	
 	
@@ -178,9 +186,58 @@
 	// === 댓글 쓰기 ===
 	function goAddComment() {
 		
+		const comment_content = $("textarea[name='content']").val().trim();
 		
+		if(comment_content == "") {
+			alert("댓글 내용을 입력하세요!");
+			return;
+		}
+		
+		const queryString = $("form[name='addCommentFrm']").serialize();
+		
+		$.ajax({
+			url: "<%=ctxPath%>/community/addComment.trip",
+			data: queryString,
+			type: "post",
+			dataType: "json",
+			success: function(json) {
+				
+				if(json.n == 1) {
+//					alert("댓글 등록 성공!");
+					goViewComment(1); // 페이징 처리한 댓글 읽어오기
+				}
+
+				$("textarea[name='content']").val(""); // 댓글 칸 내용 비우기
+			},
+			error: function(request, status, error){
+				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+			}
+		});
 		
 	} // end of function goAddComment() -----------------
+	
+	
+	function goViewComment(currentShowPageNo) {
+		
+		$.ajax({
+			url: "<%=ctxPath%>/community/viewComment.trip",
+			data: {
+				"parentSeq":"${requestScope.boardvo.seq}",
+				"currentShowPageNo":currentShowPageNo
+			},
+			dataType: "json",
+			success: function(json) {
+				
+				let v_html = ``;
+				
+			},
+			error: function(request, status, error){
+				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+			}
+		});
+		
+	} // end of function goViewComment(currentShowPageNo) ------------------
+	
 	
 </script>
 
@@ -246,65 +303,70 @@
 		</div>
 		
 		<div class="comment-info mb-5" style="width: 80%; margin: 0 auto;">
-			<div id="comment" class="d-flex" style="padding: 1.5% 0">
-				<div style="width: 90%; padding: 1.5% 0">
-					<div class="mb-2 d-flex align-items-center">
-						<img src="<%=ctxPath%>/resources/images/logo_circle.png" width="30">
-						<span class="font-weight-bold" style="margin-left: 1%; font-size: 1rem;">김라영</span>
+			<div id="commentList">
+			
+				<div id="comment" class="d-flex" style="padding: 1.5% 0">
+					<div style="width: 90%; padding: 1.5% 0">
+						<div class="mb-2 d-flex align-items-center">
+							<img src="<%=ctxPath%>/resources/images/logo_circle.png" width="30">
+							<span class="font-weight-bold" style="margin-left: 1%; font-size: 1rem;">김라영</span>
+						</div>
+						<span class="d-block mb-2">저도 궁금합니다.<br>대댓 부탁드려용 🍒</span>
+						<span class="d-block mb-2" style="font-size: 0.8rem; color: #8c8c8c;">2024-07-11 10:36</span>
+						<button type="button" class="btn" style="border: solid 1px #8c8c8c; font-size: 0.8rem; padding: 3px 6px;">답글</button>
 					</div>
-					<span class="d-block mb-2">저도 궁금합니다.<br>대댓 부탁드려용 🍒</span>
-					<span class="d-block mb-2" style="font-size: 0.8rem; color: #8c8c8c;">2024-07-11 10:36</span>
-					<button type="button" class="btn" style="border: solid 1px #8c8c8c; font-size: 0.8rem; padding: 3px 6px;">답글</button>
-				</div>
-				<div class="more-options" style="width: 10%; padding-top: 1.5%; text-align: right;">
-					<span><i class="fa-solid fa-ellipsis-vertical"></i></span>
-					<div class="options-menu">
-						<span class="d-block mb-1">수정</span>
-						<span class="d-block">삭제</span>
-					</div>
-				</div>
-			</div>
-			<div id="comment" class="d-flex" style="padding: 1.5% 0">
-				<div style="width: 90%; padding: 1.5% 0">
-					<div class="mb-2 d-flex align-items-center">
-						<img src="<%=ctxPath%>/resources/images/logo_circle.png" width="30">
-						<span class="font-weight-bold" style="margin-left: 1%; font-size: 1rem;">김라영</span>
-					</div>
-					<span class="d-block mb-2">관광지 탭을 참조해보세요!</span>
-					<span class="d-block mb-2" style="font-size: 0.8rem; color: #8c8c8c;">2024-07-11 10:36</span>
-					<button type="button" class="btn" style="border: solid 1px #8c8c8c; font-size: 0.8rem; padding: 3px 6px;">답글</button>
-				</div>
-				<div class="more-options" style="width: 10%; padding-top: 1.5%; text-align: right;">
-					<span><i class="fa-solid fa-ellipsis-vertical"></i></span>
-					<div class="options-menu">
-						<span class="d-block mb-1">수정</span>
-						<span class="d-block">삭제</span>
+					<div class="more-options" style="width: 10%; padding-top: 1.5%; text-align: right;">
+						<span><i class="fa-solid fa-ellipsis-vertical"></i></span>
+						<div class="options-menu">
+							<span class="d-block mb-1">수정</span>
+							<span class="d-block">삭제</span>
+						</div>
 					</div>
 				</div>
+				<div id="comment" class="d-flex" style="padding: 1.5% 0">
+					<div style="width: 90%; padding: 1.5% 0">
+						<div class="mb-2 d-flex align-items-center">
+							<img src="<%=ctxPath%>/resources/images/logo_circle.png" width="30">
+							<span class="font-weight-bold" style="margin-left: 1%; font-size: 1rem;">김라영</span>
+						</div>
+						<span class="d-block mb-2">관광지 탭을 참조해보세요!</span>
+						<span class="d-block mb-2" style="font-size: 0.8rem; color: #8c8c8c;">2024-07-11 10:36</span>
+						<button type="button" class="btn" style="border: solid 1px #8c8c8c; font-size: 0.8rem; padding: 3px 6px;">답글</button>
+					</div>
+					<div class="more-options" style="width: 10%; padding-top: 1.5%; text-align: right;">
+						<span><i class="fa-solid fa-ellipsis-vertical"></i></span>
+						<div class="options-menu">
+							<span class="d-block mb-1">수정</span>
+							<span class="d-block">삭제</span>
+						</div>
+					</div>
+				</div>
+				
+				<div id="commentPageBar" class="text-center mt-3 mb-5" style="width: 80%; margin: 0 auto 10% auto;">
+					<ul>
+						<li style='width: 4%; font-size: 0.8rem;'>◀◀</li>
+						<li style='width: 4%; font-size: 0.8rem;'>◀</li>
+						<li class='font-weight-bold' style='width: 3%; color: #ff5000;'>1</li>
+						<li style='width: 3%;'>2</li>
+						<li style='width: 3%;'>3</li>
+						<li style='width: 3%;'>4</li>
+						<li style='width: 3%;'>5</li>
+						<li style='width: 3%;'>6</li>
+						<li style='width: 3%;'>7</li>
+						<li style='width: 3%;'>8</li>
+						<li style='width: 3%;'>9</li>
+						<li style='width: 3%;'>10</li>
+						<li style='width: 4%; font-size: 0.8rem;'>▶</li>
+						<li style='width: 4%; font-size: 0.8rem;'>▶▶</li>
+					</ul>
+				</div>
+				
 			</div>
 			
-			<div id="commentPageBar" class="text-center mt-3 mb-5" style="width: 80%; margin: 0 auto;">
-				<ul>
-					<li style='width: 4%; font-size: 0.8rem;'>◀◀</li>
-					<li style='width: 4%; font-size: 0.8rem;'>◀</li>
-					<li class='font-weight-bold' style='width: 3%; color: #ff5000;'>1</li>
-					<li style='width: 3%;'>2</li>
-					<li style='width: 3%;'>3</li>
-					<li style='width: 3%;'>4</li>
-					<li style='width: 3%;'>5</li>
-					<li style='width: 3%;'>6</li>
-					<li style='width: 3%;'>7</li>
-					<li style='width: 3%;'>8</li>
-					<li style='width: 3%;'>9</li>
-					<li style='width: 3%;'>10</li>
-					<li style='width: 4%; font-size: 0.8rem;'>▶</li>
-					<li style='width: 4%; font-size: 0.8rem;'>▶▶</li>
-				</ul>
-			</div>
 			
 			<c:if test="${not empty sessionScope.loginuser || not empty sessionScope.loginCompanyuser}">
 				<form name="addCommentFrm">
-					<div style="border: solid 1px #a6a6a6; margin-top: 10%; padding: 1.5% 1%">
+					<div class="mt-5" style="border: solid 1px #a6a6a6; padding: 1.5% 1%">
 						<span class="d-block mb-2">
 							<c:if test="${not empty sessionScope.loginuser}">
 								<input type="hidden" name="fk_userid" value="${sessionScope.loginuser.userid}">

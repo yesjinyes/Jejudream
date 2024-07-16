@@ -10,11 +10,15 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.app.trip.common.AES256;
 import com.spring.app.trip.common.Sha256;
 import com.spring.app.trip.domain.BoardVO;
+import com.spring.app.trip.domain.CommentVO;
 import com.spring.app.trip.domain.CompanyVO;
 import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.MemberVO;
@@ -482,6 +486,33 @@ public class Dy_TripService_imple implements Dy_TripService {
 		BoardVO boardvo = dao.getViewBoard(paraMap); // 글 1개 조회하기
 		
 		return boardvo;
+	}
+
+
+	// 댓글 쓰기 및 원게시물에 댓글 개수 증가하기 (Transaction 처리)
+	@Override
+	@Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.READ_COMMITTED, rollbackFor={Throwable.class})
+	public int addComment(CommentVO commentvo) throws Throwable {
+		
+		int n1=0, n2=0;
+		
+		n1 = dao.addComment(commentvo); // 댓글 쓰기
+		
+		if(n1 == 1) {
+			n2 = dao.updateCommentCount(commentvo.getParentSeq()); // 원게시물(tbl_board 테이블) 댓글 개수 증가
+		}
+		
+		return n2;
+	}
+
+
+	// 댓글 목록 불러오기
+	@Override
+	public List<CommentVO> getViewComment(Map<String, String> paraMap) {
+		
+		List<CommentVO> commentList = dao.getViewComment(paraMap);
+		
+		return commentList;
 	}
 
 

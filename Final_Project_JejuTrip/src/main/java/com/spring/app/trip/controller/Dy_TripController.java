@@ -40,6 +40,7 @@ import com.spring.app.trip.common.FileManager;
 import com.spring.app.trip.common.GoogleMail;
 import com.spring.app.trip.common.Sha256;
 import com.spring.app.trip.domain.BoardVO;
+import com.spring.app.trip.domain.CommentVO;
 import com.spring.app.trip.domain.CompanyVO;
 import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.MemberVO;
@@ -1235,6 +1236,7 @@ public class Dy_TripController {
 	}
 	
 	
+	// 게시판 상세(이전글, 다음글)
 	@PostMapping("community/viewBoard_2.trip")
 	public ModelAndView viewBoard_2(ModelAndView mav, HttpServletRequest request, RedirectAttributes redirectAttr,
 									@RequestParam(defaultValue="") String seq,
@@ -1273,5 +1275,61 @@ public class Dy_TripController {
 		
 		return mav;
 	}
+	
+	
+	// 댓글 쓰기
+	@ResponseBody
+	@PostMapping(value="community/addComment.trip", produces="text/plain;charset=UTF-8")
+	public String addComment(CommentVO commentvo) {
+		
+		int n = 0;
+		
+		try {
+			n = service.addComment(commentvo);
+			// 댓글 쓰기 및 원게시물에 댓글 개수 증가하기
+			
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("n", n);
+		
+		return jsonObj.toString();
+	}
+	
+
+	// 댓글 목록 불러오기
+	@ResponseBody
+	@PostMapping(value="community/viewComment.trip", produces="text/plain;charset=UTF-8")
+	public String viewComment(@RequestParam(defaultValue = "") String parentSeq,
+							  @RequestParam(defaultValue = "") String currentShowPageNo) {
+		
+		if("".equals(currentShowPageNo)) {
+			currentShowPageNo = "1";
+		}
+		
+		int sizePerPage = 5;
+		
+		int startRno = ((Integer.parseInt(currentShowPageNo) - 1) * sizePerPage) + 1;
+		int endRno = startRno + sizePerPage - 1;
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("parentSeq", parentSeq);
+		paraMap.put("startRno", String.valueOf(startRno));
+		paraMap.put("endRno", String.valueOf(endRno));
+		
+		List<CommentVO> commentList = service.getViewComment(paraMap);
+		int totalCount = service.getCommentTotalCount(parentSeq); // 페이징 처리 시 보여주는 순번을 나타내기 위함
+
+		
+		
+		
+		return "";
+	}
+	
+	
+	
+	
 	
 }

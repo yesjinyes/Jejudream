@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.app.trip.domain.BoardVO;
+import com.spring.app.trip.domain.CommentVO;
 import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.MemberVO;
 
@@ -78,5 +79,11 @@ public interface Dy_TripService {
 
 	// 글 조회수 증가 없이 단순히 글 1개만 조회하기
 	BoardVO getViewBoard_no_increase_readCount(Map<String, String> paraMap);
+
+	// 댓글 쓰기 및 원게시물에 댓글 개수 증가하기 (Transaction 처리)
+	int addComment(CommentVO commentvo) throws Throwable;
+
+	// 댓글 목록 불러오기
+	List<CommentVO> getViewComment(Map<String, String> paraMap);
 
 }

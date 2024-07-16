@@ -6,10 +6,10 @@ import java.util.Map;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import com.spring.app.trip.domain.BoardVO;
+import com.spring.app.trip.domain.CommentVO;
 import com.spring.app.trip.domain.CompanyVO;
 import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.MemberVO;
@@ -312,6 +312,36 @@ public class Dy_TripDAO_imple implements Dy_TripDAO {
 		int n = sqlsession.update("dy_trip.increase_readCount", seq);
 		
 		return n;
+	}
+
+
+	// 댓글 쓰기
+	@Override
+	public int addComment(CommentVO commentvo) {
+		
+		int n = sqlsession.insert("dy_trip.addComment", commentvo);
+		
+		return n;
+	}
+
+
+	// 댓글 쓰기 - 원게시물(tbl_board 테이블) 댓글 개수 증가
+	@Override
+	public int updateCommentCount(String parentSeq) {
+		
+		int n = sqlsession.update("dy_trip.updateCommentCount", parentSeq);
+		
+		return n;
+	}
+
+
+	// 댓글 목록 불러오기
+	@Override
+	public List<CommentVO> getViewComment(Map<String, String> paraMap) {
+		
+		List<CommentVO> commentList = sqlsession.selectList("dy_trip.getViewComment", paraMap);
+		
+		return commentList;
 	}
 	
 
