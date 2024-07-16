@@ -2,6 +2,8 @@ package com.spring.app.trip.controller;
 
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.security.GeneralSecurityException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.spring.app.trip.common.AES256;
 import com.spring.app.trip.common.FileManager;
 import com.spring.app.trip.common.GoogleMail;
 import com.spring.app.trip.domain.CompanyVO;
@@ -43,6 +46,9 @@ public class Ws_TripController {
 	
 	@Autowired
 	private FileManager fileManager;
+	
+	@Autowired
+    private AES256 aES256;
 	
 	@GetMapping("/index.trip") 
 	public ModelAndView readComment(ModelAndView mav) {
@@ -1710,15 +1716,55 @@ public class Ws_TripController {
 		return mav;
 	}
 	
+	// 로그인한 유저 자기자신의 이메일을 제외한 다른 사람의 이메일중 중복값이 있는 지 알아오기.
+	@ResponseBody
+	@PostMapping(value="/userEmailDuplicateCheckEdit.trip", produces="text/plain;charset=UTF-8") 
+	public String userEmailDuplicateCheckEdit(HttpServletRequest request) {
+
+		String email = request.getParameter("email");
+		HttpSession session = request.getSession();
+		MemberVO membervo = (MemberVO)session.getAttribute("loginuser");
+		String userid = membervo.getUserid();
+		
+		Map<String,String> paraMap = new HashMap<>();
+		paraMap.put("email", email);
+		paraMap.put("userid", userid);
+		
+		boolean isExist = service.userEmailDuplicateCheckEdit(paraMap);
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("isExist", isExist);
+		
+		return jsonObj.toString();
+		
+	}
+	
 	// 멤버 정보 수정하기
 	@ResponseBody
 	@PostMapping(value="/memberEditEnd.trip", produces="text/plain;charset=UTF-8") 
 	public String memberEditEnd(MemberVO membervo, HttpServletRequest request) {
-
-		System.out.println(membervo.getUser_name());
+		
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
+		
+		membervo.setUserid(loginuser.getUserid());
+		int n = service.update_member_info(membervo);// 입력한 값으로 회원 정보를 수정한다.
+		if(n == 1) {
+			try {
+				loginuser.setUser_name(membervo.getUser_name());
+				loginuser.setEmail(aES256.decrypt(membervo.getEmail()));
+				loginuser.setAddress(membervo.getAddress());
+				loginuser.setDetail_address(membervo.getDetail_address());
+				loginuser.setMobile(aES256.decrypt(membervo.getMobile()));
+				loginuser.setBirthday(membervo.getBirthday());
+			} catch (UnsupportedEncodingException | GeneralSecurityException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
 		JSONObject jsonObj = new JSONObject();
-		
+		jsonObj.put("n", n);
 		return jsonObj.toString();
 		
 	}

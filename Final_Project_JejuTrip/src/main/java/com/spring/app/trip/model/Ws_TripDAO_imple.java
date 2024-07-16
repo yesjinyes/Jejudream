@@ -414,5 +414,21 @@ public class Ws_TripDAO_imple implements Ws_TripDAO {
 		Map<String,String> email_map = sqlsession.selectOne("ws_trip.get_email_map", reservation_code);
 		return email_map;
 	}
+	
+	// 입력한 값으로 회원 정보를 수정한다.
+	@Override
+	public int update_member_info(MemberVO membervo) {
+		int n = sqlsession.update("ws_trip.update_member_info",membervo);
+		return n;
+	}
+	
+	// 로그인한 유저 자기자신의 이메일을 제외한 다른 사람의 이메일중 중복값이 있는 지 알아오기.
+	@Override
+	public String userEmailDuplicateCheckEdit(Map<String, String> paraMap) {
+		
+		String exist_email = sqlsession.selectOne("ws_trip.userEmailDuplicateCheckEdit", paraMap);
+		
+		return exist_email;
+	}
 
 }

@@ -784,4 +784,14 @@
 		where R.reservation_code = #{reservation_code}
 	</select>
 	
+	<select id="userEmailDuplicateCheckEdit" parameterType="HashMap" resultType="String">
+		select email
+		from tbl_member
+		where email = #{email} and userid != #{userid}
+	</select>
+	
+	<update id="update_member_info" parameterType="com.spring.app.trip.domain.MemberVO">
+		update tbl_member set email = #{email} , user_name = #{user_name} , mobile = #{mobile} , address = #{address} , detail_address = #{detail_address} , birthday = #{birthday} where userid = #{userid}
+	</update>
+	
 </mapper>

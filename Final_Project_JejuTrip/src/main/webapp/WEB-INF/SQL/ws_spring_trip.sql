@@ -11,16 +11,7 @@ create user final_orauser2 identified by gclass default tablespace users;
 grant connect, resource, create view, unlimited tablespace to final_orauser2;
 -- Grant을(를) 성공했습니다.
 
-select D.room_name, D.room_img, R.check_in||' '||D.check_in as check_in, R.check_out||' '||D.check_out as check_out ,R.reservation_price, R.reservation_code, L.lodging_name, L.lodging_tell, L.lodging_address
-from tbl_reservation R JOIN tbl_room_detail D
-on R.fk_room_detail_code = D.room_detail_code
-JOIN tbl_lodging L
-on D.fk_lodging_code = L.lodging_code
-where R.reservation_code = 12;
-
-
 select *
-from tbl_lodging;
+from tbl_member;
 
-select *
-from tbl_room_detail;
+update tbl_member set email = 'CT7IgCT+Y9vM4lsGX1pHmu69lDWbyGyb6bfullGqOz4=' , user_name = '우석정' , mobile = 'e72CTRofXoxe+KHw+V+Ebg==' , address = '서울시' , detail_address = '어딘가' , birthday = '2006-07-05' where userid = 'jeongws' 

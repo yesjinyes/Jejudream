@@ -710,8 +710,8 @@ function goViewAllReservationList(currentShowPageNo){
             </li>
             <li class="list">
                 <a href="<%= ctxPath%>/cash_points.trip">
-                    <span class="icon"><ion-icon name="wallet-outline"></ion-icon></span>
-                    <span class="title">캐시&포인트</span>
+                    <span class="icon"><ion-icon name="calendar-number-outline"></ion-icon></span>
+                    <span class="title">내 일정</span>
                 </a>
             </li>
             <li class="list">
