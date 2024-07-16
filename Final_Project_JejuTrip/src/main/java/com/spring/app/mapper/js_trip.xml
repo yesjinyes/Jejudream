@@ -381,5 +381,16 @@
      	from tbl_review
      	where fk_userid = #{userid} and parent_code = #{lodging_code}
 	</select>
+	
+	
+	<update id="updateLodgingComment" parameterType="HashMap">
+		update tbl_review set review_content = #{content} , registerday = sysdate 
+		where review_code = #{review_code}
+	</update>
+	
+	
+	<delete id="deleteLodgingComment">
+		delete from tbl_review where review_code = #{review_code}
+	</delete>
  
 </mapper>

@@ -48,6 +48,12 @@ public interface Js_TripService {
 	// 리뷰를 작성했는지 안했는지 확인하기
 	int chkReview(Map<String, String> chkMap);
 
+	// 숙소 상세 댓글 수정하기
+	int updateLodgingComment(Map<String, String> paraMap);
+
+	// 숙소 리뷰 삭제하기
+	int deleteLodgingComment(String review_code);
+
 	
 	
 
