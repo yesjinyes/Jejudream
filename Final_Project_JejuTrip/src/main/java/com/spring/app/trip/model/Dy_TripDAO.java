@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.spring.app.trip.domain.BoardVO;
+import com.spring.app.trip.domain.CommentVO;
 import com.spring.app.trip.domain.CompanyVO;
 import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.MemberVO;
@@ -87,6 +88,18 @@ public interface Dy_TripDAO {
 
 	// 글 조회수 1 증가하기
 	int increase_readCount(String seq);
+
+	// 댓글 쓰기
+	int addComment(CommentVO commentvo);
+
+	// 댓글 쓰기 - 원게시물(tbl_board 테이블) 댓글 개수 증가
+	int updateCommentCount(String parentSeq);
+
+	// 댓글 목록 불러오기
+	List<CommentVO> getViewComment(Map<String, String> paraMap);
+
+	// 게시물당 댓글 총 개수 (페이징 처리 시 보여주는 순번을 나타내기 위함)
+	int getCommentTotalCount(String parentSeq);
 
 	
 }
