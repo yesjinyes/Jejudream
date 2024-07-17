@@ -55,8 +55,9 @@
 	    $("input#lodging_tell").blur((e) => {
 
 			const lodging_tell = $(e.target).val().trim();
-
-			const regExp_mobile = new RegExp(/^01[016789]{1}[0-9]{3,4}[0-9]{4}$/);
+			
+			const regExp_mobile = new RegExp(/^[0-9]{3,4}[0-9]{3,4}[0-9]{4}$/);
+			// 01[016789]{1} << 원래거
 			const bool = regExp_mobile.test(lodging_tell);
 
 			if(lodging_tell == "") {

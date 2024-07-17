@@ -34,6 +34,30 @@
     background-color: #f8f9fa;
 }
 
+
+.rand{
+	display: flex;
+}
+
+
+.mini_img{
+
+	width: 140px; 
+	height: 140px;
+	border-radius: 5px; /* 모서리 둥글게 */
+    margin-right: 10px;
+  	object-fit: cover;
+
+}
+
+.recommendation {
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #ffffff;
+}
+
 </style>
 
 <c:set var="resultMap" value="${requestScope.resultMap}"/>
@@ -61,17 +85,33 @@
                     <p><span class="label">객실명 :</span> <span class="content">${resultMap.room_name}</span></p>
                     <p><span class="label">결제 금액 :</span> <span class="content"><fmt:formatNumber value="${resultMap.reservation_price}" pattern="#,###"/>원</span></p>
                     <p><span class="label">총 숙박일 :</span> <span class="content">${resultMap.days}박 <fmt:formatNumber var="outday" value="${resultMap.days}"/>${outday + 1}일</span></p>
-                    <p><span class="label">체크인 날짜 :</span> <span class="content">${resultMap.check_in}</span></p>
-                    <p><span class="label">체크아웃 날짜 :</span> <span class="content">${resultMap.check_out}</span></p>
+                    <p><span class="label">체크인 날짜 :</span> <span class="content">${resultMap.check_intime}</span></p>
+                    <p><span class="label">체크아웃 날짜 :</span> <span class="content">${resultMap.check_outtime}</span></p>
                 </div>
-                <div style="flex: 1; margin-left: 20px;">
+                <div style="flex: 1; margin-left: 20px; align-content: end;">
                     <div class="recommendation">
                         <h5>같은 지역 맛집 추천</h5>
-                        <div></div>
+                        <div class="rand">
+                        	<div>
+                        		<a href="<%= ctxPath%>/foodstoreDetail.trip?food_store_code=${requestScope.randMap.fvo.food_store_code}"><img class="mini_img" alt="" src="<%= ctxPath%>/resources/images/foodstore/imgMain/${requestScope.randMap.fvo.food_main_img}"></a>
+                        	</div>
+                        	<div>
+                        		<a href="<%= ctxPath%>/foodstoreDetail.trip?food_store_code=${requestScope.randMap.fvo.food_store_code}"><h4>${requestScope.randMap.fvo.food_name}</h4></a>
+                        		<p>${requestScope.randMap.fvo.food_content}</p>
+                        	</div>
+                        </div>
                     </div>
                     <div class="recommendation">
                         <h5>같은 지역 즐길거리 추천</h5>
-                        <div></div>
+                        <div class="rand">
+                        	<div>
+                        		<a href="<%= ctxPath%>/goAddSchedule.trip?play_code=${requestScope.randMap.pvo.play_code}"><img class="mini_img" alt="" src="<%= ctxPath%>/resources/images/play/${requestScope.randMap.pvo.play_main_img}"></a>
+                        	</div>
+                        	<div>
+                        		<a href="<%= ctxPath%>/goAddSchedule.trip?play_code=${requestScope.randMap.pvo.play_code}"><h4>${requestScope.randMap.pvo.play_name}</h4></a>
+                        		<p>${requestScope.randMap.pvo.play_content}</p>
+                        	</div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -75,6 +75,9 @@ public interface Js_TripService {
 	// 한 숙소에 대한 좋아요 추가하기
 	int lodgingAddLike(Map<String, String> paraMap);
 
+	// 숙소 예약시 일정테이블에 insert
+	int insertLodgingSchedule(Map<String, String> paraMap);
+
 	
 	
 
