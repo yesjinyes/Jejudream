@@ -275,21 +275,21 @@ public class Dy_TripDAO_imple implements Dy_TripDAO {
 	}
 
 	
-	// 자유게시판 총 게시물 건수 조회하기
+	// 커뮤니티 게시판 총 게시물 건수 조회하기
 	@Override
-	public int getFreeBoardTotalCount(Map<String, String> paraMap) {
+	public int getBoardTotalCount(Map<String, String> paraMap) {
 		
-		int totalCount = sqlsession.selectOne("dy_trip.getFreeBoardTotalCount", paraMap);
+		int totalCount = sqlsession.selectOne("dy_trip.getBoardTotalCount", paraMap);
 		
 		return totalCount;
 	}
 	
 	
-	// 커뮤니티 자유게시판 리스트 조회하기
+	// 커뮤니티 게시판 리스트 조회하기
 	@Override
-	public List<BoardVO> getFreeBoardList(Map<String, String> paraMap) {
+	public List<BoardVO> getBoardList(Map<String, String> paraMap) {
 		
-		List<BoardVO> list = sqlsession.selectList("dy_trip.getFreeBoardList", paraMap);
+		List<BoardVO> list = sqlsession.selectList("dy_trip.getBoardList", paraMap);
 		
 		return list;
 	}

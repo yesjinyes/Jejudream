@@ -165,11 +165,6 @@
 								<option value="2">숙박</option>
 								<option value="3">관광지,체험</option>
 								<option value="4">맛집</option>
-								
-								<c:if test="${not empty sessionScope.loginCompanyuser}">
-									<option value="5">구인</option>
-								</c:if>
-								
 							</select>
 						</td>
 					</tr>

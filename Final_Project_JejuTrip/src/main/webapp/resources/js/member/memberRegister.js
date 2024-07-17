@@ -357,7 +357,7 @@ function goRegister(ctxPath) {
             queryString += "&";
         }
         queryString += "email=" + encodeURIComponent(email);
-
+        
         // 회원가입 처리하기
         $.ajax({
             url: ctxPath + "/memberRegisterEnd.trip",

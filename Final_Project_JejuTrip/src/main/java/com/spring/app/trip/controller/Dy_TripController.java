@@ -60,7 +60,7 @@ public class Dy_TripController {
     private AES256 aES256;
 	
 	// 회원가입 페이지 요청
-	@GetMapping("memberRegister.trip")
+	@GetMapping("/memberRegister.trip")
 	public String memberRegister() {
 		
 		return "member/memberRegister.tiles1";
@@ -70,7 +70,7 @@ public class Dy_TripController {
 	
 	// 일반 회원가입 처리하기
 	@ResponseBody
-	@PostMapping("memberRegisterEnd.trip")
+	@PostMapping("/memberRegisterEnd.trip")
 	public String memberRegisterEnd(MemberVO mvo) {
 		
 		int n = service.memberRegister(mvo);
@@ -874,6 +874,7 @@ public class Dy_TripController {
 		Map<String, String> paraMap = new HashMap<>();
 		paraMap.put("searchType", searchType);
 		paraMap.put("searchWord", searchWord);
+		paraMap.put("category", "1");
 		
 		int totalCount = 0;        // 총 게시물 건수
 		int sizePerPage = 10;      // 한 페이지당 보여줄 게시물 건수 
@@ -881,7 +882,7 @@ public class Dy_TripController {
 		int totalPage = 0;         // 총 페이지수(웹브라우저상에서 보여줄 총 페이지 개수, 페이지바) 
 		
 		// 총 게시물 건수(totalCount)
-		totalCount = service.getFreeBoardTotalCount(paraMap);
+		totalCount = service.getBoardTotalCount(paraMap);
 		
 		totalPage = (int)Math.ceil((double)totalCount / sizePerPage);
 		
@@ -912,8 +913,8 @@ public class Dy_TripController {
 		paraMap.put("startRno", String.valueOf(startRno));
 		paraMap.put("endRno", String.valueOf(endRno));
 		
-		// 커뮤니티 자유게시판 리스트 조회하기
-		freeBoardList = service.getFreeBoardList(paraMap);
+		// 커뮤니티 게시판 리스트 조회하기
+		freeBoardList = service.getBoardList(paraMap);
 		mav.addObject("freeBoardList", freeBoardList);
 
 		
@@ -935,7 +936,7 @@ public class Dy_TripController {
 		int pageNo = ((currentShowPageNo - 1)/blockSize) * blockSize + 1;
 		
 		String pageBar = "<ul>";
-		String url = "community/freeBoard.jsp";
+		String url = "freeBoard.trip";
 
 		// === [맨처음][이전] 만들기 === //
 		if(pageNo != 1) {
@@ -1344,6 +1345,438 @@ public class Dy_TripController {
 		}
 		
 		return jsonArr.toString();
+	}
+	
+	
+	// 커뮤니티 숙박 페이지 요청
+	@GetMapping("community/lodgingBoard.trip")
+	public ModelAndView lodgingBoard(ModelAndView mav, HttpServletRequest request) {
+		
+		List<BoardVO> lodgingBoardList = null;
+		
+		// === #69. 글조회수(readCount)증가 (DML문 update)는
+		//          반드시 목록보기에 와서 해당 글제목을 클릭했을 경우에만 증가되고,
+		//          웹브라우저에서 새로고침(F5)을 했을 경우에는 증가가 되지 않도록 해야 한다.
+		//          이것을 하기 위해서는 session 을 사용하여 처리하면 된다.
+		HttpSession session = request.getSession();
+		session.setAttribute("readCountPermission", "yes");
+		
+		String searchType = request.getParameter("searchType");
+		String searchWord = request.getParameter("searchWord");
+		String str_currentShowPageNo = request.getParameter("currentShowPageNo"); 
+		
+		if(searchType == null) {
+			searchType = "";
+		}
+		
+		if(searchWord == null) {
+			searchWord = "";
+		}
+		
+		if(searchWord != null) {
+			searchWord = searchWord.trim();
+		}
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("searchType", searchType);
+		paraMap.put("searchWord", searchWord);
+		paraMap.put("category", "2");
+		
+		int totalCount = 0;        // 총 게시물 건수
+		int sizePerPage = 10;      // 한 페이지당 보여줄 게시물 건수 
+		int currentShowPageNo = 0; // 현재 보여주는 페이지 번호로서, 초기치로는 1페이지로 설정함. 
+		int totalPage = 0;         // 총 페이지수(웹브라우저상에서 보여줄 총 페이지 개수, 페이지바) 
+		
+		// 게시판 총 게시물 건수(totalCount)
+		totalCount = service.getBoardTotalCount(paraMap);
+		
+		totalPage = (int)Math.ceil((double)totalCount / sizePerPage);
+		
+		if(str_currentShowPageNo == null) {
+			// 게시판에 보여지는 초기화면
+			
+			currentShowPageNo = 1;
+			
+		} else {
+			try {
+				currentShowPageNo = Integer.parseInt(str_currentShowPageNo);
+				
+				if(currentShowPageNo < 1 || currentShowPageNo > totalPage) {
+					// get 방식이므로 사용자가 str_currentShowPageNo 에 입력한 값이 0 또는 음수를 입력하여 장난친 경우 
+					// get 방식이므로 사용자가 str_currentShowPageNo 에 입력한 값이 실제 데이터베이스에 존재하는 페이지수 보다 더 큰값을 입력하여 장난친 경우 
+					currentShowPageNo = 1;
+				}
+				
+			} catch (NumberFormatException e) {
+				// get 방식이므로 사용자가 str_currentShowPageNo 에 입력한 값이 숫자가 아닌 문자를 입력하여 장난친 경우 
+				currentShowPageNo = 1; 
+			}
+		}
+		
+		int startRno = ((currentShowPageNo - 1) * sizePerPage) + 1; // 시작 행번호 
+		int endRno = startRno + sizePerPage - 1; // 끝 행번호
+
+		paraMap.put("startRno", String.valueOf(startRno));
+		paraMap.put("endRno", String.valueOf(endRno));
+		
+		// 커뮤니티 게시판 리스트 조회하기
+		lodgingBoardList = service.getBoardList(paraMap);
+		mav.addObject("lodgingBoardList", lodgingBoardList);
+
+		
+		// 검색 시 검색조건 및 검색어 값 유지시키기
+		if("subject".equals(searchType) ||
+		   "content".equals(searchType) ||
+		   "name".equals(searchType)) {
+			
+			mav.addObject("paraMap", paraMap);
+		}
+		
+		
+
+		// ==== #129. 페이지바 만들기 ==== //
+		int blockSize = 10;
+		
+		int loop = 1;
+		
+		int pageNo = ((currentShowPageNo - 1)/blockSize) * blockSize + 1;
+		
+		String pageBar = "<ul>";
+		String url = "lodgingBoard.trip";
+
+		// === [맨처음][이전] 만들기 === //
+		if(pageNo != 1) {
+			pageBar += "<li style='width: 4%; font-size: 0.8rem;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo=1'>◀◀</a></li>";
+			pageBar += "<li style='width: 4%; font-size: 0.8rem;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+(pageNo-1)+"'>◀</a></li>"; 
+		}
+
+		while( !(loop > blockSize || pageNo > totalPage) ) {
+			
+			if(pageNo == currentShowPageNo) {
+				pageBar += "<li class='font-weight-bold' style='width: 3%; color: #ff5000;'>"+pageNo+"</li>";
+			}
+			else {
+				pageBar += "<li style='width: 3%;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+pageNo+"'>"+pageNo+"</a></li>"; 
+			}
+			
+			loop++;
+			pageNo++;
+		}// end of while------------------------
+
+		// === [다음][마지막] 만들기 === //
+		if(pageNo <= totalPage) {
+			pageBar += "<li style='width: 4%; font-size: 0.8rem;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+pageNo+"'>▶</a></li>";
+			pageBar += "<li style='width: 4%; font-size: 0.8rem;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+totalPage+"'>▶▶</a></li>"; 
+		}
+		
+		pageBar += "</ul>";
+
+		mav.addObject("pageBar", pageBar);
+		// ==== #129. 페이지바 만들기 끝 ==== //
+
+		
+		// === #131. 페이징 처리된 후 특정 글제목을 클릭하여 상세내용을 본 이후
+		//           사용자가 "검색된결과목록보기" 버튼을 클릭했을때 돌아갈 페이지를 알려주기 위해
+		//           현재 페이지 주소를 뷰단으로 넘겨준다.
+		String goBackURL = MyUtil.getCurrentURL(request);
+		mav.addObject("goBackURL", goBackURL);
+		
+		// '페이징 처리 시 보여주는 순번'에 필요한 변수들
+		mav.addObject("totalCount", totalCount);
+		mav.addObject("currentShowPageNo", currentShowPageNo);
+		mav.addObject("sizePerPage", sizePerPage);
+		
+		mav.setViewName("community/lodgingBoard.tiles1");
+		
+		return mav;
+	}
+	
+	
+	// 커뮤니티 관광지,체험 페이지 요청
+	@GetMapping("community/playBoard.trip")
+	public ModelAndView playBoard(ModelAndView mav, HttpServletRequest request) {
+		
+		List<BoardVO> playBoardList = null;
+		
+		// === #69. 글조회수(readCount)증가 (DML문 update)는
+		//          반드시 목록보기에 와서 해당 글제목을 클릭했을 경우에만 증가되고,
+		//          웹브라우저에서 새로고침(F5)을 했을 경우에는 증가가 되지 않도록 해야 한다.
+		//          이것을 하기 위해서는 session 을 사용하여 처리하면 된다.
+		HttpSession session = request.getSession();
+		session.setAttribute("readCountPermission", "yes");
+		
+		String searchType = request.getParameter("searchType");
+		String searchWord = request.getParameter("searchWord");
+		String str_currentShowPageNo = request.getParameter("currentShowPageNo"); 
+		
+		if(searchType == null) {
+			searchType = "";
+		}
+		
+		if(searchWord == null) {
+			searchWord = "";
+		}
+		
+		if(searchWord != null) {
+			searchWord = searchWord.trim();
+		}
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("searchType", searchType);
+		paraMap.put("searchWord", searchWord);
+		paraMap.put("category", "3");
+		
+		int totalCount = 0;        // 총 게시물 건수
+		int sizePerPage = 10;      // 한 페이지당 보여줄 게시물 건수 
+		int currentShowPageNo = 0; // 현재 보여주는 페이지 번호로서, 초기치로는 1페이지로 설정함. 
+		int totalPage = 0;         // 총 페이지수(웹브라우저상에서 보여줄 총 페이지 개수, 페이지바) 
+		
+		// 게시판 총 게시물 건수(totalCount)
+		totalCount = service.getBoardTotalCount(paraMap);
+		
+		totalPage = (int)Math.ceil((double)totalCount / sizePerPage);
+		
+		if(str_currentShowPageNo == null) {
+			// 게시판에 보여지는 초기화면
+			
+			currentShowPageNo = 1;
+			
+		} else {
+			try {
+				currentShowPageNo = Integer.parseInt(str_currentShowPageNo);
+				
+				if(currentShowPageNo < 1 || currentShowPageNo > totalPage) {
+					// get 방식이므로 사용자가 str_currentShowPageNo 에 입력한 값이 0 또는 음수를 입력하여 장난친 경우 
+					// get 방식이므로 사용자가 str_currentShowPageNo 에 입력한 값이 실제 데이터베이스에 존재하는 페이지수 보다 더 큰값을 입력하여 장난친 경우 
+					currentShowPageNo = 1;
+				}
+				
+			} catch (NumberFormatException e) {
+				// get 방식이므로 사용자가 str_currentShowPageNo 에 입력한 값이 숫자가 아닌 문자를 입력하여 장난친 경우 
+				currentShowPageNo = 1; 
+			}
+		}
+		
+		int startRno = ((currentShowPageNo - 1) * sizePerPage) + 1; // 시작 행번호 
+		int endRno = startRno + sizePerPage - 1; // 끝 행번호
+		
+		paraMap.put("startRno", String.valueOf(startRno));
+		paraMap.put("endRno", String.valueOf(endRno));
+		
+		// 커뮤니티 게시판 리스트 조회하기
+		playBoardList = service.getBoardList(paraMap);
+		mav.addObject("playBoardList", playBoardList);
+		
+		
+		// 검색 시 검색조건 및 검색어 값 유지시키기
+		if("subject".equals(searchType) ||
+				"content".equals(searchType) ||
+				"name".equals(searchType)) {
+			
+			mav.addObject("paraMap", paraMap);
+		}
+		
+		
+		
+		// ==== #129. 페이지바 만들기 ==== //
+		int blockSize = 10;
+		
+		int loop = 1;
+		
+		int pageNo = ((currentShowPageNo - 1)/blockSize) * blockSize + 1;
+		
+		String pageBar = "<ul>";
+		String url = "playBoard.trip";
+		
+		// === [맨처음][이전] 만들기 === //
+		if(pageNo != 1) {
+			pageBar += "<li style='width: 4%; font-size: 0.8rem;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo=1'>◀◀</a></li>";
+			pageBar += "<li style='width: 4%; font-size: 0.8rem;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+(pageNo-1)+"'>◀</a></li>"; 
+		}
+		
+		while( !(loop > blockSize || pageNo > totalPage) ) {
+			
+			if(pageNo == currentShowPageNo) {
+				pageBar += "<li class='font-weight-bold' style='width: 3%; color: #ff5000;'>"+pageNo+"</li>";
+			}
+			else {
+				pageBar += "<li style='width: 3%;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+pageNo+"'>"+pageNo+"</a></li>"; 
+			}
+			
+			loop++;
+			pageNo++;
+		}// end of while------------------------
+		
+		// === [다음][마지막] 만들기 === //
+		if(pageNo <= totalPage) {
+			pageBar += "<li style='width: 4%; font-size: 0.8rem;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+pageNo+"'>▶</a></li>";
+			pageBar += "<li style='width: 4%; font-size: 0.8rem;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+totalPage+"'>▶▶</a></li>"; 
+		}
+		
+		pageBar += "</ul>";
+		
+		mav.addObject("pageBar", pageBar);
+		// ==== #129. 페이지바 만들기 끝 ==== //
+		
+		
+		// === #131. 페이징 처리된 후 특정 글제목을 클릭하여 상세내용을 본 이후
+		//           사용자가 "검색된결과목록보기" 버튼을 클릭했을때 돌아갈 페이지를 알려주기 위해
+		//           현재 페이지 주소를 뷰단으로 넘겨준다.
+		String goBackURL = MyUtil.getCurrentURL(request);
+		mav.addObject("goBackURL", goBackURL);
+		
+		// '페이징 처리 시 보여주는 순번'에 필요한 변수들
+		mav.addObject("totalCount", totalCount);
+		mav.addObject("currentShowPageNo", currentShowPageNo);
+		mav.addObject("sizePerPage", sizePerPage);
+		
+		mav.setViewName("community/playBoard.tiles1");
+		
+		return mav;
+	}
+	
+	
+	// 커뮤니티 맛집 페이지 요청
+	@GetMapping("community/foodBoard.trip")
+	public ModelAndView foodBoard(ModelAndView mav, HttpServletRequest request) {
+		
+		List<BoardVO> foodBoardList = null;
+		
+		// === #69. 글조회수(readCount)증가 (DML문 update)는
+		//          반드시 목록보기에 와서 해당 글제목을 클릭했을 경우에만 증가되고,
+		//          웹브라우저에서 새로고침(F5)을 했을 경우에는 증가가 되지 않도록 해야 한다.
+		//          이것을 하기 위해서는 session 을 사용하여 처리하면 된다.
+		HttpSession session = request.getSession();
+		session.setAttribute("readCountPermission", "yes");
+		
+		String searchType = request.getParameter("searchType");
+		String searchWord = request.getParameter("searchWord");
+		String str_currentShowPageNo = request.getParameter("currentShowPageNo"); 
+		
+		if(searchType == null) {
+			searchType = "";
+		}
+		
+		if(searchWord == null) {
+			searchWord = "";
+		}
+		
+		if(searchWord != null) {
+			searchWord = searchWord.trim();
+		}
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("searchType", searchType);
+		paraMap.put("searchWord", searchWord);
+		paraMap.put("category", "4");
+		
+		int totalCount = 0;        // 총 게시물 건수
+		int sizePerPage = 10;      // 한 페이지당 보여줄 게시물 건수 
+		int currentShowPageNo = 0; // 현재 보여주는 페이지 번호로서, 초기치로는 1페이지로 설정함. 
+		int totalPage = 0;         // 총 페이지수(웹브라우저상에서 보여줄 총 페이지 개수, 페이지바) 
+		
+		// 게시판 총 게시물 건수(totalCount)
+		totalCount = service.getBoardTotalCount(paraMap);
+		
+		totalPage = (int)Math.ceil((double)totalCount / sizePerPage);
+		
+		if(str_currentShowPageNo == null) {
+			// 게시판에 보여지는 초기화면
+			
+			currentShowPageNo = 1;
+			
+		} else {
+			try {
+				currentShowPageNo = Integer.parseInt(str_currentShowPageNo);
+				
+				if(currentShowPageNo < 1 || currentShowPageNo > totalPage) {
+					// get 방식이므로 사용자가 str_currentShowPageNo 에 입력한 값이 0 또는 음수를 입력하여 장난친 경우 
+					// get 방식이므로 사용자가 str_currentShowPageNo 에 입력한 값이 실제 데이터베이스에 존재하는 페이지수 보다 더 큰값을 입력하여 장난친 경우 
+					currentShowPageNo = 1;
+				}
+				
+			} catch (NumberFormatException e) {
+				// get 방식이므로 사용자가 str_currentShowPageNo 에 입력한 값이 숫자가 아닌 문자를 입력하여 장난친 경우 
+				currentShowPageNo = 1; 
+			}
+		}
+		
+		int startRno = ((currentShowPageNo - 1) * sizePerPage) + 1; // 시작 행번호 
+		int endRno = startRno + sizePerPage - 1; // 끝 행번호
+		
+		paraMap.put("startRno", String.valueOf(startRno));
+		paraMap.put("endRno", String.valueOf(endRno));
+		
+		// 커뮤니티 게시판 리스트 조회하기
+		foodBoardList = service.getBoardList(paraMap);
+		mav.addObject("foodBoardList", foodBoardList);
+		
+		
+		// 검색 시 검색조건 및 검색어 값 유지시키기
+		if("subject".equals(searchType) ||
+				"content".equals(searchType) ||
+				"name".equals(searchType)) {
+			
+			mav.addObject("paraMap", paraMap);
+		}
+		
+		
+		
+		// ==== #129. 페이지바 만들기 ==== //
+		int blockSize = 10;
+		
+		int loop = 1;
+		
+		int pageNo = ((currentShowPageNo - 1)/blockSize) * blockSize + 1;
+		
+		String pageBar = "<ul>";
+		String url = "foodBoard.trip";
+		
+		// === [맨처음][이전] 만들기 === //
+		if(pageNo != 1) {
+			pageBar += "<li style='width: 4%; font-size: 0.8rem;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo=1'>◀◀</a></li>";
+			pageBar += "<li style='width: 4%; font-size: 0.8rem;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+(pageNo-1)+"'>◀</a></li>"; 
+		}
+		
+		while( !(loop > blockSize || pageNo > totalPage) ) {
+			
+			if(pageNo == currentShowPageNo) {
+				pageBar += "<li class='font-weight-bold' style='width: 3%; color: #ff5000;'>"+pageNo+"</li>";
+			}
+			else {
+				pageBar += "<li style='width: 3%;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+pageNo+"'>"+pageNo+"</a></li>"; 
+			}
+			
+			loop++;
+			pageNo++;
+		}// end of while------------------------
+		
+		// === [다음][마지막] 만들기 === //
+		if(pageNo <= totalPage) {
+			pageBar += "<li style='width: 4%; font-size: 0.8rem;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+pageNo+"'>▶</a></li>";
+			pageBar += "<li style='width: 4%; font-size: 0.8rem;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+totalPage+"'>▶▶</a></li>"; 
+		}
+		
+		pageBar += "</ul>";
+		
+		mav.addObject("pageBar", pageBar);
+		// ==== #129. 페이지바 만들기 끝 ==== //
+		
+		
+		// === #131. 페이징 처리된 후 특정 글제목을 클릭하여 상세내용을 본 이후
+		//           사용자가 "검색된결과목록보기" 버튼을 클릭했을때 돌아갈 페이지를 알려주기 위해
+		//           현재 페이지 주소를 뷰단으로 넘겨준다.
+		String goBackURL = MyUtil.getCurrentURL(request);
+		mav.addObject("goBackURL", goBackURL);
+		
+		// '페이징 처리 시 보여주는 순번'에 필요한 변수들
+		mav.addObject("totalCount", totalCount);
+		mav.addObject("currentShowPageNo", currentShowPageNo);
+		mav.addObject("sizePerPage", sizePerPage);
+		
+		mav.setViewName("community/foodBoard.tiles1");
+		
+		return mav;
 	}
 	
 	

@@ -16,6 +16,16 @@
 	    		
 	    	} else if($(e.target).val() == "1") {
 	    		location.href = "<%=ctxPath%>/community/freeBoard.trip";
+	    		
+	    	} else if($(e.target).val() == "2") {
+	    		location.href = "<%=ctxPath%>/community/lodgingBoard.trip";
+	    		
+	    	} else if($(e.target).val() == "3") {
+	    		location.href = "<%=ctxPath%>/community/playBoard.trip";
+	    		
+	    	} else if($(e.target).val() == "4") {
+	    		location.href = "<%=ctxPath%>/community/foodBoard.trip";
+	    		
 	    	}
 	    });
 	    

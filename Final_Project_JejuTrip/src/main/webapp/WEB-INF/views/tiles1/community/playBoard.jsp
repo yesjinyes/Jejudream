@@ -10,16 +10,16 @@ div.container {
 	background-color: none;
 }
 
-table#freeBoard {
+table#playBoard {
 	font-size: 1.2rem;
 	margin-bottom: 10%;
 }
 
-table#freeBoard > thead {
+table#playBoard > thead {
 	background-color: #f2f2f2;
 }
 
-table#freeBoard > tbody > tr {
+table#playBoard > tbody > tr {
 	font-weight: normal;
 }
 
@@ -143,7 +143,7 @@ div#pageBar a {
     	
     	const frm = document.goViewFrm;
 		frm.seq.value = seq;
-		frm.category.value = "1";
+		frm.category.value = "3";
 		frm.goBackURL.value = goBackURL;		
 
 		if(${not empty requestScope.paraMap}) { // 검색 조건이 있을 경우
@@ -171,13 +171,13 @@ div#pageBar a {
 		<input type="radio" id="radio-1" name="category" value="" />
 		<label class="tab" for="radio-1">커뮤니티 전체</label>
 		
-		<input type="radio" id="radio-2" name="category" value="1" checked />
+		<input type="radio" id="radio-2" name="category" value="1" />
 		<label class="tab" for="radio-2">자유게시판</label>
 		
 		<input type="radio" id="radio-3" name="category" value="2" />
 		<label class="tab" for="radio-3">숙박</label>
 		
-		<input type="radio" id="radio-4" name="category" value="3" />
+		<input type="radio" id="radio-4" name="category" value="3" checked />
 		<label class="tab" for="radio-4">관광지,체험</label>
 		
 		<input type="radio" id="radio-5" name="category" value="4" />
@@ -218,7 +218,7 @@ div#pageBar a {
 	</form>
 	
 	<div>
-	<table id="freeBoard" class="table table-hover" style="width: 100%;">
+	<table id="playBoard" class="table table-hover" style="width: 100%;">
 		<thead>
 			<tr>
 				<th style="width: 7%;  text-align: center;">순번</th>
@@ -230,8 +230,8 @@ div#pageBar a {
 		</thead>
 		
 		<tbody>
-			<c:if test="${not empty requestScope.freeBoardList}">
-				<c:forEach var="boardvo" items="${requestScope.freeBoardList}" varStatus="status">
+			<c:if test="${not empty requestScope.playBoardList}">
+				<c:forEach var="boardvo" items="${requestScope.playBoardList}" varStatus="status">
 					<tr>
 						<td align="center">
 							${(requestScope.totalCount) - (requestScope.currentShowPageNo - 1) * (requestScope.sizePerPage) - (status.index)}
@@ -284,7 +284,7 @@ div#pageBar a {
 				</c:forEach>
 			</c:if>
 			
-			<c:if test="${empty requestScope.freeBoardList}">
+			<c:if test="${empty requestScope.playBoardList}">
 				<tr>
 					<td colspan="5" style="text-align: center;">데이터가 없습니다.</td>
 				</tr>
@@ -312,6 +312,3 @@ div#pageBar a {
 	<input type="hidden" name="searchWord" />
 </form>
 
-	
-	
-	
