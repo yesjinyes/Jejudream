@@ -814,16 +814,25 @@ create table tbl_board
     select *
     from tbl_food_store
     
-    select food_store_code, local_status, food_name, food_content, food_businesshours, food_mobile
-				 , food_address, food_main_img, review_division, food_category
+    select food_store_code, local_status, food_name, food_content, food_main_img
 			from (
-			    select food_store_code, local_status, food_name, food_content, food_businesshours, food_mobile
-					 , food_address, food_main_img, review_division, food_category
+			    select food_store_code, local_status, food_name, food_content, food_main_img
 			    from tbl_food_store
                 where local_status = '제주시 시내'
 			    order by DBMS_RANDOM.RANDOM
 			)
             where rownum =1
+            
+    select play_code, local_status, play_name, play_content, play_main_img
+			from (
+			    select play_code, local_status, play_name, play_content, play_main_img
+			    from tbl_play
+                where local_status = '제주시 시내'
+			    order by DBMS_RANDOM.RANDOM
+			)
+            where rownum =1        
+            
+            
      
      select * from tbl_review;
      
@@ -1017,3 +1026,6 @@ create table tbl_board
     ------------- >>>>>>>> 일정관리(풀캘린더) 끝 <<<<<<<< -------------
     
     select * from tbl_food_store;
+    
+    
+    select * from tbl_like where parent_code = 5214;
