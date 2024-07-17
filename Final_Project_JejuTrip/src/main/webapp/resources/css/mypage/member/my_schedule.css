@@ -69,63 +69,49 @@
    font-weight:bold;
 }
 
-#contentFrame{
-   width: 1024px; 
-   padding-bottom: 1%; 
-   margin-left: 2%;
-   border: 1px solid #e6e6e6;
-   /* background: #008000; */
-   
+
+
+
+div#wrapper1{
+	float: left; display: inline-block; width: 15%; margin-left: 100px; margin-top:200px; font-size: 13pt;
 }
 
-.flex-row {
-	display: flex;
-	flex-direction: row;
+div#wrapper2{
+	display: inline-block; width: 90%; margin-right:150px; margin-top: 30px; border:solid 0px red;
 }
 
-.flex-col {
-	display: flex;
-	flex-direction: col;
+/* ========== full calendar css 시작 ========== */
+.fc-header-toolbar {
+	height: 30px;
 }
 
-form.reservationFrm {
-    width:50%;
-    margin:2% auto;
-    border:solid 0px red;
-}
+a, a:hover, .fc-daygrid {
+    color: #000;
+    text-decoration: none;
+    background-color: transparent;
+    cursor: pointer;
+} 
 
-#reservation {
-	width: 100%;
-	border-top: 2px solid black;
-	border-left: 1px solid gray;
-	border-right: 1px solid gray;
-	border-bottom: 1px solid gray;
-	border-radius: 10px 10px;
-    margin:auto;
-}
+.fc-sat { color: #0000FF; }    /* 토요일 */
+.fc-sun { color: #FF0000; }    /* 일요일 */
+/* ========== full calendar css 끝 ========== */
 
-#top_color{
-padding: 20px 10px 0px 20px; 
-border-bottom: solid 1px #ff8000; 
-background: #ff8000; 
-border-radius: 10px 10px 0px 0px;
-}
-
-li a {
-	color: black;
-}
-
-.reservation li {
+ul{
 	list-style: none;
-	display: block;
-	float: left;
-	width: 55%;
-	padding: 0 0 2%;
-	margin: 0 auto;
-	border-right: 1px dotted #c9c7ca;
-	text-align: center;
 }
 
-tr:hover{
-	cursor: pointer;
+button.btn_normal{
+	background-color: #990000;
+	border: none;
+	color: white;
+	width: 50px;
+	height: 30px;
+	font-size: 12pt;
+	padding: 3px 0px;
+	border-radius: 10%;
+}
+
+button.btn_edit{
+	border: none;
+	background-color: #fff;
 }

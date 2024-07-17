@@ -3,6 +3,8 @@ package com.spring.app.trip.model;
 import java.util.List;
 import java.util.Map;
 
+import com.spring.app.trip.domain.Calendar_schedule_VO;
+import com.spring.app.trip.domain.Calendar_small_category_VO;
 import com.spring.app.trip.domain.CompanyVO;
 import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.LodgingVO;
@@ -66,5 +68,11 @@ public interface Ws_TripDAO {
 	Map<String, String> get_email_map(String reservation_code);// 바우처에 입력할 정보를 가져오기 위해 예약정보등을 가져온다.
 	int update_member_info(MemberVO membervo);// 입력한 값으로 회원 정보를 수정한다.
 	String userEmailDuplicateCheckEdit(Map<String, String> paraMap);// 로그인한 유저 자기자신의 이메일을 제외한 다른 사람의 이메일중 중복값이 있는 지 알아오기.
+	List<Calendar_schedule_VO> selectSchedule(String fk_userid);// 등록된 일정 가져오기
+	Map<String, String> detailSchedule(String scheduleno);// 일정상세보기
+	List<Calendar_small_category_VO> showMyCalendar(String fk_userid);// 내 캘린더에서 내캘린더 소분류  보여주기
+	int getTotalScheduleCount(Map<String, String> paraMap);// 총 일정 검색 건수(totalCount)
+	List<Map<String, String>> scheduleListSearchWithPaging(Map<String, String> paraMap);// 페이징 처리한 캘린더 가져오기(검색어가 없다라도 날짜범위 검색은 항시 포함된 것임)
+	int registerSchedule_end(Map<String, String> paraMap);// 일정 등록하기
 
 }
