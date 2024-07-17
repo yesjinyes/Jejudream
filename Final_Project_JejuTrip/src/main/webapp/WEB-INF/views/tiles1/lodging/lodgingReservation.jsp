@@ -31,6 +31,7 @@
 }
 .btn {
     width: 100%;
+    
 }
         
 
@@ -217,7 +218,12 @@ function goReserveInsert(){
 	<input type="hidden" name="price" value="${reserve_info.price}" />
 	<input type="hidden" name="totalPrice" value="${reserve_info.totalPrice}"/>
 	<input type="hidden" name="check_in" value="${reserve_info.check_in}"/>
+	<input type="hidden" name="check_inTime" value="${reserve_info.check_inTime}"/>
+	<input type="hidden" name="check_outTime" value="${reserve_info.check_outTime}"/>
 	<input type="hidden" name="check_out" value="${reserve_info.check_out}"/>
 	<input type="hidden" name="days" value="${reserve_info.days}"/>
+	<input type="hidden" name="lodging_name" value="${reserve_info.lodging_name}"/>
+	<input type="hidden" name="room_name" value="${reserve_info.room_name}"/>
+	<input type="hidden" name="lodging_address" value="${reserve_info.lodging_address}"/>
 	<input type="hidden" name="reservation_code" value=""/>
 </form>

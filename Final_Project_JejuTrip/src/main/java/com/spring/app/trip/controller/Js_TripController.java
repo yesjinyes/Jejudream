@@ -477,10 +477,16 @@ public class Js_TripController {
 	@ResponseBody
 	@PostMapping(value="/JSONreserveInsert.trip")
 	public String JSONreserveInsert(@RequestParam(defaultValue = "") String userid,
+									@RequestParam(defaultValue = "") String lodging_code,
 			   						@RequestParam(defaultValue = "") String room_detail_code,
 			   						@RequestParam(defaultValue = "") String totalPrice,
 			   						@RequestParam(defaultValue = "") String check_in,
 			   						@RequestParam(defaultValue = "") String check_out,
+			   						@RequestParam(defaultValue = "") String check_inTime,
+			   						@RequestParam(defaultValue = "") String check_outTime,
+			   						@RequestParam(defaultValue = "") String lodging_name,
+			   						@RequestParam(defaultValue = "") String room_name,
+			   						@RequestParam(defaultValue = "") String lodging_address,
 			   						HttpServletRequest request) {
 		
 		/*
@@ -500,11 +506,19 @@ public class Js_TripController {
 		
 		if(userid.equals(loginuser.getUserid())){
 			
+			paraMap.put("lodging_code", lodging_code);
 			paraMap.put("room_detail_code", room_detail_code);
 			paraMap.put("userid", userid);
 			paraMap.put("totalPrice", totalPrice);
-			paraMap.put("check_in", check_in);
-			paraMap.put("check_out", check_out);
+			
+			// System.out.println("체크인시간 : " + check_inTime.substring(0,2));
+			// System.out.println("체크아웃시간 : " + check_outTime.substring(0,2));
+			
+			paraMap.put("check_in", check_in + " " + check_inTime.substring(0,2) + ":00:00");
+			paraMap.put("check_out", check_out + " " + check_outTime.substring(0,2) + ":00:00");
+			
+			System.out.println("체크인시간 : " + paraMap.get("check_in"));
+			System.out.println("체크아웃시간 : " + paraMap.get("check_out"));
 			
 			// 예약결과 예약번호 표현을 위한 채번해오기
 			String num = service.getReservationNum();
@@ -513,8 +527,20 @@ public class Js_TripController {
 			
 			// 결제 후 예약테이블에 insert 하기 
 			int n = service.insertReservation(paraMap);
+			int m = 0;
 			
-			jsonObj.put("n", n);
+			if(n==1) {
+				
+				paraMap.put("lodging_name",lodging_name);
+				paraMap.put("room_name",room_name);
+				paraMap.put("lodging_address",lodging_address);
+				
+				m = service.insertLodgingSchedule(paraMap); // 일정테이블에 추가하기
+				
+			}
+			
+			
+			jsonObj.put("n", n * m);
 			jsonObj.put("num", num);
 			
 		}
@@ -549,8 +575,22 @@ public class Js_TripController {
 			paraMap.put("room_detail_code", room_detail_code);
 			paraMap.put("reservation_code", reservation_code);
 			
-			
 			resultMap = service.getReservationInfo(paraMap);
+			
+			
+			String local_status = resultMap.get("local_status");
+			
+			// 같은 지역구분 맛집 랜덤추천해주기
+			FoodstoreVO fvo = service.getRandomFood(local_status);
+			// 같은 지역구분 즐길거리 랜덤추천해주기
+			PlayVO pvo = service.getRandomPlay(local_status);
+			
+			Map<String,Object> randMap = new HashMap<>();
+			
+			randMap.put("fvo", fvo);
+			randMap.put("pvo", pvo);
+			
+			mav.addObject("randMap",randMap);
 			
 			if(resultMap != null) {
 				
@@ -582,7 +622,7 @@ public class Js_TripController {
 	
 	
 	
-	
+	// 숙소 리뷰 불러오기
 	@ResponseBody
 	@GetMapping(value="JSONLodgingCommentList.trip", produces="text/plain;charset=UTF-8")
 	public String JSONLodgingCommentList(HttpServletRequest request) {
@@ -648,7 +688,7 @@ public class Js_TripController {
 	
 	
 	
-	
+	// 숙소 리뷰 수정하기
 	@ResponseBody
 	@PostMapping(value="/JSONUpdateComment.trip", produces="text/plain;charset=UTF-8")
 	public String JSONUpdateLodgingComment(@RequestParam (value="review_code") String review_code,
@@ -680,6 +720,7 @@ public class Js_TripController {
 	} // end of public String JSONUpdateComment
 	
 	
+	// 숙소 리뷰 삭제하기
 	@ResponseBody
 	@PostMapping(value="/JSONDeleteComment.trip", produces="text/plain;charset=UTF-8")
 	public String JSONDeleteLodgingComment(@RequestParam (value="review_code") String review_code) {
@@ -703,7 +744,7 @@ public class Js_TripController {
 	
 	
 	
-	
+	// 숙소 리뷰 작성하기
 	@ResponseBody
 	@PostMapping(value="/addLodgingReview.trip", produces="text/plain;charset=UTF-8")
 	public String addLodgingReview(ReviewVO rvo) {

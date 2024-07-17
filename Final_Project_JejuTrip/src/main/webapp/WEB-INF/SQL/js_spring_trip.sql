@@ -925,10 +925,12 @@ create table tbl_board
     insert into tbl_calendar_small_category (smcatgono, fk_lgcatgono, smcatgoname) values (seq_smcatgono.nextval, 1 , '숙소');
     insert into tbl_calendar_small_category (smcatgono, fk_lgcatgono, smcatgoname) values (seq_smcatgono.nextval, 1 , '맛집');
     insert into tbl_calendar_small_category (smcatgono, fk_lgcatgono, smcatgoname) values (seq_smcatgono.nextval, 1 , '즐길거리');
+    insert into tbl_calendar_small_category (smcatgono, fk_lgcatgono, smcatgoname) values (seq_smcatgono.nextval, 1 , '기타');
     
     insert into tbl_calendar_small_category (smcatgono, fk_lgcatgono, smcatgoname) values (seq_smcatgono.nextval, 2 , '숙소');
     insert into tbl_calendar_small_category (smcatgono, fk_lgcatgono, smcatgoname) values (seq_smcatgono.nextval, 2 , '맛집');
     insert into tbl_calendar_small_category (smcatgono, fk_lgcatgono, smcatgoname) values (seq_smcatgono.nextval, 2 , '즐길거리');
+    insert into tbl_calendar_small_category (smcatgono, fk_lgcatgono, smcatgoname) values (seq_smcatgono.nextval, 2 , '기타');
     commit;
     
     select * from tbl_calendar_small_category
@@ -946,6 +948,8 @@ create table tbl_board
     select *
     from tbl_calendar_small_category
     order by smcatgono desc;
+    
+    
     
     
     -- *** 캘린더 일정 *** 
@@ -1025,7 +1029,20 @@ create table tbl_board
 
     ------------- >>>>>>>> 일정관리(풀캘린더) 끝 <<<<<<<< -------------
     
-    select * from tbl_food_store;
+    select * from tbl_lodging;
+    select to_date('2024-07-18 11:00:00', 'yyyy-mm-dd hh24:mi:ss')
+    from dual
     
+    select * from tbl_company
     
     select * from tbl_like where parent_code = 5214;
+    
+    
+    
+    
+    
+    select * from tbl_calendar_schedule;
+    
+    insert into tbl_calendar_schedule(scheduleno, startdate, enddate, subject, color, place, content, fk_smcatgono, fk_lgcatgono, fk_userid ,schedule_divison ,parent_code) 
+    					   values(seq_scheduleno.nextval, to_date(#{check_in}, 'yyyy-mm-dd hh24:mi:ss'), to_date(#{check_out}, 'yyyy-mm-dd hh24:mi:ss'), 
+    					   		  #{lodging_name}, '', #{lodging_address}, #{room_name}, 1, 1, #{userid} , 'A',#{lodging_code} )  

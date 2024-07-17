@@ -252,6 +252,18 @@ public class Js_TripService_imple implements Js_TripService {
 		
 		return n;
 	} // end of public int lodgingAddLike(Map<String, String> paraMap) { 
+
+
+	
+	// 숙소 예약시 일정테이블에 insert
+	@Override
+	public int insertLodgingSchedule(Map<String, String> paraMap) {
+		
+		int n = dao.insertLodgingSchedule(paraMap);
+		
+		return n;
+		
+	} // end of public int insertLodgingSchedule(Map<String, String> paraMap) {
 	
 
 	

@@ -285,7 +285,7 @@
 	
 	<insert id="insertReservation" parameterType="HashMap">
 		insert into tbl_reservation (RESERVATION_CODE, FK_USERID, FK_ROOM_DETAIL_CODE, CHECK_IN, CHECK_OUT, RESERVATION_PRICE)
-		values(#{num}, #{userid}, #{room_detail_code}, #{check_in} , #{check_out}, #{totalPrice})
+		values(#{num}, #{userid}, #{room_detail_code}, to_date(#{check_in}, 'yyyy-mm-dd hh24:mi:ss') , to_date(#{check_out}, 'yyyy-mm-dd hh24:mi:ss'), #{totalPrice})
 	</insert>
 	
 	
@@ -303,13 +303,14 @@
 		<result property="min_person" column="min_person" javaType="String" />
 		<result property="max_person" column="max_person" javaType="String" />
 		<result property="lodging_code" column="lodging_code" javaType="String" />
+		<result property="local_status" column="local_status" javaType="String" />
 		<result property="lodging_category" column="lodging_category" javaType="String" />
 		<result property="lodging_name" column="lodging_name" javaType="String" />
 		<result property="lodging_tell" column="lodging_tell" javaType="String" />
 		<result property="lodging_address" column="lodging_address" javaType="String" />
 	</resultMap>
 	<select id="getReservationInfo" parameterType="HashMap" resultMap="reservationInfo">
-		select reservation_code, reservation_price, check_in, check_out,
+		select reservation_code, reservation_price, check_in, check_out, local_status,
           	   leftdays, room_detail_code, room_name, check_intime, check_outtime,
                min_person, max_person, lodging_code, lodging_category, lodging_name, 
                lodging_tell, lodging_address
@@ -317,7 +318,7 @@
 		   	   (
 		   		select reservation_code, fk_room_detail_code, reservation_price, 
 		   			   to_char(check_in, 'yyyy-mm-dd') as check_in, to_char(check_out, 'yyyy-mm-dd') as check_out,
-		        	   check_in - to_date(to_char(sysdate, 'yyyy-mm-dd') , 'yyyy-mm-dd')  as leftdays
+		        	   to_date(to_char(check_in, 'yyyy-mm-dd'), 'yyyy-mm-dd') - to_date(to_char(sysdate, 'yyyy-mm-dd') , 'yyyy-mm-dd')  as leftdays
 		        from tbl_reservation
 		        where reservation_code = #{reservation_code}    
 		       )RSV join 
@@ -329,7 +330,7 @@
 		       on RSV.fk_room_detail_code = R.room_detail_code
 		       join
 		       (
-		   		select lodging_code, lodging_category, lodging_name, lodging_tell, lodging_address 
+		   		select lodging_code, lodging_category, lodging_name, lodging_tell, lodging_address, local_status 
 		   		from tbl_lodging
 		   		where lodging_code = #{lodging_code}
 		       )L
@@ -442,4 +443,13 @@
  	<insert id="lodgingAddLike" parameterType="HashMap">
  		insert into tbl_like (fk_userid, parent_code, like_division_r) values(#{userid}, #{lodging_code}, 'A')
  	</insert>
+ 	
+ 	
+ 	
+ 	<insert id="insertLodgingSchedule" parameterType="HashMap">
+ 		insert into tbl_calendar_schedule(scheduleno, startdate, enddate, subject, color, place, content, fk_smcatgono, fk_lgcatgono, fk_userid ,schedule_divison ,parent_code) 
+    	values(seq_scheduleno.nextval, to_date(#{check_in}, 'yyyy-mm-dd hh24:mi:ss'), to_date(#{check_out}, 'yyyy-mm-dd hh24:mi:ss'), 
+    		  #{lodging_name}, '#ffcc80', #{lodging_address}, #{room_name}, 1, 1, #{userid} , 'A',#{lodging_code} )
+ 	</insert>
+ 	
 </mapper>
