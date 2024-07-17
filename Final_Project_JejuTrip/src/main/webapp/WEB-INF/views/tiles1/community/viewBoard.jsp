@@ -35,6 +35,10 @@
 		padding: 5% 2%; 
 	}
 	
+	button#fileDownload:hover {
+		color: #ff5000 !important;
+	}
+	
 	div#cmtInfoBtn {
 		cursor: pointer;
 	}
@@ -187,6 +191,20 @@
 	} // end of function goView(seq) -------------------
 	
 	
+	// === 첨부파일 다운로드 받기 ===
+	function goFileDownload(seq, category) {
+		
+		if(${empty sessionScope.loginuser && empty sessionScope.loginCompanyuser}) {
+			alert("로그인 후 다운로드가 가능합니다.");
+			return;
+			
+		} else {
+			location.href = "<%=ctxPath%>/fileDownload.trip?seq=" + seq + "&category=" + category;
+		}
+		
+	}
+	
+	
 	// === 댓글 쓰기 ===
 	function goAddComment() {
 		
@@ -336,7 +354,7 @@
 					<span id="category">
 						<c:if test="${requestScope.boardvo.category == 1}">자유게시판</c:if>
 						<c:if test="${requestScope.boardvo.category == 2}">숙박</c:if>
-						<c:if test="${requestScope.boardvo.category == 3}">관광지, 체험</c:if>
+						<c:if test="${requestScope.boardvo.category == 3}">관광지&nbsp;/&nbsp;체험</c:if>
 						<c:if test="${requestScope.boardvo.category == 4}">맛집</c:if>
 						<c:if test="${requestScope.boardvo.category == 5}">구인</c:if>
 					</span>
@@ -371,6 +389,20 @@
 			<div id="content">
 				${requestScope.boardvo.content}
 			</div>
+			
+			<c:if test="${not empty requestScope.boardvo.fileName}">
+				<div id="attachFile" class="d-flex justify-content-between align-items-center" style="border: solid 1px #ccc; margin-bottom: 5%; padding: 1.5%;">
+					<div>
+						<i class="fa-regular fa-folder" style="font-size: 1.2rem;"></i>
+						<span class="ml-2">${requestScope.boardvo.orgFilename}</span>
+					</div>
+					<div>
+						<button type="button" id="fileDownload" class="btn" onclick="goFileDownload('${requestScope.boardvo.seq}', '${requestScope.boardvo.category}')" style="padding: 0; color: #808080;">
+							<i class="fa-solid fa-download" style="font-size: 1.2rem;"></i>
+						</button>
+					</div>
+				</div>
+			</c:if>
 			
 			<hr>
 		</div>
@@ -430,6 +462,15 @@
 		<div class="text-center">
 			<c:if test="${requestScope.boardvo.category == 1}">
 				<button type="button" class="btn btn-success mr-3" onclick="javascript:location.href='<%=ctxPath%>/community/freeBoard.trip'">전체 목록</button>
+			</c:if>
+			<c:if test="${requestScope.boardvo.category == 2}">
+				<button type="button" class="btn btn-success mr-3" onclick="javascript:location.href='<%=ctxPath%>/community/lodgingBoard.trip'">전체 목록</button>
+			</c:if>
+			<c:if test="${requestScope.boardvo.category == 3}">
+				<button type="button" class="btn btn-success mr-3" onclick="javascript:location.href='<%=ctxPath%>/community/playBoard.trip'">전체 목록</button>
+			</c:if>
+			<c:if test="${requestScope.boardvo.category == 4}">
+				<button type="button" class="btn btn-success mr-3" onclick="javascript:location.href='<%=ctxPath%>/community/foodBoard.trip'">전체 목록</button>
 			</c:if>
 			<button type="button" class="btn btn-secondary" onclick="javascript:location.href='<%=ctxPath%>${requestScope.goBackURL}'">검색된 결과 목록</button>
 		</div>

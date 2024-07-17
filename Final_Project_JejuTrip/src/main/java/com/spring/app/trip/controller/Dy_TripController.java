@@ -1780,7 +1780,71 @@ public class Dy_TripController {
 	}
 	
 	
-	
+	@GetMapping("fileDownload.trip")
+	public void requiredLogin_fileDownload(HttpServletRequest request, HttpServletResponse response,
+										   @RequestParam(defaultValue="") String seq,
+										   @RequestParam(defaultValue="") String category) {
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("seq", seq);
+		paraMap.put("category", category);
+		paraMap.put("searchType", "");
+		paraMap.put("searchWord", "");
+		
+		// **** 웹브라우저에 출력하기 시작 ****
+		response.setContentType("text/html; charset=UTF-8"); // 한글 깨짐 방지
+		
+		PrintWriter out = null;
+		
+		try {
+			Integer.parseInt(seq);
+			
+			BoardVO boardvo = service.getViewBoard_no_increase_readCount(paraMap);
+			
+			if(boardvo == null || (boardvo != null && boardvo.getFileName() == null)) {
+				// 시퀀스에 해당하는 글이 없거나, 첨부파일이 없는 글일 경우
+				
+				out = response.getWriter();
+				
+				out.println("<script type='text/javascript'>alert('글번호가 존재하지 않거나, 첨부파일이 없는 글이므로 다운로드 할 수 없습니다.'); history.back();</script>");
+				return;
+				
+			} else {
+				// 정상적으로 다운로드가 가능한 경우
+				
+				String fileName = boardvo.getFileName();
+				String orgFilename = boardvo.getOrgFilename();
+
+				// 첨부파일이 저장되어 있는 WAS 디스크 경로를 알아야 다운로드 할 수 있다.
+				HttpSession session = request.getSession();
+				String root = session.getServletContext().getRealPath("/");
+				
+				String path = root + "resources" + File.separator + "images" + File.separator + "community";
+				
+				// === 파일 다운로드 하기 ===
+				boolean flag = false; // 파일 다운로드 성공 여부를 알려주는 용도
+				flag = fileManager.doFileDownload(fileName, orgFilename, path, response);
+				
+				if(!flag) {
+					// 다운로드가 실패한 경우
+					
+					out = response.getWriter();
+					out.println("<script type='text/javascript'>alert('파일 다운로드가 실패되었습니다.'); history.back();</script>");
+				}
+			}
+			
+		} catch (NumberFormatException | IOException e) {
+			
+			try {
+				out = response.getWriter();
+				out.println("<script type='text/javascript'>alert('파일을 다운로드 할 수 없습니다.'); history.back();</script>");
+				
+			} catch (IOException e2) {
+				e2.printStackTrace();
+			}
+		}
+		
+	}
 	
 	
 }
