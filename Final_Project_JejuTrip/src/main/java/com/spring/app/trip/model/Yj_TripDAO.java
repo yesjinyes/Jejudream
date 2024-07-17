@@ -26,6 +26,25 @@ public interface Yj_TripDAO {
 	// == 맛집 상세 추가 이미지 == //
 	List<Map<String, String>> viewfoodaddImg(Map<String, String> paraMap);
 
+	//////////////////////////////////////////////////////////////////////////
+	
+	// == 맛집 리뷰 쓰기 == //
+	int addFoodstoreReview(ReviewVO reviewvo);
+
+	// == 작성한 리뷰 보이기 == //
+	List<ReviewVO> getReviewList(Map<String, String> paraMap);
+
+	// === 리뷰 수정하기 === //
+	int updateReview(Map<String, String> paraMap);
+
+	// == 리뷰 삭제하기 == //
+	int deleteReview(String review_code);
+
+	// == 리뷰 총 개수 구하기 == //
+	int getReviewTotalCount(String parent_code);
+
+	//////////////////////////////////////////////////////////////////////////
+	
 	// == 좋아요 총 개수 알아오기 == //
 	int countFoodlike(Map<String, String> paraMap);
 
@@ -38,25 +57,8 @@ public interface Yj_TripDAO {
 	// == 좋아요 취소 == //
 	void deleteLike(Map<String, String> paraMap);
 
-	
-	//////////////////////////////////////////////////////////////////////////
-	
-	// == 맛집 리뷰 쓰기 == //
-	int addFoodstoreReview(ReviewVO reviewvo);
-
-	// == 작성한 리뷰 보이기 == //
-	List<ReviewVO> getReviewList(String parent_code);
-
-	// === 리뷰 수정하기 === //
-	int updateReview(Map<String, String> paraMap);
-
-	// == 리뷰 삭제하기 == //
-	int deleteReview(String review_code);
-
-	// == 리뷰 총 개수 구하기 == //
-	int getReviewTotalCount(String parent_code);
-
-	
+	// == 글 조회수 1 증가시키기 == //
+	int increase_readCount(Map<String, String> paraMap);
 
 	
 

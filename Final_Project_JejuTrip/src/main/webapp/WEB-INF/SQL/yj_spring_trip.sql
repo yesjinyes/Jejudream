@@ -288,6 +288,21 @@ commit;
 desc tbl_food_store;
 
 
+-- 리뷰 페이징
+SELECT review_code, fk_userid, review_content, registerday
+FROM
+(
+    select row_number() over(order by review_code desc) As rno
+          , review_code, fk_userid, review_content
+          , to_char(registerday, 'yyyy-mm-dd') AS registerday
+    from tbl_review
+    where parent_code = 5316
+    order by review_code desc
+)V
+WHERE V.rno BETWEEN #{startRno} and #{endRno};
+
+
+
 -------------------------------------------------------------------------
 -- 맛집 조회수
 ALTER TABLE tbl_food_store ADD readcount varchar2(1000) default 0;
@@ -305,6 +320,7 @@ from tbl_food_store;
 
 commit;
 
+-----------------------------------------------------
 select * from tbl_review;
 
 select * from tbl_food_store;
@@ -314,12 +330,16 @@ select * from tbl_like;
 select * from user_tables;
 
 select * from tbl_board;
-
-
+------------------------------------------------------
 
 select count(*)
 from tbl_review
-where parent_code = 5316;
+where parent_code = 5323;
 
+select * from tbl_food_store;
 
+update tbl_food_store set readCount = readCount + 1
+where food_store_code = 5316
 
+rollback;
+commit;

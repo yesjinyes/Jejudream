@@ -21,15 +21,12 @@ public interface Yj_TripService {
 	
 	// == 맛집 상세 조회하기 (조회수 증가 X) == //
 	FoodstoreVO viewfoodstoreDetail(Map<String, String> paraMap);
+	
+	// == 맛집 상세 조회하기 (조회수 증가 O) == //
+	FoodstoreVO viewfoodstoreDetail_withReadCount(Map<String, String> paraMap);
 
 	// == 맛집 상세 추가 이미지 == //
 	List<Map<String, String>> viewfoodaddImg(Map<String, String> paraMap);
-
-	// == 좋아요 총 개수 알아오기 == //
-	int countFoodlike(Map<String, String> paraMap);
-	
-	// == 좋아요 여부 알아오기 == //
-	List<FoodstoreVO> checkLike(Map<String, String> paraMap);
 	
 	/////////////////////////////////////////////////////////////////////////////
 	
@@ -37,7 +34,7 @@ public interface Yj_TripService {
 	int addFoodstoreReview(ReviewVO reviewvo);
 
 	// == 작성한 리뷰 보이기 == //
-	List<ReviewVO> getReviewList(String parent_code);
+	List<ReviewVO> getReviewList(Map<String, String> paraMap);
 
 	// == 리뷰 수정하기 == //
 	int updateReview(Map<String, String> paraMap);
@@ -48,11 +45,21 @@ public interface Yj_TripService {
 	// == 리뷰 총 개수 구하기 == //
 	int getReviewTotalCount(String parent_code);
 
+	/////////////////////////////////////////////////////////////////////////////
+	
+	// == 좋아요 총 개수 알아오기 == //
+	int countFoodlike(Map<String, String> paraMap);
+	
+	// == 좋아요 여부 알아오기 == //
+	List<FoodstoreVO> checkLike(Map<String, String> paraMap);
+	
 	// == 좋아요 추가 == //
 	int addLike(Map<String, String> paraMap);
 
 	// == 좋아요 취소 == //
 	void deleteLike(Map<String, String> paraMap);
+
+	
 
 	
 

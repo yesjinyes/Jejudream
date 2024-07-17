@@ -189,10 +189,6 @@ textarea {
 		
 		goViewReview(1); // 리뷰 리스트 띄우기
 		
-		
-		
-		
-		
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		// == 리뷰 input 엔터 키 == //
@@ -239,7 +235,6 @@ textarea {
 			    }); 
 			}
 			
-			
 			else if($(e.target).text() == "완료") {
 				// alert("리뷰시퀀스 들어올 자리 : "+$(e.target).parent().parent().children("td:nth-child(1)").text());
 				// alert($(e.target).parent().parent().children("td:nth-child(2)").children("input").val()); // 수정 후 리뷰 내용
@@ -257,9 +252,9 @@ textarea {
 						
 						//$(e.target).parent().parent().children("td:nth-child(2)").html(content);
 						
-						//const currentShowPageNo = $(e.target).parent().parent().find("input.currentShowPageNo").val(); 
+						const currentShowPageNo = $(e.target).parent().parent().find("input.currentShowPageNo").val(); 
 						
-						goViewReview(); // 작성한 리뷰 불러오기
+						goViewReview(currentShowPageNo); // 작성한 리뷰 불러오기
 						
 						$(e.target).text("수정").removeClass("btn-info").addClass("btn-secondary");
 						$(e.target).next().next().text("삭제").removeClass("btn-danger").addClass("btn-secondary");
@@ -302,7 +297,7 @@ textarea {
 						dataType:"json",
 						success:function(json){
 							// console.log("리뷰삭제 =>" + JSON.stringify(json))
-							goViewReview();
+							goViewReview(1);
 						},
 						error: function(request, status, error){
 							alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
@@ -318,8 +313,6 @@ textarea {
 		// == 좋아요 기능 == //
 		$("button#btnLike").click(function() {
 			// alert("좋아요 버튼 클릭");
-			
-			
 			
 			if(${empty sessionScope.loginuser}) {
 				alert("좋아요는 로그인 후 가능합니다.");
@@ -356,9 +349,9 @@ textarea {
 			} 
 		});// end of $("button#btnLike").click(function() {})----------------------------
 		
-		////////////////////////////////////////////////////////////////////////////////////////////////
-		
-		// == 일정추가 modal 달력 띄우기 == //
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+ 		// == 일정추가 modal 달력 띄우기 == //
 		const today = new Date();
 	    const year = today.getFullYear();
 	    const month = String(today.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
@@ -366,7 +359,7 @@ textarea {
 	    
 	    
 	    setDatePickers();
-	 // **** 동기적으로 실행하기 위해서 document.ready 안에다가 함수선언했음  ******    
+	 	// **** 동기적으로 실행하기 위해서 document.ready 안에다가 함수선언했음  ******    
 	
 	    // === 전체 datepicker 옵션 일괄 설정하기 ===  
 	    //     한번의 설정으로 $("input#fromDate"), $('input#toDate')의 옵션을 모두 설정할 수 있다.
@@ -405,9 +398,8 @@ textarea {
 		    $('input#toDate').datepicker('option', 'minDate', '+1D');
 		    
 		} // end of function setDatePickers() {}
-	 	    
 	    
-	    
+		
 	    let fromDate = $("input:text[id='fromDate']").val();
 	    let toDate = $("input#toDate").val();
 	    
@@ -427,7 +419,6 @@ textarea {
 	        // alert('toDate > ' + toDate);
 	    }, 100); // 100ms 딜레이를 주어 datepicker 설정이 완료되도록 함
 	    
-	
 	    
 	    $("input:text[name='datepicker']").keyup( (e)=>{
 	        // input태그가 text 타입인데 키보드로 문자를 입력하려고할때 막아야한다 마우스클릭으로만 가능하게끔
@@ -464,25 +455,20 @@ textarea {
 	            frm.check_out.value = $("input#toDate").val();
 	        }
 	    	else {
-	        	
 	        	if (id === "fromDate") {
-	        	      
 	                frm.check_in.value = d1;
-	                
 	            } else if (id === "toDate") {
-	            
 	                frm.check_out.value = d2;
-	                
 	            }
-	        	
 	        }
 	    	
 	    	fetchFilteredData(currentShowPageNo, currentSort);
 	    	
 	    }); // end of  $("input:text[name='datepicker']").change( (e)=>{})
-		
+		 
 		
 	});// end of $(document).ready(function() {})-----------------------------
+	
 	
 	//▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒//
 	// Function declaration
@@ -491,10 +477,8 @@ textarea {
 	function goLikeDislikeCount(){
 		$.ajax({
 	        url: "<%= ctxPath %>/countFoodlike.trip",
-	        data: {
-	            "parent_code": "${requestScope.foodstorevo.food_store_code}",
-	            "fk_userid": "${sessionScope.loginuser.userid}"
-	        },
+	        data: {"parent_code": "${requestScope.foodstorevo.food_store_code}",
+	            "fk_userid": "${sessionScope.loginuser.userid}"},
 	        dataType: "json",
 	        success: function(json) {
 	            $("p#likeCount").html(json.countLike);
@@ -512,7 +496,6 @@ textarea {
 	    });// end of $.ajax---------------------------------------
 		
 	}//end of function goLikeDislikeCount()---------------------------------------
-
 	
 	
 	// == 내 일정에 추가 == //
@@ -524,7 +507,8 @@ textarea {
 		
 	}// end of function addSchedule()-----------------------------------------
 	
-
+	//////////////////////////////////////////// === 리뷰 시작 === //////////////////////////////////////////////////
+	
 	// == 맛집 리뷰 작성하기 == //
 	function goAddReview() {
 		
@@ -543,19 +527,18 @@ textarea {
 	        type:"post",
 	        dataType:"json",
 	        success:function(json){
-	        	 console.log("리뷰 insert 확인 : ", JSON.stringify(json));
+	        	// console.log("리뷰 insert 확인 : ", JSON.stringify(json));
 	        	// {"food_store_code":"5316","fk_userid":"yy6037","n":1}
 	        	
 	        	if(json.n == 1) {
 	        		alert("리뷰가 등록되었습니다.");
-	        		goViewReview();
+	        		goViewReview(1);
 	        	}
 	        	else {
 	        		alert("리뷰 작성 실패");
 	        	}
 	        	
 	        	$("textarea[name='review_content']").val("");
-	        	
 	        },
 	        error: function(request, status, error){
 				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
@@ -611,12 +594,12 @@ textarea {
 			    	   			  </tr>`;
 			    }
 				
-				$("tbody#reviewDisplay").html(v_html);
-				$("p#reviewCount").html(count_html);
+				$("tbody#reviewDisplay").html(v_html); // 작성된 리뷰 자리에 넣어주기
+				$("p#reviewCount").html(count_html); // 리뷰 총 개수 넣어주기
 				
-				//const totalPage = Math.ceil( json[0].totalCount / json[0].sizePerPage);
+				const totalPage = Math.ceil( json[0].totalCount / json[0].sizePerPage);
 				
-				//makeReviewPageBar(currentShowPageNo, totalPage); // 리뷰 페이지바 함수 호출
+				makeReviewPageBar(currentShowPageNo, totalPage); // 리뷰 페이지바 함수 호출
 				
 			},
 			error: function(request, status, error){
@@ -673,6 +656,7 @@ textarea {
 		
 	}// end of function makeReviewPageBar(currentShowPageNo)------------------ */
 
+	//////////////////////////////////////////// === 리뷰 끝 === ////////////////////////////////////////////////////
 	
 	// == 맛집 상세 페이지에서 로그인 페이지로 이동 (리뷰 작성을 위한 것) == //
 	function goLogin() {
@@ -772,7 +756,7 @@ textarea {
 							</div>
 							<p class="icon-title">조회수</p>
 						</button>
-						<p class="count" id="readCount">128</p>
+						<p class="count" id="readCount">${requestScope.foodstorevo.readCount}</p>
 					</li>
 					<li class="list-item">
 						<button type="button" class="iconbtn" id="btnSchedule" onclick="addSchedule()">
@@ -805,7 +789,7 @@ textarea {
 			                        
 			                        <label for="calendar_content" class="col-form-label">일정 내용</label>
 			                        <input type="text" class="form-control mb-3" id="calendar_content" name="calendar_content">
-			                        
+			                       <%--  
 			                        <div class="fromDate">
 							            <label>날짜</label>
 							            <div>
@@ -816,7 +800,7 @@ textarea {
 							                </div>
 							            </div>
 							        </div>
-							      <%--   <div class="toDate">
+							        <div class="toDate">
 							            <label>체크아웃</label>
 							            <div>
 							                <div class="date-container">
@@ -826,9 +810,6 @@ textarea {
 							                </div>
 							            </div>
 							        </div> --%>
-					                  <!-- <input type="hidden" name="startdate"/>
-					                  <input type="hidden" name="enddate"/>
-					                  <input type="hidden" name="schedule_seq"/> -->
 			                    </div>
 			                </div>
 			                <div class="modal-footer">
@@ -873,6 +854,7 @@ textarea {
 				
 			</div>
 		</div><!-- 우측 div 끝 -->
+		
 	</div> <!-- row 끝 -->
 	
 	<!-- //////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
@@ -880,7 +862,7 @@ textarea {
 	<!-- 맛집 리뷰 -->
 	<div class="border rounded" id="reviewList">
 
-		<!-- 리뷰쓰기 폼 추가 -->
+		<!-- 리뷰쓰기 -->
 		<c:if test="${empty sessionScope.loginuser}">
 			<h4 class="mb-5" style="color: orange;">리뷰를 작성하려면 먼저 로그인을 해주세요.
 				<button type="button" class="btn btn-secondary ml-4" onclick="goLogin()">로그인하기</button>
@@ -892,7 +874,7 @@ textarea {
            <form name="addReviewFrm" id="addReviewFrm">
                <table class="table" style="width: 100%;">
                     <tr style="height: 30px;">
-                       <!-- <th>리뷰 내용 </th> -->
+                       <!-- 리뷰 내용 -->
                        <td>
                           <textarea name="review_content" placeholder="리뷰 내용을 작성해 주세요."></textarea> 
                           <input type="text" style="display: none" />

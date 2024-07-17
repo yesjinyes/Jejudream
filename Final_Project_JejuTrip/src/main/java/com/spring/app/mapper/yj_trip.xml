@@ -92,7 +92,7 @@
 	<!-- 맛집 상세 조회하기 -->
 	<select id="viewfoodstoreDetail" parameterType="HashMap" resultType="com.spring.app.trip.domain.FoodstoreVO">
 		select food_store_code, local_status, food_name, food_category, food_content, food_address, food_businesshours, food_mobile
-			 , food_main_img, review_division
+			 , food_main_img, review_division, readcount
 		from tbl_food_store
 		<!-- 맛집 리스트에서 이동한 경우 -->
 		<if test="food_store_code != ''">
@@ -156,12 +156,18 @@
 	
 	
 	<!-- 작성한 리뷰 보이기 -->
-	<select id="getReviewList" parameterType="String" resultType="com.spring.app.trip.domain.ReviewVO">
-		select review_code, fk_userid, parent_code, review_content
-			 , to_char(registerday, 'yyyy-mm-dd') AS registerday
-		from tbl_review
-		where parent_code = #{parent_code}
-		order by review_code desc
+	<select id="getReviewList" parameterType="HashMap" resultType="com.spring.app.trip.domain.ReviewVO">
+		SELECT review_code, fk_userid, review_content, registerday
+		FROM
+		(
+		    select row_number() over(order by review_code desc) As rno
+		          , review_code, fk_userid, review_content
+		          , to_char(registerday, 'yyyy-mm-dd') AS registerday
+		    from tbl_review
+		    where parent_code = 5316
+		    order by review_code desc
+		)V
+		WHERE V.rno BETWEEN #{startRno} and #{endRno}
 	</select>
 
 	
@@ -213,5 +219,18 @@
 		from tbl_like
 		where fk_userid = #{fk_userid} and parent_code = #{parent_code}
 	</select>
+
+
+	<!-- 글 조회수 1 증가시키기  -->
+	<update id="increase_readCount" parameterType="HashMap">
+		update tbl_food_store set readCount = readCount + 1
+		<if test="food_store_code != ''">
+			where food_store_code = #{food_store_code}
+		</if>
+		<if test="food_store_code == ''">
+			where food_store_code = #{random_recommend_code}
+		</if>
+	</update>
+
 
 </mapper>

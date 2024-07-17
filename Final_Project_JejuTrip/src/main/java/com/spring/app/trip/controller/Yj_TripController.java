@@ -60,11 +60,11 @@ public class Yj_TripController {
 							    @RequestParam(defaultValue="") String orderValue_desc,
 							    @RequestParam(defaultValue="") String currentShowPageNo) {
 		
-		// System.out.println("currentShowPageNo 확인 !!" + currentShowPageNo);
-
-		// 조회수 처리
-		//service
+		List<FoodstoreVO> foodstoreList = null; // insert 된 맛집이 없을 경우 null
 		
+		// 조회수 처리
+		HttpSession session = request.getSession();
+		session.setAttribute("readCountPermission", "yes"); // session 에  "readCountPermission" 에 대한 값을 yes 라고 저장
 		
 		// 페이징 처리
 		int sizePerPage = 7; //한페이지당 7개의 맛집
@@ -124,7 +124,7 @@ public class Yj_TripController {
 	    int totalCount = service.getTotalCount(map);
 	    // System.out.println("totalCount => "+totalCount);
 	    
-		List<FoodstoreVO> foodstoreList = service.viewFoodstoreList(map); // 맛집 리스트(조회수 증가X)
+		foodstoreList = service.viewFoodstoreList(map); // 맛집 리스트(조회수 증가X)
 		//System.out.println("foodstoreList 길이 : " + foodstoreList.size());
 		
 		List<FoodstoreVO> randomRecommend = service.randomRecommend(map); // 맛집 랜덤 추천
@@ -187,48 +187,49 @@ public class Yj_TripController {
 	
 		String food_store_code = "";
 		
-/*		// redirect 되어서 넘어온 데이터가 있는지 꺼내어 와본다.
- 		Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);
- 		
- 		if(inputFlashMap != null) {
- 			// redirect 되어서 넘어온 데이터가 있는 경우
- 			@SuppressWarnings("unchecked")
-			Map<String, String> redirect_map = (Map<String, String>)inputFlashMap.get("redirect_map");
- 			food_store_code = redirect_map.get("food_store_code");
- 		}
- 		
- 		else { 
- 			// redirect 되어서 넘어온 데이터가 아닌 경우 (직접 해온 경우)
- 			food_store_code = request.getParameter("food_store_code");
- 			
- 			
- 		}
-		
- 		
- 		try {
- 			Integer.parseInt(food_store_code);
- 			
- 			
- 		}
-		
-*/		
-		
-		Map<String, String> paraMap = new HashMap<>();
-		
 		food_store_code = request.getParameter("food_store_code");
 		
 //		System.out.println("-------------------------------------------------------");
 //		System.out.println("## 확인용 food_store_code => "+ food_store_code);
 //		System.out.println("## 확인용 random_recommend_code => "+ random_recommend_code);
 		
-		paraMap.put("food_store_code", food_store_code); // 맛집 리스트에서 상세 페이지로 넘어가기
-		paraMap.put("random_recommend_code", random_recommend_code); // 맛집 추천에서 상세 페이지로 넘어가기
+//		paraMap.put("food_store_code", food_store_code); // 맛집 리스트에서 상세 페이지로 넘어가기
+//		paraMap.put("random_recommend_code", random_recommend_code); // 맛집 추천에서 상세 페이지로 넘어가기
 		
-		FoodstoreVO foodstorevo = service.viewfoodstoreDetail(paraMap); // 맛집 상세 페이지 띄우기
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
+		
+		String login_userid = null;
+		if(loginuser != null) { // 로그인 한 상태일 때
+			login_userid = loginuser.getUserid();
+		}
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("food_store_code", food_store_code);
+		paraMap.put("random_recommend_code", random_recommend_code);
+		paraMap.put("login_userid", login_userid);
+		
+		///////////////////////////////////////////////////////
+		
+		FoodstoreVO foodstorevo = null;
+		
+		if("yes".equals((String)session.getAttribute("readCountPermission"))) {
+			
+			foodstorevo = service.viewfoodstoreDetail_withReadCount(paraMap); // 맛집 상세 페이지 띄우기 (조회수 증가 O)
+			
+			session.removeAttribute("readCountPermission");
+		}
+		else {
+			foodstorevo = service.viewfoodstoreDetail(paraMap); // 맛집 상세 페이지 띄우기 (조회수 증가 X)
+			
+			if(foodstorevo == null) {
+				mav.setViewName("redirect:/foodstoreList.trip");
+				return mav;
+			}
+		}
 		
 //		String food_name =  foodstorevo.getFood_name();
 //		System.out.println("food_name 확인 =>" + food_name);
-		
 	
 		List<Map<String, String>> addimgList = service.viewfoodaddImg(paraMap); // 맛집 상세 추가 이미지
 		
@@ -390,14 +391,26 @@ public class Yj_TripController {
 	// == 작성한 리뷰 보이기 == //
 	@ResponseBody
 	@GetMapping(value="/foodstoreReviewList.trip", produces="text/plain;charset=UTF-8")
-	public String foodstoreReviewList(ReviewVO reviewvo, HttpServletRequest request) {
+	public String foodstoreReviewList(ReviewVO reviewvo, HttpServletRequest request,
+			 						 @RequestParam(defaultValue="") String parent_code,
+									 @RequestParam(defaultValue="") String currentShowPageNo) {
 		
-		String parent_code = request.getParameter("parent_code");
-		// System.out.println("parent_code 확인 =>" + parent_code);
+		if("".equals(currentShowPageNo)) {
+			currentShowPageNo = "1"; 
+		}
 		
-		List<ReviewVO> reviewList = service.getReviewList(parent_code);
+		int sizePerPage = 10;
+		int startRno = ((Integer.parseInt(currentShowPageNo) - 1) * sizePerPage) + 1; // 시작 행번호 
+        int endRno = startRno + sizePerPage - 1; // 끝 행번호
+        
+        Map<String, String> paraMap = new HashMap<>();
+        paraMap.put("parent_code", parent_code);
+        paraMap.put("startRno", String.valueOf(startRno));
+        paraMap.put("endRno", String.valueOf(endRno));
 		
-		int totalCount = service.getReviewTotalCount(parent_code); // 리뷰 총 개수 구하기
+		List<ReviewVO> reviewList = service.getReviewList(paraMap);
+		
+		int totalCount = service.getReviewTotalCount(parent_code); // 리뷰 총 개수 구하기 => 나옴
 		
 		JSONArray jsonArr = new JSONArray();
 		
@@ -410,6 +423,7 @@ public class Yj_TripController {
 				jsonObj.put("review_content", rvo.getReview_content());
 				jsonObj.put("registerday", rvo.getRegisterday());
 				
+				jsonObj.put("sizePerPage", sizePerPage);
 				jsonObj.put("totalCount", totalCount);
 				
 				jsonArr.put(jsonObj);
@@ -418,7 +432,6 @@ public class Yj_TripController {
 	
 		//System.out.println("~~~리뷰 List jsonArr 확인 => "+jsonArr.toString());
 		return jsonArr.toString();
-		
 	}
 	
 	
