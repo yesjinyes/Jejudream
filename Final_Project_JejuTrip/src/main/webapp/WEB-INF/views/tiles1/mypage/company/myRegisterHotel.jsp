@@ -204,6 +204,7 @@
 				      			<th>카테고리</th>
 				      			<th>주소</th>
 				      			<th>처리상태</th>
+				      			<th>객실등록</th>
 				    		</tr>
 				  		</thead>
 				  		<tbody>
