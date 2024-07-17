@@ -6,9 +6,9 @@
 <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 
 <script type="text/javascript">
-	let checkName = false;
+	let checkName = true;
 	let checkEmailId = false;
-	let checkMobile = false;
+	let checkMobile = true;
 	
 	$(function () {
 	
@@ -145,7 +145,7 @@
 	    $("select#email_dropdown").change(function(e) {
 	
 	        $.ajax({
-	            url: "userEmailDuplicateCheck.trip",
+	            url: "userEmailDuplicateCheckEdit.trip",
 	            type: "post",
 	            data: {"email":$(e.target).prev().prev().val() + "@" + $(e.target).val()},
 	            dataType: "json",
@@ -306,8 +306,8 @@
             </li>
             <li class="list">
                 <a href="<%= ctxPath%>/cash_points.trip">
-                    <span class="icon"><ion-icon name="wallet-outline"></ion-icon></span>
-                    <span class="title">캐시&포인트</span>
+                    <span class="icon"><ion-icon name="calendar-number-outline"></ion-icon></span>
+                    <span class="title">내 일정</span>
                 </a>
             </li>
             <li class="list">
@@ -328,8 +328,7 @@
 	
 	<div class="container">
 	    <div style="width: 80%; margin: 7% auto;">
-		    <h2 style="margin-top: 20%;" class="h2 font-weight-bold">회원가입</h2>
-		    <h5 class="h5">가입을 통해 다양한 서비스를 만나보세요!</h5>
+		    <h2 style="margin-top: 20%;" class="h2 font-weight-bold">회원정보수정</h2>
 		</div>
 		
 		<form name="editFrm">
@@ -357,16 +356,7 @@
 		        </div>
 		        <div class="info_block mt-3 d-flex">
 		            <input type="text" class="datepicker" name="birthday" id="birthday" placeholder="생년월일" value="${sessionScope.loginuser.birthday }">
-		            <div id="gender_block">
-		                <label id="label_male">남자
-		                    <input type="radio" checked="checked" name="gender" value="1">
-		                    <span class="checkmark"></span>
-		                </label>
-		                <label id="label_female">여자
-		                    <input type="radio" name="gender" value="2">
-		                    <span class="checkmark"></span>
-		                </label>
-		            </div>
+		            
 		        </div>
 		        <div class="info_block mt-3">
 		            <input type="text" name="mobile" id="mobile" placeholder="휴대폰 번호 입력 ('-' 제외 11자리 입력)" value="${sessionScope.loginuser.mobile }">
@@ -381,7 +371,7 @@
 		    </div>
 		
 		    <div style="text-align: center; margin-bottom: 13%;">
-		        <button type="button" class="btn" id="registerBtn" onclick="goRegister('<%=ctxPath%>')">가입하기</button>
+		        <button type="button" class="btn" id="registerBtn" onclick="goRegister('<%=ctxPath%>')">수정하기</button>
 		    </div>
 		
 		</form>

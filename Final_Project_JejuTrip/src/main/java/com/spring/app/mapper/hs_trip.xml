@@ -204,9 +204,9 @@ WHERE RNO between #{startRno} and #{endRno}
  
  
 <insert id="registerPlaySchedule_end" parameterType="HashMap">
-insert into tbl_calendar_schedule(scheduleno, startdate, enddate, subject, color, place, joinuser, content, fk_smcatgono, fk_lgcatgono, fk_userid ,schedule_divison) 
+insert into tbl_calendar_schedule(scheduleno, startdate, enddate, subject, color, place, joinuser, content, fk_smcatgono, fk_lgcatgono, fk_userid ,schedule_divison ,parent_code) 
     					   values(seq_scheduleno.nextval, to_date(#{startdate}, 'yyyymmddhh24miss'), to_date(#{enddate}, 'yyyymmddhh24miss'), 
-    					   		  #{subject}, #{color}, #{place}, #{joinuser}, #{content}, #{fk_smcatgono}, #{fk_lgcatgono}, #{fk_userid} , #{schedule_divison} )  
+    					   		  #{subject}, #{color}, #{place}, #{joinuser}, #{content}, #{fk_smcatgono}, #{fk_lgcatgono}, #{fk_userid} , #{schedule_divison},#{parent_code} )  
 
 </insert> 
  

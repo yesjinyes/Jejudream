@@ -222,17 +222,19 @@
 		<result property="remaining_qty" column="remaining_qty" javaType="String" />
 		<result property="min_person" column="min_person" javaType="String" />
 		<result property="max_person" column="max_person" javaType="String" />
+		<result property="check_inTime" column="check_intime" javaType="String" />
+		<result property="check_outTime" column="check_outtime" javaType="String" />
 		<result property="room_img" column="room_img" javaType="String" />
 	</resultMap>
 	<select id="getRoomDetail" resultMap="RoomDetail" parameterType="HashMap">
 	
 		SELECT A.lodging_code, A.room_detail_code, A.room_name, A.price,
                A.room_stock - NVL(B.RESERVATION_CNT, 0) AS remaining_qty,
-               A.min_person, A.max_person, A.room_img
+               A.min_person, A.max_person, A.room_img ,check_intime , check_outtime
 			 FROM 
 			 (
 			  SELECT L.lodging_code, D.room_name, D.room_stock, min_person, max_person, 
-                     price, room_detail_code, room_img   
+                     price, room_detail_code, room_img, check_in as check_intime, check_out as check_outtime   
 			  FROM tbl_lodging L JOIN tbl_room_detail D
 			  ON L.lodging_code = D.fk_lodging_code 
               where lodging_code = #{lodging_code}
@@ -393,4 +395,51 @@
 		delete from tbl_review where review_code = #{review_code}
 	</delete>
  
+ 
+ 	<insert id="addLodgingReview" parameterType="ReviewVO">
+ 		insert into tbl_review (review_code, fk_userid, parent_code, review_content, review_division_r)
+ 		values(seq_review.nextval , #{fk_userid}, #{parent_code}, #{review_content}, #{review_division_R})
+ 	</insert>
+ 	
+ 	<select id="getRandomFood" parameterType="String" resultType="FoodstoreVO">
+ 		select food_store_code, local_status, food_name, food_content, food_main_img
+		from (
+		    select food_store_code, local_status, food_name, food_content, food_main_img
+		    from tbl_food_store
+               where local_status = #{local_status}
+		    order by DBMS_RANDOM.RANDOM
+		)
+        where rownum =1
+ 	
+ 	</select>
+ 	
+ 	
+ 	<select id="getRandomPlay" parameterType="String" resultType="PlayVO">
+ 		select play_code, local_status, play_name, play_content, play_main_img
+		from (
+		    select play_code, local_status, play_name, play_content, play_main_img
+		    from tbl_play
+               where local_status = #{local_status}
+		    order by DBMS_RANDOM.RANDOM
+		)
+           where rownum =1   
+ 	
+ 	</select>
+ 	
+ 	
+ 	<select id="getLodgingLike" parameterType="HashMap" resultType="int">
+ 		select count(*) from tbl_like where parent_code = #{lodging_code} and fk_userid = #{userid}
+ 	</select>
+ 	
+ 	
+ 	
+ 	<delete id="lodgingCancelAddLike" parameterType="HashMap">
+ 		delete from tbl_like where parent_code = #{lodging_code} and fk_userid = #{userid}	
+ 	</delete>
+ 
+ 
+ 
+ 	<insert id="lodgingAddLike" parameterType="HashMap">
+ 		insert into tbl_like (fk_userid, parent_code, like_division_r) values(#{userid}, #{lodging_code}, 'A')
+ 	</insert>
 </mapper>

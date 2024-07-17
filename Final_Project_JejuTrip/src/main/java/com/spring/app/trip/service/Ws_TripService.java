@@ -64,6 +64,8 @@ public interface Ws_TripService {
 	int getTotalUserReservationCount(Map<String, String> paraMap);// tbl_reservation에서 자기 자신의 모든 예약정보를 카운트한다.
 	String get_user_email(String reservation_code);// 회원의 이메일을 읽어온다.
 	Map<String, String> get_email_map(String reservation_code);// 바우처에 입력할 정보를 가져오기 위해 예약정보등을 가져온다.
+	int update_member_info(MemberVO membervo);// 입력한 값으로 회원 정보를 수정한다.
+	boolean userEmailDuplicateCheckEdit(Map<String, String> paraMap);// 로그인한 유저 자기자신의 이메일을 제외한 다른 사람의 이메일중 중복값이 있는 지 알아오기.
 	
 
 }

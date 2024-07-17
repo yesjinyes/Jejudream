@@ -9,7 +9,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
+import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.LodgingVO;
+import com.spring.app.trip.domain.PlayVO;
+import com.spring.app.trip.domain.ReviewVO;
 
 
 @Component
@@ -189,9 +192,71 @@ public class Js_TripDAO_imple implements Js_TripDAO {
 		
 	} // end of public int deleteLodgingComment(String review_code) {
 
+
+	
+	// 숙소 리뷰 작성하기
+	@Override
+	public int addLodgingReview(ReviewVO rvo) {
+		
+		int n = sqlsession.insert("js_trip.addLodgingReview", rvo);
+		
+		return n;
+		
+	} // end of public int addLodgingReview(ReviewVO rvo) {
+
 	
 	
-	
+	// 같은 지역구분 맛집 랜덤추천해주기
+	@Override
+	public FoodstoreVO getRandomFood(String local_status) {
+		
+		FoodstoreVO fvo = sqlsession.selectOne("js_trip.getRandomFood", local_status);
+		
+		return fvo;
+		
+	} // end of public FoodstoreVO getRandomFood(String local_status) {
+
+
+	// 같은 지역구분 즐길거리 랜덤추천해주기
+	@Override
+	public PlayVO getRandomPlay(String local_status) {
+		
+		PlayVO pvo = sqlsession.selectOne("js_trip.getRandomPlay", local_status);
+		
+		return pvo;
+		
+	} // end of public PlayVO getRandomPlay(String local_status) {
+
+
+	// 한 숙소에 대해 좋아요를 눌렀는지 안눌렀는지 
+	@Override
+	public int getLodgingLike(Map<String, String> chkMap) {
+		
+		int n = sqlsession.selectOne("js_trip.getLodgingLike", chkMap);
+		
+		return n;
+		
+	} // end of public int getLodgingLike(Map<String, String> chkMap) {
+
+
+	// 한 숙소에 대한 좋아요 취소하기
+	@Override
+	public int lodgingCancelAddLike(Map<String, String> paraMap) {
+		
+		int n = sqlsession.delete("js_trip.lodgingCancelAddLike", paraMap);
+		
+		return n;
+	} // end of public int lodgingCancelAddLike(Map<String, String> paraMap) { 
+
+
+	// 한 숙소에 대한 좋아요 추가하기
+	@Override
+	public int lodgingAddLike(Map<String, String> paraMap) {
+
+		int n = sqlsession.insert("js_trip.lodgingAddLike", paraMap);
+		
+		return n;
+	} // end of public int lodgingAddLike(Map<String, String> paraMap) { 
 	
 	
 	

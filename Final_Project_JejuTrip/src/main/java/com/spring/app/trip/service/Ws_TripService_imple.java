@@ -467,6 +467,42 @@ public class Ws_TripService_imple implements Ws_TripService {
 		return email_map;
 	}
 	
+	// 입력한 값으로 회원 정보를 수정한다.
+	@Override
+	public int update_member_info(MemberVO membervo) {
+		int n = 0;
+		try {
+			membervo.setEmail(aES256.encrypt(membervo.getEmail()));
+			membervo.setMobile(aES256.encrypt(membervo.getMobile()));
+			n = dao.update_member_info(membervo);
+		} catch (UnsupportedEncodingException | GeneralSecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return n;
+	}
+	
+	// 로그인한 유저 자기자신의 이메일을 제외한 다른 사람의 이메일중 중복값이 있는 지 알아오기.
+	@Override
+	public boolean userEmailDuplicateCheckEdit(Map<String, String> paraMap) {
+		boolean isExist = false;
+		
+		try {
+			paraMap.put("email", aES256.encrypt(paraMap.get("email")));
+			
+			String exist_email = dao.userEmailDuplicateCheckEdit(paraMap);
+			
+			if(exist_email != null) {
+				isExist = true;
+			}
+			
+		} catch (UnsupportedEncodingException | GeneralSecurityException e) {
+			e.printStackTrace();
+		}
+		
+		return isExist;
+	}
+	
 	
 	
 
