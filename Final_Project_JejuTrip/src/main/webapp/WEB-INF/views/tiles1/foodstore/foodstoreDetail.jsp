@@ -357,7 +357,6 @@ textarea {
 	    const month = String(today.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
 	    const day = String(today.getDate()).padStart(2, '0');
 	    
-	    
 	    setDatePickers();
 	 	// **** 동기적으로 실행하기 위해서 document.ready 안에다가 함수선언했음  ******    
 	
@@ -380,93 +379,40 @@ textarea {
 		        ,monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'] //달력의 월 부분 Tooltip 텍스트
 		        ,dayNamesMin: ['일','월','화','수','목','금','토'] //달력의 요일 부분 텍스트
 		        ,dayNames: ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'] //달력의 요일 부분 Tooltip 텍스트
-		      ,minDate: "0D" //최소 선택일자(-1D:하루전, -1M:한달전, -1Y:일년전)
-		      ,maxDate: "+1Y" //최대 선택일자(+1D:하루후, -1M:한달후, -1Y:일년후)                    
+		      	,minDate: "0D" //최소 선택일자(-1D:하루전, -1M:한달전, -1Y:일년전)
+		      	,maxDate: "+1Y" //최대 선택일자(+1D:하루후, -1M:한달후, -1Y:일년후)                    
 		    });
 		 
 		    // input을 datepicker로 선언
-		    $("input#fromDate").datepicker();                    
-		    $("input#toDate").datepicker();
-		        
+		    $("input#scheduleDate").datepicker();                    
 		        
 		    // From의 초기값을 오늘 날짜로 설정
-		    $('input#fromDate').datepicker('setDate', 'today'); //(-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, +1M:한달후, +1Y:일년후)
+		    $('input#scheduleDate').datepicker('setDate', 'today'); //(-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, +1M:한달후, +1Y:일년후)
 		    
-		    // To의 초기값을 1일후로 설정
-		    $('input#toDate').datepicker('setDate', '+1D'); //(-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, +1M:한달후, +1Y:일년후)
-		    
-		    $('input#toDate').datepicker('option', 'minDate', '+1D');
-		    
-		} // end of function setDatePickers() {}
+		} // end of function setDatePickers() {}-----------------------
+
 	    
-		
-	    let fromDate = $("input:text[id='fromDate']").val();
-	    let toDate = $("input#toDate").val();
-	    
-	 // setTimeout을 사용하여 datepicker 설정 후 값을 가져오도록 함
-	    setTimeout(function() {
-	    	fromDate = $("input:text[id='fromDate']").val();
-	    	toDate = $("input#toDate").val();
-	        
-	    	const frm = document.filterForm;
-	    	
-	    	frm.check_in.value = fromDate;
-	    	frm.check_out.value = toDate;
-	    	
-	    	fetchFilteredData(currentShowPageNo, currentSort);
-	    	
-	        // alert('fromDate > ' + fromDate);
-	        // alert('toDate > ' + toDate);
-	    }, 100); // 100ms 딜레이를 주어 datepicker 설정이 완료되도록 함
-	    
-	    
-	    $("input:text[name='datepicker']").keyup( (e)=>{
-	        // input태그가 text 타입인데 키보드로 문자를 입력하려고할때 막아야한다 마우스클릭으로만 가능하게끔
-	            e.preventDefault(); // 입력막기
-	        	alert("마우스 클릭으로만 날짜를 입력하세요!"); // 에러메시지 표현
-	            
-	            $("input#fromDate").val(fromDate);
-	            $("input#toDate").val(toDate);
-	
-	    }); // end of $('input#datepicker').keyup( (e)=>{})
-	    
-	    
-	    $("input:text[name='datepicker']").change( (e)=>{
-	    	
-	    	const id = $(e.target).attr('id');
-	    	// alert(id);
-	    	
-	    	let d1 = $("input#fromDate").val();
-	    	let d2 = $("input#toDate").val();
-	    	
-	    	const frm = document.filterForm;
-	    	
-	    	if (d1 >= d2) {
-	    	    
-	    		let date1 = new Date(d1);
-	            
-	    		date1.setDate(date1.getDate() + 1); // d1의 다음 날로 설정
-	            
-	    		d2 = date1.toISOString().split('T')[0]; // 'yyyy-mm-dd' 형식으로 변환
-	
-	            $("input#toDate").val(d2);
-	    		
-	            frm.check_in.value = $("input#fromDate").val();
-	            frm.check_out.value = $("input#toDate").val();
-	        }
+	    // == 로그인 하지 않고 일정 추가 버튼 시 로그인 페이지로 이동 , 로그인 시에는 모달 띄우기 == //
+	    $("button#btnSchedule").click(function() {
+	    	if(${empty sessionScope.loginuser}) {
+	    		alert("일정 추가 기능은 로그인 후 사용 가능합니다.");
+	    	 	location.href = "login.trip";
+	    	}
 	    	else {
-	        	if (id === "fromDate") {
-	                frm.check_in.value = d1;
-	            } else if (id === "toDate") {
-	                frm.check_out.value = d2;
-	            }
-	        }
+	    		viewScheduleModal(); // 일정 모달 띄우기
+	    	}
 	    	
-	    	fetchFilteredData(currentShowPageNo, currentSort);
-	    	
-	    }); // end of  $("input:text[name='datepicker']").change( (e)=>{})
-		 
+	    });// end of $("button#btnSchedule").click(function() {})----------------
+	    
 		
+	    // == 일정 취소버튼 클릭 시 내용 reset == //
+	    $("button#sprintSettingModalClose").click(function() {
+	    	$("input:text[id='scheduleTitle']").val("");
+	    	$("input:text[id='scheduleContent']").val("");
+	    	$("input#scheduleDate").datepicker('setDate', 'today');
+	    });
+	    
+	    
 	});// end of $(document).ready(function() {})-----------------------------
 	
 	
@@ -498,14 +444,42 @@ textarea {
 	}//end of function goLikeDislikeCount()---------------------------------------
 	
 	
-	// == 내 일정에 추가 == //
-	function addSchedule() {
+	// == 일정 추가 모달 띄우기 == //
+	function viewScheduleModal() {
+		
 		$("#calendarModal").modal("show");
 		
-		
-		
-		
 	}// end of function addSchedule()-----------------------------------------
+	
+	
+	// == 일정에 추가하기 == //
+	function addSchedule() {
+		
+		// 일정 제목
+		const scheduleTitle = $("input:text[id='scheduleTitle']").val();
+		// console.log("~~scheduleTitle 확인 => " + scheduleTitle);
+		
+		// 일정 내용
+		const scheduleContent = $("input:text[id='scheduleContent']").val();
+		// console.log("~~scheduleContent 확인 => " + scheduleContent);
+		
+		// 일정 날짜
+		const scheduleDate = $("input:text[id='scheduleDate']").val();
+		// console.log("~~scheduleDate 확인 => " + scheduleDate);
+	
+		
+		const frm = document.scheduleFrm;
+		
+		frm.scheduleTitle.value = scheduleTitle;
+		frm.scheduleContent.value = scheduleContent;
+		frm.scheduleDate.value = scheduleDate;
+		
+		frm.action = "foodstoreDetail.trip";
+		// frm.submit();
+		
+		
+	}
+	
 	
 	//////////////////////////////////////////// === 리뷰 시작 === //////////////////////////////////////////////////
 	
@@ -649,7 +623,7 @@ textarea {
 		
 		pageBar_html += "</ul>";
 		 
-		console.log("pageBar_html 확인 : ", pageBar_html);
+		// console.log("pageBar_html 확인 : ", pageBar_html);
 		
 		// 리뷰 페이지바 출력
 		$("div#pageBar").html(pageBar_html);
@@ -759,7 +733,7 @@ textarea {
 						<p class="count" id="readCount">${requestScope.foodstorevo.readCount}</p>
 					</li>
 					<li class="list-item">
-						<button type="button" class="iconbtn" id="btnSchedule" onclick="addSchedule()">
+						<button type="button" class="iconbtn" id="btnSchedule">
 							<div>
 								<img class="icon" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_calender.png">
 							</div>
@@ -779,43 +753,34 @@ textarea {
 			                        <span aria-hidden="true">&times;</span>
 			                    </button>
 			                </div>
-			                <div class="modal-body" style="padding: 7%;">
-			                    <div class="form-group">
-			                    	<label for="food_name" class="col-form-label">맛집 이름</label>
-			                        <input type="text" class="form-control mb-3" id="food_name" name="food_name" readonly="readonly" value="${requestScope.foodstorevo.food_name}">
-			                        
-			                        <label for="calendar_title" class="col-form-label">일정 제목</label>
-			                        <input type="text" class="form-control mb-3" id="calendar_title" name="calendar_title">
-			                        
-			                        <label for="calendar_content" class="col-form-label">일정 내용</label>
-			                        <input type="text" class="form-control mb-3" id="calendar_content" name="calendar_content">
-			                       <%--  
-			                        <div class="fromDate">
-							            <label>날짜</label>
-							            <div>
-							                <div class="date-container">
-							                    <span class="date-pick">
-							                        <input class="datepicker" style="cursor: pointer;" type="text" id="fromDate" name="datepicker" value="${requestScope.dateSendMap.detail_check_in}" placeholder="입실일 선택">
-							                    </span>
-							                </div>
-							            </div>
-							        </div>
-							        <div class="toDate">
-							            <label>체크아웃</label>
-							            <div>
-							                <div class="date-container">
-							                    <span class="date-pick">
-							                        <input class="datepicker" style="cursor: pointer;" type="text" id="toDate" name="datepicker" value="${requestScope.dateSendMap.detail_check_out}" placeholder="퇴실일 선택">
-							                    </span>
-							                </div>
-							            </div>
-							        </div> --%>
-			                    </div>
-			                </div>
+			                <form name="scheduleFrm">
+				                <div class="modal-body" style="padding: 7%;">
+				                    <div class="form-group">
+				                    	<label for="food_name" class="col-form-label">맛집 이름</label>
+				                        <input type="text" class="form-control mb-3" id="food_name" name="food_name" readonly="readonly" value="${requestScope.foodstorevo.food_name}">
+				                        
+				                        <label for="scheduleTitle" class="col-form-label">일정 제목</label>
+				                        <input type="text" class="form-control mb-3" id="scheduleTitle" name="scheduleTitle">
+				                        
+				                        <label for="scheduleContent" class="col-form-label">일정 내용</label>
+				                        <input type="text" class="form-control mb-3" id="scheduleContent" name="scheduleContent">
+				                        
+				                        <div class="scheduleDate">
+								            <label>날짜</label>
+								            <div>
+								                <div class="date-container">
+								                    <span class="date-pick">
+								                        <input class="datepicker" style="cursor: pointer;" type="text" id="scheduleDate" name="scheduleDate" placeholder="일정에 추가할 날짜 선택">
+								                    </span>
+								                </div>
+								            </div>
+								        </div>
+				                    </div>
+				                </div>
+			                </form>
 			                <div class="modal-footer">
-			                    <button type="button" class="btn btn-info" id="EditCalendar">등록</button>
-			                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
-			                        id="sprintSettingModalClose">취소</button>
+			                    <button type="button" class="btn btn-secondary" data-dismiss="modal" id="sprintSettingModalClose">취소</button>
+			                    <button type="button" class="btn btn-info" id="EditCalendar" onclick="addSchedule()">등록</button>
 			                </div>
 			    
 			            </div>
@@ -923,11 +888,6 @@ textarea {
 <!-- container 끝 -->
 
 
-<form name="submitFrm">
-	<input name="readCount" value="${requestScope.readCount}" placeholder="조회수 들어올 자리" />
-
-	<input type="text" name="currentShowPageNo" placeholder="리뷰 페이징...." />
-</form>
 
 
 

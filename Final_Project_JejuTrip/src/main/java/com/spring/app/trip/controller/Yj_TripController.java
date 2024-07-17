@@ -183,18 +183,17 @@ public class Yj_TripController {
 	// == 맛집 상세 페이지 보이기 == //
 	@GetMapping("foodstoreDetail.trip")
 	public ModelAndView foodstoreDetail(ModelAndView mav, HttpServletRequest request,
-										@RequestParam(defaultValue="") String random_recommend_code) {
+										@RequestParam(defaultValue="") String random_recommend_code,
+										@RequestParam(defaultValue="") String scheduleTitle,
+										@RequestParam(defaultValue="") String scheduleContent,
+										@RequestParam(defaultValue="") String scheduleDate) {
 	
 		String food_store_code = "";
-		
 		food_store_code = request.getParameter("food_store_code");
 		
-//		System.out.println("-------------------------------------------------------");
-//		System.out.println("## 확인용 food_store_code => "+ food_store_code);
-//		System.out.println("## 확인용 random_recommend_code => "+ random_recommend_code);
-		
-//		paraMap.put("food_store_code", food_store_code); // 맛집 리스트에서 상세 페이지로 넘어가기
-//		paraMap.put("random_recommend_code", random_recommend_code); // 맛집 추천에서 상세 페이지로 넘어가기
+		// System.out.println("-------------------------------------------------------");
+		// System.out.println("## 확인용 food_store_code => "+ food_store_code);
+		// System.out.println("## 확인용 random_recommend_code => "+ random_recommend_code);
 		
 		HttpSession session = request.getSession();
 		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
@@ -219,6 +218,7 @@ public class Yj_TripController {
 			
 			session.removeAttribute("readCountPermission");
 		}
+		
 		else {
 			foodstorevo = service.viewfoodstoreDetail(paraMap); // 맛집 상세 페이지 띄우기 (조회수 증가 X)
 			
@@ -228,8 +228,19 @@ public class Yj_TripController {
 			}
 		}
 		
-//		String food_name =  foodstorevo.getFood_name();
-//		System.out.println("food_name 확인 =>" + food_name);
+		int n = service.insertFoodSchedule(paraMap); // 맛집 일정 추가
+		
+		if(n==1) {
+			System.out.println("insert 성공");
+		}
+		else {
+			System.out.println("insert 실패");
+		}
+		
+		
+		
+		// String food_name =  foodstorevo.getFood_name();
+		// System.out.println("food_name 확인 =>" + food_name);
 	
 		List<Map<String, String>> addimgList = service.viewfoodaddImg(paraMap); // 맛집 상세 추가 이미지
 		
@@ -265,32 +276,6 @@ public class Yj_TripController {
 	
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	
-	// == 좋아요 기능 페이지 요청 == //
-/*	@GetMapping("foodLike.trip")
-	public ModelAndView requiredLogin_foodLike(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
-		
-		HttpSession session = request.getSession();
-		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
-		
-		if(loginuser != null) {
-			
-			String message = "좋아요는 로그인 후 사용 가능합니다.";
-			String loc = request.getContextPath() + "/login.trip";
-			
-			mav.addObject("message", message);
-			mav.addObject("loc", loc);
-			
-			mav.setViewName("msg");
-			
-		} else {
-			mav.setViewName("");
-		}
-		
-		return mav;
-	}
-	*/
 	
 	
 	// == 좋아요 기능 처리하기 == //

@@ -343,3 +343,22 @@ where food_store_code = 5316
 
 rollback;
 commit;
+
+
+select * from user_tables;
+
+
+select * from TBL_CALENDAR_SMALL_CATEGORY;
+desc TBL_CALENDAR_SMALL_CATEGORY;
+
+desc TBL_CALENDAR_SCHEDULE;
+
+
+
+select * from TBL_CALENDAR_SCHEDULE;
+
+insert into tbl_calender_schedule(SCHEDULENO, STARTDATE, ENDDATE, SUBJECT, COLOR, PLACE, CONTENT, PARENT_CODE, SCHEDULE_DIVISON, FK_SMCATGONO, FK_LGCATGONO, FK_USERID)
+values(SEQ_SCHEDULENO.nextval, '2024-07-17', '2024-07-17', '팀회식', 'yellow', '물꼬해녀의집 주소', '팀회식 예정입니다.', '5316', 'B', 2 , 1, 'yy6037');
+
+
+

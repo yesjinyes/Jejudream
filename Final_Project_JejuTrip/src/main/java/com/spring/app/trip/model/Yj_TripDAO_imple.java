@@ -143,6 +143,14 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 		int n = sqlsession.update("yj_trip.increase_readCount", paraMap);
 		return n;
 	}
+
+
+	// == 맛집 일정 추가 == //
+	@Override
+	public int insertFoodSchedule(Map<String, String> paraMap) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 		
 
 

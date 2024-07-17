@@ -59,6 +59,9 @@ public interface Yj_TripService {
 	// == 좋아요 취소 == //
 	void deleteLike(Map<String, String> paraMap);
 
+	// == 맛집 일정 추가 == //
+	int insertFoodSchedule(Map<String, String> paraMap);
+
 	
 
 	

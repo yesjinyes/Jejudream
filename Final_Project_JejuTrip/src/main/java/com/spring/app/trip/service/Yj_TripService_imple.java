@@ -58,9 +58,7 @@ public class Yj_TripService_imple implements Yj_TripService {
 		
 		String login_userid = paraMap.get("login_userid"); // 로그인 했을 경우에만 조회수 올리기 위함
 		
-		String readCount = "0";
-		
-		readCount = foodstorevo.getReadCount();
+		// String readCount = foodstorevo.getReadCount();
 		// System.out.println("이전 조회수  확인 => " + readCount);
 		
 		if(login_userid != null &&  // 로그인 되어졌고
@@ -83,6 +81,7 @@ public class Yj_TripService_imple implements Yj_TripService {
 		return addimgList;
 	}
 
+	//////////////////////////////////////////////////////////////////////////////////////
 
 	// == 맛집 리뷰 쓰기 == //
 	@Override
@@ -153,6 +152,15 @@ public class Yj_TripService_imple implements Yj_TripService {
 	@Override
 	public void deleteLike(Map<String, String> paraMap) {
 		dao.deleteLike(paraMap);
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////
+
+	// == 맛집 일정 추가 == //
+	@Override
+	public int insertFoodSchedule(Map<String, String> paraMap) {
+		int n = dao.insertFoodSchedule(paraMap);
+		return n;
 	}
 
 
