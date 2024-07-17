@@ -158,8 +158,8 @@ public class Yj_TripService_imple implements Yj_TripService {
 
 	// == 맛집 일정 추가 == //
 	@Override
-	public int insertFoodSchedule(Map<String, String> paraMap) {
-		int n = dao.insertFoodSchedule(paraMap);
+	public int addFoodSchedule(Map<String, String> paraMap) {
+		int n = dao.addFoodSchedule(paraMap);
 		return n;
 	}
 

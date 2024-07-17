@@ -204,9 +204,16 @@ public class Yj_TripController {
 		}
 		
 		Map<String, String> paraMap = new HashMap<>();
+		
 		paraMap.put("food_store_code", food_store_code);
+		paraMap.put("parent_code", food_store_code);
+	
 		paraMap.put("random_recommend_code", random_recommend_code);
 		paraMap.put("login_userid", login_userid);
+		
+		paraMap.put("scheduleTitle", scheduleTitle);
+		paraMap.put("scheduleContent", scheduleContent);
+		paraMap.put("scheduleDate", scheduleDate);
 		
 		///////////////////////////////////////////////////////
 		
@@ -228,7 +235,13 @@ public class Yj_TripController {
 			}
 		}
 		
-		int n = service.insertFoodSchedule(paraMap); // 맛집 일정 추가
+		///////////////////////////////////////////////////////
+		
+		if(scheduleTitle != "") {
+			
+		}
+		
+		int n = service.addFoodSchedule(paraMap); // 맛집 일정 추가
 		
 		if(n==1) {
 			System.out.println("insert 성공");
@@ -236,7 +249,6 @@ public class Yj_TripController {
 		else {
 			System.out.println("insert 실패");
 		}
-		
 		
 		
 		// String food_name =  foodstorevo.getFood_name();

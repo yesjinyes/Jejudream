@@ -63,7 +63,7 @@ public interface Yj_TripDAO {
 	//////////////////////////////////////////////////////////////////////////
 
 	// == 맛집 일정 추가 == //
-	int insertFoodSchedule(Map<String, String> paraMap);
+	int addFoodSchedule(Map<String, String> paraMap);
 
 	
 

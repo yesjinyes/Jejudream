@@ -147,9 +147,9 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 
 	// == 맛집 일정 추가 == //
 	@Override
-	public int insertFoodSchedule(Map<String, String> paraMap) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int addFoodSchedule(Map<String, String> paraMap) {
+		int n = sqlsession.insert("yj_trip.addFoodSchedule", paraMap);
+		return n;
 	}
 		
 

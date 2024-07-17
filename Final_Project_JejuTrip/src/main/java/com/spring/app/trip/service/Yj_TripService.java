@@ -60,7 +60,7 @@ public interface Yj_TripService {
 	void deleteLike(Map<String, String> paraMap);
 
 	// == 맛집 일정 추가 == //
-	int insertFoodSchedule(Map<String, String> paraMap);
+	int addFoodSchedule(Map<String, String> paraMap);
 
 	
 
