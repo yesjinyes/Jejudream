@@ -139,7 +139,7 @@
 		// ===== 댓글 메뉴 =====
 		$("div.options-menu").hide();
 		
-		$(document).on("div.more-options > span", "click", function(e) {
+		$(document).on("click", "div.more-options > span", function(e) {
 			e.stopPropagation(); // 이벤트 버블링 방지
         	$(this).next("div.options-menu").toggle();
 		});
@@ -253,7 +253,7 @@
 										 
 							v_html += `  <div class="more-options" style="width: 10%; padding-top: 1.5%; text-align: right;">
 											<span><i class="fa-solid fa-ellipsis-vertical"></i></span>
-											<div class="options-menu">
+											<div class="options-menu" style="display: none;">
 												<span class="d-block mb-1">수정</span>
 												<span class="d-block">삭제</span>
 											</div>
@@ -263,13 +263,14 @@
 						v_html += `</div>`;
 						
 					}); // end of $.each() -------------------------------------------------
+					
+					$("div#commentList").html(v_html);
+					
+					const totalPage = Math.ceil(json[0].totalCount / json[0].sizePerPage);
+					
+					makeCommentPageBar(currentShowPageNo, totalPage);
 				}
 				
-				$("div#commentList").html(v_html);
-				
-				const totalPage = Math.ceil(json[0].totalCount / json[0].sizePerPage);
-				
-				makeCommentPageBar(currentShowPageNo, totalPage);
 			},
 			error: function(request, status, error){
 				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
@@ -385,66 +386,9 @@
 		</div>
 		
 		<div class="comment-info mb-5" style="width: 80%; margin: 0 auto;">
-			<div id="commentList">
-			<%--
-				<div id="comment" class="d-flex" style="padding: 1.5% 0">
-					<div style="width: 90%; padding: 1.5% 0">
-						<div class="mb-2 d-flex align-items-center">
-							<img src="<%=ctxPath%>/resources/images/logo_circle.png" width="30">
-							<span class="font-weight-bold" style="margin-left: 1%; font-size: 1rem;">김라영</span>
-						</div>
-						<span class="d-block mb-2">저도 궁금합니다.<br>대댓 부탁드려용 🍒</span>
-						<span class="d-block mb-2" style="font-size: 0.8rem; color: #8c8c8c;">2024-07-11 10:36</span>
-						<button type="button" class="btn" style="border: solid 1px #8c8c8c; font-size: 0.8rem; padding: 3px 6px;">답글</button>
-					</div>
-					<div class="more-options" style="width: 10%; padding-top: 1.5%; text-align: right;">
-						<span><i class="fa-solid fa-ellipsis-vertical"></i></span>
-						<div class="options-menu">
-							<span class="d-block mb-1">수정</span>
-							<span class="d-block">삭제</span>
-						</div>
-					</div>
-				</div>
-				<div id="comment" class="d-flex" style="padding: 1.5% 0">
-					<div style="width: 90%; padding: 1.5% 0">
-						<div class="mb-2 d-flex align-items-center">
-							<img src="<%=ctxPath%>/resources/images/logo_circle.png" width="30">
-							<span class="font-weight-bold" style="margin-left: 1%; font-size: 1rem;">김라영</span>
-						</div>
-						<span class="d-block mb-2">관광지 탭을 참조해보세요!</span>
-						<span class="d-block mb-2" style="font-size: 0.8rem; color: #8c8c8c;">2024-07-11 10:36</span>
-						<button type="button" class="btn" style="border: solid 1px #8c8c8c; font-size: 0.8rem; padding: 3px 6px;">답글</button>
-					</div>
-					<div class="more-options" style="width: 10%; padding-top: 1.5%; text-align: right;">
-						<span><i class="fa-solid fa-ellipsis-vertical"></i></span>
-						<div class="options-menu">
-							<span class="d-block mb-1">수정</span>
-							<span class="d-block">삭제</span>
-						</div>
-					</div>
-				</div>
-			 --%>
-			</div>
+			<div id="commentList"></div>
 
 			<div id="commentPageBar" class="text-center mt-3 mb-5" style="width: 80%; margin: 0 auto 10% auto;">
-			<%--
-					<ul>
-						<li style='width: 4%; font-size: 0.8rem;'>◀◀</li>
-						<li style='width: 4%; font-size: 0.8rem;'>◀</li>
-						<li class='font-weight-bold' style='width: 3%; color: #ff5000;'>1</li>
-						<li style='width: 3%;'>2</li>
-						<li style='width: 3%;'>3</li>
-						<li style='width: 3%;'>4</li>
-						<li style='width: 3%;'>5</li>
-						<li style='width: 3%;'>6</li>
-						<li style='width: 3%;'>7</li>
-						<li style='width: 3%;'>8</li>
-						<li style='width: 3%;'>9</li>
-						<li style='width: 3%;'>10</li>
-						<li style='width: 4%; font-size: 0.8rem;'>▶</li>
-						<li style='width: 4%; font-size: 0.8rem;'>▶▶</li>
-					</ul>
-			 --%>
 			</div>
 			
 			<c:if test="${not empty sessionScope.loginuser || not empty sessionScope.loginCompanyuser}">
@@ -460,7 +404,7 @@
 								<input type="text" class="font-weight-bold" name="name" value="${sessionScope.loginCompanyuser.company_name}" style="border: none; background-color: #FAFAFA;" readonly>
 							</c:if>
 						</span>
-						<textarea class="mb-2" name="content" style="width: 100%; height: 100px; border: none; background-color: rgba(242, 242, 242, 0.3);" placeholder="댓글을 작성해주세요."></textarea>
+						<textarea class="mb-2" name="content" style="width: 100%; height: 100px; border: none; background-color: #fafafa;" placeholder="댓글을 작성해주세요."></textarea>
 						<input type="hidden" name="parentSeq" value="${requestScope.boardvo.seq}" readonly />
 						<div style="text-align: right;"><button type="button" class="btn" id="addCommentBtn" onclick="goAddComment()">등록</button></div>
 					</div>

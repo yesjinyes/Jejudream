@@ -219,6 +219,12 @@ FROM
 where V.rno between 1 and 5;
 
 
+-- 게시물당 댓글 개수
+select count(*)
+from tbl_comment
+where status = 1 and parentSeq = 5;
+
+
 
 
 
