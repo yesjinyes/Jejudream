@@ -3,7 +3,10 @@ package com.spring.app.trip.model;
 import java.util.List;
 import java.util.Map;
 
+import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.LodgingVO;
+import com.spring.app.trip.domain.PlayVO;
+import com.spring.app.trip.domain.ReviewVO;
 import com.spring.app.trip.domain.RoomDetailVO;
 
 
@@ -53,6 +56,24 @@ public interface Js_TripDAO {
 
 	// 숙소 리뷰 삭제하기
 	int deleteLodgingComment(String review_code);
+
+	// 숙소 리뷰 작성하기
+	int addLodgingReview(ReviewVO rvo);
+
+	// 같은 지역구분 맛집 랜덤추천해주기
+	FoodstoreVO getRandomFood(String local_status);
+		
+	// 같은 지역구분 즐길거리 랜덤추천해주기
+	PlayVO getRandomPlay(String local_status);
+
+	// 한 숙소에 대해 좋아요를 눌렀는지 안눌렀는지
+	int getLodgingLike(Map<String, String> chkMap);
+
+	// 한 숙소에 대한 좋아요 취소하기
+	int lodgingCancelAddLike(Map<String, String> paraMap);
+
+	// 한 숙소에 대한 좋아요 추가하기
+	int lodgingAddLike(Map<String, String> paraMap);
 
 	
 

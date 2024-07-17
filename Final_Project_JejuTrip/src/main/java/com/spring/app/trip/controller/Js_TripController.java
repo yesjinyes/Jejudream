@@ -22,8 +22,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.MemberVO;
+import com.spring.app.trip.domain.PlayVO;
+import com.spring.app.trip.domain.ReviewVO;
 import com.spring.app.trip.service.Js_TripService;
 
 @Controller
@@ -240,6 +243,14 @@ public class Js_TripController {
 			chkMap.put("lodging_code", lodging_code);
 			chkMap.put("userid",userid);
 			
+			int chkLike = service.getLodgingLike(chkMap); // 한 숙소에 대해 좋아요를 눌렀는지 안눌렀는지
+			
+			if(chkLike > 0) {
+				
+				dateSendMap.put("chkLike", String.valueOf(chkLike));
+			}
+			
+			
 			int chkR = service.chkReservation(chkMap); // 숙소상세페이지 이동시에 예약했는지 확인하기 
 			
 			if(chkR > 0) {
@@ -258,6 +269,20 @@ public class Js_TripController {
 			
 		} // end of 로그인 했는지 안했는지 if
 		
+		
+		String local_status = lodgingDetail.getLocal_status();
+		
+		// 같은 지역구분 맛집 랜덤추천해주기
+		FoodstoreVO fvo = service.getRandomFood(local_status);
+		// 같은 지역구분 즐길거리 랜덤추천해주기
+		PlayVO pvo = service.getRandomPlay(local_status);
+		
+		Map<String,Object> randMap = new HashMap<>();
+		
+		randMap.put("fvo", fvo);
+		randMap.put("pvo", pvo);
+		
+		mav.addObject("randMap",randMap);
 		
 		mav.addObject("convenientList", convenientList);
 		mav.addObject("lodgingDetail", lodgingDetail);
@@ -316,6 +341,8 @@ public class Js_TripController {
 	        		jsonObj.put("min_person", map.get("min_person"));
 	        		jsonObj.put("max_person", map.get("max_person"));
 	        		jsonObj.put("room_img", map.get("room_img"));
+	        		jsonObj.put("check_inTime", map.get("check_inTime"));
+	        		jsonObj.put("check_outTime", map.get("check_outTime"));
 	        		
 	        		jsonArr.put(jsonObj);
 	        		
@@ -674,5 +701,79 @@ public class Js_TripController {
 		
 	} // end of public String JSONDeleteLodgingComment(@RequestParam (value="review_code") String review_code) {
 	
+	
+	
+	
+	@ResponseBody
+	@PostMapping(value="/addLodgingReview.trip", produces="text/plain;charset=UTF-8")
+	public String addLodgingReview(ReviewVO rvo) {
+		
+		int n = 0;
+		
+		/*
+		System.out.println("fk_userid = "+rvo.getFk_userid());
+		System.out.println("parent_code = "+rvo.getParent_code());
+		System.out.println("review_content = "+rvo.getReview_content());
+		System.out.println("review_division_R = "+rvo.getReview_division_R());
+		*/
+		
+		// 숙소 리뷰 작성하기
+		n = service.addLodgingReview(rvo);
+		
+		JSONObject jsonObj = new JSONObject();
+		
+		jsonObj.put("n", n);
+		
+		return jsonObj.toString();
+	
+	} // end of public String addLodgingComment
+	
+	
+	// 숙소 좋아요 취소하기
+	@ResponseBody	
+	@PostMapping(value="/lodgingcancelAddLike.trip", produces="text/plain;charset=UTF-8")
+	public String lodgingCancelAddLike(@RequestParam (value="userid") String userid,
+									   @RequestParam (value="lodging_code") String lodging_code) {
+		
+		
+		Map<String,String> paraMap = new HashMap<>();
+		
+		paraMap.put("userid", userid);
+		paraMap.put("lodging_code", lodging_code);
+		
+		int n = service.lodgingCancelAddLike(paraMap);
+		
+		JSONObject jsonObj = new JSONObject();
+		
+		jsonObj.put("n", n);
+		
+		return jsonObj.toString();
+		
+	} // end of public String lodgingcancelAddLike( 숙소 좋아요 취소하기
+	
+	
+	
+	
+	// 숙소 좋아요 추가하기
+	@ResponseBody	
+	@PostMapping(value="/lodgingaddLike.trip", produces="text/plain;charset=UTF-8")
+	public String lodgingAddLike(@RequestParam (value="userid") String userid,
+							     @RequestParam (value="lodging_code") String lodging_code) {
+		
+		
+		Map<String,String> paraMap = new HashMap<>();
+		
+		paraMap.put("userid", userid);
+		paraMap.put("lodging_code", lodging_code);
+		
+		int n = service.lodgingAddLike(paraMap);
+		
+		JSONObject jsonObj = new JSONObject();
+		
+		jsonObj.put("n", n);
+		
+		return jsonObj.toString();
+		
+	} // end of public String lodgingaddLike 숙소 좋아요 추가하기
 	
 }

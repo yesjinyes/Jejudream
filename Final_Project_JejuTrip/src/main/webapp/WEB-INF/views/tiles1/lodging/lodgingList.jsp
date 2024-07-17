@@ -658,7 +658,7 @@ $(document).ready(function(){
                         
                     </li>
                     
-                    
+                    <%-- 
                     <li class="nav-item">
                     	<h4>숙소 가격범위</h4>
                     	<div class="slider">
@@ -671,7 +671,7 @@ $(document).ready(function(){
 					        </div>
 					    </div>
                     </li>
-                    
+                    --%>
                 </ul>
                	 
             </div>
