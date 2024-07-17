@@ -11,7 +11,30 @@ create user final_orauser2 identified by gclass default tablespace users;
 grant connect, resource, create view, unlimited tablespace to final_orauser2;
 -- Grant을(를) 성공했습니다.
 
-select *
-from tbl_member;
+select scheduleno 
+     , startdate, enddate
+     , smcatgoname, lgcatgoname, user_name
+     , subject, content 
+from 
+(
+    select  row_number() over(order by SD.scheduleno desc) as rno 
+          , SD.scheduleno
+          , to_char(SD.startdate, 'yyyy-mm-dd hh24:mi') as startdate
+          , to_char(SD.enddate, 'yyyy-mm-dd hh24:mi') as enddate
+          , SC.smcatgoname, LC.lgcatgoname, M.user_name 
+          , SD.subject, SD.content 
+    from tbl_calendar_schedule SD 
+    JOIN tbl_member M 
+    ON SD.fk_userid = M.userid
+    JOIN tbl_calendar_small_category SC 
+    ON SD.fk_smcatgono = SC.smcatgono
+    JOIN tbl_calendar_large_category LC 
+    ON SD.fk_lgcatgono = LC.lgcatgono 
+    where ( to_char(SD.startdate,'YYYY-MM-DD') between 2024-07-01 and 2024-08-31 )
+    AND   ( to_char(SD.enddate,'YYYY-MM-DD') between 2024-07-01 and 2024-08-31 ) 
+        and ( SD.fk_lgcatgono = 1 OR SD.fk_userid = 'jeongws' OR
+              ( SD.fk_userid != 'jeongws' and lower(SD.joinuser) like '%'||lower('jeongws')||'%' ) ) 
+    
+) V 
+where V.rno between 1 and 5
 
-update tbl_member set email = 'CT7IgCT+Y9vM4lsGX1pHmu69lDWbyGyb6bfullGqOz4=' , user_name = '우석정' , mobile = 'e72CTRofXoxe+KHw+V+Ebg==' , address = '서울시' , detail_address = '어딘가' , birthday = '2006-07-05' where userid = 'jeongws' 

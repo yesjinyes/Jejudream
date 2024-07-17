@@ -305,7 +305,7 @@
                 </a>
             </li>
             <li class="list">
-                <a href="<%= ctxPath%>/cash_points.trip">
+                <a href="<%= ctxPath%>/my_schedule.trip">
                     <span class="icon"><ion-icon name="calendar-number-outline"></ion-icon></span>
                     <span class="title">내 일정</span>
                 </a>

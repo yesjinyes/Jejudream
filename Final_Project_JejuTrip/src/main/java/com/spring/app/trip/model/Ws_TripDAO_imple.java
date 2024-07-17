@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
+import com.spring.app.trip.domain.Calendar_schedule_VO;
+import com.spring.app.trip.domain.Calendar_small_category_VO;
 import com.spring.app.trip.domain.CompanyVO;
 import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.LodgingVO;
@@ -429,6 +431,48 @@ public class Ws_TripDAO_imple implements Ws_TripDAO {
 		String exist_email = sqlsession.selectOne("ws_trip.userEmailDuplicateCheckEdit", paraMap);
 		
 		return exist_email;
+	}
+	
+	// 등록된 일정 가져오기
+	@Override
+	public List<Calendar_schedule_VO> selectSchedule(String fk_userid) {
+		List<Calendar_schedule_VO> scheduleList = sqlsession.selectList("ws_trip.selectSchedule",fk_userid);
+		return scheduleList;
+	}
+	
+	// === 일정상세보기 ===
+	@Override
+	public Map<String, String> detailSchedule(String scheduleno) {
+		Map<String, String> map = sqlsession.selectOne("ws_trip.detailSchedule", scheduleno);
+		return map;
+	}
+	
+	// 내 캘린더에서 내캘린더 소분류  보여주기
+	@Override
+	public List<Calendar_small_category_VO> showMyCalendar(String fk_userid) {
+		List<Calendar_small_category_VO> List = sqlsession.selectList("ws_trip.showMyCalendar",fk_userid);
+		return List;
+	}
+	
+	// 총 일정 검색 건수(totalCount)
+	@Override
+	public int getTotalScheduleCount(Map<String, String> paraMap) {
+		int n = sqlsession.selectOne("ws_trip.getTotalScheduleCount",paraMap);
+		return n;
+	}
+	
+	// 페이징 처리한 캘린더 가져오기(검색어가 없다라도 날짜범위 검색은 항시 포함된 것임)
+	@Override
+	public List<Map<String, String>> scheduleListSearchWithPaging(Map<String, String> paraMap) {
+		List<Map<String,String>> mapList = sqlsession.selectList("ws_trip.scheduleListSearchWithPaging",paraMap);
+		return mapList;
+	}
+	
+	// 일정 등록하기
+	@Override
+	public int registerSchedule_end(Map<String, String> paraMap) {
+		int n = sqlsession.insert("ws_trip.registerSchedule_end",paraMap);
+		return n;
 	}
 
 }
