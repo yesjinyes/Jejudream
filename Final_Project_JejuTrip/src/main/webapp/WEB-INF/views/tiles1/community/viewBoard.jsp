@@ -411,7 +411,8 @@
 			<div id="cmtInfoBtn" class="cmt-no-drop text-center d-flex justify-content-between" style="width: 13%; padding: 0.5%;">
 				<div>
 					<i class="fa-solid fa-comment-dots"></i>
-					댓글 쓰기&nbsp;
+					<c:if test="${requestScope.boardvo.commentCount == 0}">댓글 쓰기</c:if>
+					<c:if test="${requestScope.boardvo.commentCount > 0}">댓글 ${requestScope.boardvo.commentCount}</c:if>
 				</div>
 				<div id="cmtDropdownBar"><i class="fa-solid fa-angle-down"></i></div>
 			</div>
