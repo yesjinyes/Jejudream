@@ -192,18 +192,21 @@
 	        const originalHtml = commentDiv.html();
 	        
 	        const seq = $(this).parent().parent().siblings().find("input#cmt_seq").val();
+	        const fk_userid = $(this).parent().parent().siblings().find("input#cmt_userid").val();
 	        const orgContent = $(this).parent().parent().siblings().find("span#cmt_content").text();
 	        
 	        let v_html = `<div style="border: solid 1px #a6a6a6; width: 97%; margin: 0 auto; padding: 1.5% 1%">
 	        				 <div class="d-flex justify-content-between">
 		        				 <span class="d-block mb-2">
+		        				 <%--
 		        				 	<input type="hidden" name="seq" value="\${seq}">
 		        				 	<input type="hidden" name="fk_userid" value="${sessionScope.loginuser.userid}">
+		        				 --%>
 		        				 	<input type="text" class="font-weight-bold" name="name" value="${sessionScope.loginuser.user_name}" style="border: none; background-color: #FAFAFA;" readonly>
 		        				 </span>
 		        				 <button type="button" class="btn cancel-btn" style="padding: 0 0.5% 0 0;">취소</button>
 	        				 </div>
-	        				 <textarea class="mb-2" id="new_content" name="content" style="width: 100%; height: 80px; border: none; background-color: #fafafa;" placeholder="댓글을 작성해주세요.">\${orgContent}</textarea>
+	        				 <textarea class="mb-2" id="new_content" style="width: 100%; height: 80px; border: none; background-color: #fafafa;" placeholder="댓글을 작성해주세요.">\${orgContent}</textarea>
 	 						 <div style="text-align: right;"><button type="button" class="btn" id="updateCommentBtn" onclick="goUpdateComment()" style="border: solid 1px #737373;">수정</button></div>
 	        			  </div>`;
 	        
@@ -232,12 +235,24 @@
 	        		alert("댓글 내용을 입력하세요!");
 	        		return;
 	        	}
-	        	/* 
+	        	
 	        	$.ajax({
-	        		
+	        		url: "<%=ctxPath%>/community/updateComment.trip",
+	        		data: {
+						"seq": seq,
+						"fk_userid": fk_userid,
+	        			"new_content": $("textarea#new_content").val()
+	        		},
+	        		type: "post",
+	        		dataType: "json",
+	        		success: function(json) {
+	        			
+	        		},
+	        		error: function(request, status, error){
+      					alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+      		      	}
 	        	});
-	        	 */
-	        }
+	        } // end of function goUpdateComment() ---------------------
 	        
 	    });
 	    
@@ -390,6 +405,7 @@
 											<span class="font-weight-bold" style="margin-left: 1%; font-size: 1rem;">\${item.name}</span>
 										</div>
 										<input type="hidden" id="cmt_seq" value="\${item.seq}">
+										<input type="hidden" id="cmt_userid" value="\${item.fk_userid}">
 										<span class="d-block mb-2" id="cmt_content">\${item.content}</span>
 										<span class="d-block mb-2" id="cmt_regDate" style="font-size: 0.8rem; color: #8c8c8c;">\${item.regdate}</span>
 										<button type="button" class="btn" style="border: solid 1px #8c8c8c; font-size: 0.8rem; padding: 3px 6px;">답글</button>
