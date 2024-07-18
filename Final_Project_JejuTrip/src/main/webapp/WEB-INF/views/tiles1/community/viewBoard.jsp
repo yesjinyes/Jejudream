@@ -166,7 +166,76 @@
 	    	}
 	    });
 	    
+	    
+	    // === 글 삭제 모달 ===
+	    $('#deleteBoardModal').on('shown.bs.modal', function () {
+	        $("input[name='pw']").trigger('focus');
+	    });
+	    
+	    $('#deleteBoardModal').on('hidden.bs.modal', function () {
+	        $("input[name='pw']").val("");
+	    });
+	    
+	    $("input[name='pw']").keyup(function(e) {
+	    	if(e.keyCode == 13) {
+	    		goDeleteBoard("${requestScope.boardvo.seq}");
+	    	}
+	    });
+	    
 	}); // end of $(document).ready(function() {}) ---------------------
+	
+	
+	// === 글 삭제 ===
+	function goDeleteBoard(seq) {
+		
+		const pw = $("input[name='pw']").val().trim();
+		
+		if(pw == "") {
+			alert("글암호를 입력하세요!");
+			return;
+		}
+		
+		if(pw != "${requestScope.boardvo.pw}") {
+			alert("글암호가 일치하지 않습니다.\n다시 입력해 주세요.");
+			$("input[name='pw']").val("").focus();
+			return;
+		}
+		
+		if(confirm("글을 삭제하시겠습니까?")) {
+			$.ajax({
+				url: "<%=ctxPath%>/community/deleteBoard.trip",
+				data: {
+					"seq": seq,
+					"pw": pw,
+					"login_id": "${sessionScope.loginuser.userid}"
+				},
+				type: "post",
+				dataType: "json",
+				success: function(json) {
+					if(json.n == 1) {
+						alert("글이 삭제되었습니다.");
+						
+						if(${requestScope.boardvo.category} == 1) {
+							location.href = "<%=ctxPath%>/community/freeBoard.trip";
+							
+						} else if(${requestScope.boardvo.category} == 2) {
+							location.href = "<%=ctxPath%>/community/lodgingBoard.trip";
+							
+						} else if(${requestScope.boardvo.category} == 3) {
+							location.href = "<%=ctxPath%>/community/playBoard.trip";
+							
+						} else if(${requestScope.boardvo.category} == 4) {
+							location.href = "<%=ctxPath%>/community/foodBoard.trip";
+							
+						}
+					}
+				},
+				error: function(request, status, error){
+					alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+				}
+			});
+		}
+	}
 	
 	
 	// === 이전글, 다음글 보기 ===
@@ -369,7 +438,7 @@
 							<c:if test="${requestScope.boardvo.fk_userid == sessionScope.loginuser.userid}">
 								<div class="mr-2 d-flex justify-content-end" style="width: 10%;">
 									<span id="updateBoard" onclick="location.href='<%=ctxPath%>/community/updateBoard.trip?seq=${requestScope.boardvo.seq}'">수정</span>&nbsp;&nbsp;|&nbsp;&nbsp;
-									<span id="deleteBoard">삭제</span>
+									<span id="deleteBoard" data-toggle="modal" data-target="#deleteBoardModal">삭제</span>
 								</div>
 							</c:if>
 						</c:if>
@@ -378,6 +447,30 @@
 				<hr>
 			</div>
 			
+			<%-- 글 삭제 모달 --%>
+			<div class="modal fade" id="deleteBoardModal" data-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog modal-dialog-centered">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel">글 삭제</h5>
+							<button type="button" class="close" data-dismiss="modal"
+								aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body mt-3 mb-3">
+							<label>글 암호 입력</label>
+							<input type="password" name="pw" maxlength="4" class="ml-2" style="width: 50%; height: 40px; border-radius: none; border: solid 1px #ccc;">
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+							<button type="button" class="btn btn-danger" onclick="goDeleteBoard('${requestScope.boardvo.seq}')">삭제</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
 			<div id="content">
 				${requestScope.boardvo.content}
 			</div>

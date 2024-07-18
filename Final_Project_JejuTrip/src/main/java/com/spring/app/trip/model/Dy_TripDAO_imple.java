@@ -383,6 +383,16 @@ public class Dy_TripDAO_imple implements Dy_TripDAO {
 		
 		return n;
 	}
+
+
+	// 커뮤니티 글 삭제 처리하기 (status를 0으로 update 하기)
+	@Override
+	public int deleteBoard(Map<String, String> paraMap) {
+
+		int n = sqlsession.update("dy_trip.deleteBoard", paraMap);
+		
+		return n;
+	}
 	
 
 }

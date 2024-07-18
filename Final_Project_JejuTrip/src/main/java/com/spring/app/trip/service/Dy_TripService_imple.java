@@ -592,5 +592,29 @@ public class Dy_TripService_imple implements Dy_TripService {
 		
 		return n;
 	}
+
+
+	// 커뮤니티 글 삭제 처리하기
+	@Override
+	public int deleteBoard(Map<String, String> paraMap) {
+		
+		int n = 0;
+		
+		BoardVO boardvo = dao.getBoardInfo(paraMap.get("seq"));
+		
+		if(boardvo == null) {
+			return n;
+			
+		} else {
+			if(!(paraMap.get("login_id").equals(boardvo.getFk_userid()))) {
+				return n;
+				
+			} else {
+				n = dao.deleteBoard(paraMap);
+			}
+		}
+		
+		return n;
+	}
 	
 }

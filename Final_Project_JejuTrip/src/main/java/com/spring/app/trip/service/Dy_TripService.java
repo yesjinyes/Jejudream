@@ -97,5 +97,8 @@ public interface Dy_TripService {
 
 	// 파일 첨부가 있는 글 수정하기
 	int updateBoard_withFile(BoardVO boardvo);
+
+	// 커뮤니티 글 삭제 처리하기
+	int deleteBoard(Map<String, String> paraMap);
 	
 }

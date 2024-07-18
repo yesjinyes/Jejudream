@@ -1927,4 +1927,24 @@ public class Dy_TripController {
 	}
 	
 	
+	// 커뮤니티 글 삭제 처리하기
+	@ResponseBody
+	@PostMapping(value="community/deleteBoard.trip", produces="text/plain;charset=UTF-8")
+	public String deleteBoard(@RequestParam(defaultValue = "") String seq,
+							  @RequestParam(defaultValue = "") String pw,
+							  @RequestParam(defaultValue = "") String login_id) {
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("seq", seq);
+		paraMap.put("pw", pw);
+		paraMap.put("login_id", login_id);
+		
+		int n = service.deleteBoard(paraMap);
+
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("n", n);
+
+		return jsonObj.toString();
+	}
+	
 }
