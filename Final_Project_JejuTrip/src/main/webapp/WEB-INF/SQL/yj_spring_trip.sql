@@ -187,9 +187,9 @@ from (
 where rownum <= 5;
 
 -- 숙소 랜덤 추천
-select main_img, lodging_name, lodging_content
+select main_img, lodging_name
 from (
-    select main_img, lodging_name, lodging_content
+    select main_img, lodging_name
     from tbl_lodging
     order by DBMS_RANDOM.RANDOM
 )
