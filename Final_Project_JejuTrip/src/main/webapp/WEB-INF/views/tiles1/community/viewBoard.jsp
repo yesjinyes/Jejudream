@@ -266,8 +266,8 @@
 										<button type="button" class="btn" style="border: solid 1px #8c8c8c; font-size: 0.8rem; padding: 3px 6px;">답글</button>
 									 </div>`;
 						
-						if(${sessionScope.loginuser != null || sessionScope.loginCompanyuser != null} && 
-							("${sessionScope.loginuser.userid}" == item.fk_userid || "${sessionScope.loginCompanyuser.companyid}" == item.fk_userid)) {
+						if(${sessionScope.loginuser != null} && 
+							("${sessionScope.loginuser.userid}" == item.fk_userid)) {
 										 
 							v_html += `  <div class="more-options" style="width: 10%; padding-top: 1.5%; text-align: right;">
 											<span><i class="fa-solid fa-ellipsis-vertical"></i></span>
@@ -373,14 +373,6 @@
 								</div>
 							</c:if>
 						</c:if>
-						<c:if test="${not empty sessionScope.loginCompanyuser}">
-							<c:if test="${requestScope.boardvo.fk_userid == sessionScope.loginCompanyuser.companyid}">
-								<div class="mr-2 d-flex justify-content-end" style="width: 10%;">
-									<span id="updateBoard">수정</span>&nbsp;&nbsp;|&nbsp;&nbsp;
-									<span id="deleteBoard">삭제</span>
-								</div>
-							</c:if>
-						</c:if>
 					</div>
 				</div>
 				<hr>
@@ -424,17 +416,13 @@
 			<div id="commentPageBar" class="text-center mt-3 mb-5" style="width: 80%; margin: 0 auto 10% auto;">
 			</div>
 			
-			<c:if test="${not empty sessionScope.loginuser || not empty sessionScope.loginCompanyuser}">
+			<c:if test="${not empty sessionScope.loginuser}">
 				<form name="addCommentFrm">
 					<div class="mt-2" style="border: solid 1px #a6a6a6; padding: 1.5% 1%">
 						<span class="d-block mb-2">
 							<c:if test="${not empty sessionScope.loginuser}">
 								<input type="hidden" name="fk_userid" value="${sessionScope.loginuser.userid}">
 								<input type="text" class="font-weight-bold" name="name" value="${sessionScope.loginuser.user_name}" style="border: none; background-color: #FAFAFA;" readonly>
-							</c:if>
-							<c:if test="${not empty sessionScope.loginCompanyuser}">
-								<input type="text" name="fk_userid" value="${sessionScope.loginCompanyuser.companyid}">
-								<input type="text" class="font-weight-bold" name="name" value="${sessionScope.loginCompanyuser.company_name}" style="border: none; background-color: #FAFAFA;" readonly>
 							</c:if>
 						</span>
 						<textarea class="mb-2" name="content" style="width: 100%; height: 100px; border: none; background-color: #fafafa;" placeholder="댓글을 작성해주세요."></textarea>

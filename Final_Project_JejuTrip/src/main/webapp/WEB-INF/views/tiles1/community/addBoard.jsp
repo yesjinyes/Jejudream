@@ -150,10 +150,6 @@
 								<input type="hidden" name="fk_userid" value="${sessionScope.loginuser.userid}">
 								<input type="text" name="name" value="${sessionScope.loginuser.user_name}" style="width: 15%;" readonly>
 							</c:if>
-							<c:if test="${not empty sessionScope.loginCompanyuser}">
-								<input type="hidden" name="fk_userid" value="${sessionScope.loginCompanyuser.companyid}">
-								<input type="text" name="name" value="${sessionScope.loginCompanyuser.company_name}" style="width: 15%;" readonly>
-							</c:if>
 						</td>
 					</tr>
 					<tr>

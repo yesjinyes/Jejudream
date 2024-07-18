@@ -1167,7 +1167,7 @@ public class Dy_TripController {
 		 */
 
 			HttpSession session = request.getSession();
-			MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
+			MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
 			CompanyVO loginCompanyuser = (CompanyVO)session.getAttribute("loginCompanyuser");
 			
 			String login_id = null;
@@ -1178,7 +1178,7 @@ public class Dy_TripController {
 			} else if(loginCompanyuser != null) {
 				login_id = loginCompanyuser.getCompanyid();
 			}
-
+			
 			Map<String, String> paraMap = new HashMap<>();
 			paraMap.put("seq", seq);
 			paraMap.put("category", category);
