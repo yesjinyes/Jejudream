@@ -61,6 +61,47 @@
 		
 	});
 	
+	
+	// ========================= 랜덤 방언 보여주는거 시작  ========================= //
+    let jsonData = [];
+    let currentIndex = sessionStorage.getItem('currentIndex') ? parseInt(sessionStorage.getItem('currentIndex')) : 0;
+
+    function fetchData() {
+        $.ajax({
+            url: "<%= ctxPath%>/api/jejuBang_eon_JSON.trip",
+            type: "get",
+            dataType: "json",
+            success: function(json) {
+                jsonData = json;
+                displayData();
+                setInterval(displayData, 50000);
+            },
+            error: function(request, status, error) {
+                alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+            }
+        });
+    }
+
+    function displayData() {
+        if (jsonData.length === 0) return;
+
+        let randomIndex = Math.floor(Math.random() * jsonData.length);
+        const item = jsonData[randomIndex];
+        $('#result').css('background-image', `url(https://source.unsplash.com/random/?coding=${Math.random()})`);
+        $('.seq').html(item.seq + ".");
+        $('.name').html(item.name);
+        $('.sitename').html(item.sitename);
+        $('.contents').html(item.contents);
+        $('.solution').html(item.solution);
+
+        currentIndex = (currentIndex + 1) % jsonData.length;
+        sessionStorage.setItem('currentIndex', currentIndex);
+    }
+
+    fetchData(); 
+ // ================================= 끝 =========================================== //
+	
+	
 </script>
 
 
@@ -200,12 +241,12 @@
 	</div>
 
 
-	<div class="d-flex justify-content-between">	
+	<div class="d-flex">	
 		
 		<!-- === 실시간 인기글 === -->
 		<!-- 조회수 순으로 정렬할 예정 -->
 		<!-- 테이블 제목 길어지면 뒤에 내용 '...' 처리해야함 -->
-		<div id="content2">
+		<div id="content2" style = "width: 35%">
 			<h4>실시간 인기글</h4>
 			<main>
 				<table id="rankTable">
@@ -286,67 +327,50 @@
 		</div>
 
 
-		<!-- === 이달의 행사 === -->
-		<div id="content3">
-			<h4>이달의 행사</h4>
-			<div id="festivalList">
-				<div class="festivalObject">
-					<h2 class="festivalTitle">⦁ 비체올린 여름꽃 & 능소화축제</h2>
-					<figure class="snip1504">
-						<img src="<%= ctxPath%>/resources/images/community/festival_1.jpg" class="img-fluid imgFestival" alt="..." />
-						<figcaption>
-							<h3>햇빛 위에 올려놓은 자연 속에 조성된 힐링테마파크에서 펼쳐지는 ‘여름꽃 & 능소화 축제’ </h3>
-							<h5>2024.5.15 ~ 7.20</h5>
-						</figcaption>
-						<a href="#"></a>
-					</figure>
-				</div>
-				  
-				<div class="festivalObject">
-					<h2 class="festivalTitle">⦁ 세상에 이런(E-RUN) 트립 in 우도</h2>
-					<figure class="snip1504 festivalHover">
-						<img src="<%= ctxPath%>/resources/images/community/festival_7.jpg" class="img-fluid imgFestival" alt="..." />
-						<figcaption>
-							<h3>청정 제주를 위해 제주를 사랑하는 여러 기업/단체가 모여 기획한 친환경 관광 프로젝트</h3>
-							<h5>2024.6.2 ~ 8.1</h5>
-						</figcaption>
-						<a href="#"></a>
-					</figure>
-				</div>	
-						
-				<!-- <div class="festivalObject">
-					<h2 class="festivalTitle">⦁ 제주목관아 야간개장</h2>
-					<figure class="snip1504">
-						<img src="../images/festival_4.jpg" class="img-fluid imgFestival" alt="..." />
-						<figcaption>
-							<h3>제주의 역사문화유적인 제주목 관아의 가치와 아름다움을 알리는 제주목 관아 귤림야행</h3>
-							<h5>2024.5.1 ~ 8.30</h5>
-						</figcaption>
-						<a href="#"></a>
-					</figure>
-				</div> -->
-			</div>
-		</div>
-		
-		
 		<!-- === 스텝 게시판 === -->
 		<!-- 최신순으로 정렬할 예정 -->
 		<!-- 테이블 제목 길어지면 뒤에 내용 '...' 처리해야함 -->
-		<div id="content4">
-			<h4>게하 스텝 구해요</h4>
-			<ul>
-				<li><a class="staffTitle" href="#">[제주멍] 가족같이 일할 직원 구해요.</a></li>
-				<li><a class="staffTitle" href="#">[제주온도] 주3일 출근, 숙식제공</a></li>
-				<li><a class="staffTitle" href="#">[숨게스트하우스] 성격 활발하고 사람 좋아하는 스텝 모집합니다.</a></li>
-				<li><a class="staffTitle" href="#">[감성애월] 서핑 가능한 스텝님 모십니다!</a></li>
-				<li><a class="staffTitle" href="#">[소낭게스트하우스] 카페, 객실 정리, 파티 (숙식제공)</a></li>
-				<li><a class="staffTitle" href="#">[또랑] 성실하신 직원분 모집합니다.</a></li>
-				<li><a class="staffTitle" href="#">[쌍용게하] 조용한 게하에서 일하실 분 구해요</a></li>
-			</ul>
+		<div style = "width: 64%">
+			<div id="content3">
+				<h4>게하 스텝 구해요</h4>
+				<ul>
+					<li><a class="staffTitle" href="#">[제주멍] 가족같이 일할 직원 구해요.</a></li>
+					<li><a class="staffTitle" href="#">[제주온도] 주3일 출근, 숙식제공</a></li>
+					<li><a class="staffTitle" href="#">[숨게스트하우스] 성격 활발하고 사람 좋아하는 스텝 모집합니다.</a></li>
+					<li><a class="staffTitle" href="#">[감성애월] 서핑 가능한 스텝님 모십니다!</a></li>
+					<li><a class="staffTitle" href="#">[소낭게스트하우스] 카페, 객실 정리, 파티 (숙식제공)</a></li>
+					<li><a class="staffTitle" href="#">[또랑] 성실하신 직원분 모집합니다.</a></li>
+					<li><a class="staffTitle" href="#">[쌍용게하] 조용한 게하에서 일하실 분 구해요</a></li>
+				</ul>
+			</div>
+			
+			
+			 <div id="content4">
+			    <h4>제주 방언</h4>
+			   <ul>
+					<li>
+						<span class="jejuBang_eon">[ 방언 ]</span><br>
+						<span class="name"></span>
+					</li>
+					<li>
+						<span class="jejuBang_eon"> [ 표준어 ]</span><br>
+			            <span class="sitename"></span>
+					</li>
+					<li>
+						<span class="jejuBang_eon"> [ 방언 활용 문장 ]</span><br>
+			            <span class="contents"></span>
+					</li>
+					
+					<li>
+						<span class="jejuBang_eon"> [ 표준어 문장 ]</span><br>
+			            <span class="solution"></span>
+					</li>
+					
+				</ul>
+			</div>
 		</div>
-		
-		
 	</div>
+	
 	<!-- 두번째 줄(실시간 인기글, 이달의 행사, 스텝게시판) 끝 icons8 -->
 
 

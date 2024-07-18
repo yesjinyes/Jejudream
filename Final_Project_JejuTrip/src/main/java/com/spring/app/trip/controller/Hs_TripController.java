@@ -2,6 +2,9 @@ package com.spring.app.trip.controller;
 
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,13 +13,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -726,9 +731,42 @@ public class Hs_TripController {
 		}
 		
 		
+		///////////////////////////////오픈api 시작////////////////////////////////////
+		@ResponseBody //제이슨 쓸때는 무!족!권! 써야함
+		@GetMapping(value="/api/jejuBang_eon_JSON.trip", produces = "text/plain;charset=UTF-8")
+		public String jejuBang_eon(HttpServletRequest request) throws IOException, ParseException {
+		    // json 파일이 저장되어 있는 WAS(톰캣)의 디스크 경로명을 알아와야만 한다. 
+		    // WAS 의 webapp 의 절대경로를 알아와야 한다.
+		    HttpSession session = request.getSession();
+		    String root = session.getServletContext().getRealPath("/");
+
+		    String jsonFilePath = root + "resources" + File.separator + "jeju_opendata" + File.separator + "jeju.json";
+		    // File.separator은 경로의 구분자로서 윈도우 이라면 "\"를 말하고, 
+		    // Mac, Unix, Linux 이라면 "/" 를 말하는 것이다
+
+		    // jsonFilePath 가 json 파일이 된다
+		    // System.out.println("확인용 jsonFilePath : " + jsonFilePath);
+
+		    JSONParser parser = new JSONParser(); // import 시 org.json.simple.parser.JSONParser 이다.
+
+		    // JSON 파일 읽기
+		    Reader reader = new FileReader(jsonFilePath);
+		    org.json.simple.JSONObject jsonObj = (org.json.simple.JSONObject) parser.parse(reader);
+
+		    // "jejunetapi" 객체 가져오기
+		    org.json.simple.JSONObject jejunetapiObj = (org.json.simple.JSONObject) jsonObj.get("jejunetapi");
+
+		    // "items" 객체 가져오기
+		    org.json.simple.JSONObject itemsObj = (org.json.simple.JSONObject) jejunetapiObj.get("items");
+
+		    // "item" 배열 가져오기
+		    org.json.simple.JSONArray jsonArr = (org.json.simple.JSONArray) itemsObj.get("item");
+
+		    //System.out.println("jsonArr.toString: " + jsonArr.toString());
+		    return jsonArr.toString();
+		}
 		
-		
-		
+
 		
 		
 		

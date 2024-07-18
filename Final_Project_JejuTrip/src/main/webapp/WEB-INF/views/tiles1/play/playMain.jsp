@@ -348,10 +348,7 @@ $(document).ready(function() {
     //================================ 카테고리 클릭 이벤트용 끝 ================================//
     
     
-    
-    
-    
-    
+
     
 });//end of $(document).ready(function()-----------------------------
 
@@ -493,6 +490,9 @@ function goTop() {
     $(window).scrollTop(0);
 }
 
+/////////////////////////////////////////////////////////////////////////
+
+
 
 
 
@@ -533,7 +533,7 @@ function goTop() {
             
             <div class="col-md-10 py-3">
                 <div class="row py-8">
-                    <div id="tabArea" class="tabArea1 text-center" style="display: flex; width:100%;margin:3% auto 6%; ">
+                    <div id="tabArea" class="tabArea1 text-center" style="display: flex; margin:3% auto 6%; ">
                         <div class="areaMap" style="display: flex;">
                             <div class="areamap mx-2" style="width: 25%;">
                                 <img src="<%= ctxPath %>/resources/images/areamap_total.png" />
@@ -620,5 +620,8 @@ function goTop() {
 	        <input type="hidden" name="searchWord"/>
 	    </form>	
     </div>
+     
+     
+
 </body>
 </html>
