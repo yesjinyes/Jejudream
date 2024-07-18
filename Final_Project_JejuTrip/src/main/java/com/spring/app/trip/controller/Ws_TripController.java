@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,8 +37,6 @@ import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.domain.PlayVO;
 import com.spring.app.trip.service.Ws_TripService;
-
-import oracle.jdbc.proxy.annotation.Post;
 
 @Controller
 public class Ws_TripController {
@@ -2170,4 +2167,20 @@ public class Ws_TripController {
 			
 		return jsObj.toString();
 	}
+	
+	@GetMapping("/mypage_chatting_toCompany.trip")
+	public ModelAndView chat(ModelAndView mav) {
+		
+		mav.setViewName("mypage_chatting_toCompany");
+		
+		return mav;
+	}
+	
+	// === #222. (웹 채팅 관련4) === // 
+	@GetMapping("/chatting/multichat.trip")
+	public String requiredLogin_multichat(HttpServletRequest request, HttpServletResponse response) {
+		
+		return "mypage_chatting_toCompany";
+	}
+	
 }

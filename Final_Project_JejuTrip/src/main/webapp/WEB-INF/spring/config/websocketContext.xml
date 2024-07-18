@@ -13,7 +13,7 @@
     
     <beans:bean id="echoHandler" class="com.spring.app.chatting.websockethandler.WebsocketEchoHandler" init-method="init" />
     <websocket:handlers>
-        <websocket:mapping path="/chatting/multichatstart.action" handler="echoHandler" />
+        <websocket:mapping path="/multichatstart.trip" handler="echoHandler" />
         						<!-- path 의 url(contextPath가 생략된)은 handelr가 응대해준다, 이 파일 자체를 쓰려면 web.xml contextConfigLocation 
         																			부분에 추가해줘야한다!!! -->
         <!-- websocket:handlers 태그안에서 아래처럼 websocket:handshake-interceptors에
