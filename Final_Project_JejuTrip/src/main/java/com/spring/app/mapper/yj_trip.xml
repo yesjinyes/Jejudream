@@ -235,8 +235,8 @@
 
 	<!-- 맛집 일정 추가 -->
  	<insert id="addFoodSchedule" parameterType="HashMap">
-		insert into tbl_calendar_schedule(scheduleno, startdate, enddate, subject, place, content, parent_code, schedule_divison, fk_smcatgono, fk_lgcatgono, fk_userid)
-		values(seq_scheduleno.nextval, #{scheduleDate}, #{scheduleDate}, #{scheduleTitle}, '가족외식', '가족외식 예정입니다.', '5316', 'B', 2 , 1, 'yy6037')
+		insert into tbl_calendar_schedule(scheduleno, startdate, enddate, subject, color, place, content, parent_code, schedule_divison, fk_smcatgono, fk_lgcatgono, fk_userid)
+		values(seq_scheduleno.nextval, #{scheduleDate}, #{scheduleDate}, #{scheduleTitle}, '#ffc2b3', #{food_address} , #{scheduleContent}, #{parent_code}, 'B', 2 , 1, #{login_userid})
 	</insert>
 
 
