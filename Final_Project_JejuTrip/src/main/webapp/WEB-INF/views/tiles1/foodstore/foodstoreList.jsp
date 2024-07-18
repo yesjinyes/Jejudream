@@ -263,8 +263,6 @@ span#data {
 	// == 카테고리, 지역 Ajax 처리 == //
 	function goAjax(currentShowPageNo) {
 		
-		goTop();
-		
 		$("input:hidden[name='currentShowPageNo']").val(currentShowPageNo);
 		
 		// form 태그 불러오기
@@ -315,7 +313,9 @@ span#data {
 										        </div>
 									      	</div>`
 						}
+						
 					});// end of json.forEach------------------------
+					
 					// console.log("json[0].sizePerPage" , json[0].sizePerPage);
 		        	// console.log("json[0].totalCount" , json[0].totalCount);
 		        	// console.log("json[0].currentShowPageNo" , Number(json[0].currentShowPageNo));

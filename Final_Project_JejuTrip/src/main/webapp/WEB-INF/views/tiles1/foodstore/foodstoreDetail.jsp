@@ -6,6 +6,8 @@
     //    /JejuDream
 %>
 
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=16695e6ff612a1dbaa353fda89e2424d&libraries=services"></script>
+
 <style type="text/css">
 
 /* 상단 이미지, 텍스트 */
@@ -157,7 +159,7 @@ p.info-title {
 /* 맛집 리뷰 */
 div#reviewList {
   width: 70%;
-  margin: 5% auto;
+  margin: 2% auto;
   padding: 3%;
 }
 
@@ -201,11 +203,33 @@ input#scheduleDate {
   color:gray;
 }
 
+/*--------------------------------------------------------*/
+
+div.bottom {
+  width: 70%;
+  margin: 0 auto;
+  
+}
+
+div#map_div {
+  padding: 3%;
+  margin-left: -1.5%;
+  /* margin-right: 3%; */
+}
+
+div#map {
+  height:450px;
+}
+
+
 
 </style>
 
 <script type="text/javascript">
 
+	//== 새로고침 시 맨 위로 이동 == //
+	history.scrollRestoration = "manual"
+	
 	$(document).ready(function() {
 
 		goLikeDislikeCount(); // 좋아요 개수 띄우기
@@ -434,6 +458,16 @@ input#scheduleDate {
             $("input#scheduleDate").datepicker('setDate', 'today');
         });
 	    
+		// == 일정 달력 input 태그 밑에 고정 == //
+	    jQuery("#calendar").datepicker({
+            beforeShow: function(input) {
+               var i_offset = jQuery(input).offset();
+               setTimeout(function(){
+                  jQuery("#ui-datepicker-div").css({"left":i_offset});
+                 // datepicker의 div의 포지션을 강제로 클릭한 input 위치로 이동시킨다.
+               });
+            }
+        });
 	    
 	    // == 일정 시간 설정 == //
 	 	// 시작시간, 종료시간 
@@ -488,9 +522,51 @@ input#scheduleDate {
 			}
 		});// end of $("input#allDay").click(function() {})------------------------
     
+		///////////////////////////////////////////////////////////////////////////////////
+		// ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+		// == 지도 띄우기 == //
+		// 서버 측 변수를 JavaScript 변수로 할당
+		var food_address = $("input#food_address").val().trim();
 		
-		
-    
+		// 지도 생성 및 설정
+	    var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+	    mapOption = {
+	        center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+	        level: 4 // 지도의 확대 레벨
+	    };  
+	    var map = new kakao.maps.Map(mapContainer, mapOption); 
+
+	    // 주소-좌표 변환 객체를 생성합니다
+	    var geocoder = new kakao.maps.services.Geocoder();
+
+	    // 주소로 좌표를 검색합니다
+	    geocoder.addressSearch(food_address, function(result, status) {
+	        if (status === kakao.maps.services.Status.OK) {
+	            var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+	            var message = 'latlng: new kakao.maps.LatLng(' + result[0].y + ', ' + result[0].x + ')';
+	            //var resultDiv = document.getElementById('clickLatlng'); 
+	            //resultDiv.innerHTML = message;
+
+	            // 결과값으로 받은 위치를 마커로 표시합니다
+	            var marker = new kakao.maps.Marker({
+	                map: map,
+	                position: coords
+	            });
+
+	            // 인포윈도우로 장소에 대한 설명을 표시합니다
+	            var infowindow = new kakao.maps.InfoWindow({
+	                content: '<div style="width:150px;text-align:center;padding:6px 0;" ><a href="https://map.kakao.com/link/to/${requestScope.foodstorevo.food_name},' + result[0].y+','+ result[0].x+'" target="_blank" style="color:black;">${requestScope.foodstorevo.food_name}</a></div>'
+	            });
+	            infowindow.open(map, marker);
+	            
+	            // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+	            map.setCenter(coords);
+	        }
+	    });  
+	    
+		///////////////////////////////////////////////////////////////////////////////////
+
+
 	    
 	    
 	    
@@ -550,8 +626,6 @@ input#scheduleDate {
 			alert("일정 내용을 입력해주세요");
 			return;
 		}
-		
-		
 		
 		$.ajax({
 			url:"addFoodSchedule.trip",
@@ -718,16 +792,31 @@ input#scheduleDate {
 		
 	}// end of function makeReviewPageBar(currentShowPageNo)------------------ */
 
-	//////////////////////////////////////////// === 리뷰 끝 === ////////////////////////////////////////////////////
 	
 	// == 맛집 상세 페이지에서 로그인 페이지로 이동 (리뷰 작성을 위한 것) == //
 	function goLogin() {
-		
 		location.href = "login.trip";
-
-		// 로그인 후에 다시 전 페이지로 돌아가는 기능 구현해야 함
-		
 	}// end of function goLogin()---------------------------
+	
+	//////////////////////////////////////////// === 리뷰 끝 === ////////////////////////////////////////////////////
+	
+/* 	function goRandomLodging() {
+		
+		$.ajax({
+			url:"randomLodging.trip",
+			data:form,
+			dataType:"json",
+			success:function(json) {
+				alert("맛집 랜덤 추천");
+				
+			},
+			error: function(request, status, error){
+            	alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+            }
+			
+		});// end of $.ajax--------------------- 
+		
+	}// end of function goRandomLodging()------------------------- */
 	
 </script>
 
@@ -795,8 +884,8 @@ input#scheduleDate {
 						<!-- <button type="button" class="iconbtn" onclick="golikeAdd()"> -->
 						<button type="button" class="iconbtn" id="btnLike">
 							<div class="item-each">
-								<img class="icon like" id="like" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_like.png">
-								<img class="icon likeup" id="likeup" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_likeup.png">
+								<img class="icon like" id="like" src="<%= ctxPath %>/resources/images/foodstore/icon/Like.png">
+								<img class="icon likeup" id="likeup" src="<%= ctxPath %>/resources/images/foodstore/icon/LikeUp.png">
 							</div>
 							<p class="icon-title">좋아요</p>
 						</button>
@@ -922,9 +1011,8 @@ input#scheduleDate {
 				</div>
 				
 			</div>
-		</div><!-- 우측 div 끝 -->
-		
-	</div> <!-- row 끝 -->
+		</div>
+	</div>
 	
 	<!-- //////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
 
@@ -936,7 +1024,6 @@ input#scheduleDate {
 			<h4 class="mb-5" style="color: orange;">리뷰를 작성하려면 먼저 로그인을 해주세요.
 				<button type="button" class="btn btn-secondary ml-4" onclick="goLogin()">로그인하기</button>
 			</h4>
-			
 		</c:if>
         <c:if test="${not empty sessionScope.loginuser}">
            <h3 style="margin: 0 0 2% 4%;">리뷰 작성</h3>
@@ -979,14 +1066,35 @@ input#scheduleDate {
 			<tbody id="reviewDisplay">
 			</tbody>
 		</table>
-		
-		<!-- 리뷰 페이지바가 보여지는 곳 -->
-		<div style="display: flex; margin-bottom: 50px;">
+		<!-- 리뷰 페이지바 -->
+		<div style="display: flex;">
         	<div id="pageBar" style="margin: auto; text-align: center;"></div>
         </div>
-		
 	</div>
-	<!-- 리뷰 끝 -->
+	
+	<!-- 지도, 랜덤추천 -->
+		<!-- 지도 -->
+		<div class="row bottom">
+			<div class="col-md-8">
+				<div class="border rounded" id="map_div">
+					<h3 class="mb-5">위치 확인</h3>
+					<div id="map"></div>
+					<input type="hidden" name="food_address" id="food_address" value="${requestScope.foodstorevo.food_address}" />
+					<input type="text" style="display: none;" />
+				</div>
+			</div>
+			
+			<!-- 랜덤추천 -->
+			<div class="col-md-4 border rounded">
+				<div>
+					<h3 class="mb-4 mt-4 ml-3">주변 숙소 추천</h3>
+					<div> 
+						<div id="randomLodging">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 	
 </div>
 <!-- container 끝 -->

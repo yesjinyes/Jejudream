@@ -186,6 +186,15 @@ from (
 )
 where rownum <= 5;
 
+-- 숙소 랜덤 추천
+select main_img, lodging_name, lodging_content
+from (
+    select main_img, lodging_name, lodging_content
+    from tbl_lodging
+    order by DBMS_RANDOM.RANDOM
+)
+where rownum <= 5;
+
 
 -- 맛집 리스트 띄우기
 select food_store_code, food_category, local_status, food_name, food_content, food_businesshours, food_mobile
@@ -353,16 +362,33 @@ desc TBL_CALENDAR_SMALL_CATEGORY;
 
 desc TBL_CALENDAR_SCHEDULE;
 
+delete from tbl_review
+where fk_userid = 'yejin'
 
+commit;
 
-select * from TBL_CALENDAR_SCHEDULE
-order by scheduleno desc;
+-- 일정 추가 
+select SCHEDULENO, subject,
+       to_char(STARTDATE, 'yyyy-mm-dd hh24:mi:ss') as startdate,
+       to_char(ENDDATE, 'yyyy-mm-dd hh24:mi:ss') as enddate,
+       COLOR, PLACE, CONTENT, PARENT_CODE, SCHEDULE_DIVISON, FK_SMCATGONO, FK_LGCATGONO, FK_USERID
+from TBL_CALENDAR_SCHEDULE
+order by scheduleno;
 
 insert into TBL_CALENDAR_SCHEDULE(SCHEDULENO, STARTDATE, ENDDATE, SUBJECT, COLOR, PLACE, CONTENT, PARENT_CODE, SCHEDULE_DIVISON, FK_SMCATGONO, FK_LGCATGONO, FK_USERID)
 values(SEQ_SCHEDULENO.nextval, '2024-07-17', '2024-07-17', '팀회식', 'yellow', '물꼬해녀의집', '팀회식 예정입니다.', '5316', 'B', 2 , 1, 'yy6037');
+-------
 
+delete from TBL_CALENDAR_SCHEDULE
+where fk_userid = 'yejin'
 
+commit;
 select food_address
 where 
+
+desc tbl_play;
+
+
+
 
 
