@@ -217,7 +217,7 @@
 				      			<c:if test="${lodgingvo.status == 0}"><td style="color:blue; font-weight:bold;">처리중</td></c:if>
 				      			<c:if test="${lodgingvo.status == 1}"><td style="color:green; font-weight:bold;">승인</td></c:if>
 				      			<c:if test="${lodgingvo.status == 2}"><td style="color:red; font-weight:bold;">반려</td></c:if>
-				      			<c:if test="${lodgingvo.status == 1}"><button type=""></button></c:if>
+				      			<c:if test="${lodgingvo.status == 1}"><td><button type="button" class="btn btn-light">객실등록</button></td></c:if>
 					    	</tr>
 					    	<input type="hidden" name="lodginvo_lodgingCode" value="${lodgingvo.lodging_code}"/>
 				    	</c:forEach>
@@ -262,6 +262,7 @@
 				      			<th>카테고리</th>
 				      			<th>주소</th>
 				      			<th>처리상태</th>
+				      			<th>객실등록</th>
 				    		</tr>
 						  </thead>
 			    		 <tbody>
@@ -275,6 +276,7 @@
 						      			<c:if test="${lodgingvo.status == 0}"><td style="color:blue; font-weight:bold;">처리중</td></c:if>
 						      			<c:if test="${lodgingvo.status == 1}"><td style="color:green; font-weight:bold;">승인</td></c:if>
 						      			<c:if test="${lodgingvo.status == 2}"><td style="color:red; font-weight:bold;">반려</td></c:if>
+						      			<c:if test="${lodgingvo.status == 1}"><td><button type="button" class="btn btn-light">객실등록</button></td></c:if>
 							    	</tr>
 							    </c:if>
 							    <input type="hidden" name="lodginvo_lodgingCode" value="${lodgingvo.lodging_code}"/>
