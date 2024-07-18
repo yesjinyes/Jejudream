@@ -355,10 +355,14 @@ desc TBL_CALENDAR_SCHEDULE;
 
 
 
-select * from TBL_CALENDAR_SCHEDULE;
+select * from TBL_CALENDAR_SCHEDULE
+order by scheduleno desc;
 
-insert into tbl_calender_schedule(SCHEDULENO, STARTDATE, ENDDATE, SUBJECT, COLOR, PLACE, CONTENT, PARENT_CODE, SCHEDULE_DIVISON, FK_SMCATGONO, FK_LGCATGONO, FK_USERID)
-values(SEQ_SCHEDULENO.nextval, '2024-07-17', '2024-07-17', '팀회식', 'yellow', '물꼬해녀의집 주소', '팀회식 예정입니다.', '5316', 'B', 2 , 1, 'yy6037');
+insert into TBL_CALENDAR_SCHEDULE(SCHEDULENO, STARTDATE, ENDDATE, SUBJECT, COLOR, PLACE, CONTENT, PARENT_CODE, SCHEDULE_DIVISON, FK_SMCATGONO, FK_LGCATGONO, FK_USERID)
+values(SEQ_SCHEDULENO.nextval, '2024-07-17', '2024-07-17', '팀회식', 'yellow', '물꼬해녀의집', '팀회식 예정입니다.', '5316', 'B', 2 , 1, 'yy6037');
 
+
+select food_address
+where 
 
 

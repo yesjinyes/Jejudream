@@ -182,12 +182,14 @@ public class Yj_TripController {
 	
 	// == 맛집 상세 페이지 보이기 == //
 	@GetMapping("foodstoreDetail.trip")
-	public ModelAndView foodstoreDetail(ModelAndView mav, HttpServletRequest request,
+	public ModelAndView foodstoreDetail(ModelAndView mav, HttpServletRequest request,FoodstoreVO foodstorevo,
 										@RequestParam(defaultValue="") String random_recommend_code,
 										@RequestParam(defaultValue="") String scheduleTitle,
 										@RequestParam(defaultValue="") String scheduleContent,
 										@RequestParam(defaultValue="") String scheduleDate) {
-	
+		
+		System.out.println("~~~ foodstorevo 확인 => " + foodstorevo.getFood_name());
+		
 		String food_store_code = "";
 		food_store_code = request.getParameter("food_store_code");
 		
@@ -197,6 +199,7 @@ public class Yj_TripController {
 		
 		HttpSession session = request.getSession();
 		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
+		System.out.println("id 확인!! => " + loginuser.getUserid());
 		
 		String login_userid = null;
 		if(loginuser != null) { // 로그인 한 상태일 때
@@ -217,7 +220,8 @@ public class Yj_TripController {
 		
 		///////////////////////////////////////////////////////
 		
-		FoodstoreVO foodstorevo = null;
+		// FoodstoreVO foodstorevo = null;
+		foodstorevo = null;
 		
 		if("yes".equals((String)session.getAttribute("readCountPermission"))) {
 			
@@ -237,11 +241,8 @@ public class Yj_TripController {
 		
 		///////////////////////////////////////////////////////
 		
-		if(scheduleTitle != "") {
-			
-		}
-		
-		int n = service.addFoodSchedule(paraMap); // 맛집 일정 추가
+		// 맛집 일정 추가
+		int n = service.addFoodSchedule(paraMap);
 		
 		if(n==1) {
 			System.out.println("insert 성공");
