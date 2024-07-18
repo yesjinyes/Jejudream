@@ -43,6 +43,70 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 	}
 
 	
+	////////////////////////////////////////////////////////////////////////////////////////////////
+
+	
+	// == 맛집 상세 조회하기 == //
+	@Override
+	public FoodstoreVO viewfoodstoreDetail(Map<String, String> paraMap) {
+		FoodstoreVO foodstorevo = sqlsession.selectOne("yj_trip.viewfoodstoreDetail", paraMap);
+		return foodstorevo;
+	}
+	
+	
+	// == 맛집 상세 추가 이미지 == //
+	@Override
+	public List<Map<String, String>> viewfoodaddImg(Map<String, String> paraMap) {
+		List<Map<String, String>> addimgList = sqlsession.selectList("yj_trip.viewfoodaddImg", paraMap);
+		return addimgList;
+	}
+
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	
+	// == 맛집 리뷰 쓰기 == //
+	@Override
+	public int addFoodstoreReview(ReviewVO reviewvo) {
+		int n = sqlsession.insert("yj_trip.addFoodstoreReview", reviewvo);
+		return n;
+	}
+
+
+	// == 작성한 리뷰 보이기 == //
+	@Override
+	public List<ReviewVO> getReviewList(Map<String, String> paraMap) {
+		List<ReviewVO> reviewList = sqlsession.selectList("yj_trip.getReviewList", paraMap);
+		return reviewList;
+	}
+
+
+	// === 리뷰 수정하기 === //
+	@Override
+	public int updateReview(Map<String, String> paraMap) {
+		int n = sqlsession.update("yj_trip.updateReview", paraMap);
+		return n;
+	}
+
+
+	// == 리뷰 삭제하기 == //
+	@Override
+	public int deleteReview(String review_code) {
+		int n = sqlsession.delete("yj_trip.deleteReview", review_code);
+		return n;
+	}
+
+
+	// == 리뷰 총 개수 구하기 == //
+	@Override
+	public int getReviewTotalCount(String parent_code) {
+		int n = sqlsession.selectOne("yj_trip.getReviewTotalCount", parent_code);
+		// System.out.println("리뷰 총 개수 확인 => " + n);
+		return n;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+
 	// == 좋아요 총 개수 알아오기 == //
 	@Override
 	public int countFoodlike(Map<String, String> paraMap) {
@@ -72,71 +136,23 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 	public void deleteLike(Map<String, String> paraMap) {
 		sqlsession.delete("yj_trip.deleteLike", paraMap);
 	}
-	
-	
-	////////////////////////////////////////////////////////////////////////////////////////////////
 
-	
-	// == 맛집 상세 조회하기 == //
+	// == 글 조회수 1 증가시키기 == //
 	@Override
-	public FoodstoreVO viewfoodstoreDetail(Map<String, String> paraMap) {
-		FoodstoreVO foodstorevo = sqlsession.selectOne("yj_trip.viewfoodstoreDetail", paraMap);
-		return foodstorevo;
-	}
-
-
-	// == 맛집 상세 추가 이미지 == //
-	@Override
-	public List<Map<String, String>> viewfoodaddImg(Map<String, String> paraMap) {
-		List<Map<String, String>> addimgList = sqlsession.selectList("yj_trip.viewfoodaddImg", paraMap);
-		return addimgList;
-	}
-
-	
-	////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	
-	// == 맛집 리뷰 쓰기 == //
-	@Override
-	public int addFoodstoreReview(ReviewVO reviewvo) {
-		int n = sqlsession.insert("yj_trip.addFoodstoreReview", reviewvo);
+	public int increase_readCount(Map<String, String> paraMap) {
+		int n = sqlsession.update("yj_trip.increase_readCount", paraMap);
 		return n;
 	}
 
 
-	// == 작성한 리뷰 보이기 == //
+	// == 맛집 일정 추가 == //
 	@Override
-	public List<ReviewVO> getReviewList(String parent_code) {
-		List<ReviewVO> reviewList = sqlsession.selectList("yj_trip.getReviewList", parent_code);
-		return reviewList;
-	}
-
-
-	// === 리뷰 수정하기 === //
-	@Override
-	public int updateReview(Map<String, String> paraMap) {
-		int n = sqlsession.update("yj_trip.updateReview", paraMap);
+	public int addFoodSchedule(Map<String, String> paraMap) {
+		int n = sqlsession.insert("yj_trip.addFoodSchedule", paraMap);
 		return n;
 	}
+		
 
-
-	// == 리뷰 삭제하기 == //
-	@Override
-	public int deleteReview(String review_code) {
-		int n = sqlsession.delete("yj_trip.deleteReview", review_code);
-		return n;
-	}
-
-
-	// == 리뷰 총 개수 구하기 == //
-	@Override
-	public int getReviewTotalCount(String parent_code) {
-		int n = sqlsession.selectOne("yj_trip.getReviewTotalCount", parent_code);
-		return n;
-	}
-
-
-	
 
 
 

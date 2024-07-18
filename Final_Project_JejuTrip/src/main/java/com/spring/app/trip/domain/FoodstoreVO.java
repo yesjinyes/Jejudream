@@ -4,7 +4,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 // == 맛집 VO == //
 public class FoodstoreVO {
-	
+
 	private String food_store_code;		// 맛집일련번호
 	private String local_status;		// 지역구분
 	private String food_category;		// 맛집카테고리
@@ -15,15 +15,13 @@ public class FoodstoreVO {
 	private String food_address;		// 상세주소
 	private String food_main_img;		// 대표이미지
 	private String review_division;		// 리뷰용구분컬럼(default) B
+	private String readCount;			// 조회수
 	
 	private MultipartFile attach;
 	
 	private String fileName;
-	
 	private String orgFilename;
-	
 	private String fileSize;
-	
 	
 	//////////////////////////////////////////////////////////////////
 	// == Getter, Setter == //
@@ -108,6 +106,14 @@ public class FoodstoreVO {
 		this.review_division = review_division;
 	}
 
+	public String getReadCount() {
+		return readCount;
+	}
+
+	public void setReadCount(String readCount) {
+		this.readCount = readCount;
+	}
+	
 	public MultipartFile getAttach() {
 		return attach;
 	}

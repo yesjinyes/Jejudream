@@ -307,14 +307,14 @@ a.rankTitle:hover {
 div#content3 {
   border: solid 1px #bfbfbf;
   border-radius: 8px;
-  margin: 0 1%;
-  width: 40%;
-margin-bottom: 10%;
+  margin: 0 0 1% 1%;
+  width: 100%;
+margin-bottom: 2%;
 /*   height: 680px; */
 }
 
 div#content3 > h4 {
-  margin: 5% 0 5% 6%;
+  margin: 0.4% 0 2% 2%;
   color: #ff854d;;
   font-weight: 550;
 }
@@ -440,26 +440,59 @@ figure.snip1504 img {
 
 
 /*-------------------------------------------------------*/
-/* 스탭 게시판 CSS */
+/* 방언 관련 CSS */
 div#content4 {
   border: solid 1px #bfbfbf;
   border-radius: 8px;
-  width: 40%;
-  margin-bottom: 20%;
-/*   height: 480px; */
-  padding: 1.1% 0 1% 1.1%;
+  margin: 1% 0 1% 1%;
+  width: 100%;
+/* margin-bottom: 10%; */
+  height: 385px;  
+  overflow: scroll;
+  overflow-x: hidden;
 }
 
+
+
 div#content4 > h4 {
-  margin: 0.4% 0 5% 2%;
-  color: #ff854d;;
+  margin: 0.4% 0 2% 2%;
+  color: #ff854d;
   font-weight: 550;
     
 }
 
-div#content4 > ul {
+ div#content4 > ul {
   width: 90%; 
 }
+
+div#content4 > ul > li {
+  font-size: 14pt; 
+  list-style-type: none;
+  margin-bottom: 3%;
+}
+
+span.jejuBang_eon{
+  margin-right: 4%;
+  color: gray;
+}
+
+
+#content4::-webkit-scrollbar {
+    width: 10px;
+  }
+#content4::-webkit-scrollbar-thumb {
+  background-color: #ff8000;
+  border-radius: 10px;
+  background-clip: padding-box;
+  border: 2px solid transparent;
+}
+#content4::-webkit-scrollbar-track {
+  background-color: grey;
+  border-radius: 10px;
+  box-shadow: inset 0px 0px 5px white;
+}
+
+/*-------------------------------------------------------*/
 
 a.staffTitle {
   font-size: 14pt;
