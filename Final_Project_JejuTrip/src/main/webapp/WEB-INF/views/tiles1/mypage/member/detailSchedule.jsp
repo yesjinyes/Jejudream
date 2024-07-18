@@ -92,7 +92,7 @@ function delSchedule(scheduleno){
 	
 	if(bool){
 		$.ajax({
-			url: "<%= ctxPath%>/schedule/deleteSchedule.action",
+			url: "<%= ctxPath%>/schedule/deleteSchedule.trip",
 			type: "post",
 			data: {"scheduleno":scheduleno},
 			dataType: "json",
@@ -104,7 +104,7 @@ function delSchedule(scheduleno){
 					alert("일정을 삭제하지 못했습니다.");
 				}
 				
-				location.href="<%= ctxPath%>/schedule/scheduleManagement.action";
+				location.href="<%= ctxPath%>/my_schedule.trip";
 			},
 			error: function(request, status, error){
 	            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
@@ -120,7 +120,7 @@ function editSchedule(scheduleno){
 	var frm = document.goEditFrm;
 	frm.scheduleno.value = scheduleno;
 	
-	frm.action = "<%= ctxPath%>/schedule/editSchedule.action";
+	frm.action = "<%= ctxPath%>/schedule/editSchedule.trip";
 	frm.method = "post";
 	frm.submit();
 }
@@ -201,7 +201,7 @@ function editSchedule(scheduleno){
 					</tr>
 					<tr>
 						<th style="vertical-align: middle;">내용</th>
-						<td><textarea id="content" rows="10" cols="100" style="height: 200px; border: none;" readonly>${requestScope.map.CONTENT}</textarea></td>
+						<td><textarea id="content" rows="10" cols="70" style="height: 200px; border: none;" readonly>${requestScope.map.CONTENT}</textarea></td>
 					</tr>
 					<tr>
 						<th style="vertical-align: middle;">작성자</th>
@@ -216,12 +216,10 @@ function editSchedule(scheduleno){
 				<c:set var="v_fk_lgcatgono" value="${requestScope.map.FK_LGCATGONO}"/>
 				<c:set var="v_loginuser_userid" value="${sessionScope.loginuser.userid}"/>
 			
-				<div>
-				
+				<div style="float: right; margin-bottom:30px;">
 					<button type="button" id="edit" class="btn_normal" onclick="editSchedule('${requestScope.map.SCHEDULENO}')">수정</button>
 					<button type="button" class="btn_normal" onclick="delSchedule('${requestScope.map.SCHEDULENO}')">삭제</button>
-					<button type="button" id="cancel" class="btn_normal" style="margin-right: 0px; background-color: #990000;" onclick="javascript:location.href='<%= ctxPath%>/my_schedule.trip'">취소</button> 
-				
+					<button type="button" id="cancel" class="btn_normal" style="margin-right: 0px; background-color: #990000;" onclick="javascript:location.href='<%= ctxPath%>/my_schedule.trip'">취소</button> 				
 				</div>
 			</div>
 		
@@ -229,7 +227,7 @@ function editSchedule(scheduleno){
 			<form name="goEditFrm">
 				<input type="hidden" name="scheduleno"/>
 				<input type="hidden" name="gobackURL_detailSchedule" value="${requestScope.gobackURL_detailSchedule}"/>
-			</form>0
+			</form>
 		
 		</div>
 </div>

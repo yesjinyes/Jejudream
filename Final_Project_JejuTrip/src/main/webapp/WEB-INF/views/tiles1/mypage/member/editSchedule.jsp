@@ -1,9 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <% String ctxPath = request.getContextPath(); %>
 <link rel="stylesheet" href="<%=ctxPath%>/resources/css/mypage/member/mypageEditProfile.css"/>
 <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
 <style type="text/css">
 
 	table#schedule{
@@ -15,8 +17,17 @@
 	 	vertical-align: middle;
 	}
 	
-	table#schedule th{
-		width:80px;
+	a{
+	    color: #395673;
+	    text-decoration: none;
+	    cursor: pointer;
+	}
+	
+	a:hover {
+	    color: #395673;
+	    cursor: pointer;
+	    text-decoration: none;
+		font-weight: bold;
 	}
 	
 	select.schedule{
@@ -57,13 +68,57 @@
 		border-radius: 10%;
 	}
 </style>
+
 <script type="text/javascript">
 $(document).ready(function(){
 	
-	// 캘린더 소분류 카테고리 숨기기
-	$("select.small_category").hide();
+	// ==== 종일체크박스에 체크를 할 것인지 안할 것인지를 결정하는 것 시작 ==== //
+	// 시작 시 분
+	var str_startdate = "${requestScope.map.STARTDATE}";
+ // console.log(str_startdate); 
+	// 2021-12-01 09:00
+	var target = str_startdate.indexOf(":");
+	var start_min = str_startdate.substring(target+1);
+ // console.log(start_min);
+	// 00
+	var start_hour = str_startdate.substring(target-2,target);
+ // console.log(start_hour);
+	// 09
+			
 	
-	// === *** 달력(type="date") 관련 시작 *** === //
+	// 종료 시 분
+	var str_enddate = "${requestScope.map.ENDDATE}";
+ //	console.log(str_enddate);
+	// 2021-12-01 18:00
+	target = str_enddate.indexOf(":");
+	var end_min = str_enddate.substring(target+1);
+ // console.log(end_min);
+    // 00 
+	var end_hour = str_enddate.substring(target-2,target);
+ //	console.log(end_hour);
+	// 18
+	
+	
+	if(start_hour=='00' && start_min=='00' && end_hour=='23' && end_min=='59' ){
+		$("input#allDay").prop("checked",true);
+	}
+	else{
+		$("input#allDay").prop("checked",false);
+	}
+	// ==== 종일체크박스에 체크를 할 것인지 안할 것인지를 결정하는 것 끝 ==== // 
+	
+	
+	// 시작날짜 넣어주기
+	target = str_startdate.indexOf(" ");
+	var start_yyyymmdd = str_startdate.substring(0,target);
+	$("input#startDate").val(start_yyyymmdd);
+	
+	// 종료날짜 넣어주기
+	target = str_enddate.indexOf(" ");
+	var end_yyyymmdd = str_enddate.substring(0,target);
+	$("input#endDate").val(end_yyyymmdd);
+	
+	
 	// 시작시간, 종료시간		
 	var html="";
 	for(var i=0; i<24; i++){
@@ -77,6 +132,10 @@ $(document).ready(function(){
 	
 	$("select#startHour").html(html);
 	$("select#endHour").html(html);
+	
+	// === *** 시작시간 시 분 넣어주기 *** === //
+	$("select#startHour").val(start_hour);
+	$("select#endHour").val(end_hour);
 	
 	// 시작분, 종료분 
 	html="";
@@ -92,7 +151,11 @@ $(document).ready(function(){
 	
 	$("select#startMinute").html(html);
 	$("select#endMinute").html(html);
-	// === *** 달력(type="date") 관련 끝 *** === //
+	
+	// === *** 종료시간 시 분 넣어주기 *** === //
+	$("select#startMinute").val(start_min);
+	$("select#endMinute").val(end_min);
+	
 	
 	// '종일' 체크박스 클릭시
 	$("input#allDay").click(function() {
@@ -116,6 +179,24 @@ $(document).ready(function(){
 		}
 	});
 	
+	// ========== *** 캘린더선택에서 이미 저장된 캘린더 넣어주기 시작 *** ========== //
+
+	$("select.small_category").val("${requestScope.map.FK_SMCATGONO}");
+	// ========== *** 캘린더선택에서 이미 저장된 캘린더 넣어주기 끝 *** ========== //
+
+	
+	// **** 수정하기전 이미 저장되어있는 공유자 **** 
+	var stored_joinuser = "${requestScope.map.JOINUSER}";
+	if(stored_joinuser != "공유자가 없습니다."){
+		var arr_stored_joinuser = stored_joinuser.split(",");
+		var str_joinuser = "";
+		for(var i=0; i<arr_stored_joinuser.length; i++){
+			var user = arr_stored_joinuser[i];
+		//	console.log(user);
+			add_joinUser(user);
+		}// end of for--------------------------
+	}// end of if--------------------------------      
+
 	
 	// 공유자 추가하기
 	$("input#joinUserName").bind("keyup",function(){
@@ -127,10 +208,8 @@ $(document).ready(function(){
 				dataType:"json",
 				success : function(json){
 					var joinUserArr = [];
-			    
-				//  input태그 공유자입력란에 "이" 를 입력해본 결과를 json.length 값이 얼마 나오는지 알아본다. 
-				//	console.log(json.length);
-				
+			
+			//		console.log("이:"+json.length);
 					if(json.length > 0){
 						
 						$.each(json, function(index,item){
@@ -172,8 +251,8 @@ $(document).ready(function(){
 	});
 
 	
-	// 등록 버튼 클릭
-	$("button#register").click(function(){
+	// 수정 버튼 클릭
+	$("button#edit").click(function(){
 	
 		// 일자 유효성 검사 (시작일자가 종료일자 보다 크면 안된다!!)
 		var startDate = $("input#startDate").val();	
@@ -230,7 +309,7 @@ $(document).ready(function(){
         // 캘린더 선택 유무 검사
 		var calType = $("select.calType").val().trim();
 		if(calType==""){
-			alert("분류를 선택하세요."); 
+			alert("캘린더 종류를 선택하세요."); 
 			return;
 		}
 		
@@ -249,6 +328,7 @@ $(document).ready(function(){
 		
 	//  console.log("색상 => " + $("input#color").val());
 		
+		      
 		// 공유자 넣어주기
 		var plusUser_elm = document.querySelectorAll("div.displayUserList > span.plusUser");
 		var joinUserArr = new Array();
@@ -269,43 +349,42 @@ $(document).ready(function(){
 		
 		$("input[name=joinuser]").val(joinuser);
 		
-		var frm = document.scheduleFrm;
-		frm.action="<%= ctxPath%>/schedule/registerSchedule_end.trip";
+	    var frm = document.scheduleFrm;
+	  	frm.action="<%= ctxPath%>/schedule/editSchedule_end.trip";
 		frm.method="post";
-		frm.submit();
+		frm.submit(); 
 
-	});// end of $("button#register").click(function(){})--------------------
+	});// end of $("button#edit").click(function(){})--------------------
 	
-}); // end of $(document).ready(function(){}-----------------------------------
-
-
-// ~~~~ Function Declaration ~~~~
-
-// div.displayUserList 에 공유자를 넣어주는 함수
-function add_joinUser(value){  // value 가 공유자로 선택한이름 이다.
+	}); // end of $(document).ready(function(){}-----------------------------------
 	
-	var plusUser_es = $("div.displayUserList > span.plusUser").text();
-
- // console.log("확인용 plusUser_es => " + plusUser_es);
-    /*
-    	확인용 plusUser_es => 
-			확인용 plusUser_es => 이순신(leess/hanmailrg@naver.com)
-			확인용 plusUser_es => 이순신(leess/hanmailrg@naver.com)아이유1(iyou1/younghak0959@naver.com)
-			확인용 plusUser_es => 이순신(leess/hanmailrg@naver.com)아이유1(iyou1/younghak0959@naver.com)아이유2(iyou2/younghak0959@naver.com)
-    */
-
-	if(plusUser_es.includes(value)) {  // plusUser_es 문자열 속에 value 문자열이 들어있다라면 
-		alert("이미 추가한 회원입니다.");
-	}
 	
-	else {
-		$("div.displayUserList").append("<span class='plusUser'>"+value+"&nbsp;<i class='fas fa-times-circle'></i></span>");
-	}
+	// ~~~~ Function Declaration ~~~~
 	
-	$("input#joinUserName").val("");
+	// div.displayUserList 에 공유자를 넣어주는 함수
+	function add_joinUser(value){  // value 가 공유자로 선택한이름 이다.
+		
+		var plusUser_es = $("div.displayUserList > span.plusUser").text();
 	
-}// end of function add_joinUser(value){}----------------------------			
-
+	 // console.log("확인용 plusUser_es => " + plusUser_es);
+	    /*
+	    	확인용 plusUser_es => 
+				확인용 plusUser_es => 이순신(leess/hanmailrg@naver.com)
+				확인용 plusUser_es => 이순신(leess/hanmailrg@naver.com)아이유1(iyou1/younghak0959@naver.com)
+				확인용 plusUser_es => 이순신(leess/hanmailrg@naver.com)아이유1(iyou1/younghak0959@naver.com)아이유2(iyou2/younghak0959@naver.com)
+	    */
+	
+		if(plusUser_es.includes(value)) {  // plusUser_es 문자열 속에 value 문자열이 들어있다라면 
+			alert("이미 추가한 회원입니다.");
+		}
+		
+		else {
+			$("div.displayUserList").append("<span class='plusUser'>"+value+"&nbsp;<i class='fas fa-times-circle'></i></span>");
+		}
+		
+		$("input#joinUserName").val("");
+		
+	}// end of function add_joinUser(value){}----------------------------		
 </script>
 
 <div class="body">
@@ -346,9 +425,8 @@ function add_joinUser(value){  // value 가 공유자로 선택한이름 이다.
     </div>
 	
 	<div class="container">
-	    <div style="width: 88%; margin: 100px auto;">
-			<h3>일정 등록</h3>
-			
+	    <div style="margin-left: 80px; width: 88%;  margin: 50px auto;">
+			<h3 style="display: inline-block;">일정 수정하기</h3>&nbsp;&nbsp;<a href="<%= ctxPath%>/schedule/scheduleManagement.action"><span>◀캘린더로 돌아가기</span></a>
 				<form name="scheduleFrm">
 					<table id="schedule" class="table table-bordered">
 						<tr>
@@ -368,27 +446,29 @@ function add_joinUser(value){  // value 가 공유자로 선택한이름 이다.
 						</tr>
 						<tr>
 							<th>제목</th>
-							<td><input type="text" id="subject" name="subject" class="form-control"/></td>
+							<td><input type="text" id="subject" name="subject" class="form-control" value="${requestScope.map.SUBJECT}"/></td> 
 						</tr>
+						
 						<tr>
-							<th>분류선택</th>
+							<th>캘린더선택</th>
 							<td>
-								<select class="calType schedule" name="fk_smcatgono"> 
+								 <select class="calType schedule small_category" name="fk_smcatgono"> 
 									<option value="">선택하세요</option>
 									<option value="1">숙소</option>
 									<option value="2">맛집</option>
 									<option value="3">즐길거리</option>
 									<option value="4">기타</option>
-								</select> &nbsp;
+								</select>
+								 &nbsp;
 							</td>
 						</tr>
 						<tr>
 							<th>색상</th>
-							<td><input type="color" id="color" name="color" value="#009900"/></td>
+							<td><input type="color" id="color" name="color" value="${requestScope.map.COLOR}"/></td>
 						</tr>
 						<tr>
 							<th>장소</th>
-							<td><input type="text" name="place" class="form-control"/></td>
+							<td><input type="text" name="place" class="form-control" value="${requestScope.map.PLACE}"/></td>
 						</tr>
 						
 						<tr>
@@ -401,15 +481,16 @@ function add_joinUser(value){  // value 가 공유자로 선택한이름 이다.
 						</tr>
 						<tr>
 							<th>내용</th>
-							<td><textarea rows="10" cols="100" style="height: 200px;" name="content" id="content"  class="form-control"></textarea></td>
+							<td><textarea rows="10" cols="100" style="height: 200px;" name="content" id="content" class="form-control">${requestScope.map.CONTENT}</textarea></td>
 						</tr>
 					</table>
 					<input type="hidden" value="${sessionScope.loginuser.userid}" name="fk_userid"/>
+					<input type="hidden" value="${requestScope.map.SCHEDULENO}" name="scheduleno"/>
 				</form>
 				
-				<div style="float: right;">
-				<button type="button" id="register" class="btn_normal" style="margin-right: 10px; background-color: #0071bd;">등록</button>
-				<button type="button" class="btn_normal" style="background-color: #990000;" onclick="javascript:location.href='<%= ctxPath%>/my_schedule.trip'">취소</button> 
+				<div style="float: right; margin-bottom:30px;">
+					<button type="button" id="edit" class="btn_normal" style="margin-right: 10px; background-color: #0071bd;">완료</button>
+					<button type="button" class="btn_normal" style="background-color: #990000;" onclick="javascript:location.href='<%= ctxPath%>${gobackURL_detailSchedule}'">취소</button> 
 				</div>
 			</div>
 	</div>
