@@ -471,19 +471,16 @@ public class Yj_TripController {
 										@RequestParam(defaultValue="") String food_address,
 										@RequestParam(defaultValue="") String scheduleTitle,
 										@RequestParam(defaultValue="") String scheduleContent,
-										@RequestParam(defaultValue="") String scheduleDate
-										/*@RequestParam(defaultValue="") String startdate,
-										@RequestParam(defaultValue="") String enddate*/) {
+										@RequestParam(defaultValue="") String startdate,
+										@RequestParam(defaultValue="") String enddate) {
 		
 		//System.out.println("~~~ parent_code 확인 =>" + parent_code);
 		//System.out.println("~~~ food_address 확인 =>" + food_address);
 		//System.out.println("~~~ scheduleTitle 확인 => " + scheduleTitle);
 		//System.out.println("~~~ scheduleContent 확인 => " + scheduleContent);
 		//System.out.println("~~~ scheduleDate 확인 => " + scheduleDate);
-		
-//		System.out.println("~~~ startdate 확인 => " + startdate);
-//		System.out.println("~~~ enddate 확인 => " + enddate);
-		
+		//System.out.println("~~~ startdate 확인 => " + startdate);
+		//System.out.println("~~~ enddate 확인 => " + enddate);
 		
 		HttpSession session = request.getSession();
 		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
@@ -503,11 +500,17 @@ public class Yj_TripController {
 		
 		paraMap.put("scheduleTitle", scheduleTitle);
 		paraMap.put("scheduleContent", scheduleContent);
-		paraMap.put("scheduleDate", scheduleDate);
-//		paraMap.put("startdate", startdate);
-//		paraMap.put("enddate", enddate);
+		paraMap.put("scheduleContent", scheduleContent);
+		paraMap.put("startdate", startdate);
+		paraMap.put("enddate", enddate);
 		
-		int n = service.addFoodSchedule(paraMap);
+		int n = 0;
+		
+		try {
+			n = service.addFoodSchedule(paraMap);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 		mav.addObject("n", n);
 		
