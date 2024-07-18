@@ -474,5 +474,26 @@ public class Ws_TripDAO_imple implements Ws_TripDAO {
 		int n = sqlsession.insert("ws_trip.registerSchedule_end",paraMap);
 		return n;
 	}
+	
+	// 공유자 명단 불러오기
+	@Override
+	public List<MemberVO> searchJoinUserList(String joinUserName) {
+		List<MemberVO> mvo = sqlsession.selectList("ws_trip.searchJoinUserList",joinUserName);
+		return mvo;
+	}
+	
+	// 일정 수정 완료하기
+	@Override
+	public int editSchedule_end(Calendar_schedule_VO svo) {
+		int n = sqlsession.update("ws_trip.editSchedule_end",svo);
+		return n;
+	}
+	
+	// 일정삭제하기
+	@Override
+	public int deleteSchedule(String scheduleno) {
+		int n = sqlsession.delete("ws_trip.deleteSchedule",scheduleno);
+		return n;
+	}
 
 }

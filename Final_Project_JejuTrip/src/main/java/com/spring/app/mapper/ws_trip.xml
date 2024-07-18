@@ -11,7 +11,7 @@
 		insert into tbl_company (companyid, company_name, pw, email, mobile, registerday, lastpwdchangedate, status, idle) 
 		values (#{companyid},#{company_name},#{pw},#{email},#{mobile},default, default, default, default)
 	</insert>
-
+	
 	<select id="companyIdCheck" parameterType="String" resultType="String">
 		select companyid
 		from tbl_company
@@ -961,4 +961,31 @@
     	values(seq_scheduleno.nextval, to_date(#{startdate}, 'yyyymmddhh24miss'), to_date(#{enddate}, 'yyyymmddhh24miss'), #{subject}, #{color}, #{place}, #{joinuser}, #{content}, #{fk_smcatgono}, 1, #{fk_userid})  
     </insert>
 	
+	<!-- 공유자를 찾기 위한 특정글자가 들어간 회원명단 불러오기 -->
+    <select id="searchJoinUserList" parameterType="String" resultType="MemberVO">
+    	select userid, user_name
+		from tbl_member
+		where lower(user_name) like '%'|| lower(#{joinUserName}) ||'%'
+    </select>
+    
+    <!-- 일정수정하가 -->
+	<update id="editSchedule_end" parameterType="Calendar_schedule_VO">
+		update tbl_calendar_schedule set startdate = to_date(#{startdate}, 'yyyymmddhh24miss')
+		                               , enddate = to_date(#{enddate}, 'yyyymmddhh24miss')
+		                               , subject = #{subject}
+		                               , fk_lgcatgono = 1
+		                               , fk_smcatgono = #{fk_smcatgono}
+		                               , color = #{color}
+		                               , place = #{place}
+		                               , joinuser = #{joinuser}
+		                               , content = #{content}
+		where scheduleno = #{scheduleno} 
+	</update>
+    
+    <!-- 일정삭제하기 -->
+	<delete id="deleteSchedule" parameterType="String">
+		delete from tbl_calendar_schedule 
+		where scheduleno = #{scheduleno} 
+	</delete>
+    
 </mapper>
