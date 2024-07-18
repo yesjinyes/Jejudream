@@ -177,6 +177,29 @@ textarea {
   margin-top: 1%;
 }
 
+/*--------------------------------------------------------*/
+/* == 일정 == */
+
+/* 방문날짜 */
+input#scheduleDate {
+  border: solid 1px rgba(206, 212, 218);
+  border-radius: 5px;
+  height: 35px;
+  padding-left: 3%;
+}
+
+/* 방문 시간 */
+.visit_time select{
+  width: 100%;
+  max-width: 60px;
+  height: 35px;
+  margin: 2% auto;
+  border: solid 1px rgba(206, 212, 218);
+  border-radius: 5px;
+  padding: 0 0 0 15px;
+  font-size: 16px;
+  color:gray;
+}
 
 
 </style>
@@ -404,13 +427,71 @@ textarea {
 	    	
 	    });// end of $("button#btnSchedule").click(function() {})----------------
 	    
+
+	    // == 모달창 닫으면 내용 reset == //
+	    $('#calendarModal').on('hidden.bs.modal', function (e) {
+            $(this).find('form')[0].reset();
+            $("input#scheduleDate").datepicker('setDate', 'today');
+        });
+	    
+	    
+	    // == 일정 시간 설정 == //
+	 	// 시작시간, 종료시간 
+		var html="";
+		for(var i=0; i<24; i++){
+			if(i<10){
+				html+="<option value='0"+i+"'>0"+i+"</option>";
+			}
+			else{
+				html+="<option value="+i+">"+i+"</option>";
+			}
+		}// end of for----------------------
+    
+	 	$("select#startHour").html(html);
+		$("select#endHour").html(html);
 		
-	    // == 일정 취소버튼 클릭 시 내용 reset == //
-	    $("button#sprintSettingModalClose").click(function() {
-	    	$("input:text[id='scheduleTitle']").val("");
-	    	$("input:text[id='scheduleContent']").val("");
-	    	$("input#scheduleDate").datepicker('setDate', 'today');
-	    });
+		// 시작분, 종료분 
+		html="";
+		for(var i=0; i<60; i=i+5){
+			if(i<10){
+				html+="<option value='0"+i+"'>0"+i+"</option>";
+			}
+			else {
+				html+="<option value="+i+">"+i+"</option>";
+			}
+		}// end of for--------------------
+		
+		html+="<option value="+59+">"+59+"</option>"
+		
+		$("select#startMinute").html(html);
+		$("select#endMinute").html(html);
+		
+		// '종일' 체크박스 클릭시
+		$("input#allDay").click(function() {
+			var bool = $('input#allDay').prop("checked");
+			
+			if(bool == true) {
+				$("select#startHour").val("00");
+				$("select#startMinute").val("00");
+				$("select#endHour").val("23");
+				$("select#endMinute").val("59");
+				$("select#startHour").prop("disabled",true);
+				$("select#startMinute").prop("disabled",true);
+				$("select#endHour").prop("disabled",true);
+				$("select#endMinute").prop("disabled",true);
+			} 
+			else {
+				$("select#startHour").prop("disabled",false);
+				$("select#startMinute").prop("disabled",false);
+				$("select#endHour").prop("disabled",false);
+				$("select#endMinute").prop("disabled",false);
+			}
+		});// end of $("input#allDay").click(function() {})------------------------
+    
+		
+		
+    
+	    
 	    
 	    
 	});// end of $(document).ready(function() {})-----------------------------
@@ -454,32 +535,39 @@ textarea {
 	
 	// == 일정에 추가하기 == //
 	function addSchedule() {
-		
-		// 일정 제목
-		const scheduleTitle = $("input:text[id='scheduleTitle']").val();
-		// console.log("~~scheduleTitle 확인 => " + scheduleTitle);
-		
-		// 일정 내용
-		const scheduleContent = $("input:text[id='scheduleContent']").val();
-		// console.log("~~scheduleContent 확인 => " + scheduleContent);
-		
-		// 일정 날짜
-		const scheduleDate = $("input:text[id='scheduleDate']").val();
-		// console.log("~~scheduleDate 확인 => " + scheduleDate);
 	
+		const schedule = $("form[name='scheduleFrm']").serialize();
 		
-		const frm = document.scheduleFrm;
+		// 유효성 검사
+		const scheduleTitle = $("input#scheduleTitle").val().trim();
+		if(scheduleTitle == "") {
+			alert("일정 제목을 입력해주세요");
+			return;
+		}
 		
-		frm.scheduleTitle.value = scheduleTitle;
-		frm.scheduleContent.value = scheduleContent;
-		frm.scheduleDate.value = scheduleDate;
+		const scheduleContent = $("input#scheduleContent").val().trim();
+		if(scheduleContent == "") {
+			alert("일정 내용을 입력해주세요");
+			return;
+		}
 		
-		frm.action = "foodstoreDetail.trip";
-		// frm.submit();
 		
 		
-	}
-	
+		$.ajax({
+			url:"addFoodSchedule.trip",
+			type:"post",
+			data:schedule,
+			/* dataType:"json", */
+			success:function(json) {
+				alert("일정 등록에 성공했습니다.");
+				$("#calendarModal").modal("hide");
+			},
+			error: function(request, status, error) {
+                alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+            }
+		});// end of $.ajax------------------------
+
+	}// end of function viewScheduleModal()------------------------------
 	
 	//////////////////////////////////////////// === 리뷰 시작 === //////////////////////////////////////////////////
 	
@@ -757,24 +845,40 @@ textarea {
 				                <div class="modal-body" style="padding: 7%;">
 				                    <div class="form-group">
 				                    	<label for="food_name" class="col-form-label">맛집 이름</label>
-				                        <input type="text" class="form-control mb-3" id="food_name" name="food_name" readonly="readonly" value="${requestScope.foodstorevo.food_name}">
+				                        <input type="text" class="form-control schedule-input mb-3" id="food_name" name="food_name" readonly="readonly" value="${requestScope.foodstorevo.food_name}">
+				                        
+				                        <input type="hidden" id="parent_code" name="parent_code" value="${requestScope.foodstorevo.food_store_code}" />
+				                        <input type="hidden" id="food_address" name="food_address" value="${requestScope.foodstorevo.food_address}" />
 				                        
 				                        <label for="scheduleTitle" class="col-form-label">일정 제목</label>
-				                        <input type="text" class="form-control mb-3" id="scheduleTitle" name="scheduleTitle">
+				                        <input type="text" class="form-control schedule-input mb-3" id="scheduleTitle" name="scheduleTitle">
 				                        
 				                        <label for="scheduleContent" class="col-form-label">일정 내용</label>
-				                        <input type="text" class="form-control mb-3" id="scheduleContent" name="scheduleContent">
+				                        <input type="text" class="form-control schedule-input mb-3" id="scheduleContent" name="scheduleContent">
 				                        
 				                        <div class="scheduleDate">
-								            <label>날짜</label>
+								            <label class="mt-3">방문 날짜</label>
 								            <div>
 								                <div class="date-container">
 								                    <span class="date-pick">
-								                        <input class="datepicker" style="cursor: pointer;" type="text" id="scheduleDate" name="scheduleDate" placeholder="일정에 추가할 날짜 선택">
+								                        <input class="datepicker schedule-input" style="cursor: pointer;" type="text" id="scheduleDate" name="scheduleDate" placeholder="일정에 추가할 날짜 선택">
 								                    </span>
 								                </div>
 								            </div>
 								        </div>
+								        
+								        <div class="visit_time">
+								        	<label class="mt-4">방문 시간</label><br>
+											<select id="startHour" class="schedule"></select> 시
+											<select id="startMinute" class="schedule"></select> 분
+											<select id="endHour" class="schedule"></select> 시
+											<select id="endMinute" class="schedule"></select> 분
+											<input type="checkbox" id="allDay" class="ml-3"/>&nbsp;<label for="allDay">종일</label>
+											 
+											<input type="hidden" name="startdate"/>
+											<input type="hidden" name="enddate"/>
+								        </div>
+								        
 				                    </div>
 				                </div>
 			                </form>
