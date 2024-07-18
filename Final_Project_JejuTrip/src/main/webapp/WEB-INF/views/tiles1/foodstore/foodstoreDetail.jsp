@@ -117,6 +117,15 @@ img.icon {
   font-size: 13pt;
 }
 
+button#btnSchedule {
+  border: solid 1px orange;
+  border-radius: 10%;
+  background-color: #ffebcc;
+  margin: 10% 0 0 15%;
+  padding-top: 10%;
+}
+
+
 /* 상세정보 */
 div#storedetail {
   width: 90%;
@@ -226,7 +235,6 @@ textarea {
 			    }); 
 			}
 			
-			
 			else if($(e.target).text() == "완료") {
 				// alert("리뷰시퀀스 들어올 자리 : "+$(e.target).parent().parent().children("td:nth-child(1)").text());
 				// alert($(e.target).parent().parent().children("td:nth-child(2)").children("input").val()); // 수정 후 리뷰 내용
@@ -244,9 +252,9 @@ textarea {
 						
 						//$(e.target).parent().parent().children("td:nth-child(2)").html(content);
 						
-						//const currentShowPageNo = $(e.target).parent().parent().find("input.currentShowPageNo").val(); 
+						const currentShowPageNo = $(e.target).parent().parent().find("input.currentShowPageNo").val(); 
 						
-						goViewReview(); // 작성한 리뷰 불러오기
+						goViewReview(currentShowPageNo); // 작성한 리뷰 불러오기
 						
 						$(e.target).text("수정").removeClass("btn-info").addClass("btn-secondary");
 						$(e.target).next().next().text("삭제").removeClass("btn-danger").addClass("btn-secondary");
@@ -267,7 +275,7 @@ textarea {
 		$(document).on("click", "button.btnDeleteReview", function(e) {
 
 			if($(e.target).text() == "취소") {
-				 alert("댓글 수정취소");
+				// alert("댓글 수정취소");
 				
 				const $review_content = $(e.target).parent().parent().children("td:nth-child(2)");
 				
@@ -289,7 +297,7 @@ textarea {
 						dataType:"json",
 						success:function(json){
 							// console.log("리뷰삭제 =>" + JSON.stringify(json))
-							goViewReview();
+							goViewReview(1);
 						},
 						error: function(request, status, error){
 							alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
@@ -305,8 +313,6 @@ textarea {
 		// == 좋아요 기능 == //
 		$("button#btnLike").click(function() {
 			// alert("좋아요 버튼 클릭");
-			
-			
 			
 			if(${empty sessionScope.loginuser}) {
 				alert("좋아요는 로그인 후 가능합니다.");
@@ -328,11 +334,11 @@ textarea {
 					dataType:"json", 
 					success:function(json) {
 						if(json.n == 1){
-							alert("좋아요 등록 완료");
+							// alert("좋아요 등록 완료");
 							goLikeDislikeCount();
 						}
 						else{
-							alert("좋아요 취소");
+							// alert("좋아요 취소");
 							goLikeDislikeCount();
 						}
 			        },
@@ -343,7 +349,72 @@ textarea {
 			} 
 		});// end of $("button#btnLike").click(function() {})----------------------------
 		
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+ 		// == 일정추가 modal 달력 띄우기 == //
+		const today = new Date();
+	    const year = today.getFullYear();
+	    const month = String(today.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
+	    const day = String(today.getDate()).padStart(2, '0');
+	    
+	    setDatePickers();
+	 	// **** 동기적으로 실행하기 위해서 document.ready 안에다가 함수선언했음  ******    
+	
+	    // === 전체 datepicker 옵션 일괄 설정하기 ===  
+	    //     한번의 설정으로 $("input#fromDate"), $('input#toDate')의 옵션을 모두 설정할 수 있다.
+	    function setDatePickers() {
+		    //모든 datepicker에 대한 공통 옵션 설정
+		    $.datepicker.setDefaults({
+		         dateFormat: 'yy-mm-dd' //Input Display Format 변경
+		        ,showOtherMonths: true //빈 공간에 현재월의 앞뒤월의 날짜를 표시
+		        ,showMonthAfterYear:true //년도 먼저 나오고, 뒤에 월 표시
+		        ,changeYear: true //콤보박스에서 년 선택 가능
+		        ,changeMonth: true //콤보박스에서 월 선택 가능                
+		     // ,showOn: "both" //button:버튼을 표시하고,버튼을 눌러야만 달력 표시됨. both:버튼을 표시하고,버튼을 누르거나 input을 클릭하면 달력 표시됨.  
+		     // ,buttonImage: "http://jqueryui.com/resources/demos/datepicker/images/calendar.gif" //버튼 이미지 경로
+		     // ,buttonImageOnly: true //기본 버튼의 회색 부분을 없애고, 이미지만 보이게 함
+		     // ,buttonText: "선택" //버튼에 마우스 갖다 댔을 때 표시되는 텍스트                
+		        ,yearSuffix: "년" //달력의 년도 부분 뒤에 붙는 텍스트
+		        ,monthNamesShort: ['1','2','3','4','5','6','7','8','9','10','11','12'] //달력의 월 부분 텍스트
+		        ,monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'] //달력의 월 부분 Tooltip 텍스트
+		        ,dayNamesMin: ['일','월','화','수','목','금','토'] //달력의 요일 부분 텍스트
+		        ,dayNames: ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'] //달력의 요일 부분 Tooltip 텍스트
+		      	,minDate: "0D" //최소 선택일자(-1D:하루전, -1M:한달전, -1Y:일년전)
+		      	,maxDate: "+1Y" //최대 선택일자(+1D:하루후, -1M:한달후, -1Y:일년후)                    
+		    });
+		 
+		    // input을 datepicker로 선언
+		    $("input#scheduleDate").datepicker();                    
+		        
+		    // From의 초기값을 오늘 날짜로 설정
+		    $('input#scheduleDate').datepicker('setDate', 'today'); //(-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, +1M:한달후, +1Y:일년후)
+		    
+		} // end of function setDatePickers() {}-----------------------
+
+	    
+	    // == 로그인 하지 않고 일정 추가 버튼 시 로그인 페이지로 이동 , 로그인 시에는 모달 띄우기 == //
+	    $("button#btnSchedule").click(function() {
+	    	if(${empty sessionScope.loginuser}) {
+	    		alert("일정 추가 기능은 로그인 후 사용 가능합니다.");
+	    	 	location.href = "login.trip";
+	    	}
+	    	else {
+	    		viewScheduleModal(); // 일정 모달 띄우기
+	    	}
+	    	
+	    });// end of $("button#btnSchedule").click(function() {})----------------
+	    
+		
+	    // == 일정 취소버튼 클릭 시 내용 reset == //
+	    $("button#sprintSettingModalClose").click(function() {
+	    	$("input:text[id='scheduleTitle']").val("");
+	    	$("input:text[id='scheduleContent']").val("");
+	    	$("input#scheduleDate").datepicker('setDate', 'today');
+	    });
+	    
+	    
 	});// end of $(document).ready(function() {})-----------------------------
+	
 	
 	//▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒//
 	// Function declaration
@@ -352,10 +423,8 @@ textarea {
 	function goLikeDislikeCount(){
 		$.ajax({
 	        url: "<%= ctxPath %>/countFoodlike.trip",
-	        data: {
-	            "parent_code": "${requestScope.foodstorevo.food_store_code}",
-	            "fk_userid": "${sessionScope.loginuser.userid}"
-	        },
+	        data: {"parent_code": "${requestScope.foodstorevo.food_store_code}",
+	            "fk_userid": "${sessionScope.loginuser.userid}"},
 	        dataType: "json",
 	        success: function(json) {
 	            $("p#likeCount").html(json.countLike);
@@ -373,19 +442,47 @@ textarea {
 	    });// end of $.ajax---------------------------------------
 		
 	}//end of function goLikeDislikeCount()---------------------------------------
-
 	
 	
-	// == 내 일정에 추가 == //
-	function addSchedule() {
+	// == 일정 추가 모달 띄우기 == //
+	function viewScheduleModal() {
+		
 		$("#calendarModal").modal("show");
-		
-		
-		
 		
 	}// end of function addSchedule()-----------------------------------------
 	
-
+	
+	// == 일정에 추가하기 == //
+	function addSchedule() {
+		
+		// 일정 제목
+		const scheduleTitle = $("input:text[id='scheduleTitle']").val();
+		// console.log("~~scheduleTitle 확인 => " + scheduleTitle);
+		
+		// 일정 내용
+		const scheduleContent = $("input:text[id='scheduleContent']").val();
+		// console.log("~~scheduleContent 확인 => " + scheduleContent);
+		
+		// 일정 날짜
+		const scheduleDate = $("input:text[id='scheduleDate']").val();
+		// console.log("~~scheduleDate 확인 => " + scheduleDate);
+	
+		
+		const frm = document.scheduleFrm;
+		
+		frm.scheduleTitle.value = scheduleTitle;
+		frm.scheduleContent.value = scheduleContent;
+		frm.scheduleDate.value = scheduleDate;
+		
+		frm.action = "foodstoreDetail.trip";
+		// frm.submit();
+		
+		
+	}
+	
+	
+	//////////////////////////////////////////// === 리뷰 시작 === //////////////////////////////////////////////////
+	
 	// == 맛집 리뷰 작성하기 == //
 	function goAddReview() {
 		
@@ -404,19 +501,18 @@ textarea {
 	        type:"post",
 	        dataType:"json",
 	        success:function(json){
-	        	 console.log("리뷰 insert 확인 : ", JSON.stringify(json));
+	        	// console.log("리뷰 insert 확인 : ", JSON.stringify(json));
 	        	// {"food_store_code":"5316","fk_userid":"yy6037","n":1}
 	        	
 	        	if(json.n == 1) {
 	        		alert("리뷰가 등록되었습니다.");
-	        		goViewReview();
+	        		goViewReview(1);
 	        	}
 	        	else {
 	        		alert("리뷰 작성 실패");
 	        	}
 	        	
 	        	$("textarea[name='review_content']").val("");
-	        	
 	        },
 	        error: function(request, status, error){
 				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
@@ -438,7 +534,9 @@ textarea {
 			success:function(json) {
 				//console.log("리뷰 select 확인 : "+JSON.stringify(json));
 				
-				let v_html = "";
+				let v_html = ""; // 작성한 리뷰
+				let count_html = 0; // 리뷰 총 개수
+
 				if(json.length > 0) {
 					$.each(json, function(index, item){
 						
@@ -460,7 +558,7 @@ textarea {
 								       }
 								        
 						v_html += `</tr>`;
-								       
+						count_html = item.totalCount;     
 					});
 				}// end of if(json.length > 0)---------
 				
@@ -470,11 +568,12 @@ textarea {
 			    	   			  </tr>`;
 			    }
 				
-				$("tbody#reviewDisplay").html(v_html);
+				$("tbody#reviewDisplay").html(v_html); // 작성된 리뷰 자리에 넣어주기
+				$("p#reviewCount").html(count_html); // 리뷰 총 개수 넣어주기
 				
-				//const totalPage = Math.ceil( json[0].totalCount / json[0].sizePerPage);
+				const totalPage = Math.ceil( json[0].totalCount / json[0].sizePerPage);
 				
-				//makeReviewPageBar(currentShowPageNo, totalPage); // 리뷰 페이지바 함수 호출
+				makeReviewPageBar(currentShowPageNo, totalPage); // 리뷰 페이지바 함수 호출
 				
 			},
 			error: function(request, status, error){
@@ -524,13 +623,14 @@ textarea {
 		
 		pageBar_html += "</ul>";
 		 
-		console.log("pageBar_html 확인 : ", pageBar_html);
+		// console.log("pageBar_html 확인 : ", pageBar_html);
 		
 		// 리뷰 페이지바 출력
 		$("div#pageBar").html(pageBar_html);
 		
 	}// end of function makeReviewPageBar(currentShowPageNo)------------------ */
 
+	//////////////////////////////////////////// === 리뷰 끝 === ////////////////////////////////////////////////////
 	
 	// == 맛집 상세 페이지에서 로그인 페이지로 이동 (리뷰 작성을 위한 것) == //
 	function goLogin() {
@@ -624,22 +724,21 @@ textarea {
 						<p class="count" id="reviewCount"></p>
 					</li>
 					<li class="list-item">
-						<button type="button" class="iconbtn" onclick="addSchedule()">
-							<div>
-								<img class="icon" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_calender.png">
-							</div>
-							<p class="icon-title">일정에 추가</p>
-						</button>
-						<p class="count">30</p>
-					</li>
-					<li class="list-item">
 						<button type="button" class="iconbtn" style="cursor: default;">
 							<div>
 								<img class="icon" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_viewcount.png">
 							</div>
 							<p class="icon-title">조회수</p>
 						</button>
-						<p class="count">128</p>
+						<p class="count" id="readCount">${requestScope.foodstorevo.readCount}</p>
+					</li>
+					<li class="list-item">
+						<button type="button" class="iconbtn" id="btnSchedule">
+							<div>
+								<img class="icon" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_calender.png">
+							</div>
+							<p class="icon-title" id="addSchedule">일정 추가</p>
+						</button>
 					</li>
 				</ul>
 				<!-- 아이콘 모음 끝-->
@@ -654,38 +753,34 @@ textarea {
 			                        <span aria-hidden="true">&times;</span>
 			                    </button>
 			                </div>
-			                <div class="modal-body" style="padding: 7%;">
-			                    <div class="form-group">
-			                    	<label for="food_name" class="col-form-label">맛집 이름</label>
-			                        <input type="text" class="form-control mb-3" id="food_name" name="food_name" readonly="readonly" value="${requestScope.foodstorevo.food_name}">
-			                        <label for="calendar_title" class="col-form-label">일정 제목</label>
-			                        <input type="text" class="form-control mb-3" id="calendar_title" name="calendar_title">
-			                        <label for="calendar_content" class="col-form-label">일정 내용</label>
-			                        <input type="text" class="form-control mb-3" id="calendar_content" name="calendar_content">
-			                        
-			                        <label for="taskId" class="col-form-label">시작 일자</label>
-			                        <br>
-			                  <input type="date" id="calendar_start_time" name="calendar_start_time"/>&nbsp; 
-			                  <select id="startHour" class="form-select"></select> 시
-			                  <select id="startMinute" class="form-select"></select> 분
-			                  
-			                  <br>
-			                  <label for="taskId" class="col-form-label">종료 일자</label>
-			                  <br>
-			                  <input type="date" id="calendar_end_time" name="calendar_end_time"/>&nbsp;
-			                  <select id="endHour" class="schedule"></select> 시
-			                  <select id="endMinute" class="schedule"></select> 분&nbsp;
-			                  <input type="checkbox" id="allDay"/>&nbsp;<label for="allDay">종일</label>
-			                  
-			                  <input type="hidden" name="startdate"/>
-			                  <input type="hidden" name="enddate"/>
-			                  <input type="hidden" name="schedule_seq"/>
-			                    </div>
-			                </div>
+			                <form name="scheduleFrm">
+				                <div class="modal-body" style="padding: 7%;">
+				                    <div class="form-group">
+				                    	<label for="food_name" class="col-form-label">맛집 이름</label>
+				                        <input type="text" class="form-control mb-3" id="food_name" name="food_name" readonly="readonly" value="${requestScope.foodstorevo.food_name}">
+				                        
+				                        <label for="scheduleTitle" class="col-form-label">일정 제목</label>
+				                        <input type="text" class="form-control mb-3" id="scheduleTitle" name="scheduleTitle">
+				                        
+				                        <label for="scheduleContent" class="col-form-label">일정 내용</label>
+				                        <input type="text" class="form-control mb-3" id="scheduleContent" name="scheduleContent">
+				                        
+				                        <div class="scheduleDate">
+								            <label>날짜</label>
+								            <div>
+								                <div class="date-container">
+								                    <span class="date-pick">
+								                        <input class="datepicker" style="cursor: pointer;" type="text" id="scheduleDate" name="scheduleDate" placeholder="일정에 추가할 날짜 선택">
+								                    </span>
+								                </div>
+								            </div>
+								        </div>
+				                    </div>
+				                </div>
+			                </form>
 			                <div class="modal-footer">
-			                    <button type="button" class="btn btn-info" id="EditCalendar">등록</button>
-			                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
-			                        id="sprintSettingModalClose">취소</button>
+			                    <button type="button" class="btn btn-secondary" data-dismiss="modal" id="sprintSettingModalClose">취소</button>
+			                    <button type="button" class="btn btn-info" id="EditCalendar" onclick="addSchedule()">등록</button>
 			                </div>
 			    
 			            </div>
@@ -724,6 +819,7 @@ textarea {
 				
 			</div>
 		</div><!-- 우측 div 끝 -->
+		
 	</div> <!-- row 끝 -->
 	
 	<!-- //////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
@@ -731,7 +827,7 @@ textarea {
 	<!-- 맛집 리뷰 -->
 	<div class="border rounded" id="reviewList">
 
-		<!-- 리뷰쓰기 폼 추가 -->
+		<!-- 리뷰쓰기 -->
 		<c:if test="${empty sessionScope.loginuser}">
 			<h4 class="mb-5" style="color: orange;">리뷰를 작성하려면 먼저 로그인을 해주세요.
 				<button type="button" class="btn btn-secondary ml-4" onclick="goLogin()">로그인하기</button>
@@ -743,7 +839,7 @@ textarea {
            <form name="addReviewFrm" id="addReviewFrm">
                <table class="table" style="width: 100%;">
                     <tr style="height: 30px;">
-                       <!-- <th>리뷰 내용 </th> -->
+                       <!-- 리뷰 내용 -->
                        <td>
                           <textarea name="review_content" placeholder="리뷰 내용을 작성해 주세요."></textarea> 
                           <input type="text" style="display: none" />
@@ -771,7 +867,9 @@ textarea {
 					<th style="text-align: center;">내용</th>
 					<th style="width: 12%;">작성자 아이디</th>
 					<th style="width: 12%;">작성일자</th>
-					<th style="width: 12%;">수정/삭제</th>
+					<c:if test="${not empty sessionScope.loginuser}">
+						<th style="width: 12%;">수정/삭제</th>
+					</c:if>
 				</tr>
 			</thead>
 			<tbody id="reviewDisplay">
@@ -790,11 +888,6 @@ textarea {
 <!-- container 끝 -->
 
 
-<form name="submitFrm">
-	<input name="readCount" value="${requestScope.readCount}" placeholder="조회수 들어올 자리" />
-
-	<input type="text" name="currentShowPageNo" placeholder="리뷰 페이징...." />
-</form>
 
 
 

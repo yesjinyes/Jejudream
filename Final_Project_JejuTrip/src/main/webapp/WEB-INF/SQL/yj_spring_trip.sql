@@ -288,6 +288,21 @@ commit;
 desc tbl_food_store;
 
 
+-- 리뷰 페이징
+SELECT review_code, fk_userid, review_content, registerday
+FROM
+(
+    select row_number() over(order by review_code desc) As rno
+          , review_code, fk_userid, review_content
+          , to_char(registerday, 'yyyy-mm-dd') AS registerday
+    from tbl_review
+    where parent_code = 5316
+    order by review_code desc
+)V
+WHERE V.rno BETWEEN #{startRno} and #{endRno};
+
+
+
 -------------------------------------------------------------------------
 -- 맛집 조회수
 ALTER TABLE tbl_food_store ADD readcount varchar2(1000) default 0;
@@ -305,11 +320,49 @@ from tbl_food_store;
 
 commit;
 
+-----------------------------------------------------
+select * from tbl_review;
 
 select * from tbl_food_store;
+
+select * from tbl_like;
 
 select * from user_tables;
 
 select * from tbl_board;
+------------------------------------------------------
+
+select count(*)
+from tbl_review
+where parent_code = 5323;
+
+select * from tbl_food_store;
+
+update tbl_food_store set readCount = readCount + 1
+where food_store_code = 5316
+
+rollback;
+commit;
+
+
+select * from user_tables;
+
+
+select * from TBL_CALENDAR_SMALL_CATEGORY;
+desc TBL_CALENDAR_SMALL_CATEGORY;
+
+desc TBL_CALENDAR_SCHEDULE;
+
+
+
+select * from TBL_CALENDAR_SCHEDULE
+order by scheduleno desc;
+
+insert into TBL_CALENDAR_SCHEDULE(SCHEDULENO, STARTDATE, ENDDATE, SUBJECT, COLOR, PLACE, CONTENT, PARENT_CODE, SCHEDULE_DIVISON, FK_SMCATGONO, FK_LGCATGONO, FK_USERID)
+values(SEQ_SCHEDULENO.nextval, '2024-07-17', '2024-07-17', '팀회식', 'yellow', '물꼬해녀의집', '팀회식 예정입니다.', '5316', 'B', 2 , 1, 'yy6037');
+
+
+select food_address
+where 
 
 

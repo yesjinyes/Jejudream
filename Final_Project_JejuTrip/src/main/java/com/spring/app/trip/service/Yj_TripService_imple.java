@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.spring.app.trip.domain.FoodstoreVO;
+import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.domain.ReviewVO;
 import com.spring.app.trip.model.Yj_TripDAO;
 
@@ -49,6 +50,29 @@ public class Yj_TripService_imple implements Yj_TripService {
 		return foodstorevo;
 	}
 
+	// == 맛집 상세 조회하기 (조회수 증가 O) == //
+	@Override
+	public FoodstoreVO viewfoodstoreDetail_withReadCount(Map<String, String> paraMap) {
+		
+		FoodstoreVO foodstorevo = dao.viewfoodstoreDetail(paraMap);
+		
+		String login_userid = paraMap.get("login_userid"); // 로그인 했을 경우에만 조회수 올리기 위함
+		
+		// String readCount = foodstorevo.getReadCount();
+		// System.out.println("이전 조회수  확인 => " + readCount);
+		
+		if(login_userid != null &&  // 로그인 되어졌고
+		   foodstorevo != null) { // 해당 글이 있을 경우
+		
+			int n = dao.increase_readCount(paraMap); // 글 조회수 1 증가시키기
+			
+			if(n==1) {
+				foodstorevo.setReadCount(String.valueOf(Integer.parseInt(foodstorevo.getReadCount())+1));
+			}
+		}
+		return foodstorevo;
+	}
+	
 	
 	// == 맛집 상세 추가 이미지 == //
 	@Override
@@ -57,6 +81,7 @@ public class Yj_TripService_imple implements Yj_TripService {
 		return addimgList;
 	}
 
+	//////////////////////////////////////////////////////////////////////////////////////
 
 	// == 맛집 리뷰 쓰기 == //
 	@Override
@@ -68,8 +93,8 @@ public class Yj_TripService_imple implements Yj_TripService {
 
 	// == 작성한 리뷰 보이기 == //
 	@Override
-	public List<ReviewVO> getReviewList(String parent_code) {
-		List<ReviewVO> reviewList = dao.getReviewList(parent_code);
+	public List<ReviewVO> getReviewList(Map<String, String> paraMap) {
+		List<ReviewVO> reviewList = dao.getReviewList(paraMap);
 		return reviewList;
 	}
 
@@ -97,6 +122,7 @@ public class Yj_TripService_imple implements Yj_TripService {
 		return n;
 	}
 
+	//////////////////////////////////////////////////////////////////////////////////////
 
 	// == 좋아요 총 개수 알아오기 == //
 	@Override
@@ -127,6 +153,18 @@ public class Yj_TripService_imple implements Yj_TripService {
 	public void deleteLike(Map<String, String> paraMap) {
 		dao.deleteLike(paraMap);
 	}
+
+	//////////////////////////////////////////////////////////////////////////////////////
+
+	// == 맛집 일정 추가 == //
+	@Override
+	public int addFoodSchedule(Map<String, String> paraMap) {
+		int n = dao.addFoodSchedule(paraMap);
+		return n;
+	}
+
+
+	
 
 	
 
