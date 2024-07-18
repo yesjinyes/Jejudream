@@ -1037,6 +1037,9 @@ create table tbl_board
     
     select * from tbl_like where parent_code = 5214;
     
+    select * from tbl_food_add_img;
+    select * from tbl_play_add_img;
+    
     
     
     

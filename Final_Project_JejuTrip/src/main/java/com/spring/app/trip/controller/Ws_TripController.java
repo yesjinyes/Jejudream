@@ -29,6 +29,9 @@ import org.springframework.web.servlet.ModelAndView;
 import com.spring.app.trip.common.AES256;
 import com.spring.app.trip.common.FileManager;
 import com.spring.app.trip.common.GoogleMail;
+import com.spring.app.trip.common.MyUtil;
+import com.spring.app.trip.domain.Calendar_schedule_VO;
+import com.spring.app.trip.domain.Calendar_small_category_VO;
 import com.spring.app.trip.domain.CompanyVO;
 import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.LodgingVO;
@@ -1767,6 +1770,301 @@ public class Ws_TripController {
 		jsonObj.put("n", n);
 		return jsonObj.toString();
 		
+	}
+	
+	@GetMapping("my_schedule.trip")
+	public ModelAndView my_schedule(ModelAndView mav, HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
+		
+		if(loginuser != null) {
+			mav.setViewName("mypage/member/my_schedule.tiles1");
+		}
+		return mav;
+	}
+	
+	// === 모든 캘린더(사내캘린더, 내캘린더, 공유받은캘린더)를 불러오는것 ===
+	@ResponseBody
+	@RequestMapping(value="/selectSchedule.trip", produces="text/plain;charset=UTF-8")
+	public String selectSchedule(HttpServletRequest request) {
+		
+		// 등록된 일정 가져오기
+		
+		String fk_userid = request.getParameter("fk_userid");
+				
+		List<Calendar_schedule_VO> scheduleList = service.selectSchedule(fk_userid);
+		
+		JSONArray jsArr = new JSONArray();
+		
+		if(scheduleList != null && scheduleList.size() > 0) {
+			
+			for(Calendar_schedule_VO svo : scheduleList) {
+				JSONObject jsObj = new JSONObject();
+				jsObj.put("subject", svo.getSubject());
+				jsObj.put("startdate", svo.getStartdate());
+				jsObj.put("enddate", svo.getEnddate());
+				jsObj.put("color", svo.getColor());
+				jsObj.put("scheduleno", svo.getScheduleno());
+				jsObj.put("fk_lgcatgono", svo.getFk_lgcatgono());
+				jsObj.put("fk_smcatgono", svo.getFk_smcatgono());
+				jsObj.put("fk_userid", svo.getFk_userid());
+				jsObj.put("joinuser", svo.getJoinuser());
+				
+				jsArr.put(jsObj);
+			}// end of for-------------------------------------
+		
+		}
+		
+		return jsArr.toString();
+	}
+	
+	// === 일정상세보기 ===
+	@RequestMapping(value="/schedule/detailSchedule.trip")
+	public ModelAndView detailSchedule(ModelAndView mav, HttpServletRequest request) {
+		
+		String scheduleno = request.getParameter("scheduleno");
+		
+		// 검색하고 나서 취소 버튼 클릭했을 때 필요함
+		String listgobackURL_schedule = request.getParameter("listgobackURL_schedule");
+		mav.addObject("listgobackURL_schedule",listgobackURL_schedule);
+
+		
+		// 일정상세보기에서 일정수정하기로 넘어갔을 때 필요함
+		String gobackURL_detailSchedule = MyUtil.getCurrentURL(request);
+		mav.addObject("gobackURL_detailSchedule", gobackURL_detailSchedule);
+		
+		try {
+			Integer.parseInt(scheduleno);
+			Map<String,String> map = service.detailSchedule(scheduleno);
+			mav.addObject("map", map);
+			mav.setViewName("mypage/member/detailSchedule.tiles1");
+		} catch (NumberFormatException e) {
+			mav.setViewName("redirect:/my_schedule.action");
+		}
+		
+		return mav;
+	}
+	
+	
+	// === 내 캘린더에서 내캘린더 소분류  보여주기 ===
+	@ResponseBody
+	@GetMapping(value="/schedule/showMyCalendar.trip", produces="text/plain;charset=UTF-8") 
+	public String showMyCalendar(HttpServletRequest request) {
+		
+		String fk_userid = request.getParameter("fk_userid");
+		
+		List<Calendar_small_category_VO> calendar_small_category_VO_CompanyList = service.showMyCalendar(fk_userid);
+		
+		JSONArray jsonArr = new JSONArray();
+		
+		if(calendar_small_category_VO_CompanyList != null) {
+			for(Calendar_small_category_VO smcatevo : calendar_small_category_VO_CompanyList) {
+				JSONObject jsObj = new JSONObject();
+				jsObj.put("smcatgono", smcatevo.getSmcatgono());
+				jsObj.put("smcatgoname", smcatevo.getSmcatgoname());
+				jsonArr.put(jsObj);
+			}
+		}
+		
+		return jsonArr.toString();
+	}
+	
+	// === 검색 기능 === //
+	@GetMapping("/schedule/searchSchedule.trip")
+	public ModelAndView searchSchedule(HttpServletRequest request, ModelAndView mav) { 
+		
+		List<Map<String,String>> scheduleList = null;
+		
+		String startdate = request.getParameter("startdate");
+		String enddate = request.getParameter("enddate");
+		String searchType = request.getParameter("searchType");
+		String searchWord = request.getParameter("searchWord");
+		String fk_userid = request.getParameter("fk_userid");  // 로그인한 사용자id
+		String str_currentShowPageNo = request.getParameter("currentShowPageNo");
+		String str_sizePerPage = request.getParameter("sizePerPage");
+	
+		String fk_lgcatgono = request.getParameter("fk_lgcatgono");
+		
+		if(searchType==null || (!"subject".equals(searchType) && !"content".equals(searchType)  && !"joinuser".equals(searchType))) {  
+			searchType="";
+		}
+		
+		if(searchWord==null || "".equals(searchWord) || searchWord.trim().isEmpty()) {  
+			searchWord="";
+		}
+		
+		if(startdate==null || "".equals(startdate)) {
+			startdate="";
+		}
+		
+		if(enddate==null || "".equals(enddate)) {
+			enddate="";
+		}
+			
+		if(str_sizePerPage == null || "".equals(str_sizePerPage) || 
+		   !("10".equals(str_sizePerPage) || "15".equals(str_sizePerPage) || "20".equals(str_sizePerPage))) {
+				str_sizePerPage ="10";
+		}
+		
+		if(fk_lgcatgono == null ) {
+			fk_lgcatgono="";
+		}
+		
+		Map<String, String> paraMap = new HashMap<String, String>();
+		paraMap.put("startdate", startdate);
+		paraMap.put("enddate", enddate);
+		paraMap.put("searchType", searchType);
+		paraMap.put("searchWord", searchWord);
+		paraMap.put("fk_userid", fk_userid);
+		paraMap.put("str_sizePerPage", str_sizePerPage);
+
+		paraMap.put("fk_lgcatgono", fk_lgcatgono);
+		
+		int totalCount=0;          // 총 게시물 건수		
+		int currentShowPageNo=0;   // 현재 보여주는 페이지 번호로서, 초기치로는 1페이지로 설정함.
+		int totalPage=0;           // 총 페이지수(웹브라우저상에서 보여줄 총 페이지 개수, 페이지바)  
+		int sizePerPage = Integer.parseInt(str_sizePerPage);  // 한 페이지당 보여줄 행의 개수
+		int startRno=0;            // 시작 행번호
+	    int endRno=0;              // 끝 행번호 
+	    
+	    // 총 일정 검색 건수(totalCount)
+	    totalCount = service.getTotalScheduleCount(paraMap);
+	//  System.out.println("~~~ 확인용 총 일정 검색 건수 totalCount : " + totalCount);
+      
+	    totalPage = (int)Math.ceil((double)totalCount/sizePerPage); 
+
+		if(str_currentShowPageNo == null) {
+			currentShowPageNo = 1;
+		}
+		else {
+			try {
+				currentShowPageNo = Integer.parseInt(str_currentShowPageNo);
+				if(currentShowPageNo < 1 || currentShowPageNo > totalPage) {
+					currentShowPageNo = 1;
+				}
+			} catch (NumberFormatException e) {
+				currentShowPageNo=1;
+			}
+		}
+		
+		startRno = ((currentShowPageNo - 1 ) * sizePerPage) + 1;
+	    endRno = startRno + sizePerPage - 1;
+	      
+	    paraMap.put("startRno", String.valueOf(startRno));
+	    paraMap.put("endRno", String.valueOf(endRno));
+	    	   
+	    scheduleList = service.scheduleListSearchWithPaging(paraMap);
+	    // 페이징 처리한 캘린더 가져오기(검색어가 없다라도 날짜범위 검색은 항시 포함된 것임)
+	    
+		mav.addObject("paraMap", paraMap);
+		// 검색대상 컬럼과 검색어를 유지시키기 위한 것임.
+		
+		// === 페이지바 만들기 === //
+		int blockSize= 5;
+		
+		int loop = 1;
+		
+		int pageNo = ((currentShowPageNo - 1)/blockSize) * blockSize + 1;
+	   
+		String pageBar = "<ul style='list-style:none;'>";
+		
+		String url = "searchSchedule.action";
+		
+		// === [맨처음][이전] 만들기 ===
+		if(pageNo!=1) {
+			pageBar += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&searchType="+searchType+"&searchWord="+searchWord+"&fk_userid="+fk_userid+"&fk_lgcatgono="+fk_lgcatgono+"&sizePerPage="+sizePerPage+"&currentShowPageNo=1'>[맨처음]</a></li>";
+			pageBar += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&searchType="+searchType+"&searchWord="+searchWord+"&fk_userid="+fk_userid+"&fk_lgcatgono="+fk_lgcatgono+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+(pageNo-1)+"'>[이전]</a></li>";
+		}
+		while(!(loop>blockSize || pageNo>totalPage)) {
+			
+			if(pageNo==currentShowPageNo) {
+				pageBar += "<li style='display:inline-block; width:30px; font-size:12pt; border:solid 1px gray; color:red; padding:2px 4px;'>"+pageNo+"</li>";
+			}
+			else {
+				pageBar += "<li style='display:inline-block; width:30px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&searchType="+searchType+"&searchWord="+searchWord+"&fk_userid="+fk_userid+"&fk_lgcatgono="+fk_lgcatgono+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+pageNo+"'>"+pageNo+"</a></li>";
+			}
+			
+			loop++;
+			pageNo++;
+		}// end of while--------------------
+		
+		// === [다음][마지막] 만들기 === //
+		if(pageNo <= totalPage) {
+			pageBar += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&searchType="+searchType+"&searchWord="+searchWord+"&fk_userid="+fk_userid+"&fk_lgcatgono="+fk_lgcatgono+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+pageNo+"'>[다음]</a></li>";
+			pageBar += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&searchType="+searchType+"&searchWord="+searchWord+"&fk_userid="+fk_userid+"&fk_lgcatgono="+fk_lgcatgono+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+totalPage+"'>[마지막]</a></li>";
+		}
+		pageBar += "</ul>";
+		
+		mav.addObject("pageBar",pageBar);
+		
+		String listgobackURL_schedule = MyUtil.getCurrentURL(request);
+	//	System.out.println("~~~ 확인용 검색 listgobackURL_schedule : " + listgobackURL_schedule);
+		
+		mav.addObject("listgobackURL_schedule",listgobackURL_schedule);
+		mav.addObject("scheduleList", scheduleList);
+		mav.setViewName("mypage/member/searchSchedule.tiles1");
+
+		return mav;
+	}
+	
+	// === 풀캘린더에서 날짜 클릭할 때 발생하는 이벤트(일정 등록창으로 넘어간다) ===
+	@PostMapping("/schedule/insertSchedule.trip")
+	public ModelAndView insertSchedule(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) { 
+		
+		// form 에서 받아온 날짜
+		String chooseDate = request.getParameter("chooseDate");
+		
+		mav.addObject("chooseDate", chooseDate);
+		mav.setViewName("mypage/member/insertSchedule.tiles1");
+		
+		return mav;
+	}
+	
+	// === 일정 등록하기 ===
+	@PostMapping("/schedule/registerSchedule_end.trip")
+	public ModelAndView registerSchedule_end(ModelAndView mav, HttpServletRequest request) throws Throwable {
+		
+		String startdate= request.getParameter("startdate");
+   	    
+		String enddate = request.getParameter("enddate");
+		String subject = request.getParameter("subject");
+		String fk_lgcatgono= "1";
+		String fk_smcatgono = request.getParameter("fk_smcatgono");
+		String color = request.getParameter("color");
+		String place = request.getParameter("place");
+		String joinuser = request.getParameter("joinuser");
+		
+		String content = request.getParameter("content");
+		String fk_userid = request.getParameter("fk_userid");
+		
+		Map<String,String> paraMap = new HashMap<String, String>();
+		paraMap.put("startdate", startdate);
+		paraMap.put("enddate", enddate);
+		paraMap.put("subject", subject);
+		paraMap.put("fk_lgcatgono",fk_lgcatgono);
+		paraMap.put("fk_smcatgono", fk_smcatgono);
+		paraMap.put("color", color);
+		paraMap.put("place", place);
+		
+		paraMap.put("joinuser", joinuser);
+		
+		paraMap.put("content", content);
+		paraMap.put("fk_userid", fk_userid);
+		
+		int n = service.registerSchedule_end(paraMap);
+
+		if(n == 0) {
+			mav.addObject("message", "일정 등록에 실패하였습니다.");
+		}
+		else {
+			mav.addObject("message", "일정 등록에 성공하였습니다.");
+		}
+		
+		mav.addObject("loc", request.getContextPath()+"/my_schedule.trip");
+		
+		mav.setViewName("msg");
+		
+		return mav;
 	}
 	
 }
