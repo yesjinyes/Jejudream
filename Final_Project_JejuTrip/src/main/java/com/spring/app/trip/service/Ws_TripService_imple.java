@@ -547,6 +547,27 @@ public class Ws_TripService_imple implements Ws_TripService {
 		return n;
 	}
 	
+	// 공유자 명단 불러오기
+	@Override
+	public List<MemberVO> searchJoinUserList(String joinUserName) {
+		List<MemberVO> mvo = dao.searchJoinUserList(joinUserName);
+		return mvo;
+	}
+	
+	// === 일정 수정 완료하기 ===
+	@Override
+	public int editSchedule_end(Calendar_schedule_VO svo) {
+		int n = dao.editSchedule_end(svo);
+		return n;
+	}
+	
+	// 일정삭제하기
+	@Override
+	public int deleteSchedule(String scheduleno) {
+		int n = dao.deleteSchedule(scheduleno);
+		return n;
+	}
+	
 	
 	
 

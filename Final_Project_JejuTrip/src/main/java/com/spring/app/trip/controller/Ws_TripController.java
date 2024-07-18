@@ -2067,4 +2067,107 @@ public class Ws_TripController {
 		return mav;
 	}
 	
+	// === 일정 수정하기 ===
+	@PostMapping("/schedule/editSchedule.trip")
+	public ModelAndView editSchedule(ModelAndView mav, HttpServletRequest request) {
+		
+		String scheduleno= request.getParameter("scheduleno");
+   		
+		try {
+			Integer.parseInt(scheduleno);
+			
+			String gobackURL_detailSchedule = request.getParameter("gobackURL_detailSchedule");
+			
+			HttpSession session = request.getSession();
+			MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
+			
+			Map<String,String> map = service.detailSchedule(scheduleno);
+			
+			if( !loginuser.getUserid().equals( map.get("FK_USERID") ) ) {
+				String message = "다른 사용자가 작성한 일정은 수정이 불가합니다.";
+				String loc = "javascript:history.back()";
+				
+				mav.addObject("message", message);
+				mav.addObject("loc", loc);
+				mav.setViewName("msg");
+			}
+			else {
+				mav.addObject("map", map);
+				mav.addObject("gobackURL_detailSchedule", gobackURL_detailSchedule);
+				
+				mav.setViewName("mypage/member/editSchedule.tiles1");
+			}
+		} catch (NumberFormatException e) {
+			mav.setViewName("redirect:/my_schedule.trip");
+		}
+		
+		return mav;
+		
+	}
+	
+	// === 공유자를 찾기 위한 특정글자가 들어간 회원명단 불러오기 ===
+	@ResponseBody
+	@RequestMapping(value="/schedule/insertSchedule/searchJoinUserList.trip", produces="text/plain;charset=UTF-8")
+	public String searchJoinUserList(HttpServletRequest request) {
+		
+		String joinUserName = request.getParameter("joinUserName");
+		
+		// 공유자 명단 불러오기
+		List<MemberVO> joinUserList = service.searchJoinUserList(joinUserName);
+
+		JSONArray jsonArr = new JSONArray();
+		if(joinUserList != null && joinUserList.size() > 0) {
+			for(MemberVO mvo : joinUserList) {
+				JSONObject jsObj = new JSONObject();
+				jsObj.put("userid", mvo.getUserid());
+				jsObj.put("user_name", mvo.getUser_name());
+				
+				jsonArr.put(jsObj);
+			}
+		}
+		
+		return jsonArr.toString();
+		
+	}
+	
+	// === 일정 수정 완료하기 ===
+	@PostMapping("/schedule/editSchedule_end.trip")
+	public ModelAndView editSchedule_end(Calendar_schedule_VO svo, HttpServletRequest request, ModelAndView mav) {
+		
+		try {
+			 int n = service.editSchedule_end(svo);
+			 
+			 if(n==1) {
+				 mav.addObject("message", "일정을 수정하였습니다.");
+				 mav.addObject("loc", request.getContextPath()+"/my_schedule.trip");
+			 }
+			 else {
+				 mav.addObject("message", "일정 수정에 실패하였습니다.");
+				 mav.addObject("loc", "javascript:history.back()");
+			 }
+			 
+			 mav.setViewName("msg");
+		} catch (Throwable e) {	
+			e.printStackTrace();
+			mav.setViewName("redirect:/my_schedule.trip");
+		}
+			
+		return mav;
+	}
+	
+	
+	// === 일정삭제하기 ===
+	@ResponseBody
+	@PostMapping("/schedule/deleteSchedule.trip")
+	public String deleteSchedule(HttpServletRequest request) throws Throwable {
+		
+		String scheduleno = request.getParameter("scheduleno");
+				
+		int n = service.deleteSchedule(scheduleno);
+		
+		JSONObject jsObj = new JSONObject();
+		jsObj.put("n", n);
+			
+		return jsObj.toString();
+	}
 }
