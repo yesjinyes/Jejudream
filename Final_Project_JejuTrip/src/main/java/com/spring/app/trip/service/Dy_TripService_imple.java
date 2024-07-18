@@ -2,12 +2,14 @@ package com.spring.app.trip.service;
 
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.collections4.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -523,6 +525,72 @@ public class Dy_TripService_imple implements Dy_TripService {
 		int totalCount = dao.getCommentTotalCount(parentSeq);
 		
 		return totalCount;
+	}
+
+
+	// 커뮤니티 글 수정 페이지 요청
+	@Override
+	public ModelAndView updateBoard(ModelAndView mav, HttpServletRequest request) {
+		
+		String seq = request.getParameter("seq");
+		
+		try {
+			Integer.parseInt(seq);
+			
+			BoardVO boardvo = dao.getBoardInfo(seq);
+			// 글번호에 대한 글 조회하기
+			
+			if(boardvo == null) {
+//				System.out.println("~~~ 확인용 : 글이 없다");
+				mav.setViewName("redirect:/communityMain.trip");
+				
+			} else {
+				
+				HttpSession session = request.getSession();
+				MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
+				
+				if(loginuser != null && !(boardvo.getFk_userid().equals(loginuser.getUserid()))) {
+					// 글번호에 대한 글이 로그인한 사용자의 글이 아니라면
+					
+//					System.out.println("~~~ 확인용 : 내 글이 아니다");
+					mav.setViewName("redirect:/communityMain.trip");
+					
+				} else {
+//					System.out.println("~~~ 확인용 : 내 글이 맞다");				
+					
+					mav.addObject("boardvo", boardvo);
+					mav.setViewName("community/updateBoard.tiles1");
+				}
+				
+			}
+			
+		} catch (NumberFormatException e) { // url에 존재하지 않는 글번호를 입력한 경우
+//			System.out.println("~~~ 확인용 : 시퀀스가 이상하다");
+			
+			mav.setViewName("redirect:/communityMain.trip");
+		}
+		
+		return mav;
+	}
+
+
+	// 파일 첨부가 없는 글 수정하기
+	@Override
+	public int updateBoardEnd(BoardVO boardvo) {
+		
+		int n = dao.updateBoardEnd(boardvo);
+		
+		return n;
+	}
+
+
+	// 파일 첨부가 있는 글 수정하기
+	@Override
+	public int updateBoard_withFile(BoardVO boardvo) {
+		
+		int n = dao.updateBoard_withFile(boardvo);
+		
+		return n;
 	}
 	
 }

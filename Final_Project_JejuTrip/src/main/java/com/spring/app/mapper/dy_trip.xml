@@ -372,4 +372,30 @@
 	</select>
 	
 	
+	<!-- 글번호에 대한 글 조회하기 -->
+	<select id="getBoardInfo" parameterType="String" resultType="BoardVO">
+		select seq, fk_userid, name, subject, content, pw,
+			   readcount, regdate, commentcount, filename, orgfilename, filesize, category
+		from tbl_board
+		where status = 1 and seq = #{seq}
+	</select>
+	
+	
+	<!-- 파일 첨부가 없는 글 수정하기 -->
+	<update id="updateBoardEnd" parameterType="BoardVO">
+		update tbl_board
+		set subject = #{subject}, content = #{content}, category = #{category}
+		where seq = #{seq} and fk_userid = #{fk_userid} and pw = #{pw}
+	</update>
+	
+	
+	<!-- 파일 첨부가 있는 글 수정하기 -->
+	<update id="updateBoard_withFile" parameterType="BoardVO">
+		update tbl_board
+		set subject = #{subject}, content = #{content}, category = #{category},
+			filename = #{fileName}, orgfilename = #{orgFilename}, filesize = #{fileSize}
+		where seq = #{seq} and fk_userid = #{fk_userid} and pw = #{pw}
+	</update>
+	
+	
 </mapper>

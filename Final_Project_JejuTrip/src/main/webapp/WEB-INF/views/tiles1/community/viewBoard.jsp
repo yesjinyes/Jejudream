@@ -368,7 +368,7 @@
 						<c:if test="${not empty sessionScope.loginuser}">
 							<c:if test="${requestScope.boardvo.fk_userid == sessionScope.loginuser.userid}">
 								<div class="mr-2 d-flex justify-content-end" style="width: 10%;">
-									<span id="updateBoard">수정</span>&nbsp;&nbsp;|&nbsp;&nbsp;
+									<span id="updateBoard" onclick="location.href='<%=ctxPath%>/community/updateBoard.trip?seq=${requestScope.boardvo.seq}'">수정</span>&nbsp;&nbsp;|&nbsp;&nbsp;
 									<span id="deleteBoard">삭제</span>
 								</div>
 							</c:if>
@@ -461,7 +461,10 @@
 			<c:if test="${requestScope.boardvo.category == 4}">
 				<button type="button" class="btn btn-success mr-3" onclick="javascript:location.href='<%=ctxPath%>/community/foodBoard.trip'">전체 목록</button>
 			</c:if>
-			<button type="button" class="btn btn-secondary" onclick="javascript:location.href='<%=ctxPath%>${requestScope.goBackURL}'">검색된 결과 목록</button>
+			
+			<c:if test="${not empty requestScope.goBackURL}">
+				<button type="button" class="btn btn-secondary" onclick="javascript:location.href='<%=ctxPath%>${requestScope.goBackURL}'">검색된 결과 목록</button>
+			</c:if>
 		</div>
 	
 	</div>
