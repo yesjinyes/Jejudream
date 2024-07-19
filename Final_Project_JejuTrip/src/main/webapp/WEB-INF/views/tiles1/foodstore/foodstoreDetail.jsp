@@ -464,7 +464,7 @@ div#map {
                var i_offset = jQuery(input).offset();
                setTimeout(function(){
                   jQuery("#ui-datepicker-div").css({"left":i_offset});
-                 // datepicker의 div의 포지션을 강제로 클릭한 input 위치로 이동시킨다.
+                  // datepicker의 div의 포지션을 강제로 클릭한 input 위치로 이동시킨다.
                });
             }
         });
@@ -523,7 +523,7 @@ div#map {
 		});// end of $("input#allDay").click(function() {})------------------------
     
 		///////////////////////////////////////////////////////////////////////////////////
-		// ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+
 		// == 지도 띄우기 == //
 		// 서버 측 변수를 JavaScript 변수로 할당
 		var food_address = $("input#food_address").val().trim();
@@ -566,18 +566,16 @@ div#map {
 	    
 		///////////////////////////////////////////////////////////////////////////////////
 
-
-	    
-	    
 	    
 	});// end of $(document).ready(function() {})-----------------------------
 	
 	
-	//▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒//
+	//▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒//
 	// Function declaration
 
 	// == 좋아요 클릭, 취소 개수 띄우기 == //
 	function goLikeDislikeCount(){
+		
 		$.ajax({
 	        url: "<%= ctxPath %>/countFoodlike.trip",
 	        data: {"parent_code": "${requestScope.foodstorevo.food_store_code}",
@@ -612,27 +610,64 @@ div#map {
 	// == 일정에 추가하기 == //
 	function addSchedule() {
 	
+		// 오라클에 들어갈  date 형식('yyyy-mm-dd hh24:mi:ss')으로 만들기
+       	var scheduleDate = $("input#scheduleDate").val();
+       	var startdate = scheduleDate + $("select#startHour").val()+$("select#startMinute").val()+"00";
+		var enddate = scheduleDate + $("select#endHour").val()+$("select#endMinute").val()+"00";
+		// console.log("~~startDate 확인 => " + startDate);
+		// console.log("~~endDate 확인 => " + endDate);
+		
+		$("input[name=startdate]").val(startdate);
+		$("input[name=enddate]").val(enddate);
+		
+		
 		const schedule = $("form[name='scheduleFrm']").serialize();
 		
-		// 유효성 검사
+		// 일정 제목 유효성 검사
 		const scheduleTitle = $("input#scheduleTitle").val().trim();
 		if(scheduleTitle == "") {
 			alert("일정 제목을 입력해주세요");
 			return;
 		}
 		
+		// 일정 내용 유효성 검사
 		const scheduleContent = $("input#scheduleContent").val().trim();
 		if(scheduleContent == "") {
 			alert("일정 내용을 입력해주세요");
 			return;
 		}
 		
+		// 방문 시간 유효성 검사
+		var startHour= $("select#startHour").val();
+     	var endHour = $("select#endHour").val();
+     	var startMinute= $("select#startMinute").val();
+     	var endMinute= $("select#endMinute").val();
+       
+       	if(Number(startHour) > Number(endHour)){
+       		alert("종료 시간이 시작 시간보다 빠릅니다. 방문 시간을 확인해주세요.");
+       		return;
+       	}
+       	
+       	else if(Number(startHour) == Number(endHour)){
+       		
+       		if(Number(startMinute) > Number(endMinute)){
+       			alert("종료 시간이 시작 시간보다 빠릅니다. 방문 시간을 확인해주세요."); 
+       			return;
+       		}
+       		else if(Number(startMinute) == Number(endMinute)){
+       			alert("시작 시간과 종료 시간이 동일합니다. 방문 시간을 확인해주세요."); 
+       			return;
+       		}
+       	}
+		
+		// 일정 등록 데이터 넘기기
 		$.ajax({
 			url:"addFoodSchedule.trip",
 			type:"post",
 			data:schedule,
-			/* dataType:"json", */
 			success:function(json) {
+				// console.log("방문 시간 넘기기 => " + JSON.stringify(json));
+				
 				alert("일정 등록에 성공했습니다.");
 				$("#calendarModal").modal("hide");
 			},
@@ -643,7 +678,7 @@ div#map {
 
 	}// end of function viewScheduleModal()------------------------------
 	
-	//////////////////////////////////////////// === 리뷰 시작 === //////////////////////////////////////////////////
+	/////////////// === 리뷰 시작 === ///////////////////////////////////////////////////////////////////////
 	
 	// == 맛집 리뷰 작성하기 == //
 	function goAddReview() {
@@ -798,8 +833,9 @@ div#map {
 		location.href = "login.trip";
 	}// end of function goLogin()---------------------------
 	
-	//////////////////////////////////////////// === 리뷰 끝 === ////////////////////////////////////////////////////
+	/////////////// === 리뷰 끝 === ///////////////////////////////////////////////////////////////////////
 	
+	// == 숙소 랜덤 추천 == //
 /* 	function goRandomLodging() {
 		
 		$.ajax({
@@ -807,7 +843,7 @@ div#map {
 			data:form,
 			dataType:"json",
 			success:function(json) {
-				alert("맛집 랜덤 추천");
+				alert("숙소 랜덤 추천");
 				
 			},
 			error: function(request, status, error){
@@ -823,7 +859,7 @@ div#map {
 
 
 <div id="container">
-
+	<p>맛집 수정 및 삭제 / 리뷰insert 이상하게 되네.. / 하단 우측에 뭐 넣을지.. </p>
 	<c:if test="${sessionScope.loginuser.userid == 'admin'}">
 		<div style="width: 90%; margin: 3% auto;text-align: right;">
 			<button type="button" onclick="javascript:location.href='<%= ctxPath%>/editFoodstore.trip?food_store_code=${requestScope.foodstorevo.food_store_code}'" class="btn btn-secondary mr-2">맛집 수정</button>
@@ -1087,7 +1123,7 @@ div#map {
 			<!-- 랜덤추천 -->
 			<div class="col-md-4 border rounded">
 				<div>
-					<h3 class="mb-4 mt-4 ml-3">주변 숙소 추천</h3>
+					<h3 class="mb-4 mt-4 ml-3">어떤걸 넣지</h3>
 					<div> 
 						<div id="randomLodging">
 						</div>
