@@ -353,6 +353,46 @@ public class Dy_TripDAO_imple implements Dy_TripDAO {
 		
 		return totalCount;
 	}
+
+
+	// 글번호에 대한 글 조회하기
+	@Override
+	public BoardVO getBoardInfo(String seq) {
+		
+		BoardVO boardvo = sqlsession.selectOne("dy_trip.getBoardInfo", seq);
+		
+		return boardvo;
+	}
+
+
+	// 파일 첨부가 없는 글 수정하기
+	@Override
+	public int updateBoardEnd(BoardVO boardvo) {
+		
+		int n = sqlsession.update("dy_trip.updateBoardEnd", boardvo);
+		
+		return n;
+	}
+
+
+	// 파일 첨부가 있는 글 수정하기
+	@Override
+	public int updateBoard_withFile(BoardVO boardvo) {
+		
+		int n = sqlsession.update("dy_trip.updateBoard_withFile", boardvo);
+		
+		return n;
+	}
+
+
+	// 커뮤니티 글 삭제 처리하기 (status를 0으로 update 하기)
+	@Override
+	public int deleteBoard(Map<String, String> paraMap) {
+
+		int n = sqlsession.update("dy_trip.deleteBoard", paraMap);
+		
+		return n;
+	}
 	
 
 }

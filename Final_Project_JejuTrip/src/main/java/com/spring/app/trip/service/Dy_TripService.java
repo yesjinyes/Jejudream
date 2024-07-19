@@ -88,5 +88,17 @@ public interface Dy_TripService {
 
 	// 게시물당 댓글 총 개수 (페이징 처리 시 보여주는 순번을 나타내기 위함)
 	int getCommentTotalCount(String parentSeq);
+
+	// 커뮤니티 글 수정 페이지 요청
+	ModelAndView updateBoard(ModelAndView mav, HttpServletRequest request);
+
+	// 파일 첨부가 없는 글 수정하기
+	int updateBoardEnd(BoardVO boardvo);
+
+	// 파일 첨부가 있는 글 수정하기
+	int updateBoard_withFile(BoardVO boardvo);
+
+	// 커뮤니티 글 삭제 처리하기
+	int deleteBoard(Map<String, String> paraMap);
 	
 }

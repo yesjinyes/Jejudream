@@ -53,7 +53,7 @@
 		color: #ff7433;
 	}
 	
-	div#comment {
+	div.comment {
 		border-bottom: solid 1px #ccc;
 	}
 	
@@ -166,7 +166,135 @@
 	    	}
 	    });
 	    
+	    
+	    // === 글 삭제 모달 ===
+	    $('#deleteBoardModal').on('shown.bs.modal', function () {
+	        $("input[name='pw']").trigger('focus');
+	    });
+	    
+	    $('#deleteBoardModal').on('hidden.bs.modal', function () {
+	        $("input[name='pw']").val("");
+	    });
+	    
+	    $("input[name='pw']").keyup(function(e) {
+	    	if(e.keyCode == 13) {
+	    		goDeleteBoard("${requestScope.boardvo.seq}");
+	    	}
+	    });
+	    
+	    
+	    $(document).on("click", "span#updateComment", function(e) {
+	    	
+	        // 클릭된 span#updateComment 요소에 대한 댓글 최상위 div
+	        const commentDiv = $(this).parent().parent().parent();
+	        
+	        // 원래 commentDiv의 html을 저장
+	        const originalHtml = commentDiv.html();
+	        
+	        const seq = $(this).parent().parent().siblings().find("input#cmt_seq").val();
+	        const orgContent = $(this).parent().parent().siblings().find("span#cmt_content").text();
+	        
+	        let v_html = `<div style="border: solid 1px #a6a6a6; width: 97%; margin: 0 auto; padding: 1.5% 1%">
+	        				 <div class="d-flex justify-content-between">
+		        				 <span class="d-block mb-2">
+		        				 	<input type="hidden" name="seq" value="\${seq}">
+		        				 	<input type="hidden" name="fk_userid" value="${sessionScope.loginuser.userid}">
+		        				 	<input type="text" class="font-weight-bold" name="name" value="${sessionScope.loginuser.user_name}" style="border: none; background-color: #FAFAFA;" readonly>
+		        				 </span>
+		        				 <button type="button" class="btn cancel-btn" style="padding: 0 0.5% 0 0;">취소</button>
+	        				 </div>
+	        				 <textarea class="mb-2" id="new_content" name="content" style="width: 100%; height: 80px; border: none; background-color: #fafafa;" placeholder="댓글을 작성해주세요.">\${orgContent}</textarea>
+	 						 <div style="text-align: right;"><button type="button" class="btn" id="updateCommentBtn" onclick="goUpdateComment()" style="border: solid 1px #737373;">수정</button></div>
+	        			  </div>`;
+	        
+	        commentDiv.html(v_html);
+	        $("textarea#new_content").focus();
+	        
+	        // 취소 버튼 클릭 이벤트 추가
+	        commentDiv.find(".cancel-btn").on("click", function() {
+	            commentDiv.html(originalHtml);
+	        });
+	        
+	        
+	        // 댓글내용에서 엔터 클릭 시
+	        $("textarea#new_content").keyup(function(e) {
+	        	if(e.keyCode == 13) {
+	        		goUpdateComment();
+	        	}
+	        });
+	        
+	        
+	        function goUpdateComment() {
+	        	
+	        	const new_content = $("textarea#new_content").val().trim();
+	        	
+	        	if(new_content == "") {
+	        		alert("댓글 내용을 입력하세요!");
+	        		return;
+	        	}
+	        	/* 
+	        	$.ajax({
+	        		
+	        	});
+	        	 */
+	        }
+	        
+	    });
+	    
 	}); // end of $(document).ready(function() {}) ---------------------
+	
+	
+	// === 글 삭제 ===
+	function goDeleteBoard(seq) {
+		
+		const pw = $("input[name='pw']").val().trim();
+		
+		if(pw == "") {
+			alert("글암호를 입력하세요!");
+			return;
+		}
+		
+		if(pw != "${requestScope.boardvo.pw}") {
+			alert("글암호가 일치하지 않습니다.\n다시 입력해 주세요.");
+			$("input[name='pw']").val("").focus();
+			return;
+		}
+		
+		if(confirm("글을 삭제하시겠습니까?")) {
+			$.ajax({
+				url: "<%=ctxPath%>/community/deleteBoard.trip",
+				data: {
+					"seq": seq,
+					"pw": pw,
+					"login_id": "${sessionScope.loginuser.userid}"
+				},
+				type: "post",
+				dataType: "json",
+				success: function(json) {
+					if(json.n == 1) {
+						alert("글이 삭제되었습니다.");
+						
+						if(${requestScope.boardvo.category} == 1) {
+							location.href = "<%=ctxPath%>/community/freeBoard.trip";
+							
+						} else if(${requestScope.boardvo.category} == 2) {
+							location.href = "<%=ctxPath%>/community/lodgingBoard.trip";
+							
+						} else if(${requestScope.boardvo.category} == 3) {
+							location.href = "<%=ctxPath%>/community/playBoard.trip";
+							
+						} else if(${requestScope.boardvo.category} == 4) {
+							location.href = "<%=ctxPath%>/community/foodBoard.trip";
+							
+						}
+					}
+				},
+				error: function(request, status, error){
+					alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+				}
+			});
+		}
+	}
 	
 	
 	// === 이전글, 다음글 보기 ===
@@ -255,24 +383,25 @@
 				if(json.length > 0) {
 					$.each(json, function(index, item) {
 						
-						v_html += `<div id="comment" class="d-flex" style="padding: 1.5% 0">
+						v_html += `<div id="comment\${index}" class="comment d-flex" style="padding: 1.5% 0">
 				  					 <div style="width: 90%; padding: 1.5% 0">
 										<div class="mb-2 d-flex align-items-center">
 											<img src="<%=ctxPath%>/resources/images/logo_circle.png" width="30">
 											<span class="font-weight-bold" style="margin-left: 1%; font-size: 1rem;">\${item.name}</span>
 										</div>
-										<span class="d-block mb-2">\${item.content}</span>
-										<span class="d-block mb-2" style="font-size: 0.8rem; color: #8c8c8c;">\${item.regdate}</span>
+										<input type="hidden" id="cmt_seq" value="\${item.seq}">
+										<span class="d-block mb-2" id="cmt_content">\${item.content}</span>
+										<span class="d-block mb-2" id="cmt_regDate" style="font-size: 0.8rem; color: #8c8c8c;">\${item.regdate}</span>
 										<button type="button" class="btn" style="border: solid 1px #8c8c8c; font-size: 0.8rem; padding: 3px 6px;">답글</button>
 									 </div>`;
 						
-						if(${sessionScope.loginuser != null || sessionScope.loginCompanyuser != null} && 
-							("${sessionScope.loginuser.userid}" == item.fk_userid || "${sessionScope.loginCompanyuser.companyid}" == item.fk_userid)) {
+						if(${sessionScope.loginuser != null} && 
+							("${sessionScope.loginuser.userid}" == item.fk_userid)) {
 										 
 							v_html += `  <div class="more-options" style="width: 10%; padding-top: 1.5%; text-align: right;">
 											<span><i class="fa-solid fa-ellipsis-vertical"></i></span>
 											<div class="options-menu" style="display: none;">
-												<span class="d-block mb-1">수정</span>
+												<span id="updateComment" class="d-block mb-1">수정</span>
 												<span class="d-block">삭제</span>
 											</div>
 										 </div>`;
@@ -368,16 +497,8 @@
 						<c:if test="${not empty sessionScope.loginuser}">
 							<c:if test="${requestScope.boardvo.fk_userid == sessionScope.loginuser.userid}">
 								<div class="mr-2 d-flex justify-content-end" style="width: 10%;">
-									<span id="updateBoard">수정</span>&nbsp;&nbsp;|&nbsp;&nbsp;
-									<span id="deleteBoard">삭제</span>
-								</div>
-							</c:if>
-						</c:if>
-						<c:if test="${not empty sessionScope.loginCompanyuser}">
-							<c:if test="${requestScope.boardvo.fk_userid == sessionScope.loginCompanyuser.companyid}">
-								<div class="mr-2 d-flex justify-content-end" style="width: 10%;">
-									<span id="updateBoard">수정</span>&nbsp;&nbsp;|&nbsp;&nbsp;
-									<span id="deleteBoard">삭제</span>
+									<span id="updateBoard" onclick="location.href='<%=ctxPath%>/community/updateBoard.trip?seq=${requestScope.boardvo.seq}'">수정</span>&nbsp;&nbsp;|&nbsp;&nbsp;
+									<span id="deleteBoard" data-toggle="modal" data-target="#deleteBoardModal">삭제</span>
 								</div>
 							</c:if>
 						</c:if>
@@ -386,6 +507,30 @@
 				<hr>
 			</div>
 			
+			<%-- 글 삭제 모달 --%>
+			<div class="modal fade" id="deleteBoardModal" data-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog modal-dialog-centered">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel">글 삭제</h5>
+							<button type="button" class="close" data-dismiss="modal"
+								aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body mt-3 mb-3">
+							<label>글 암호 입력</label>
+							<input type="password" name="pw" maxlength="4" class="ml-2" style="width: 50%; height: 40px; border-radius: none; border: solid 1px #ccc;">
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+							<button type="button" class="btn btn-danger" onclick="goDeleteBoard('${requestScope.boardvo.seq}')">삭제</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
 			<div id="content">
 				${requestScope.boardvo.content}
 			</div>
@@ -424,17 +569,13 @@
 			<div id="commentPageBar" class="text-center mt-3 mb-5" style="width: 80%; margin: 0 auto 10% auto;">
 			</div>
 			
-			<c:if test="${not empty sessionScope.loginuser || not empty sessionScope.loginCompanyuser}">
+			<c:if test="${not empty sessionScope.loginuser}">
 				<form name="addCommentFrm">
 					<div class="mt-2" style="border: solid 1px #a6a6a6; padding: 1.5% 1%">
 						<span class="d-block mb-2">
 							<c:if test="${not empty sessionScope.loginuser}">
 								<input type="hidden" name="fk_userid" value="${sessionScope.loginuser.userid}">
 								<input type="text" class="font-weight-bold" name="name" value="${sessionScope.loginuser.user_name}" style="border: none; background-color: #FAFAFA;" readonly>
-							</c:if>
-							<c:if test="${not empty sessionScope.loginCompanyuser}">
-								<input type="text" name="fk_userid" value="${sessionScope.loginCompanyuser.companyid}">
-								<input type="text" class="font-weight-bold" name="name" value="${sessionScope.loginCompanyuser.company_name}" style="border: none; background-color: #FAFAFA;" readonly>
 							</c:if>
 						</span>
 						<textarea class="mb-2" name="content" style="width: 100%; height: 100px; border: none; background-color: #fafafa;" placeholder="댓글을 작성해주세요."></textarea>
@@ -473,7 +614,10 @@
 			<c:if test="${requestScope.boardvo.category == 4}">
 				<button type="button" class="btn btn-success mr-3" onclick="javascript:location.href='<%=ctxPath%>/community/foodBoard.trip'">전체 목록</button>
 			</c:if>
-			<button type="button" class="btn btn-secondary" onclick="javascript:location.href='<%=ctxPath%>${requestScope.goBackURL}'">검색된 결과 목록</button>
+			
+			<c:if test="${not empty requestScope.goBackURL}">
+				<button type="button" class="btn btn-secondary" onclick="javascript:location.href='<%=ctxPath%>${requestScope.goBackURL}'">검색된 결과 목록</button>
+			</c:if>
 		</div>
 	
 	</div>

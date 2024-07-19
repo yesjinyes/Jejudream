@@ -113,7 +113,7 @@ function goDetail(scheduleno){
 	frm.scheduleno.value = scheduleno;
 	
 	frm.method="get";
-	frm.action="<%= ctxPath%>/schedule/detailSchedule.action";
+	frm.action="<%= ctxPath%>/schedule/detailSchedule.trip";
 	frm.submit();
 } // end of function goDetail(scheduleno){}-------------------------- 
 		

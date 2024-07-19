@@ -1167,7 +1167,7 @@ public class Dy_TripController {
 		 */
 
 			HttpSession session = request.getSession();
-			MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
+			MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
 			CompanyVO loginCompanyuser = (CompanyVO)session.getAttribute("loginCompanyuser");
 			
 			String login_id = null;
@@ -1178,7 +1178,7 @@ public class Dy_TripController {
 			} else if(loginCompanyuser != null) {
 				login_id = loginCompanyuser.getCompanyid();
 			}
-
+			
 			Map<String, String> paraMap = new HashMap<>();
 			paraMap.put("seq", seq);
 			paraMap.put("category", category);
@@ -1846,5 +1846,105 @@ public class Dy_TripController {
 		
 	}
 	
+	
+	// 커뮤니티 글 수정 페이지 요청
+	@GetMapping("community/updateBoard.trip")
+	public ModelAndView requiredLogin_updateBoard(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
+		
+		mav = service.updateBoard(mav, request);
+		
+		return mav;
+	}
+	
+	
+	// 커뮤니티 글 수정하기
+	@ResponseBody
+	@PostMapping(value="community/updateBoardEnd.trip", produces="text/plain;charset=UTF-8")
+	public String updateBoardEnd(BoardVO boardvo, MultipartHttpServletRequest mrequest) {
+
+		MultipartFile attach = boardvo.getAttach();
+		
+		if(attach != null) {
+			
+			HttpSession session = mrequest.getSession(); 
+			String root = session.getServletContext().getRealPath("/"); 
+			
+			String path = root + "resources" + File.separator + "images" + File.separator + "community";
+			
+			
+			String newFileName = "";
+			// WAS(톰캣)의 디스크에 저장될 파일명
+			
+			byte[] bytes = null;
+			// 첨부파일의 내용물을 담는 것
+			
+			long fileSize = 0;
+			// 첨부파일의 크기
+
+			try {
+				String orgFile = mrequest.getParameter("orgFile");
+//				System.out.println("~~~ 확인용 원래 첨부파일 : " + orgFile);
+				
+				if(orgFile != null) {
+					// 파일 변경을 위해 기존에 올려뒀던 파일 지우기
+					fileManager.doFileDelete(orgFile, path);
+				}
+				
+				
+				bytes = attach.getBytes();
+				// 추가한 첨부파일의 내용물을 읽어오는 것
+				
+				String originalFilename = attach.getOriginalFilename();
+
+				newFileName = fileManager.doFileUpload(bytes, originalFilename, path);
+				// 첨부된 파일을 업로드하기
+				
+				boardvo.setFileName(newFileName);
+				
+				boardvo.setOrgFilename(originalFilename);
+				
+				fileSize = attach.getSize();
+				boardvo.setFileSize(String.valueOf(fileSize));
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		int n = 0;
+		
+		if(attach.isEmpty()) { // 파일 첨부가 없는 경우
+			n = service.updateBoardEnd(boardvo); // <== 파일첨부가 없는 글 수정
+			
+		} else { // 파일 첨부가 있는 경우
+			n = service.updateBoard_withFile(boardvo);
+		}
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("n", n);
+
+		return jsonObj.toString();
+	}
+	
+	
+	// 커뮤니티 글 삭제 처리하기
+	@ResponseBody
+	@PostMapping(value="community/deleteBoard.trip", produces="text/plain;charset=UTF-8")
+	public String deleteBoard(@RequestParam(defaultValue = "") String seq,
+							  @RequestParam(defaultValue = "") String pw,
+							  @RequestParam(defaultValue = "") String login_id) {
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("seq", seq);
+		paraMap.put("pw", pw);
+		paraMap.put("login_id", login_id);
+		
+		int n = service.deleteBoard(paraMap);
+
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("n", n);
+
+		return jsonObj.toString();
+	}
 	
 }

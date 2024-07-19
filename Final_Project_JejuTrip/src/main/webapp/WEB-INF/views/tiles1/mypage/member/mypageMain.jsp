@@ -1,6 +1,29 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<% String ctxPath = request.getContextPath(); %>
+<% String ctxPath = request.getContextPath(); 
+	//=== #221. (웹채팅관련3) === 
+	// === 서버 IP 주소 알아오기(사용중인 IP주소가 유동IP 이라면 IP주소를 알아와야 한다.) === 
+	
+	InetAddress inet = InetAddress.getLocalHost();
+		String serverIP = inet.getHostAddress();
+	 
+		// System.out.println("serverIP : " + serverIP);
+		// serverIP : 192.168.0.191
+	
+	// String serverIP = "192.168.10.101";
+		// String serverIP = "211.238.142.72"; 만약에 사용중인 IP주소가 고정IP 이라면 IP주소를 직접입력해주면 된다. 
+	
+	// === 서버 포트번호 알아오기 === //
+	int portnumber = request.getServerPort();
+		// System.out.println("portnumber : " + portnumber);
+		// portnumber : 9099
+	
+	String serverName = "http://"+serverIP+":"+portnumber;
+		// System.out.println("serverName : " + serverName);
+		// serverName : http://172.18.80.1:9090
+
+%>
+<%@ page import="java.net.InetAddress" %>
 <link rel="stylesheet" href="<%=ctxPath%>/resources/css/mypage/member/mypageMain.css"/>
 <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
@@ -30,6 +53,27 @@
                 document.getElementById('contentFrame').src = link;
             });
         });
+        
+       	$(document).on('click','.go_chat',function(){
+       		const reservation_code = $(this).find("input").val();
+       		
+   			// >>> 팝업창 띄우기 <<<
+   		    // 너비 1000, 높이 600 인 팝업창을 화면 가운데 위치시키기
+   			const width = 500;
+   			const height = 700;
+
+   		    const left = Math.ceil( (window.screen.width - width)/2 ); // 정수로 만듬
+   		    const top = Math.ceil( (window.screen.height - height)/2 ); // 정수로 만듬
+   		    
+   		    const url = "<%= serverName%><%=ctxPath%>/mypage_chatting_toCompany.trip?reservation_code=" + reservation_code;      
+
+   		    window.open(url, "chat",
+   		               `left=\${left}, top=\${top}, width=\${width}, height=\${height}`);
+       		
+       	})
+        
+        
+        
     }); // end of $(document).ready(function(){
     	
     	
@@ -66,6 +110,7 @@ function goViewAllReservationList(currentShowPageNo){
 						if(item.status == '2'){
 							v_html_all += "<td><span style='color:red; font-weight:bold;'>취소</span></td>";
 						}
+						v_html_all += "<td class='go_chat'><ion-icon name='chatbubble-sharp'><input type='button' value='"+item.reservation_code+"'/></ion-icon></td>";
 				    	v_html_all += "</tr>";
 				    	 
 					}); // end of $.each(json, function(index, item){})-------- 
@@ -228,6 +273,7 @@ function goViewAllReservationList(currentShowPageNo){
 						v_html_all += "<td>"+item.check_in+"</td>";
 						v_html_all += "<td>"+item.check_out+"</td>";
 						v_html_all += "<td><span style='color:blue; font-weight:bold;'>승인대기</span></td>";
+						v_html_all += "<td><ion-icon name='chatbubble-sharp'></ion-icon></td>";
 				    	v_html_all += "</tr>";
 				    	 
 					}); // end of $.each(json, function(index, item){})-------- 
@@ -391,6 +437,7 @@ function goViewAllReservationList(currentShowPageNo){
 						v_html_all += "<td>"+item.check_in+"</td>";
 						v_html_all += "<td>"+item.check_out+"</td>";
 						v_html_all += "<td><span style='color:green; font-weight:bold;'>확정</span></td>";
+						v_html_all += "<td><ion-icon name='chatbubble-sharp'></ion-icon></td>";
 				    	v_html_all += "</tr>";
 				    	 
 					}); // end of $.each(json, function(index, item){})-------- 
@@ -508,7 +555,7 @@ function goViewAllReservationList(currentShowPageNo){
 					pageBar_HTML += "<li class='this_page_no'>"+pageNo+"</li>";
 				}
 				else {
-					pageBar_HTML += "<li class='choice_page_no'><a href='javascript:goViewAllReservationList("+pageNo+")'>"+pageNo+"</a></li>"; 
+					pageBar_HTML += "<li class='choice_page_no'><a href='javascript:goViewSuccessReservationList("+pageNo+")'>"+pageNo+"</a></li>"; 
 				}
 				
 				loop++;
@@ -554,6 +601,7 @@ function goViewAllReservationList(currentShowPageNo){
 						v_html_all += "<td>"+item.check_in+"</td>";
 						v_html_all += "<td>"+item.check_out+"</td>";
 						v_html_all += "<td><span style='color:red; font-weight:bold;'>취소</span></td>";
+						v_html_all += "<td><ion-icon name='chatbubble-sharp'></ion-icon></td>";
 				    	v_html_all += "</tr>";
 				    	 
 					}); // end of $.each(json, function(index, item){})-------- 
@@ -801,6 +849,7 @@ function goViewAllReservationList(currentShowPageNo){
 				      <th>체크인</th>
 				      <th>체크아웃</th>
 				      <th>예약상태</th>
+				      <th>1:1문의</th>
 				    </tr>
 				  </thead>
 				  <tbody id="all_reservation_tbody">
@@ -820,6 +869,7 @@ function goViewAllReservationList(currentShowPageNo){
 						      <th>체크인</th>
 						      <th>체크아웃</th>
 						      <th>예약상태</th>
+						      <th>1:1문의</th>
 						    </tr>
 						  </thead>
 			    		 <tbody id="send_reservation_tbody">
@@ -839,6 +889,7 @@ function goViewAllReservationList(currentShowPageNo){
 						      <th>체크인</th>
 						      <th>체크아웃</th>
 						      <th>예약상태</th>
+						      <th>1:1문의</th>
 						    </tr>
 						  </thead>
 			    		 <tbody id="success_reservation_tbody">
@@ -858,6 +909,7 @@ function goViewAllReservationList(currentShowPageNo){
 						      <th>체크인</th>
 						      <th>체크아웃</th>
 						      <th>예약상태</th>
+						      <th>1:1문의</th>
 						    </tr>
 						  </thead>
 			    		 <tbody id="fail_reservation_tbody">

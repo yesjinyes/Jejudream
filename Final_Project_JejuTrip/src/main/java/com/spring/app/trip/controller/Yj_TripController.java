@@ -182,13 +182,8 @@ public class Yj_TripController {
 	
 	// == 맛집 상세 페이지 보이기 == //
 	@GetMapping("foodstoreDetail.trip")
-	public ModelAndView foodstoreDetail(ModelAndView mav, HttpServletRequest request,FoodstoreVO foodstorevo,
-										@RequestParam(defaultValue="") String random_recommend_code,
-										@RequestParam(defaultValue="") String scheduleTitle,
-										@RequestParam(defaultValue="") String scheduleContent,
-										@RequestParam(defaultValue="") String scheduleDate) {
-		
-		System.out.println("~~~ foodstorevo 확인 => " + foodstorevo.getFood_name());
+	public ModelAndView foodstoreDetail(ModelAndView mav, HttpServletRequest request,
+										@RequestParam(defaultValue="") String random_recommend_code) {
 		
 		String food_store_code = "";
 		food_store_code = request.getParameter("food_store_code");
@@ -199,7 +194,6 @@ public class Yj_TripController {
 		
 		HttpSession session = request.getSession();
 		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
-		System.out.println("id 확인!! => " + loginuser.getUserid());
 		
 		String login_userid = null;
 		if(loginuser != null) { // 로그인 한 상태일 때
@@ -214,14 +208,9 @@ public class Yj_TripController {
 		paraMap.put("random_recommend_code", random_recommend_code);
 		paraMap.put("login_userid", login_userid);
 		
-		paraMap.put("scheduleTitle", scheduleTitle);
-		paraMap.put("scheduleContent", scheduleContent);
-		paraMap.put("scheduleDate", scheduleDate);
-		
 		///////////////////////////////////////////////////////
 		
-		// FoodstoreVO foodstorevo = null;
-		foodstorevo = null;
+		FoodstoreVO foodstorevo = null;
 		
 		if("yes".equals((String)session.getAttribute("readCountPermission"))) {
 			
@@ -240,20 +229,6 @@ public class Yj_TripController {
 		}
 		
 		///////////////////////////////////////////////////////
-		
-		// 맛집 일정 추가
-		int n = service.addFoodSchedule(paraMap);
-		
-		if(n==1) {
-			System.out.println("insert 성공");
-		}
-		else {
-			System.out.println("insert 실패");
-		}
-		
-		
-		// String food_name =  foodstorevo.getFood_name();
-		// System.out.println("food_name 확인 =>" + food_name);
 	
 		List<Map<String, String>> addimgList = service.viewfoodaddImg(paraMap); // 맛집 상세 추가 이미지
 		
@@ -262,9 +237,10 @@ public class Yj_TripController {
  		mav.addObject("addimgList", addimgList);
 		
  		mav.setViewName("foodstore/foodstoreDetail.tiles1");
-		
+ 		
  		return mav;
 	}
+	
 	
 	
 	// == 상세페이지 조회수 증가 == //
@@ -313,10 +289,10 @@ public class Yj_TripController {
 		List<FoodstoreVO> check = service.checkLike(paraMap); 
 		
 		if(check.size() == 0) {
-			n = service.addLike(paraMap);  // 좋아요 추가
+			n = service.addLike(paraMap); // 좋아요 추가
 		}
 		else {
-			service.deleteLike(paraMap);  // 좋아요 지우기
+			service.deleteLike(paraMap); // 좋아요 지우기
 	        n=0;
 		}
 		
@@ -327,6 +303,7 @@ public class Yj_TripController {
          
         return jsonObj.toString();
 	}
+	
 	
 	
 	// == 좋아요 총 개수 구하기 == //
@@ -357,7 +334,7 @@ public class Yj_TripController {
 
 	    return jsonObj.toString();
 	}
-
+	
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	
@@ -384,6 +361,7 @@ public class Yj_TripController {
 		
 		return jsonObj.toString();
 	}
+	
 	
 	
 	// == 작성한 리뷰 보이기 == //
@@ -433,6 +411,7 @@ public class Yj_TripController {
 	}
 	
 	
+	
 	// == 리뷰 수정하기 == //
 	@ResponseBody
 	@PostMapping(value="/updateReview.trip", produces="text/plain;charset=UTF-8")
@@ -440,7 +419,6 @@ public class Yj_TripController {
 		
 		String review_code = request.getParameter("review_code");
 		String review_content = request.getParameter("review_content");
-		
 		// System.out.println("~~~review_content 확인 => "+review_content);
 		
 		Map<String, String> paraMap = new HashMap<>();
@@ -451,8 +429,9 @@ public class Yj_TripController {
 		JSONObject jsonObj = new JSONObject();
 		jsonObj.put("n", n);
 		
-		return jsonObj.toString(); // "{"n":1}"
+		return jsonObj.toString();
 	}
+	
 	
 	
 	// == 리뷰 삭제하기 == //
@@ -461,10 +440,6 @@ public class Yj_TripController {
 	public String deleteReview(HttpServletRequest request) {
 		
 		String review_code = request.getParameter("review_code");
-		//String parent_code = request.getParameter("parent_code");
-		
-		//System.out.println("글번호(parent_code) 확인 => " + parent_code);
-		
 		
 		Map<String, String> paraMap = new HashMap<>();
 		paraMap.put("review_code", review_code);
@@ -483,6 +458,75 @@ public class Yj_TripController {
 		
 		return jsonObj.toString();		
 	}
+	
+	
+	///////////////////////////////////////////////////////////////////////////////////
+	
+	
+	// == 맛집 일정 추가 == //
+	@ResponseBody
+	@PostMapping("addFoodSchedule.trip")
+	public ModelAndView addFoodSchedule(ModelAndView mav, HttpServletRequest request,
+										@RequestParam(defaultValue="") String parent_code,
+										@RequestParam(defaultValue="") String food_address,
+										@RequestParam(defaultValue="") String scheduleTitle,
+										@RequestParam(defaultValue="") String scheduleContent,
+										@RequestParam(defaultValue="") String startdate,
+										@RequestParam(defaultValue="") String enddate) {
+		
+		//System.out.println("~~~ parent_code 확인 =>" + parent_code);
+		//System.out.println("~~~ food_address 확인 =>" + food_address);
+		//System.out.println("~~~ scheduleTitle 확인 => " + scheduleTitle);
+		//System.out.println("~~~ scheduleContent 확인 => " + scheduleContent);
+		//System.out.println("~~~ scheduleDate 확인 => " + scheduleDate);
+		//System.out.println("~~~ startdate 확인 => " + startdate);
+		//System.out.println("~~~ enddate 확인 => " + enddate);
+		
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
+		// System.out.println("로그인 된 id 확인 => " + loginuser.getUserid());
+		
+		String login_userid = null;
+		if(loginuser != null) { // 로그인 한 상태일 때
+			login_userid = loginuser.getUserid();
+		}
+		
+		Map<String, String> paraMap = new HashMap<>();
+		
+		paraMap.put("parent_code", parent_code);
+		paraMap.put("food_address", food_address);
+		
+		paraMap.put("login_userid", login_userid);
+		
+		paraMap.put("scheduleTitle", scheduleTitle);
+		paraMap.put("scheduleContent", scheduleContent);
+		paraMap.put("scheduleContent", scheduleContent);
+		paraMap.put("startdate", startdate);
+		paraMap.put("enddate", enddate);
+		
+		int n = 0;
+		
+		try {
+			n = service.addFoodSchedule(paraMap);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		mav.addObject("n", n);
+		
+		mav.setViewName("foodstore/foodstoreDetail.tiles1");
+		
+		return mav;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 

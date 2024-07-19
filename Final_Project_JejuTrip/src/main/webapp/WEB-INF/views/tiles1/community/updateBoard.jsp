@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%
 	String ctxPath = request.getContextPath();
 %>
@@ -46,10 +47,26 @@
 		});
 		<%-- === 스마트 에디터 구현 끝 === --%>
 		
+		
+		<%-- 페이지 로드 시 카테고리 DB에 있는 값으로 선택 --%>
+		$("select[name='category']").val("${requestScope.boardvo.category}");
+		
+		
+		<%-- 파일 선택 시 기존 파일 이름 가리기 --%>
+		$("input:file[name='attach']").change(function() {
+			
+			const new_file = $(this).val();
+			
+			if(new_file != "") {
+				$("div#orgFile").hide();
+			}
+		});
+		
+		
 		<%-- '글암호'에서 엔터 클릭 시 글 등록 --%>
 		$("input:password[name='pw']").keyup(function(e) {
 			if(e.keyCode == 13) {
-				goAddBoard();
+				goUpdateBoard();
 			}
 		});
 		
@@ -57,7 +74,7 @@
 		<%-- 취소 버튼 클릭 시 --%>
 		$("button#goBackBtn").click(function() {
 			
-			if(confirm("작성하던 내용이 저장되지 않습니다.\n글 등록을 취소하시겠습니까?")) {
+			if(confirm("작성하던 내용이 저장되지 않습니다.\n글 수정을 취소하시겠습니까?")) {
 				history.back();
 			}
 		});
@@ -65,13 +82,15 @@
 	}); // end of $(document).ready(function() {}) ---------------------
 	
 	
-	<%-- === 글 등록하기 === --%>
-	function goAddBoard() {
+	<%-- === 글 수정하기 === --%>
+	function goUpdateBoard() {
 
 		<%-- === 스마트 에디터 구현 시작 === --%>
 		// id가 content인 textarea에 에디터에서 대입
 		obj.getById["content"].exec("UPDATE_CONTENTS_FIELD", []);
 		<%-- === 스마트 에디터 구현 끝 === --%>
+		
+		
 		// 카테고리 유효성 검사
 		const category = $("select[name='category']").val();
 		
@@ -122,13 +141,40 @@
 		 return;
 		}
 		
+		if(pw != "${requestScope.boardvo.pw}") {
+			alert("글암호가 일치하지 않습니다.\n다시 입력해 주세요.");
+			$("input:password[name='pw']").val("").focus();
+			return;
+		}
 		
-		const frm = document.addBoardFrm;
-		frm.method = "post";
-		frm.action = "<%=ctxPath%>/community/addBoardEnd.trip";
-		frm.submit();
 		
-	} // end of function goAddBoard() ----------------------------------------
+		var formData = new FormData($("form[name='updateBoardFrm']").get(0));
+		
+		$.ajax({
+			url: "<%=ctxPath%>/community/updateBoardEnd.trip",
+			data: formData,
+			type: "post",
+			contentType: false,
+		    processData: false,
+			dataType: "json",
+			success: function(json) {
+				if(json.n == 1) {
+					alert("글 수정이 성공되었습니다.");
+					
+					const frm = document.goViewFrm;
+					frm.seq.value = "${requestScope.boardvo.seq}";
+					frm.category.value = "${requestScope.boardvo.category}";
+					frm.method = "post";
+					frm.action = "<%=ctxPath%>/community/viewBoard.trip";					
+					frm.submit();
+				}
+			},
+			error: function(request, status, error){
+				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+			}
+		});
+		
+	} // end of function goUpdateBoard() ----------------------------------------
 </script>
 
 <div style="background-color: rgba(242, 242, 242, 0.4); border: solid 1px rgba(242, 242, 242, 0.4);">
@@ -136,10 +182,10 @@
 	<div class="container" id="addBoardDiv">
 		
 	    <div style="margin: 7% auto;">
-	        <h2 class="font-weight-bold">커뮤니티 글 등록</h2>
+	        <h2 class="font-weight-bold">커뮤니티 글 수정</h2>
 	    </div>
 	
-	    <form name="addBoardFrm" enctype="multipart/form-data">
+	    <form name="updateBoardFrm" enctype="multipart/form-data">
 			
 			<div class="info mb-5">
 				<table class="table table-bordered" style="width: 100%;">
@@ -147,6 +193,7 @@
 						<th style="width: 15%;">성명</th>
 						<td>
 							<c:if test="${not empty sessionScope.loginuser}">
+								<input type="hidden" name="seq" value="${requestScope.boardvo.seq}">
 								<input type="hidden" name="fk_userid" value="${sessionScope.loginuser.userid}">
 								<input type="text" name="name" value="${sessionScope.loginuser.user_name}" style="width: 15%;" readonly>
 							</c:if>
@@ -167,19 +214,27 @@
 					<tr>
 						<th style="width: 15%;">제목</th>
 						<td>
-							<input type="text" name="subject" size="100" maxlength="200">
+							<input type="text" name="subject" size="100" maxlength="200" value="${requestScope.boardvo.subject}">
 						</td>
 					</tr>
 					<tr>
 						<th style="width: 15%;">내용</th>
 						<td>
-							<textarea style="width: 100%; height: 612px;" name="content" id="content"></textarea>
+							<textarea style="width: 100%; height: 612px;" name="content" id="content">${requestScope.boardvo.content}</textarea>
 						</td>
 					</tr>
 					<tr>
 						<th style="width: 15%;">첨부파일</th>
 						<td>
 							<input type="file" name="attach" />
+					        <c:if test="${not empty requestScope.boardvo.fileName}">
+					        	<div id="orgFile">
+								    <a href="<%=ctxPath%>/fileDownload.trip?seq=${requestScope.boardvo.seq}&category=${requestScope.boardvo.category}" target="_blank">
+								        ${requestScope.boardvo.orgFilename} (<fmt:formatNumber value="${requestScope.boardvo.fileSize}" pattern="#,###" /> bytes)
+								    </a><br>
+								    <input type="hidden" name="orgFile" size="50" value="${requestScope.boardvo.fileName}">
+							    </div>
+							</c:if>
 						</td>
 					</tr>
 					<tr>
@@ -192,10 +247,16 @@
 			</div>
 			
 			<div class="text-center">
-				<button type="button" id="addBoardBtn" class="btn btn-success mr-3" onclick="goAddBoard()">등록하기</button>
+				<button type="button" id="addBoardBtn" class="btn btn-success mr-3" onclick="goUpdateBoard()">수정하기</button>
 				<button type="button" id="goBackBtn" class="btn btn-secondary">취소</button>
 			</div>
 	    </form>
 	</div>
 
 </div>
+
+<%-- 게시판 상세 페이지로 보내기 위한 폼 --%>
+<form name="goViewFrm">
+	<input type="hidden" name="seq">
+	<input type="hidden" name="category">
+</form>

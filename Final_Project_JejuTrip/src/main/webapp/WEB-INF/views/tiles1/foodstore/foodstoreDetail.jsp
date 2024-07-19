@@ -6,6 +6,8 @@
     //    /JejuDream
 %>
 
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=16695e6ff612a1dbaa353fda89e2424d&libraries=services"></script>
+
 <style type="text/css">
 
 /* 상단 이미지, 텍스트 */
@@ -157,7 +159,7 @@ p.info-title {
 /* 맛집 리뷰 */
 div#reviewList {
   width: 70%;
-  margin: 5% auto;
+  margin: 2% auto;
   padding: 3%;
 }
 
@@ -177,12 +179,57 @@ textarea {
   margin-top: 1%;
 }
 
+/*--------------------------------------------------------*/
+/* == 일정 == */
+
+/* 방문날짜 */
+input#scheduleDate {
+  border: solid 1px rgba(206, 212, 218);
+  border-radius: 5px;
+  height: 35px;
+  padding-left: 3%;
+}
+
+/* 방문 시간 */
+.visit_time select{
+  width: 100%;
+  max-width: 60px;
+  height: 35px;
+  margin: 2% auto;
+  border: solid 1px rgba(206, 212, 218);
+  border-radius: 5px;
+  padding: 0 0 0 15px;
+  font-size: 16px;
+  color:gray;
+}
+
+/*--------------------------------------------------------*/
+
+div.bottom {
+  width: 70%;
+  margin: 0 auto;
+  
+}
+
+div#map_div {
+  padding: 3%;
+  margin-left: -1.5%;
+  /* margin-right: 3%; */
+}
+
+div#map {
+  height:450px;
+}
+
 
 
 </style>
 
 <script type="text/javascript">
 
+	//== 새로고침 시 맨 위로 이동 == //
+	history.scrollRestoration = "manual"
+	
 	$(document).ready(function() {
 
 		goLikeDislikeCount(); // 좋아요 개수 띄우기
@@ -404,23 +451,131 @@ textarea {
 	    	
 	    });// end of $("button#btnSchedule").click(function() {})----------------
 	    
-		
-	    // == 일정 취소버튼 클릭 시 내용 reset == //
-	    $("button#sprintSettingModalClose").click(function() {
-	    	$("input:text[id='scheduleTitle']").val("");
-	    	$("input:text[id='scheduleContent']").val("");
-	    	$("input#scheduleDate").datepicker('setDate', 'today');
-	    });
+
+	    // == 모달창 닫으면 내용 reset == //
+	    $('#calendarModal').on('hidden.bs.modal', function (e) {
+            $(this).find('form')[0].reset();
+            $("input#scheduleDate").datepicker('setDate', 'today');
+        });
 	    
+		// == 일정 달력 input 태그 밑에 고정 == //
+	    jQuery("#calendar").datepicker({
+            beforeShow: function(input) {
+               var i_offset = jQuery(input).offset();
+               setTimeout(function(){
+                  jQuery("#ui-datepicker-div").css({"left":i_offset});
+                  // datepicker의 div의 포지션을 강제로 클릭한 input 위치로 이동시킨다.
+               });
+            }
+        });
+	    
+	    // == 일정 시간 설정 == //
+	 	// 시작시간, 종료시간 
+		var html="";
+		for(var i=0; i<24; i++){
+			if(i<10){
+				html+="<option value='0"+i+"'>0"+i+"</option>";
+			}
+			else{
+				html+="<option value="+i+">"+i+"</option>";
+			}
+		}// end of for----------------------
+    
+	 	$("select#startHour").html(html);
+		$("select#endHour").html(html);
+		
+		// 시작분, 종료분 
+		html="";
+		for(var i=0; i<60; i=i+5){
+			if(i<10){
+				html+="<option value='0"+i+"'>0"+i+"</option>";
+			}
+			else {
+				html+="<option value="+i+">"+i+"</option>";
+			}
+		}// end of for--------------------
+		
+		html+="<option value="+59+">"+59+"</option>"
+		
+		$("select#startMinute").html(html);
+		$("select#endMinute").html(html);
+		
+		// '종일' 체크박스 클릭시
+		$("input#allDay").click(function() {
+			var bool = $('input#allDay').prop("checked");
+			
+			if(bool == true) {
+				$("select#startHour").val("00");
+				$("select#startMinute").val("00");
+				$("select#endHour").val("23");
+				$("select#endMinute").val("59");
+				$("select#startHour").prop("disabled",true);
+				$("select#startMinute").prop("disabled",true);
+				$("select#endHour").prop("disabled",true);
+				$("select#endMinute").prop("disabled",true);
+			} 
+			else {
+				$("select#startHour").prop("disabled",false);
+				$("select#startMinute").prop("disabled",false);
+				$("select#endHour").prop("disabled",false);
+				$("select#endMinute").prop("disabled",false);
+			}
+		});// end of $("input#allDay").click(function() {})------------------------
+    
+		///////////////////////////////////////////////////////////////////////////////////
+
+		// == 지도 띄우기 == //
+		// 서버 측 변수를 JavaScript 변수로 할당
+		var food_address = $("input#food_address").val().trim();
+		
+		// 지도 생성 및 설정
+	    var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+	    mapOption = {
+	        center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+	        level: 4 // 지도의 확대 레벨
+	    };  
+	    var map = new kakao.maps.Map(mapContainer, mapOption); 
+
+	    // 주소-좌표 변환 객체를 생성합니다
+	    var geocoder = new kakao.maps.services.Geocoder();
+
+	    // 주소로 좌표를 검색합니다
+	    geocoder.addressSearch(food_address, function(result, status) {
+	        if (status === kakao.maps.services.Status.OK) {
+	            var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+	            var message = 'latlng: new kakao.maps.LatLng(' + result[0].y + ', ' + result[0].x + ')';
+	            //var resultDiv = document.getElementById('clickLatlng'); 
+	            //resultDiv.innerHTML = message;
+
+	            // 결과값으로 받은 위치를 마커로 표시합니다
+	            var marker = new kakao.maps.Marker({
+	                map: map,
+	                position: coords
+	            });
+
+	            // 인포윈도우로 장소에 대한 설명을 표시합니다
+	            var infowindow = new kakao.maps.InfoWindow({
+	                content: '<div style="width:150px;text-align:center;padding:6px 0;" ><a href="https://map.kakao.com/link/to/${requestScope.foodstorevo.food_name},' + result[0].y+','+ result[0].x+'" target="_blank" style="color:black;">${requestScope.foodstorevo.food_name}</a></div>'
+	            });
+	            infowindow.open(map, marker);
+	            
+	            // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+	            map.setCenter(coords);
+	        }
+	    });  
+	    
+		///////////////////////////////////////////////////////////////////////////////////
+
 	    
 	});// end of $(document).ready(function() {})-----------------------------
 	
 	
-	//▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒//
+	//▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒//
 	// Function declaration
 
 	// == 좋아요 클릭, 취소 개수 띄우기 == //
 	function goLikeDislikeCount(){
+		
 		$.ajax({
 	        url: "<%= ctxPath %>/countFoodlike.trip",
 	        data: {"parent_code": "${requestScope.foodstorevo.food_store_code}",
@@ -454,34 +609,76 @@ textarea {
 	
 	// == 일정에 추가하기 == //
 	function addSchedule() {
-		
-		// 일정 제목
-		const scheduleTitle = $("input:text[id='scheduleTitle']").val();
-		// console.log("~~scheduleTitle 확인 => " + scheduleTitle);
-		
-		// 일정 내용
-		const scheduleContent = $("input:text[id='scheduleContent']").val();
-		// console.log("~~scheduleContent 확인 => " + scheduleContent);
-		
-		// 일정 날짜
-		const scheduleDate = $("input:text[id='scheduleDate']").val();
-		// console.log("~~scheduleDate 확인 => " + scheduleDate);
 	
+		// 오라클에 들어갈  date 형식('yyyy-mm-dd hh24:mi:ss')으로 만들기
+       	var scheduleDate = $("input#scheduleDate").val();
+       	var startdate = scheduleDate + $("select#startHour").val()+$("select#startMinute").val()+"00";
+		var enddate = scheduleDate + $("select#endHour").val()+$("select#endMinute").val()+"00";
+		// console.log("~~startDate 확인 => " + startDate);
+		// console.log("~~endDate 확인 => " + endDate);
 		
-		const frm = document.scheduleFrm;
-		
-		frm.scheduleTitle.value = scheduleTitle;
-		frm.scheduleContent.value = scheduleContent;
-		frm.scheduleDate.value = scheduleDate;
-		
-		frm.action = "foodstoreDetail.trip";
-		// frm.submit();
+		$("input[name=startdate]").val(startdate);
+		$("input[name=enddate]").val(enddate);
 		
 		
-	}
+		const schedule = $("form[name='scheduleFrm']").serialize();
+		
+		// 일정 제목 유효성 검사
+		const scheduleTitle = $("input#scheduleTitle").val().trim();
+		if(scheduleTitle == "") {
+			alert("일정 제목을 입력해주세요");
+			return;
+		}
+		
+		// 일정 내용 유효성 검사
+		const scheduleContent = $("input#scheduleContent").val().trim();
+		if(scheduleContent == "") {
+			alert("일정 내용을 입력해주세요");
+			return;
+		}
+		
+		// 방문 시간 유효성 검사
+		var startHour= $("select#startHour").val();
+     	var endHour = $("select#endHour").val();
+     	var startMinute= $("select#startMinute").val();
+     	var endMinute= $("select#endMinute").val();
+       
+       	if(Number(startHour) > Number(endHour)){
+       		alert("종료 시간이 시작 시간보다 빠릅니다. 방문 시간을 확인해주세요.");
+       		return;
+       	}
+       	
+       	else if(Number(startHour) == Number(endHour)){
+       		
+       		if(Number(startMinute) > Number(endMinute)){
+       			alert("종료 시간이 시작 시간보다 빠릅니다. 방문 시간을 확인해주세요."); 
+       			return;
+       		}
+       		else if(Number(startMinute) == Number(endMinute)){
+       			alert("시작 시간과 종료 시간이 동일합니다. 방문 시간을 확인해주세요."); 
+       			return;
+       		}
+       	}
+		
+		// 일정 등록 데이터 넘기기
+		$.ajax({
+			url:"addFoodSchedule.trip",
+			type:"post",
+			data:schedule,
+			success:function(json) {
+				// console.log("방문 시간 넘기기 => " + JSON.stringify(json));
+				
+				alert("일정 등록에 성공했습니다.");
+				$("#calendarModal").modal("hide");
+			},
+			error: function(request, status, error) {
+                alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+            }
+		});// end of $.ajax------------------------
+
+	}// end of function viewScheduleModal()------------------------------
 	
-	
-	//////////////////////////////////////////// === 리뷰 시작 === //////////////////////////////////////////////////
+	/////////////// === 리뷰 시작 === ///////////////////////////////////////////////////////////////////////
 	
 	// == 맛집 리뷰 작성하기 == //
 	function goAddReview() {
@@ -630,23 +827,39 @@ textarea {
 		
 	}// end of function makeReviewPageBar(currentShowPageNo)------------------ */
 
-	//////////////////////////////////////////// === 리뷰 끝 === ////////////////////////////////////////////////////
 	
 	// == 맛집 상세 페이지에서 로그인 페이지로 이동 (리뷰 작성을 위한 것) == //
 	function goLogin() {
-		
 		location.href = "login.trip";
-
-		// 로그인 후에 다시 전 페이지로 돌아가는 기능 구현해야 함
-		
 	}// end of function goLogin()---------------------------
+	
+	/////////////// === 리뷰 끝 === ///////////////////////////////////////////////////////////////////////
+	
+	// == 숙소 랜덤 추천 == //
+/* 	function goRandomLodging() {
+		
+		$.ajax({
+			url:"randomLodging.trip",
+			data:form,
+			dataType:"json",
+			success:function(json) {
+				alert("숙소 랜덤 추천");
+				
+			},
+			error: function(request, status, error){
+            	alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+            }
+			
+		});// end of $.ajax--------------------- 
+		
+	}// end of function goRandomLodging()------------------------- */
 	
 </script>
 
 
 
 <div id="container">
-
+	<p>맛집 수정 및 삭제 / 리뷰insert 이상하게 되네.. / 하단 우측에 뭐 넣을지.. </p>
 	<c:if test="${sessionScope.loginuser.userid == 'admin'}">
 		<div style="width: 90%; margin: 3% auto;text-align: right;">
 			<button type="button" onclick="javascript:location.href='<%= ctxPath%>/editFoodstore.trip?food_store_code=${requestScope.foodstorevo.food_store_code}'" class="btn btn-secondary mr-2">맛집 수정</button>
@@ -707,8 +920,8 @@ textarea {
 						<!-- <button type="button" class="iconbtn" onclick="golikeAdd()"> -->
 						<button type="button" class="iconbtn" id="btnLike">
 							<div class="item-each">
-								<img class="icon like" id="like" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_like.png">
-								<img class="icon likeup" id="likeup" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_likeup.png">
+								<img class="icon like" id="like" src="<%= ctxPath %>/resources/images/foodstore/icon/Like.png">
+								<img class="icon likeup" id="likeup" src="<%= ctxPath %>/resources/images/foodstore/icon/LikeUp.png">
 							</div>
 							<p class="icon-title">좋아요</p>
 						</button>
@@ -757,24 +970,40 @@ textarea {
 				                <div class="modal-body" style="padding: 7%;">
 				                    <div class="form-group">
 				                    	<label for="food_name" class="col-form-label">맛집 이름</label>
-				                        <input type="text" class="form-control mb-3" id="food_name" name="food_name" readonly="readonly" value="${requestScope.foodstorevo.food_name}">
+				                        <input type="text" class="form-control schedule-input mb-3" id="food_name" name="food_name" readonly="readonly" value="${requestScope.foodstorevo.food_name}">
+				                        
+				                        <input type="hidden" id="parent_code" name="parent_code" value="${requestScope.foodstorevo.food_store_code}" />
+				                        <input type="hidden" id="food_address" name="food_address" value="${requestScope.foodstorevo.food_address}" />
 				                        
 				                        <label for="scheduleTitle" class="col-form-label">일정 제목</label>
-				                        <input type="text" class="form-control mb-3" id="scheduleTitle" name="scheduleTitle">
+				                        <input type="text" class="form-control schedule-input mb-3" id="scheduleTitle" name="scheduleTitle">
 				                        
 				                        <label for="scheduleContent" class="col-form-label">일정 내용</label>
-				                        <input type="text" class="form-control mb-3" id="scheduleContent" name="scheduleContent">
+				                        <input type="text" class="form-control schedule-input mb-3" id="scheduleContent" name="scheduleContent">
 				                        
 				                        <div class="scheduleDate">
-								            <label>날짜</label>
+								            <label class="mt-3">방문 날짜</label>
 								            <div>
 								                <div class="date-container">
 								                    <span class="date-pick">
-								                        <input class="datepicker" style="cursor: pointer;" type="text" id="scheduleDate" name="scheduleDate" placeholder="일정에 추가할 날짜 선택">
+								                        <input class="datepicker schedule-input" style="cursor: pointer;" type="text" id="scheduleDate" name="scheduleDate" placeholder="일정에 추가할 날짜 선택">
 								                    </span>
 								                </div>
 								            </div>
 								        </div>
+								        
+								        <div class="visit_time">
+								        	<label class="mt-4">방문 시간</label><br>
+											<select id="startHour" class="schedule"></select> 시
+											<select id="startMinute" class="schedule"></select> 분
+											<select id="endHour" class="schedule"></select> 시
+											<select id="endMinute" class="schedule"></select> 분
+											<input type="checkbox" id="allDay" class="ml-3"/>&nbsp;<label for="allDay">종일</label>
+											 
+											<input type="hidden" name="startdate"/>
+											<input type="hidden" name="enddate"/>
+								        </div>
+								        
 				                    </div>
 				                </div>
 			                </form>
@@ -818,9 +1047,8 @@ textarea {
 				</div>
 				
 			</div>
-		</div><!-- 우측 div 끝 -->
-		
-	</div> <!-- row 끝 -->
+		</div>
+	</div>
 	
 	<!-- //////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
 
@@ -832,7 +1060,6 @@ textarea {
 			<h4 class="mb-5" style="color: orange;">리뷰를 작성하려면 먼저 로그인을 해주세요.
 				<button type="button" class="btn btn-secondary ml-4" onclick="goLogin()">로그인하기</button>
 			</h4>
-			
 		</c:if>
         <c:if test="${not empty sessionScope.loginuser}">
            <h3 style="margin: 0 0 2% 4%;">리뷰 작성</h3>
@@ -875,14 +1102,35 @@ textarea {
 			<tbody id="reviewDisplay">
 			</tbody>
 		</table>
-		
-		<!-- 리뷰 페이지바가 보여지는 곳 -->
-		<div style="display: flex; margin-bottom: 50px;">
+		<!-- 리뷰 페이지바 -->
+		<div style="display: flex;">
         	<div id="pageBar" style="margin: auto; text-align: center;"></div>
         </div>
-		
 	</div>
-	<!-- 리뷰 끝 -->
+	
+	<!-- 지도, 랜덤추천 -->
+		<!-- 지도 -->
+		<div class="row bottom">
+			<div class="col-md-8">
+				<div class="border rounded" id="map_div">
+					<h3 class="mb-5">위치 확인</h3>
+					<div id="map"></div>
+					<input type="hidden" name="food_address" id="food_address" value="${requestScope.foodstorevo.food_address}" />
+					<input type="text" style="display: none;" />
+				</div>
+			</div>
+			
+			<!-- 랜덤추천 -->
+			<div class="col-md-4 border rounded">
+				<div>
+					<h3 class="mb-4 mt-4 ml-3">어떤걸 넣지</h3>
+					<div> 
+						<div id="randomLodging">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 	
 </div>
 <!-- container 끝 -->
