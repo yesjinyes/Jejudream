@@ -163,6 +163,22 @@ public class Yj_TripService_imple implements Yj_TripService {
 	}
 
 
+	// == 맛집 수정을 위해 VO 에 있는 정보 불러오기 == //
+	@Override
+	public FoodstoreVO getFoodstorevo(String food_store_code) {
+		FoodstoreVO foodstorevo = dao.getFoodstorevo(food_store_code);
+		return foodstorevo;
+	}
+
+
+	// == 맛집  수정하기 == //
+	@Override
+	public int editFoodEnd(FoodstoreVO foodstorevo) {
+		int n = dao.editFoodEnd(foodstorevo);
+		return n;
+	}
+
+
 	
 
 	

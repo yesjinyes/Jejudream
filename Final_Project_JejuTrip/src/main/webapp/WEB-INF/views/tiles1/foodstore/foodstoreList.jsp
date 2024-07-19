@@ -290,7 +290,7 @@ span#data {
 									        	</div>
 										        <div class="contentList">
 										            <div class="mb-3">
-										            	<h3 class="pt-3 title"><a href="foodstoreDetail.trip?food_store_code=\${item.food_store_code}">\${item.food_name}</a></h3>
+										            	<h3 class="pt-3 title"><a href="<%= ctxPath %>/foodstoreDetail.trip?food_store_code=\${item.food_store_code}">\${item.food_name}</a></h3>
 										            	<span>\${item.food_content}</span>
 										            </div>
 										            <div class="pb-3">

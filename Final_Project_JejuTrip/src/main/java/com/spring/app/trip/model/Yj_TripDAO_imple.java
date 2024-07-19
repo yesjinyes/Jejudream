@@ -151,7 +151,23 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 		int n = sqlsession.insert("yj_trip.addFoodSchedule", paraMap);
 		return n;
 	}
-		
+
+
+	// == 맛집 수정을 위해 VO 에 있는 정보 불러오기 == //
+	@Override
+	public FoodstoreVO getFoodstorevo(String food_store_code) {
+		FoodstoreVO foodstorevo = sqlsession.selectOne("yj_trip.getFoodstorevo", food_store_code);
+		return foodstorevo;
+	}
+
+
+	// == 맛집  수정하기 == //
+	@Override
+	public int editFoodEnd(FoodstoreVO foodstorevo) {
+		int n = sqlsession.update("yj_trip.editFoodEnd", foodstorevo);
+		return n;
+	}
+
 
 
 

@@ -859,7 +859,7 @@ div#map {
 
 
 <div id="container">
-	<p>맛집 수정 및 삭제 / 리뷰insert 이상하게 되네.. / 하단 우측에 뭐 넣을지.. </p>
+	<p>맛집 수정 및 삭제 / 하단 우측에 뭐 넣을지.. </p>
 	<c:if test="${sessionScope.loginuser.userid == 'admin'}">
 		<div style="width: 90%; margin: 3% auto;text-align: right;">
 			<button type="button" onclick="javascript:location.href='<%= ctxPath%>/editFoodstore.trip?food_store_code=${requestScope.foodstorevo.food_store_code}'" class="btn btn-secondary mr-2">맛집 수정</button>
@@ -972,7 +972,7 @@ div#map {
 				                    	<label for="food_name" class="col-form-label">맛집 이름</label>
 				                        <input type="text" class="form-control schedule-input mb-3" id="food_name" name="food_name" readonly="readonly" value="${requestScope.foodstorevo.food_name}">
 				                        
-				                        <input type="hidden" id="parent_code" name="parent_code" value="${requestScope.foodstorevo.food_store_code}" />
+				                        <input type="hidden" id="food_store_code" name="food_store_code" value="${requestScope.foodstorevo.food_store_code}" />
 				                        <input type="hidden" id="food_address" name="food_address" value="${requestScope.foodstorevo.food_address}" />
 				                        
 				                        <label for="scheduleTitle" class="col-form-label">일정 제목</label>
@@ -1134,6 +1134,7 @@ div#map {
 	
 </div>
 <!-- container 끝 -->
+
 
 
 

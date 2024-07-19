@@ -347,8 +347,23 @@ where fk_userid = 'yy6037'
 commit;
 
 
-desc tbl_play;
+desc tbl_food_store;
 
+
+select *
+from tbl_food_store
+where food_store_code in (5316 , 5317);
+
+update tbl_food_store set food_name = '물꼬해녀의집' where food_store_code =5316;
+commit;
+
+desc tbl_play;
+desc tbl_food_store;
+
+
+
+
+rollback;
 
 
 

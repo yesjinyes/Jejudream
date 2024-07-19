@@ -1,5 +1,6 @@
 package com.spring.app.trip.controller;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,9 +17,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.spring.app.trip.common.FileManager;
 import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.domain.ReviewVO;
@@ -29,6 +33,10 @@ public class Yj_TripController {
 	
 	@Autowired // Type에 따라 알아서 Bean 을 주입해준다.
 	private Yj_TripService service;
+	
+	@Autowired
+	private FileManager fileManager;
+	
 	
 
 	// == 커뮤니티 메인 페이지 보이기 == //
@@ -474,14 +482,6 @@ public class Yj_TripController {
 										@RequestParam(defaultValue="") String startdate,
 										@RequestParam(defaultValue="") String enddate) {
 		
-		//System.out.println("~~~ parent_code 확인 =>" + parent_code);
-		//System.out.println("~~~ food_address 확인 =>" + food_address);
-		//System.out.println("~~~ scheduleTitle 확인 => " + scheduleTitle);
-		//System.out.println("~~~ scheduleContent 확인 => " + scheduleContent);
-		//System.out.println("~~~ scheduleDate 확인 => " + scheduleDate);
-		//System.out.println("~~~ startdate 확인 => " + startdate);
-		//System.out.println("~~~ enddate 확인 => " + enddate);
-		
 		HttpSession session = request.getSession();
 		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
 		// System.out.println("로그인 된 id 확인 => " + loginuser.getUserid());
@@ -520,11 +520,104 @@ public class Yj_TripController {
 	}
 	
 	
+	// == 맛집 수정 페이지 요청 (관리자) == //
+	@GetMapping("/editFoodstore.trip")
+	public ModelAndView editFoodstore(ModelAndView mav, HttpServletRequest request) {
+		
+		String food_store_code = request.getParameter("food_store_code");
+		// System.out.println("~~~~ food_store_code 확인 => " + food_store_code);
+		
+		// 맛집 수정을 위해 VO 에 있는 정보 불러오기
+		FoodstoreVO foodstorevo = service.getFoodstorevo(food_store_code);
+		
+		// System.out.println("~~ 수정용 맛집이름 확인 => " + foodstorevo.getFood_name()); 
+		
+		mav.addObject("foodstorevo", foodstorevo);
+		
+		mav.setViewName("foodstore/editFoodstore.tiles1");
+		
+		return mav;
+	}
 	
 	
+	// == 맛집 수정 데이터 처리 (관리자) == //
+	@PostMapping("/editFoodEnd.trip")
+	public ModelAndView editFoodEnd(ModelAndView mav, FoodstoreVO foodstorevo, MultipartHttpServletRequest mrequest) {
+		
+		String food_name = mrequest.getParameter("food_name");
+		String food_category = mrequest.getParameter("food_category");
+		String local_status = mrequest.getParameter("local_status");
+		String food_businesshours = mrequest.getParameter("food_businesshours");
+		String food_mobile = mrequest.getParameter("food_mobile");
+		String food_address = mrequest.getParameter("food_address");
+		String food_content = mrequest.getParameter("food_content");
+		
+		System.out.println("~~ food_name 나와주세요 => " + food_name);
+		System.out.println("~~ food_category 나와주세요 => " + food_category);
+		System.out.println("~~ local_status 나와주세요 => " + local_status);
+		System.out.println("~~ food_businesshours 나와주세요 => " + food_businesshours);
+		System.out.println("~~ food_mobile 나와주세요 => " + food_mobile);
+		System.out.println("~~ food_address 나와주세요 => " + food_address);
+		System.out.println("~~ food_content 나와주세요 => " + food_content);
+		
+		
+		
+		
+		//  ============ 첨부파일 처리 시작 ============ // 
+		MultipartFile attach = foodstorevo.getAttach();
+		
+		if(!attach.isEmpty()) {
+			
+			HttpSession session = mrequest.getSession();
+			String root = session.getServletContext().getRealPath("/");
+			
+			String path = root + "resources" + File.separator + "images" + File.separator + "foodstore";
+			String newFileName = "";
+			
+			byte[] bytes = null; // 첨부파일 내용물 담을 배열
+			long fileSize = 0; // 첨부파일의 크기
+			
+			try {
+				bytes = attach.getBytes();
+				String originalFilename = attach.getOriginalFilename();
+				newFileName = fileManager.doFileUpload(bytes, originalFilename, path);
+				
+				foodstorevo.setFileName(newFileName);
+				foodstorevo.setOrgFilename(foodstorevo.getFood_name()+".jpg");
+				
+				fileSize = attach.getSize();
+				foodstorevo.setFileSize(String.valueOf(fileSize));
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+		}// end of if(!attach.isEmpty())---------------
+		//  ============ 첨부파일 처리 끝 ============ // 
 	
-	
-	
+		int n = service.editFoodEnd(foodstorevo); // 맛집  수정하기
+		
+		if(n==1) {
+			String message = "맛집 정보가 수정되었습니다.";
+			//String loc = "javascript:history.back()";
+			
+			mav.addObject("message", message);
+			//mav.addObject("loc", loc);
+			
+			mav.setViewName("msg");
+		}
+		else {
+			String message = "맛집 정보 수정에 실패했습니다.";
+			//String loc = "javascript:history.back()";
+			
+			mav.addObject("message", message);
+			//mav.addObject("loc", loc);
+			
+			mav.setViewName("msg");
+		}
+		
+		return mav;
+	}
 	
 	
 	
