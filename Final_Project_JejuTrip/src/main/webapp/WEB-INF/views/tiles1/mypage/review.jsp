@@ -1,216 +1,581 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fn"  uri="http://java.sun.com/jsp/jstl/functions"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%> 
-
-<%
-    String ctxPath = request.getContextPath();
-%>   
-
-<%-- Bootstrap CSS --%>
-<link rel="stylesheet" href="<%= ctxPath%>/resources/bootstrap-4.6.2-dist/css/bootstrap.min.css" type="text/css">
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-
-
-<style type="text/css">
-
-.container {
-	
-	border: solid 0px red;
-    float: none;
-    width: 100%;
-    margin: 64px auto 0px;
-}
-
-
-table#memberTbl {
-   width: 100%;
-   margin: 0 auto;
-}
-
-table#memberTbl th, table#memberTbl td {
-   text-align: center;
-   font-size: 12pt;
-}
-
-table#memberTbl tr.memberInfo:hover {
-   background-color: #e6ffe6;
-   cursor: pointer;
-}
-
-form[name="member_search_frm"] {
-   border: solid 0px red;
-   width: 50%;
-   margin: 0 auto 3% auto;
-   display: flex;
-   align-items: center;
-}
-
-form[name="member_search_frm"] button.btn-secondary {
-   width: 20%;
-   height: 5%;
-   margin-left: 2%;
-   margin-right: 2%;
-}
-
-div#pageBar {
-   border: solid 0px red;
-   width: 80%;
-   margin: 3% auto 0 auto;
-   display: flex;
-}
-
-div#pageBar>nav {
-   margin: auto;
-}
-
-.titleArea{
-    color: #1a1a1a;
-    font-size: 32px;
-    font-weight: 700;
-    text-align: center;
-    line-height: 40px;
-    text-transform: uppercase;
-    
- }
- 
- a{
-    color:black !important;
- }
- .countReview{
- border:1px #ff8000 solid; 
- background: #ff8000;
- min-width:100px; 
- border-radius:30px;  
- display: inline-block; 
- font-size: 20px;
-}
-
-</style>
+<% String ctxPath = request.getContextPath(); %>
+<%@ page import="java.net.InetAddress" %>
+<link rel="stylesheet" href="<%=ctxPath%>/resources/css/mypage/member/mypageReview.css"/>
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 
 <script type="text/javascript">
+    $(document).ready(function(){
 
+    	let currentShowPageNo = 1; // currentShowPageNo 초기값
+    	goViewAllReviewList(currentShowPageNo); // 페이징처리된 리뷰보여주는 함수
+    	goViewfoodReviewList(currentShowPageNo);
+    	goViewPlayReviewList(currentShowPageNo);
+    	goViewLoginReviewList(currentShowPageNo)
+    	const list = document.querySelectorAll('.list');
 
-$(document).ready(function() {
+    	
+        function activeLink() {
+            // 모든 네비게이션 항목에서 active 클래스를 제거합니다.
+            list.forEach((item) => item.classList.remove('active'));
+            // 클릭된 네비게이션 항목에 active 클래스를 추가합니다.
+            this.classList.add('active');
+        }
 
+        list.forEach((item) => {
+            item.addEventListener('click', function () {
+                // active 클래스를 변경하는 함수 호출
+                activeLink.call(this);
+                // iframe의 src 속성을 변경하여 콘텐츠를 로드
+                const link = this.getAttribute('data-link');
+                document.getElementById('contentFrame').src = link;
+            });
+        });
+        
 
-
-
-   $("table#questioTbl tr.questioninfo").click(e=>{
-      
-      const question_seq = $(e.target).parent().children(".question_seq").text();
-   
-      const frm = document.QuestionDetail_frm;
-      frm.question_seq.value = question_seq;
-      
-      
-      frm.action = "<%= ctxPath%>/member/questionView.dk";
-      frm.method = "post";
-      frm.submit();
-   });   
-
-   
-
-});//end of ------------------------
-
-
-/*
-function goSearch(){
+        
+    }); // end of $(document).ready(function(){
+    	
+    	
+function goViewAllReviewList(currentShowPageNo){
+	$.ajax({
+	    url:"<%= ctxPath%>/userReviewListJSON.trip",
+	    type:"post",
+	    data: {"fk_userid":"${sessionScope.loginuser.userid}"
+	    	  ,"currentShowPageNo":currentShowPageNo},
+	    
+	    dataType:"json",
+	    success:function(json){
+	 	
+	 	   let v_html = "";
+	       let r_html = ""; 
+	        if (json.length > 0) {    
+	           $.each(json, function(index, item){ 
+	                             
+	              v_html += "<tr>";
+	              	v_html += "<td>"+item.rno+"</td>";
+					if(item.review_division_R == 'A'){
+						v_html += "<td><span style='color:blue; font-weight:bold;'>숙소</span></td>";
+					}
+					if(item.review_division_R == 'B'){
+						v_html += "<td><span style='color:green; font-weight:bold;'>맛집</span></td>";
+					}
+					if(item.review_division_R == 'C'){
+						v_html += "<td><span style='color:red; font-weight:bold;'>즐길거리</span></td>";
+					}
+					v_html += "<td>"+item.review_content+"</td>";
+					v_html += "<td>"+item.registerday+"</td>";
+					v_html += "</tr>";
+			    	
+			    	
+	               r_html = item.allTotalCount
+	           }); 
+	           
+	           const totalPage = Math.ceil(json[0].allTotalCount / json[0].sizePerPage);
+	           PageBar(currentShowPageNo, totalPage);
+	        }// end of if -----------------------
+	        
+	        else {
+	        	v_html += "<tr>";
+				v_html +=   "<td colspan='11' class='comment'>조회할 정보가 없습니다.</td>";
+				v_html += "</tr>";
+	        }// end of else ---------------------
+	        $("tbody#all_review_tbody").html(v_html);
+	        $("span#reservation_reception").html(r_html);
+	    },
+	    error: function(request, status, error){
+	        alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+	     }
+	 	   
+	 	   
+		   });
+	
+}
+	
+	//goViewAllReviewList 페이지바 함수
+	 function PageBar(currentShowPageNo,totalPage){
+	 	   
+	     const blockSize = 10;
+	 	let loop = 1;
+	 	let pageNo = Math.floor((Number(currentShowPageNo) - 1)/blockSize) * blockSize + 1;
+	 	
+	 	let pageBar_HTML = "<ul style='list-style:none'>";
+	 	
+	 	// [맨처음] [이전] 만들기
+	 	if(pageNo != 1) {
+	 		pageBar_HTML += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='javascript:goViewAllReviewList(1)'>[맨처음]</a></li>";
+	 		pageBar_HTML += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='javascript:goViewAllReviewList("+(pageNo-1)+")'>[이전]</a></li>";
+	 	}
+	 	
+	 	while(!(loop>blockSize || pageNo > totalPage)) {
+	 		if(pageNo == currentShowPageNo) {
+	 			pageBar_HTML += "<li style='display:inline-block; width:30px; font-size:12pt; border:solid 1px gray; color:red; padding:2px 4px;'>"+pageNo+"</a></li>";
+	 		}
+	 		else {
+	 			pageBar_HTML += "<li style='display:inline-block; width:30px; font-size:12pt;'><a href='javascript:goViewAllReviewList("+pageNo+")'>"+pageNo+"</a></li>";
+	 		}
+	 		loop++;
+	 		pageNo++;
+	 	}//end of while
+	 	
+	 	// [다음] [마지막] 만들기
+	 	if(pageNo <= totalPage) {
+	 		pageBar_HTML += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='javascript:goViewAllReviewList("+(pageNo+1)+")'>[다음]</a></li>";
+	 		pageBar_HTML += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='javascript:goViewAllReviewList("+totalPage+")'>[마지막]</a></li>";
+	 	}
+	 	
+	 	
+	 	pageBar_HTML += "</ul>";
+	 	
+	 	// 156.댓글 페이지바 출력하기
+	 	$("div#pageBar").html(pageBar_HTML);
+	 	
+	 }
+	
+	////////////////////////////////////////////////////////////////////////
+	
+	//맛집 리뷰 불러오는거
+	function goViewfoodReviewList(currentShowPageNo){
+			$.ajax({
+			    url:"<%= ctxPath%>/userfoodReviewListJSON.trip",
+			    type:"post",
+			    data: {"fk_userid":"${sessionScope.loginuser.userid}"
+			    	  ,"currentShowPageNo":currentShowPageNo},
+			    
+			    dataType:"json",
+			    success:function(json){
+			 	
+			 	   let v_html = "";
+			       let r_html = ""; 
+			        if (json.length > 0) {    
+			           $.each(json, function(index, item){ 
+			                             
+			              v_html += "<tr>";
+			              	v_html += "<td>"+item.rno+"</td>";
+							v_html += "<td>"+item.food_name+"</td>";
+							v_html += "<td>"+item.review_content+"</td>";
+							v_html += "<td>"+item.registerday+"</td>";
+							v_html += "</tr>";
+					    	
+					    	
+			               r_html = item.totalCount
+			           }); 
+			           
+			           const totalPage = Math.ceil(json[0].totalCount / json[0].sizePerPage);
+			           foodPageBar(currentShowPageNo, totalPage);
+			        }// end of if -----------------------
+			        
+			        else {
+			        	v_html += "<tr>";
+						v_html +=   "<td colspan='11' class='comment'>조회할 정보가 없습니다.</td>";
+						v_html += "</tr>";
+			        }// end of else ---------------------
+			        $("tbody#food_review_tbody").html(v_html);
+			        $("span#food_count").html(r_html);
+			    },
+			    error: function(request, status, error){
+			        alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+			     }
+			 	   
+			 	   
+				   });
+			
+		}
+	//goViewAllReviewList 페이지바 함수
+	 function foodPageBar(currentShowPageNo,totalPage){
+	 	   
+	     const blockSize = 10;
+	 	let loop = 1;
+	 	let pageNo = Math.floor((Number(currentShowPageNo) - 1)/blockSize) * blockSize + 1;
+	 	
+	 	let pageBar_HTML = "<ul style='list-style:none'>";
+	 	
+	 	// [맨처음] [이전] 만들기
+	 	if(pageNo != 1) {
+	 		pageBar_HTML += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='javascript:goViewfoodReviewList(1)'>[맨처음]</a></li>";
+	 		pageBar_HTML += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='javascript:goViewfoodReviewList("+(pageNo-1)+")'>[이전]</a></li>";
+	 	}
+	 	
+	 	while(!(loop>blockSize || pageNo > totalPage)) {
+	 		if(pageNo == currentShowPageNo) {
+	 			pageBar_HTML += "<li style='display:inline-block; width:30px; font-size:12pt; border:solid 1px gray; color:red; padding:2px 4px;'>"+pageNo+"</a></li>";
+	 		}
+	 		else {
+	 			pageBar_HTML += "<li style='display:inline-block; width:30px; font-size:12pt;'><a href='javascript:goViewfoodReviewList("+pageNo+")'>"+pageNo+"</a></li>";
+	 		}
+	 		loop++;
+	 		pageNo++;
+	 	}//end of while
+	 	
+	 	// [다음] [마지막] 만들기
+	 	if(pageNo <= totalPage) {
+	 		pageBar_HTML += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='javascript:goViewfoodReviewList("+(pageNo+1)+")'>[다음]</a></li>";
+	 		pageBar_HTML += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='javascript:goViewfoodReviewList("+totalPage+")'>[마지막]</a></li>";
+	 	}
+	 	
+	 	
+	 	pageBar_HTML += "</ul>";
+	 	
+	 	// 156.댓글 페이지바 출력하기
+	 	$("div#foodpageBar").html(pageBar_HTML);
+	 	
+	 }
+	
+	////////////////////////////////////////////////////////////////////////
+		
+		//즐길거리 리뷰 불러오는거
+		function goViewPlayReviewList(currentShowPageNo){
+				$.ajax({
+				    url:"<%= ctxPath%>/userFoodReviewListJSON.trip",
+				    type:"post",
+				    data: {"fk_userid":"${sessionScope.loginuser.userid}"
+				    	  ,"currentShowPageNo":currentShowPageNo},
+				    
+				    dataType:"json",
+				    success:function(json){
+				 	
+				 	   let v_html = "";
+				       let r_html = ""; 
+				        if (json.length > 0) {    
+				           $.each(json, function(index, item){ 
+				                             
+				              v_html += "<tr>";
+				              	v_html += "<td>"+item.rno+"</td>";
+								v_html += "<td>"+item.play_name+"</td>";
+								v_html += "<td>"+item.review_content+"</td>";
+								v_html += "<td>"+item.registerday+"</td>";
+								v_html += "</tr>";
+						    	
+						    	
+				               r_html = item.totalCount
+				           }); 
+				           
+				           const totalPage = Math.ceil(json[0].totalCount / json[0].sizePerPage);
+				           foodPageBar(currentShowPageNo, totalPage);
+				        }// end of if -----------------------
+				        
+				        else {
+				        	v_html += "<tr>";
+							v_html +=   "<td colspan='11' class='comment'>조회할 정보가 없습니다.</td>";
+							v_html += "</tr>";
+				        }// end of else ---------------------
+				        $("tbody#play_review_tbody").html(v_html);
+				        $("span#play_count").html(r_html);
+				    },
+				    error: function(request, status, error){
+				        alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+				     }
+				 	   
+				 	   
+					   });
+				
+			}
+		//goViewAllReviewList 페이지바 함수
+		 function foodPageBar(currentShowPageNo,totalPage){
+		 	   
+		     const blockSize = 10;
+		 	let loop = 1;
+		 	let pageNo = Math.floor((Number(currentShowPageNo) - 1)/blockSize) * blockSize + 1;
+		 	
+		 	let pageBar_HTML = "<ul style='list-style:none'>";
+		 	
+		 	// [맨처음] [이전] 만들기
+		 	if(pageNo != 1) {
+		 		pageBar_HTML += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='javascript:goViewfoodReviewList(1)'>[맨처음]</a></li>";
+		 		pageBar_HTML += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='javascript:goViewfoodReviewList("+(pageNo-1)+")'>[이전]</a></li>";
+		 	}
+		 	
+		 	while(!(loop>blockSize || pageNo > totalPage)) {
+		 		if(pageNo == currentShowPageNo) {
+		 			pageBar_HTML += "<li style='display:inline-block; width:30px; font-size:12pt; border:solid 1px gray; color:red; padding:2px 4px;'>"+pageNo+"</a></li>";
+		 		}
+		 		else {
+		 			pageBar_HTML += "<li style='display:inline-block; width:30px; font-size:12pt;'><a href='javascript:goViewfoodReviewList("+pageNo+")'>"+pageNo+"</a></li>";
+		 		}
+		 		loop++;
+		 		pageNo++;
+		 	}//end of while
+		 	
+		 	// [다음] [마지막] 만들기
+		 	if(pageNo <= totalPage) {
+		 		pageBar_HTML += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='javascript:goViewfoodReviewList("+(pageNo+1)+")'>[다음]</a></li>";
+		 		pageBar_HTML += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='javascript:goViewfoodReviewList("+totalPage+")'>[마지막]</a></li>";
+		 	}
+		 	
+		 	
+		 	pageBar_HTML += "</ul>";
+		 	
+		 	// 156.댓글 페이지바 출력하기
+		 	$("div#playpageBar").html(pageBar_HTML);
+		 	
+		 }
+		
+		
+		
+////////////////////////////////////////////////////////////////////////
+			
+			//숙소 리뷰 불러오는거
+			function goViewLoginReviewList(currentShowPageNo){
+					$.ajax({
+					    url:"<%= ctxPath%>/userLoginReviewListJSON.trip",
+					    type:"post",
+					    data: {"fk_userid":"${sessionScope.loginuser.userid}"
+					    	  ,"currentShowPageNo":currentShowPageNo},
+					    
+					    dataType:"json",
+					    success:function(json){
+					 	
+					 	   let v_html = "";
+					       let r_html = ""; 
+					        if (json.length > 0) {    
+					           $.each(json, function(index, item){ 
+					                             
+					              v_html += "<tr>";
+					              	v_html += "<td>"+item.rno+"</td>";
+									v_html += "<td>"+item.reservation_code+"</td>";
+									v_html += "<td>"+item.lodging_name+"</td>";
+									v_html += "<td>"+item.check_in+"</td>";
+									v_html += "<td>"+item.review_content+"</td>";
+									v_html += "<td>"+item.registerday+"</td>";
+									v_html += "</tr>";
+							    	
+							    	
+					               r_html = item.totalCount
+					           }); 
+					           
+					           const totalPage = Math.ceil(json[0].totalCount / json[0].sizePerPage);
+					           foodPageBar(currentShowPageNo, totalPage);
+					        }// end of if -----------------------
+					        
+					        else {
+					        	v_html += "<tr>";
+								v_html +=   "<td colspan='11' class='comment'>조회할 정보가 없습니다.</td>";
+								v_html += "</tr>";
+					        }// end of else ---------------------
+					        $("tbody#login_review_tbody").html(v_html);
+					        $("span#lodging_count").html(r_html);
+					    },
+					    error: function(request, status, error){
+					        alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+					     }
+					 	   
+					 	   
+						   });
+					
+				}
+			//goViewAllReviewList 페이지바 함수
+			 function foodPageBar(currentShowPageNo,totalPage){
+			 	   
+			     const blockSize = 10;
+			 	let loop = 1;
+			 	let pageNo = Math.floor((Number(currentShowPageNo) - 1)/blockSize) * blockSize + 1;
+			 	
+			 	let pageBar_HTML = "<ul style='list-style:none'>";
+			 	
+			 	// [맨처음] [이전] 만들기
+			 	if(pageNo != 1) {
+			 		pageBar_HTML += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='javascript:goViewLoginReviewList(1)'>[맨처음]</a></li>";
+			 		pageBar_HTML += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='javascript:goViewLoginReviewList("+(pageNo-1)+")'>[이전]</a></li>";
+			 	}
+			 	
+			 	while(!(loop>blockSize || pageNo > totalPage)) {
+			 		if(pageNo == currentShowPageNo) {
+			 			pageBar_HTML += "<li style='display:inline-block; width:30px; font-size:12pt; border:solid 1px gray; color:red; padding:2px 4px;'>"+pageNo+"</a></li>";
+			 		}
+			 		else {
+			 			pageBar_HTML += "<li style='display:inline-block; width:30px; font-size:12pt;'><a href='javascript:goViewLoginReviewList("+pageNo+")'>"+pageNo+"</a></li>";
+			 		}
+			 		loop++;
+			 		pageNo++;
+			 	}//end of while
+			 	
+			 	// [다음] [마지막] 만들기
+			 	if(pageNo <= totalPage) {
+			 		pageBar_HTML += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='javascript:goViewLoginReviewList("+(pageNo+1)+")'>[다음]</a></li>";
+			 		pageBar_HTML += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='javascript:goViewLoginReviewList("+totalPage+")'>[마지막]</a></li>";
+			 	}
+			 	
+			 	
+			 	pageBar_HTML += "</ul>";
+			 	
+			 	// 156.댓글 페이지바 출력하기
+			 	$("div#playpageBar").html(pageBar_HTML);
+			 	
+			 }
+		
+		
+		
 	
 	
-	const searchType = $("select[name='searchType']").val();
-	
-	if(searchType == ""){
-		alert("검색대상을 선택하세요!!");
-		return;//종료
-	}
-	
-	const frm = document.member_search_frm; //회원을 찾는 폼
-	// frm.action = "memberList.up";
-	// form 태그에 action 이 명기되지 않았으면 현재보이는 URL 경로로 submit 되어진다.
-	// frm.method = "get";
-	// form 태그에 method 를 명기하지 않으면 "get" 방식이다.
-	frm.submit();
-	
-}//end of function goSearch()-----------------	
-*/
-
-
-   
 </script>
 
-
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-</head>
-<body>
-<div class="container">
-   <h2 class="titleArea ">
-      <font face="Arial">나의 이용후기</font>
-      <span class="countReview">0건</span>
-   </h2>
-   <br> &nbsp;
-   
-   <div style="display:flex;justify-content:flex-end;">
-      <button type="button" class="btn" style="background-color: #ff8000; font-weight: bold; color:#fff;" onclick="" >이용후기등록</button>
-   </div>
-      
-   &nbsp;
-   <table class="table table-hover" id="questioTbl">
-      <thead>
-         <tr>
-            <th>번호</th>
-            <th>제목</th>
-            <th>작성일</th>
-            <th>작성자</th>
-           
-         </tr>
-      </thead>
-
-         <tbody>
-            <c:if test="${not empty requestScope.questionList}" >
-               <c:forEach var="rieview" items="${requestScope.questionList}" varStatus="status">
-                  <c:if test="${sessionScope.loginuser.id == question.id || sessionScope.loginuser.id == 'admin'}" >
-                     <tr class="rieviewinfo" >
-                     	<fmt:parseNumber var="currentPage" value="${requestScope.currentPage}"/>
-          				<fmt:parseNumber var="blockSize" value="${requestScope.blockSize}"/>
-          				
-          				<td>${(requestScope.totalQuestionCount) -( currentPage - 1 ) * blockSize-(status.index)}</td>
-                        <td class="rieview_seq" style="display:none;">${question.question_seq}</td>  <%--번호--%>    
-                        <td>${question.title}</td>                          						  <%--제목 --%>
-                        <td>${question.ragisterdate}</td>                   		                  <%--작성일 --%>
-                        <td>${question.id}</td>                        				                  <%--작성자 --%>
-                        
-                     </tr>
-                  </c:if>
-               </c:forEach>
-            </c:if>
-            
-            <c:if test="${empty requestScope.questionList}">
-                   <td colspan="5" style="text-align: center;">작성한 이용후기가 없습니다.</td>
-               </c:if>
-      </tbody>
-         
-
-   </table>
-
-  
-   <div id="pageBar">
-       <nav>
-          <ul class="pagination">${requestScope.pageBar}</ul>
-       </nav>
+<div class="body">
+    <div class="navigation">
+        <ul>
+            <li class="list active">
+                <a href="<%= ctxPath%>/requiredLogin_goMypage.trip">
+                    <span class="icon"><ion-icon name="bed-outline"></ion-icon></span>
+                    <span class="title">예약내역</span>
+                </a>
+            </li>
+            <li class="list">
+                <a href="<%= ctxPath%>/editProfile.trip">
+                    <span class="icon"><ion-icon name="person-outline"></ion-icon></span>
+                    <span class="title">회원정보수정</span>
+                </a>
+            </li>
+            <li class="list">
+                <a href="<%= ctxPath%>/my_schedule.trip">
+                    <span class="icon"><ion-icon name="calendar-number-outline"></ion-icon></span>
+                    <span class="title">내 일정</span>
+                </a>
+            </li>
+            <li class="list">
+                <a href="<%= ctxPath%>/review.trip">
+                    <span class="icon"><ion-icon name="clipboard-outline"></ion-icon></span>
+                    <span class="title">이용후기</span>
+                </a>
+            </li>
+            <br><br><br>
+            <li class="list">
+                <a href="<%= ctxPath%>/support.trip">
+                    <span class="icon"><ion-icon name="help-circle-outline"></ion-icon></span>
+                    <span class="title">고객센터</span>
+                </a>
+            </li>
+        </ul>
     </div>
-</div>
-
-<form name="RieviewDetail_frm">
-   <input type="hidden" name="rieview_seq"/> <%--한명의 회원을 넘겨주기위해--%>
-   <input type="hidden" name="goBackURL" value="${requestScope.currentURL}" /> 
-</form>
 	
-</body>
-</html>
+    <form class = "reviewFrm" name="reviewFrm">
+		<div id="review">
+			<div id="top_color">
+				<p style="font-size: 20px; font-weight: bold; color:white;">이용 후기</p>
+			</div>
+			<div class="liblock">
+				<ul class="review flex-col" style="margin-top: 15px;">
+					<li>
+						<strong style="font-size: 18px">모든후기 <br><br></strong> 
+						 <a href="#" class="count">
+						 	<span id="reservation_reception" style="color: ff8000; font-weight: bold; font-size: 30px;" >0</span>
+						 	<span style="color: gray; font-weight: bold;">건</span>
+					 	 </a>
+					</li>
+					
+					<li>
+						<strong style="font-size: 18px">숙소 <br><br></strong> 
+						<a href="#" class="count">
+							<span id="lodging_count"  style="color: ff8000; font-weight: bold; font-size: 30px;">0</span>
+							<span style="color: gray; font-weight: bold;">건</span>
+						</a>
+					</li>
+					
+					<li>
+						<strong style="font-size: 18px">맛집 <br><br></strong>
+						<a href="#" class="count">
+							<span id="food_count" style="color: ff8000; font-weight: bold; font-size: 30px;">0</span>
+							<span style="color: gray; font-weight: bold;">건</span>
+						</a>
+					</li>
+					
+					<li><strong style="font-size: 18px">즐길거리 <br><br></strong>
+						 <a href="#" class="count">
+						 	<span id="play_count" style="color: ff8000; font-weight: bold; font-size: 30px;">0</span>
+					 		<span style="color: gray; font-weight: bold;">건</span>
+					 	</a>
+					</li>
+					
+				</ul>
+			</div>
+		</div>
+		<div class="reservation_bar" style="margin-top: 10%;">
+		 <!-- Nav tabs -->
+			<ul class="nav nav-tabs">
+			  <li class="nav-item">
+			    <a class="nav-link active" data-toggle="tab" href="#all_review">전체후기 & 댓글</a>
+			  </li>
+			  <li class="nav-item">
+			    <a class="nav-link" data-toggle="tab" href="#login_review">숙소</a>
+			  </li>
+			  <li class="nav-item">
+			    <a class="nav-link" data-toggle="tab" href="#food_review">맛집</a>
+			  </li>
+			  <li class="nav-item">
+			    <a class="nav-link" data-toggle="tab" href="#play_review">즐길거리</a>
+			  </li>
+			</ul>
+			
+			<!-- Tab panes -->
+			<div class="tab-content">
+			  <div class="tab-pane active" id="all_review">
+				<table class="table table-hover">
+				  <thead>
+				    <tr>
+				      <th>#</th>
+				      <th>카테고리</th>
+				      <th>내용</th>
+				      <th>작성일자</th>
+				    </tr>
+				  </thead>
+				  <tbody id="all_review_tbody">
+					  
+				  </tbody>
+				</table>
+				<div id="pageBar" class="pageBar"></div>
+			</div>
+			  <div class="tab-pane fade" id="login_review">
+					<table class="table table-hover">
+				 		 <thead>
+						    <tr>
+						      <th>#</th>
+						      <th>예약번호</th>
+						      <th>숙소명</th>
+						      <th>체크인일자</th>
+						      <th>후기내용</th>
+						      <th>작성일자</th>
+						    </tr>
+						  </thead>
+			    		 <tbody id="login_review_tbody">
+						    
+						 </tbody>
+					</table>
+					<div id="loginpageBar" class="loginpageBar"></div>
+				</div>
+				<div class="tab-pane fade" id="food_review">
+					<table class="table table-hover">
+				 		 <thead>
+						    <tr>
+						      <th>#</th>
+						      <th>가게이름</th>
+						      <th>후기내용</th>
+						      <th>작성일자</th>
+						    </tr>
+						  </thead>
+			    		 <tbody id="food_review_tbody">
+						    
+						 </tbody>
+					</table>
+					<div id="foodpageBar" class="foodpageBar"></div>
+				</div>
+				<div class="tab-pane fade" id="play_review">
+					<table class="table table-hover">
+				 		 <thead>
+						    <tr>
+						      <th>#</th>
+						      <th>즐길거리이름</th>
+						      <th>후기내용</th>
+						      <th>작성일자</th>
+						    </tr>
+						  </thead>
+			    		 <tbody id="play_review_tbody">
+						    
+						 </tbody>
+					</table>
+					<div id="playpageBar" class="playpageBar"></div>
+				</div>
+			</div>
+		</div>
+	</form>
+
+</div>
