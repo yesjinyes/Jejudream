@@ -1224,6 +1224,9 @@ public class Dy_TripController {
 			}
 			
 			mav.addObject("boardvo", boardvo);
+			
+			// 게시판 상세에서 댓글 삭제 시 댓글 개수가 바로 반영되도록 하기 위해 세션에 저장
+			session.setAttribute("commentCount", Integer.parseInt(boardvo.getCommentCount()));
 
 			// === #140. 이전글제목, 다음글제목 보기 ===
 			mav.addObject("paraMap", paraMap);
@@ -1946,5 +1949,85 @@ public class Dy_TripController {
 
 		return jsonObj.toString();
 	}
+	
+	
+	// 커뮤니티 댓글 수정
+	@ResponseBody
+	@PostMapping(value="community/updateComment.trip", produces="text/plain;charset=UTF-8")
+	public String requiredLogin_updateComment(HttpServletRequest request, HttpServletResponse response,
+											  @RequestParam(defaultValue = "") String seq,
+											  @RequestParam(defaultValue = "") String new_content) {
+		
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
+		
+		int n = 0;
+		
+		// 댓글번호에 대한 댓글이 있는지 조회하기
+		CommentVO commentvo = service.getCommentInfo(seq);
+		
+		if(commentvo != null && loginuser.getUserid().equals(commentvo.getFk_userid())) {
+			
+			Map<String, String> paraMap = new HashMap<>();
+			paraMap.put("seq", seq);
+			paraMap.put("new_content", new_content);
+			
+			// 댓글 수정
+			n = service.updateComment(paraMap);
+			
+		}
+
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("n", n);
+		
+		return jsonObj.toString();
+	}
+	
+	
+	// 커뮤니티 댓글 삭제
+	@ResponseBody
+	@PostMapping(value="community/deleteComment.trip", produces="text/plain;charset=UTF-8")
+	public String requiredLogin_deleteComment(HttpServletRequest request, HttpServletResponse response,
+											  @RequestParam(defaultValue = "") String seq,
+											  @RequestParam(defaultValue = "") String parentSeq) {
+		
+		int n = 0;
+		int newCommentCount = 0;
+		
+		// 댓글번호에 대한 댓글이 있는지 조회하기
+		CommentVO commentvo = service.getCommentInfo(seq);
+		
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
+		
+		if(commentvo != null && loginuser.getUserid().equals(commentvo.getFk_userid())) {
+			
+			Map<String, String> paraMap = new HashMap<>();
+			paraMap.put("seq", seq);
+			paraMap.put("parentSeq", parentSeq);
+			
+			try {
+				n = service.deleteComment(paraMap);
+				
+				if(n==1) {
+					newCommentCount = (int)session.getAttribute("commentCount") - 1;
+	                session.setAttribute("commentCount", newCommentCount);
+				}
+				
+			} catch (Throwable e) {
+				e.printStackTrace();
+			}			
+		}
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("n", n);
+		jsonObj.put("newCommentCount", newCommentCount);
+		
+		return jsonObj.toString();
+	}
+	
+	
+	
+	
 	
 }

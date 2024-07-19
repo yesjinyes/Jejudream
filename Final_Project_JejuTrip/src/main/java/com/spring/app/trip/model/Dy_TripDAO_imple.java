@@ -393,6 +393,46 @@ public class Dy_TripDAO_imple implements Dy_TripDAO {
 		
 		return n;
 	}
+
+
+	// 댓글번호에 대한 댓글이 있는지 조회하기
+	@Override
+	public CommentVO getCommentInfo(String seq) {
+		
+		CommentVO commentvo = sqlsession.selectOne("dy_trip.getCommentInfo", seq);
+		
+		return commentvo;
+	}
+
+
+	// 커뮤니티 댓글 수정
+	@Override
+	public int updateComment(Map<String, String> paraMap) {
+		
+		int n = sqlsession.update("dy_trip.updateComment", paraMap);
+		
+		return n;
+	}
+
+
+	// 커뮤니티 댓글 삭제
+	@Override
+	public int deleteComment(String seq) {
+		
+		int n = sqlsession.delete("dy_trip.deleteComment", seq);
+		
+		return n;
+	}
+
+
+	// 커뮤니티 댓글 삭제 시 해당 글의 댓글 개수 1 감소
+	@Override
+	public int decreaseCommentCount(String parentSeq) {
+		
+		int n = sqlsession.update("dy_trip.decreaseCommentCount", parentSeq);
+		
+		return n;
+	}
 	
 
 }

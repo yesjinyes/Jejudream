@@ -405,4 +405,33 @@
 	</update>
 	
 	
+	<!-- 댓글번호에 대한 댓글이 있는지 조회하기 -->
+	<select id="getCommentInfo" parameterType="String" resultType="CommentVO">
+		select seq, fk_userid, name, content, regdate, parentseq
+		from tbl_comment
+		where status = 1 and seq = #{seq}
+	</select>
+	
+	
+	<!-- 커뮤니티 댓글 수정 -->
+	<update id="updateComment" parameterType="HashMap">
+		update tbl_comment set content = #{new_content}
+		where seq = #{seq}
+	</update>
+	
+	
+	<!-- 커뮤니티 댓글 삭제 -->
+	<delete id="deleteComment" parameterType="String">
+		delete from tbl_comment
+		where seq = #{seq}
+	</delete>
+	
+	
+	<!-- 커뮤니티 댓글 삭제 시 해당 글의 댓글 개수 1 감소 -->
+	<update id="decreaseCommentCount" parameterType="String">
+		update tbl_board set commentCount = commentCount - 1
+		where seq = #{parentSeq}
+	</update>
+	
+	
 </mapper>
