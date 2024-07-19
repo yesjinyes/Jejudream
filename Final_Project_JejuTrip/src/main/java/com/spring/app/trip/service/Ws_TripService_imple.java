@@ -566,6 +566,20 @@ public class Ws_TripService_imple implements Ws_TripService {
 		return n;
 	}
 	
+	// 해당 예약에 관련된 companyid를 가져와야한다.
+	@Override
+	public String getCompanyidToTblReservation(String reservation_code) {
+		String companyid = dao.getCompanyidToTblReservation(reservation_code);
+		return companyid;
+	}
+	
+	// 예약 코드를 가지고 업체아이디와 업체명을 가져오기
+	@Override
+	public Map<String, String> getCompanyIdAndLodgingNameToTblReservationCode(String reservation_code) {
+		Map<String, String> map = dao.getCompanyIdAndLodgingNameToTblReservationCode(reservation_code);
+		return map;
+	}
+	
 	
 	
 

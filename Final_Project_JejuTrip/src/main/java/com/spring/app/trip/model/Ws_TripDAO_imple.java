@@ -495,5 +495,19 @@ public class Ws_TripDAO_imple implements Ws_TripDAO {
 		int n = sqlsession.delete("ws_trip.deleteSchedule",scheduleno);
 		return n;
 	}
+	
+	// 해당 예약에 관련된 companyid를 가져와야한다.
+	@Override
+	public String getCompanyidToTblReservation(String reservation_code) {
+		String companyid = sqlsession.selectOne("ws_trip.getCompanyidToTblReservation",reservation_code);
+		return companyid;
+	}
+	
+	// 예약 코드를 가지고 업체아이디와 업체명을 가져오기
+	@Override
+	public Map<String, String> getCompanyIdAndLodgingNameToTblReservationCode(String reservation_code) {
+		Map<String,String> map = sqlsession.selectOne("ws_trip.getCompanyIdAndLodgingNameToTblReservationCode",reservation_code);
+		return map;
+	}
 
 }

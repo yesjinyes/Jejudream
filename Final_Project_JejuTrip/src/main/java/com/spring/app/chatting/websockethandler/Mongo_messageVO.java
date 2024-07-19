@@ -27,7 +27,7 @@ public class Mongo_messageVO {
 	private String userid;      // 사용자ID
 	private String name;        // 사용자명
 	private String currentTime; // 채팅한 시간 (오후 5:05) 
-	
+	private String chatting_key;
 	/* 몽고db는 sysdate가 없기때문에
 	  Date 타입의 변수를 사용하기 위해서 
 	  @DateTimeFormat(iso = ISO.DATE_TIME) 어노테이션을 부여해 준 것이다.
@@ -99,5 +99,13 @@ public class Mongo_messageVO {
 	
 	public void setCreated(Date created) {
 		this.created = created;
+	}
+
+	public String getChatting_key() {
+		return chatting_key;
+	}
+
+	public void setChatting_key(String chatting_key) {
+		this.chatting_key = chatting_key;
 	}
 }

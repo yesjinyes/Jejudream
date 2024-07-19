@@ -29,7 +29,8 @@
 <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 
 <script type="text/javascript">
-    $(document).ready(function(){
+	
+	$(document).ready(function(){
     	goViewAllReservationList(1);
     	goViewSendReservationList(1);
     	goViewSuccessReservationList(1);
@@ -57,6 +58,9 @@
        	$(document).on('click','.go_chat',function(){
        		const reservation_code = $(this).find("input").val();
        		
+       		const name = "${sessionScope.loginuser.user_name}";
+       		const userid = "${sessionScope.loginuser.userid}";
+       		
    			// >>> 팝업창 띄우기 <<<
    		    // 너비 1000, 높이 600 인 팝업창을 화면 가운데 위치시키기
    			const width = 500;
@@ -65,10 +69,27 @@
    		    const left = Math.ceil( (window.screen.width - width)/2 ); // 정수로 만듬
    		    const top = Math.ceil( (window.screen.height - height)/2 ); // 정수로 만듬
    		    
-   		    const url = "<%= serverName%><%=ctxPath%>/mypage_chatting_toCompany.trip?reservation_code=" + reservation_code;      
+   		 	let companyid = "";
+   	   		let lodging_name = "";
+   	   		
+	   		 $.ajax({
+	 			url:"<%= ctxPath%>/getCompanyIdAndNameJSON.trip",
+	 			data:{"reservation_code":reservation_code},
+	 			type:"post",
+	 			dataType:"json",
+	 			success:function(json){
+	 				companyid = json.companyid
+	 				lodging_name = json.lodging_name;
+	 				const url = "<%= serverName%><%=ctxPath%>/reservationChatToCompany.trip?reservation_code=" + reservation_code +"&name="+name+"&userid="+userid+"&companyid="+companyid+"&lodging_name="+lodging_name;
+	 				window.open(url, "mypage_chatting_toCompany",
+ 		               `left=\${left}, top=\${top}, width=\${width}, height=\${height}`);
+	 			},
+	 			error: function(request, status, error){
+	 			   alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+	 			}
+	 		});
 
-   		    window.open(url, "chat",
-   		               `left=\${left}, top=\${top}, width=\${width}, height=\${height}`);
+   		   
        		
        	})
         
