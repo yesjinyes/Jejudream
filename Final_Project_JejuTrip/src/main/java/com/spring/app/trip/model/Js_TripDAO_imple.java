@@ -13,6 +13,7 @@ import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.PlayVO;
 import com.spring.app.trip.domain.ReviewVO;
+import com.spring.app.trip.domain.RoomDetailVO;
 
 
 @Component
@@ -269,6 +270,18 @@ public class Js_TripDAO_imple implements Js_TripDAO {
 		return n;
 		
 	} // end of public int insertLodgingSchedule(Map<String, String> paraMap) { 
+
+
+	
+	// 한 숙소에대한 객실 등록하기
+	@Override
+	public int insertRoomDetail(RoomDetailVO rvo) {
+		
+		int n = sqlsession.insert("js_trip.insertRoomDetail",rvo);
+		
+		return n;
+		
+	} // end of public int insertRoomDetail(RoomDetailVO rvo) {
 	
 	
 	

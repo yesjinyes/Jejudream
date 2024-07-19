@@ -78,6 +78,9 @@ public interface Js_TripDAO {
 	// 숙소 예약시 일정테이블에 insert
 	int insertLodgingSchedule(Map<String, String> paraMap);
 
+	// 한 숙소에대한 객실 등록하기
+	int insertRoomDetail(RoomDetailVO rvo);
+
 	
 
 }

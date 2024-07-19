@@ -1,5 +1,6 @@
 package com.spring.app.trip.controller;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -20,14 +21,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.spring.app.trip.common.FileManager;
 import com.spring.app.trip.domain.CompanyVO;
 import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.domain.PlayVO;
 import com.spring.app.trip.domain.ReviewVO;
+import com.spring.app.trip.domain.RoomDetailVO;
 import com.spring.app.trip.service.Js_TripService;
 
 @Controller
@@ -36,6 +41,8 @@ public class Js_TripController {
 	@Autowired // Type에 따라 알아서 Bean 을 주입해준다.
 	private Js_TripService service;
 	
+	@Autowired // Type에 따라 알아서 Bean 을 주입해준다.
+	private FileManager fileManager;
 	
 	// 숙소리스트 페이지로 보내주기
 	@GetMapping("/lodgingList.trip")
@@ -852,6 +859,132 @@ public class Js_TripController {
 		return mav;
 		
 	} // end of public ModelAndView registerRoomDetail 
+	
+	
+	@PostMapping("/registerRoomDetailEnd.trip")
+	public ModelAndView registerRoomDetailEnd(@RequestParam("attach[]") List<MultipartFile> multiFileList,
+												ModelAndView mav , MultipartHttpServletRequest mrequest,
+											  @RequestParam("str_room_name") String str_room_name,
+											  @RequestParam("str_price") String str_price,
+											  @RequestParam("str_min_person") String str_min_person,
+											  @RequestParam("str_max_person") String str_max_person,
+											  @RequestParam("str_check_in") String str_check_in,
+											  @RequestParam("str_check_out") String str_check_out,
+											  @RequestParam("fk_lodging_code") String fk_lodging_code) {
+		
+		if(multiFileList != null && multiFileList.size() > 0) {
+			
+			String[] arr_room_name = str_room_name.split("\\,");
+			String[] arr_price = str_price.split("\\,");
+			String[] arr_min_person = str_min_person.split("\\,");
+			String[] arr_max_person = str_max_person.split("\\,");
+			String[] arr_check_in = str_check_in.split("\\,");
+			String[] arr_check_out = str_check_out.split("\\,");
+			
+			
+			RoomDetailVO rvo = new RoomDetailVO();
+			
+			HttpSession session = mrequest.getSession(); 
+		    String root = session.getServletContext().getRealPath("/");
+		    
+		    String path = root + "resources" + File.separator + "files";
+			
+			for(int i=0; i<multiFileList.size(); i++) {
+				
+				rvo.setFk_lodging_code(fk_lodging_code);
+				
+				String originalFilename = multiFileList.get(i).getOriginalFilename(); 
+				
+				String newFileName = "";
+		        // WAS(톰캣)의 디스크에 저장될 파일명
+		        
+		        byte[] bytes = null;
+		        // 첨부파일의 내용물을 담는 것이다.
+		        
+		        long fileSize = 0;
+		        // 첨부파일의 크기 
+		        
+		        try {
+					bytes = multiFileList.get(i).getBytes(); 
+					
+					/*
+					System.out.println("multiFileList 파일명 : " + originalFilename);
+					System.out.println("multiFileList 사이즈 : " + multiFileList.get(i).getSize());
+					System.out.println("arr_room_name : " + arr_room_name[i]);
+					System.out.println("arr_price : " + arr_price[i]);
+					System.out.println("arr_min_person : " + arr_min_person[i]);
+					System.out.println("arr_max_person : " + arr_max_person[i]);
+					System.out.println("arr_check_in : " + arr_check_in[i]);
+					System.out.println("arr_check_out : " + arr_check_out[i]);
+					
+					multiFileList 파일명 : 01.png
+					multiFileList 사이즈 : 185996
+					arr_room_name : 객실1
+					arr_price : 1111111111
+					arr_min_person : 2
+					arr_max_person : 2
+					arr_check_in : 2
+					arr_check_out : 2
+					multiFileList 파일명 : 02.png
+					multiFileList 사이즈 : 159634
+					arr_room_name : 객실2
+					arr_price : 2222222
+					arr_min_person : 3
+					arr_max_person : 3
+					arr_check_in : 3
+					arr_check_out : 3
+					.....
+					*/
+					
+					newFileName = fileManager.doFileUpload(bytes, originalFilename, path);
+					
+					rvo.setRoom_img(newFileName);
+					rvo.setFileName(newFileName);
+					
+					rvo.setOrgFilename(originalFilename);
+					
+					fileSize = multiFileList.get(i).getSize();// 첨부파일의 크기 (단위는 byte임)
+					rvo.setFileSize(String.valueOf(fileSize));
+					
+					rvo.setRoom_name(arr_room_name[i]);
+					rvo.setPrice(arr_price[i]);
+					rvo.setMin_person(Integer.parseInt(arr_min_person[i]));
+					rvo.setMax_person(Integer.parseInt(arr_max_person[i]));
+					rvo.setCheck_in((arr_check_in[i]) + "시");
+					rvo.setCheck_out((arr_check_out[i]) + "시");
+					
+					
+					
+					int n = service.insertRoomDetail(rvo);
+					
+					
+					
+				} catch (Exception e) {
+					
+					e.printStackTrace();
+				}
+		        
+		        
+		        
+				
+				
+			} // end of for
+			
+			
+			
+			
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		return mav;
+	}
 	
 	
 }

@@ -264,6 +264,18 @@ public class Js_TripService_imple implements Js_TripService {
 		return n;
 		
 	} // end of public int insertLodgingSchedule(Map<String, String> paraMap) {
+
+
+	
+	// 한 숙소에대한 객실 등록하기
+	@Override
+	public int insertRoomDetail(RoomDetailVO rvo) {
+		
+		int n = dao.insertRoomDetail(rvo);
+		
+		return n;
+		
+	} // end of public int insertRoomDetail(RoomDetailVO rvo) {
 	
 
 	

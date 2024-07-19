@@ -462,8 +462,12 @@ REFERENCES tbl_company (companyid) ON DELETE CASCADE;
     and status != 1
     order by room_detail_code asc;
     
-    select * from tbl_room_detail;
+    select * from tbl_room_detail order by room_detail_code desc;
     select * from tbl_reservation;
+    
+    delete from tbl_room_detail where room_detail_code in (671, 672);
+    
+    commit;
     delete from tbl_reservation where reservation_code = 5;
     commit;  
          
@@ -1058,4 +1062,7 @@ create table tbl_board
 	status NUMBER default 0 /* 채팅읽은상태 0이면 안읽음 1이면 읽음 */
     );
     
+    select * 
+    from tbl_room_detail 
+    where fk_lodging_code = 5338
     

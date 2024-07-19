@@ -452,4 +452,11 @@
     		  #{lodging_name}, '#ffcc80', #{lodging_address}, #{room_name}, 1, 1, #{userid} , 'A',#{lodging_code} )
  	</insert>
  	
+ 	
+ 	<insert id="insertRoomDetail" parameterType="RoomDetailVO">
+ 		INSERT INTO tbl_room_detail (room_detail_code, fk_lodging_code, room_name, price, check_in, check_out, min_person, max_person, room_img,fileName,orgFilename,fileSize)
+ 		values (seq_room.nextval, #{fk_lodging_code}, #{room_name}, #{price}, #{check_in}, #{check_out}, #{min_person}, #{max_person}, #{room_img}, #{fileName}, #{orgFilename}, #{fileSize})
+ 	
+ 	</insert>
+ 	
 </mapper>
