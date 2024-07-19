@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.spring.app.trip.domain.CompanyVO;
 import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.MemberVO;
@@ -816,5 +817,41 @@ public class Js_TripController {
 		return jsonObj.toString();
 		
 	} // end of public String lodgingaddLike 숙소 좋아요 추가하기
+	
+	
+	
+	
+	@PostMapping("/registerRoomDetail.trip")
+	public ModelAndView registerRoomDetail(@RequestParam (value="send_fk_lodging_code") String fk_lodging_code,
+										   @RequestParam (value="send_companyid") String companyid,
+										   ModelAndView mav, HttpServletRequest request) {
+		
+		// System.out.println("~~ 확인용 fk_lodging_code : " + fk_lodging_code);
+		
+		HttpSession session = request.getSession();
+		CompanyVO loginCompanyuser = (CompanyVO)session.getAttribute("loginCompanyuser");
+		
+		if(loginCompanyuser != null && companyid.equalsIgnoreCase(loginCompanyuser.getCompanyid())) {
+			// 로그인 한 회사가 자기 회사의 업체를 등록하는 경우
+			
+			mav.addObject("fk_lodging_code",fk_lodging_code);
+			
+			mav.setViewName("company/registerRoomDetail.tiles1");
+			
+		}
+		else {
+			String message = "업체 계정으로 로그인을 하지 않았거나 잘못된 로그인 정보입니다.";
+			String loc = "javascript:history.back()";
+
+			mav.addObject("message", message);
+			mav.addObject("loc", loc);
+			
+			mav.setViewName("msg");
+		}
+		
+		return mav;
+		
+	} // end of public ModelAndView registerRoomDetail 
+	
 	
 }

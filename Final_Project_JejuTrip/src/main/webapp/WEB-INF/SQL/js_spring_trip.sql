@@ -1041,7 +1041,7 @@ create table tbl_board
     select * from tbl_play_add_img;
     
     
-    
+    select * from tbl_room_detail;
     
     
     select * from tbl_calendar_schedule;
@@ -1049,3 +1049,13 @@ create table tbl_board
     insert into tbl_calendar_schedule(scheduleno, startdate, enddate, subject, color, place, content, fk_smcatgono, fk_lgcatgono, fk_userid ,schedule_divison ,parent_code) 
     					   values(seq_scheduleno.nextval, to_date(#{check_in}, 'yyyy-mm-dd hh24:mi:ss'), to_date(#{check_out}, 'yyyy-mm-dd hh24:mi:ss'), 
     					   		  #{lodging_name}, '', #{lodging_address}, #{room_name}, 1, 1, #{userid} , 'A',#{lodging_code} )  
+
+
+
+    create table tbl_chattinglog(
+    to_id VARCHAR2(20) NOT NULL, /* 말거는사람 */
+	from_id VARCHAR2(20) NOT NULL, /* 받는사람 */
+	status NUMBER default 0 /* 채팅읽은상태 0이면 안읽음 1이면 읽음 */
+    );
+    
+    

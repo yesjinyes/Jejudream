@@ -34,6 +34,28 @@
         	}
         });
         
+        
+        // 정수 객실 등록하기 버튼
+        $("button:button[name='register_room']").click(function(e){
+        	
+        	// alert('히히');
+        	
+        	const fk_lodging_code = $(e.target).parent().parent().next().val();
+        	const companyid = "${sessionScope.loginCompanyuser.companyid}";
+        	
+        	// alert(companyid);
+        	// alert(fk_lodging_code);
+        	
+        	const frm = document.registerRoom;
+        	
+        	frm.send_fk_lodging_code.value = fk_lodging_code;
+        	frm.send_companyid.value = companyid;
+        	frm.method = "post";
+        	frm.action = "<%= ctxPath%>/registerRoomDetail.trip";
+        	frm.submit();
+        	
+        }); // end of $("button:button[name='register_room']").click(function(e){ })
+        
     }); // end of $(document).ready(function(){
     	
     function open_modal(lodgingCode){
@@ -217,7 +239,7 @@
 				      			<c:if test="${lodgingvo.status == 0}"><td style="color:blue; font-weight:bold;">처리중</td></c:if>
 				      			<c:if test="${lodgingvo.status == 1}"><td style="color:green; font-weight:bold;">승인</td></c:if>
 				      			<c:if test="${lodgingvo.status == 2}"><td style="color:red; font-weight:bold;">반려</td></c:if>
-				      			<c:if test="${lodgingvo.status == 1}"><td><button type="button" class="btn btn-light">객실등록</button></td></c:if>
+				      			<c:if test="${lodgingvo.status == 1}"><td><button type="button" name="register_room" class="btn btn-light">객실등록</button></td></c:if>
 					    	</tr>
 					    	<input type="hidden" name="lodginvo_lodgingCode" value="${lodgingvo.lodging_code}"/>
 				    	</c:forEach>
@@ -276,7 +298,7 @@
 						      			<c:if test="${lodgingvo.status == 0}"><td style="color:blue; font-weight:bold;">처리중</td></c:if>
 						      			<c:if test="${lodgingvo.status == 1}"><td style="color:green; font-weight:bold;">승인</td></c:if>
 						      			<c:if test="${lodgingvo.status == 2}"><td style="color:red; font-weight:bold;">반려</td></c:if>
-						      			<c:if test="${lodgingvo.status == 1}"><td><button type="button" class="btn btn-light">객실등록</button></td></c:if>
+						      			<c:if test="${lodgingvo.status == 1}"><td><button type="button" name="register_room" class="btn btn-light">객실등록</button></td></c:if>
 							    	</tr>
 							    </c:if>
 							    <input type="hidden" name="lodginvo_lodgingCode" value="${lodgingvo.lodging_code}"/>
@@ -343,3 +365,8 @@
     </div>
   </div>
 </div>
+
+<form name="registerRoom">
+	<input name="send_fk_lodging_code" type="text" value="" />
+	<input name="send_companyid" type="text" value="" />
+</form>
