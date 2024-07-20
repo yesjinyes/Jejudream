@@ -128,7 +128,7 @@ public class Js_TripDAO_imple implements Js_TripDAO {
 	@Override
 	public int getCommentTotalCount(String lodging_code) {
 		
-		int totalCount = sqlsession.selectOne("js_trip.getCommentTotalCount",lodging_code);
+		int totalCount = sqlsession.selectOne("js_trip.getLodgingReviewTotalCount",lodging_code);
 		
 		return totalCount;
 		
@@ -140,7 +140,7 @@ public class Js_TripDAO_imple implements Js_TripDAO {
 	@Override
 	public List<Map<String, String>> getCommentList_Paging(Map<String, String> paraMap) {
 		
-		List<Map<String, String>> reviewList = sqlsession.selectList("js_trip.getCommentList_Paging", paraMap);
+		List<Map<String, String>> reviewList = sqlsession.selectList("js_trip.getLodgingReviewList_Paging", paraMap);
 		
 		return reviewList;
 		
@@ -282,7 +282,64 @@ public class Js_TripDAO_imple implements Js_TripDAO {
 		return n;
 		
 	} // end of public int insertRoomDetail(RoomDetailVO rvo) {
+
+
 	
+	// 객실등록 채번해오기
+	@Override
+	public String getRoomDetailSeq() {
+		
+		String room_seq = sqlsession.selectOne("js_trip.getRoomDetailSeq");
+		
+		return room_seq;
+		
+	} // end of public String getRoomDetailSeq() {
+
+
+	// 등록한 숙소개수가 몇개인지 알아오기
+	@Override
+	public int getRoomCnt(String fk_lodging_code) {
+		
+		int n = sqlsession.selectOne("js_trip.getRoomCnt", fk_lodging_code);
+		
+		return n;
+		 
+	} // end of public int getRoomCnt(String fk_lodging_code) {
+
+
+	// 등록된 객실정보 가져오기
+	@Override
+	public List<RoomDetailVO> getForUpdateRoomList(String fk_lodging_code) {
+		
+		List<RoomDetailVO> roomList = sqlsession.selectList("js_trip.getForUpdateRoomList", fk_lodging_code);
+		
+		return roomList;
+		
+	} // end of public List<RoomDetailVO> getForUpdateRoomList(String fk_lodging_code) { 
+
+
+	
+	// 객실 수정하기
+	@Override
+	public int updateRoomDetail(RoomDetailVO rvo) {
+		
+		int n = sqlsession.update("js_trip.updateRoomDetail", rvo);
+		
+		return n;
+		
+	} // end of public int updateRoomDetail(RoomDetailVO rvo) {
+
+
+	// 수정할때 객실 삭제하기
+	@Override
+	public int deleteRoomDetail(String room_detail_code) {
+		
+		int n = sqlsession.delete("js_trip.deleteRoomDetail", room_detail_code);
+		
+		return n;
+		
+	} // end of public int deleteRoomDetail(String room_detail_code) {
+	 
 	
 	
 	

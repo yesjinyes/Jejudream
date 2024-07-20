@@ -81,6 +81,21 @@ public interface Js_TripDAO {
 	// 한 숙소에대한 객실 등록하기
 	int insertRoomDetail(RoomDetailVO rvo);
 
+	// 객실등록 채번해오기
+	String getRoomDetailSeq();
+
+	// 등록한 숙소개수가 몇개인지 알아오기
+	int getRoomCnt(String fk_lodging_code);
+	
+	// 등록된 객실정보 가져오기
+	List<RoomDetailVO> getForUpdateRoomList(String fk_lodging_code);
+
+	// 객실 수정하기
+	int updateRoomDetail(RoomDetailVO rvo);
+
+	// 수정할때 객실 삭제하기
+	int deleteRoomDetail(String room_detail_code);
+
 	
 
 }

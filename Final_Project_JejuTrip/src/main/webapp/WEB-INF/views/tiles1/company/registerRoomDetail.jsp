@@ -31,6 +31,7 @@
 	    width: 100%;
 	    display: flex;
 	    transition: transform 0.5s ease-in-out;
+	    margin-bottom:5%;
 	}
 	
 	.carousel-item {
@@ -39,7 +40,7 @@
 	    display: flex;
 	    flex-direction: column;
 	    align-items: flex-start;
-	     margin: 0;
+	    margin: 0;
 	    
 	}
 	
@@ -61,7 +62,7 @@
 	
 	button#registerBtn {
 	    width: 50%;
-	    height: 50px;
+	    
 	    margin: 1% auto;
 	    border-radius: 8px;
 	    background-color: #ff5000;
@@ -79,19 +80,22 @@
 	    display: flex;
 	    justify-content: space-between;
 	    transform: translateY(-50%);
+	    height: 5px;
+    	align-items: center;
 	}
 	
+	
 	div.info_block > input {
-    display: block;
-    width: 100%;
-    max-width: 680px;
-    height: 50px;
-    margin: 0 auto;
-    border-radius: 8px;
-    border: solid 1px rgba(15, 19, 42, .1);
-    padding: 0 0 0 15px;
-    font-size: 16px;
-    color:gray;
+	    display: block;
+	    width: 100%;
+	    max-width: 680px;
+	    height: 50px;
+	    margin: 0 auto;
+	    border-radius: 8px;
+	    border: solid 1px rgba(15, 19, 42, .1);
+	    padding: 0 0 0 15px;
+	    font-size: 16px;
+	    color:gray;
 	}
 	
 	.carousel-controls button {
@@ -122,8 +126,11 @@
         	
             <div class="carousel" id="carousel">
                 <div class="carousel-item">
+                <h2>1번째 객실</h2>
                     <div class="info col-md-4">
+                    
                         <div class="info_block">
+                        	
                             <h4>객실명</h4>
                             <input type="text" name="room_name[]" placeholder="객실 명 입력">
                             <span class="error"></span>
@@ -176,12 +183,16 @@
 
 <script>
 
+let room_cnt = 1;
 let isCheck = true;
     $(document).ready(function(){
         let currentIndex = 0;
 
         $('#addRoomBtn').click(function() {
-            const newRoom = `<div class="carousel-item">
+        	room_cnt++;
+            const newRoom = `
+            				<div class="carousel-item">
+            					<h2>\${room_cnt}번째 객실</h2>
 				                <div class="info col-md-4">
 				                <div class="info_block">
 				                    <h4>객실명</h4>
@@ -225,7 +236,7 @@ let isCheck = true;
             
             currentIndex = $('#carousel .carousel-item').length - 1;
             updateCarousel();
-            
+            	
             
         });
 

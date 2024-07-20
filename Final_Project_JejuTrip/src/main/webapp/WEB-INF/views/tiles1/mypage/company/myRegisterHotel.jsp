@@ -56,6 +56,67 @@
         	
         }); // end of $("button:button[name='register_room']").click(function(e){ })
         
+        
+     	// 정수 객실등록했으면 객실 수정/삭제 버튼 생성
+     	$("button[name='register_room']").each(function(){
+  			
+   			const $this = $(this);
+   			
+          	let fk_lodging_code = $this.parent().parent().next().val();
+          	
+          	//	alert(fk_lodging_code);
+          	
+       		$.ajax({
+           		
+           		url:"<%= ctxPath%>/JSONFindRoomRegister.trip",
+       			data:{"lodging_code":fk_lodging_code}, 
+       			type:"get",
+       			dataType:"json",
+       			success:function(json){
+               	
+               		if(Number(json.result) > 0){
+               			
+               			$this.removeClass("btn-light");
+               			$this.addClass("btn-danger");
+               			$this.attr("name","updateRoom");
+               			$this.text("수정/삭제");
+               		}			
+               	
+       			},
+       			error: function(request, status, error){
+       			   alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+       			}
+               	
+            }); // end of $.ajax 객실을 등록했는지 안했는지
+          
+       	
+        }); // end of $("input:hidden[name='lodginvo_lodgingCode']").each(function(){})
+     		
+     		
+        // 정수 객실 수정/삭제 버튼 클릭시
+     	$(document).on('click', "button:button[name='updateRoom']", function(e){
+     			
+   			// alert('히히');
+   			const $this = $(e.target);
+   			
+   			const fk_lodging_code = $this.parent().parent().next().val();
+   			const companyid = "${sessionScope.loginCompanyuser.companyid}";
+   			// alert(fk_lodging_code);
+   			
+   			const frm = document.updateRoom;
+     			
+   			frm.send_fk_lodging_code.value = fk_lodging_code;
+        	frm.send_companyid.value = companyid;
+        	frm.method = "post";
+        	frm.action = "<%= ctxPath%>/updateRoomDetail.trip";
+        	frm.submit();
+        	
+     	});  // end of $(document).on('click', "button:button[name='updateRoom']", function(e){})
+     	
+        
+        
+         
+        
     }); // end of $(document).ready(function(){
     	
     function open_modal(lodgingCode){
@@ -367,6 +428,11 @@
 </div>
 
 <form name="registerRoom">
-	<input name="send_fk_lodging_code" type="text" value="" />
-	<input name="send_companyid" type="text" value="" />
+	<input name="send_fk_lodging_code" type="hidden" value="" />
+	<input name="send_companyid" type="hidden" value="" />
+</form>
+
+<form name="updateRoom">
+	<input name="send_fk_lodging_code" type="hidden" value="" />
+	<input name="send_companyid" type="hidden" value="" />
 </form>

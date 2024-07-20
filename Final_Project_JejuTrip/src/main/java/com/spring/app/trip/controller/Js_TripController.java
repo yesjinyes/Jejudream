@@ -827,7 +827,7 @@ public class Js_TripController {
 	
 	
 	
-	
+	// 객실등록버튼을 누르고 객실등록 페이지로 보내주기
 	@PostMapping("/registerRoomDetail.trip")
 	public ModelAndView registerRoomDetail(@RequestParam (value="send_fk_lodging_code") String fk_lodging_code,
 										   @RequestParam (value="send_companyid") String companyid,
@@ -861,6 +861,7 @@ public class Js_TripController {
 	} // end of public ModelAndView registerRoomDetail 
 	
 	
+	// 한 숙소에 대한 객실 등록하기
 	@PostMapping("/registerRoomDetailEnd.trip")
 	public ModelAndView registerRoomDetailEnd(@RequestParam("attach[]") List<MultipartFile> multiFileList,
 												ModelAndView mav , MultipartHttpServletRequest mrequest,
@@ -881,13 +882,12 @@ public class Js_TripController {
 			String[] arr_check_in = str_check_in.split("\\,");
 			String[] arr_check_out = str_check_out.split("\\,");
 			
-			
 			RoomDetailVO rvo = new RoomDetailVO();
 			
 			HttpSession session = mrequest.getSession(); 
 		    String root = session.getServletContext().getRealPath("/");
 		    
-		    String path = root + "resources" + File.separator + "files";
+		    String path = root + "resources" + File.separator + "images"+File.separator +"lodginglist" + File.separator + "room";
 			
 			for(int i=0; i<multiFileList.size(); i++) {
 				
@@ -944,6 +944,11 @@ public class Js_TripController {
 					rvo.setOrgFilename(originalFilename);
 					
 					fileSize = multiFileList.get(i).getSize();// 첨부파일의 크기 (단위는 byte임)
+					
+					String room_seq = service.getRoomDetailSeq(); // 객실등록 채번해오기
+					
+					rvo.setRoom_detail_code(room_seq);
+					
 					rvo.setFileSize(String.valueOf(fileSize));
 					
 					rvo.setRoom_name(arr_room_name[i]);
@@ -952,39 +957,337 @@ public class Js_TripController {
 					rvo.setMax_person(Integer.parseInt(arr_max_person[i]));
 					rvo.setCheck_in((arr_check_in[i]) + "시");
 					rvo.setCheck_out((arr_check_out[i]) + "시");
-					
-					
-					
-					int n = service.insertRoomDetail(rvo);
-					
-					
-					
+										
+					int n = service.insertRoomDetail(rvo); // 객실등록하기
+										
 				} catch (Exception e) {
 					
+					System.out.println(i+"번째 파일 업로드 실패함");
 					e.printStackTrace();
 				}
 		        
-		        
-		        
-				
-				
 			} // end of for
 			
+			String message = "객실 등록이 성공적으로 완료되었습니다!";
+			String loc = "index.trip";
+
+			mav.addObject("message", message);
+			mav.addObject("loc", loc);
 			
+			mav.setViewName("msg");
 			
+		} // end of if
+		else {
+			
+			String message = "객실 등록의 데이터가 정상적이지 않습니다!";
+			String loc = "javascript:history.back()";
+
+			mav.addObject("message", message);
+			mav.addObject("loc", loc);
+			
+			mav.setViewName("msg");
 			
 		}
 		
+		return mav;
 		
+	} // end of public ModelAndView registerRoomDetailEnd
+	
+	
+	
+	// 업체가 객실을 등록했는지 안했는지 알아오기
+	@ResponseBody
+	@GetMapping(value="/JSONFindRoomRegister.trip", produces="text/plain;charset=UTF-8")
+	public String JSONFindRoomRegister(@RequestParam ("lodging_code") String fk_lodging_code) {
 		
+		JSONObject jsonObj = new JSONObject();
 		
+		if(fk_lodging_code !=null && !"".equals(fk_lodging_code) ) {
+			
+			int room_cnt = service.getRoomCnt(fk_lodging_code);
+			// 등록한 숙소개수가 몇개인지 알아오기
+			
+			jsonObj.put("result", room_cnt);
+			
+		}
 		
+		return jsonObj.toString();
 		
+	}// end of public String JSONFindRoomRegister
+	
+	
+	
+	// 객실 수정/삭제버튼을 누르고 객실수정 페이지로 보내주기
+	@PostMapping("/updateRoomDetail.trip")
+	public ModelAndView updateRoomDetail(@RequestParam (value="send_fk_lodging_code") String fk_lodging_code,
+										   @RequestParam (value="send_companyid") String companyid,
+										   ModelAndView mav, HttpServletRequest request) {
 		
+		// System.out.println("~~ 확인용 fk_lodging_code : " + fk_lodging_code);
 		
+		HttpSession session = request.getSession();
+		CompanyVO loginCompanyuser = (CompanyVO)session.getAttribute("loginCompanyuser");
+		
+		if(loginCompanyuser != null && companyid.equalsIgnoreCase(loginCompanyuser.getCompanyid())) {
+			// 로그인 한 회사가 자기 회사의 업체를 등록하는 경우
+			
+			mav.addObject("fk_lodging_code",fk_lodging_code);
+			mav.setViewName("company/updateRoomDetail.tiles1");
+			
+		}
+		else {
+			String message = "업체 계정으로 로그인을 하지 않았거나 잘못된 로그인 정보입니다.";
+			String loc = "javascript:history.back()";
+
+			mav.addObject("message", message);
+			mav.addObject("loc", loc);
+			
+			mav.setViewName("msg");
+		}
 		
 		return mav;
-	}
+		
+	} // end of public ModelAndView updateRoomDetail
 	
+	
+	// Json 으로 등록된 객실정보 가져오기
+	@ResponseBody
+	@GetMapping(value="/JSONGetRoomDetails.trip", produces="text/plain;charset=UTF-8")
+	public String JSONGetRoomDetails(@RequestParam (value="fk_lodging_code") String fk_lodging_code) {
+		
+		
+		// 등록된 객실정보 가져오기
+		List<RoomDetailVO> roomList = service.getForUpdateRoomList(fk_lodging_code);
+		
+		JSONArray jsonArr = new JSONArray();
+		
+		if(roomList !=null && roomList.size() > 0) {
+			
+			for(RoomDetailVO rvo : roomList) {
+				
+				JSONObject jsonObj = new JSONObject();
+				
+				jsonObj.put("room_detail_code", rvo.getRoom_detail_code());
+				jsonObj.put("room_name", rvo.getRoom_name());
+				jsonObj.put("fk_lodging_code", rvo.getFk_lodging_code());
+				jsonObj.put("price", rvo.getPrice());
+				jsonObj.put("check_in", rvo.getCheck_in());
+				jsonObj.put("check_out", rvo.getCheck_out());
+				jsonObj.put("min_person", rvo.getMin_person());
+				jsonObj.put("max_person", rvo.getMax_person());
+				jsonObj.put("room_img", rvo.getRoom_img());
+				jsonObj.put("fileName", rvo.getFileName());
+				jsonObj.put("orgFilename", rvo.getOrgFilename());
+				jsonObj.put("fileSize", rvo.getFileSize());
+				
+				jsonArr.put(jsonObj);
+				
+			} // end of for
+			
+		} // end of ir
+		
+		return jsonArr.toString();
+		
+	} // end of public String JSONGetRoomDetails
+	
+	
+	
+	// 한 숙소에 대한 객실 수정하기
+	@PostMapping("/updateRoomDetailEnd.trip")
+	public ModelAndView updateRoomDetailEnd(@RequestParam("attach[]") List<MultipartFile> multiFileList,
+											ModelAndView mav , MultipartHttpServletRequest mrequest,
+											@RequestParam("str_room_detail_code") String str_room_detail_code,
+											@RequestParam("str_room_img") String str_room_img,
+											@RequestParam("str_room_name") String str_room_name,
+											@RequestParam("str_price") String str_price,
+											@RequestParam("str_min_person") String str_min_person,
+											@RequestParam("str_max_person") String str_max_person,
+											@RequestParam("str_check_in") String str_check_in,
+											@RequestParam("str_check_out") String str_check_out,
+											@RequestParam("fk_lodging_code") String fk_lodging_code) {
+		
+			
+		String[] arr_room_detail_code = str_room_detail_code.split("\\,");
+		String[] arr_room_img = str_room_img.split("\\,");
+		
+		
+		String[] arr_room_name = str_room_name.split("\\,");
+		String[] arr_price = str_price.split("\\,");
+		String[] arr_min_person = str_min_person.split("\\,");
+		String[] arr_max_person = str_max_person.split("\\,");
+		String[] arr_check_in = str_check_in.split("\\,");
+		String[] arr_check_out = str_check_out.split("\\,");
+		
+		
+		if (arr_room_name != null && arr_room_name.length > 0) {
+			// 입력된 내용이 null아니고 하나이상의 데이터가 있을때 기준을 name으로 잡은것뿐임
+			
+	        HttpSession session = mrequest.getSession();
+	        String root = session.getServletContext().getRealPath("/");
+	        String path = root + "resources" + File.separator + "images" + File.separator + "lodginglist" + File.separator + "room";
+
+	        for (int i = 0; i < arr_room_detail_code.length; i++) {
+	        	// 이전 페이지로부터 room_detail_code를 받아온 길이만큼만 update
+	        	
+	            if (arr_room_detail_code[i] != null && arr_room_name[i] != null) {
+	            	
+	                RoomDetailVO rvo = new RoomDetailVO();
+	                
+	                rvo.setRoom_detail_code(arr_room_detail_code[i]); // 수정할 room_detail_code set
+
+	                String originalFilename = multiFileList.get(i).getOriginalFilename();
+	                
+	                String newFileName = "";
+			        // WAS(톰캣)의 디스크에 저장될 파일명
+			        
+			        byte[] bytes = null;
+			        // 첨부파일의 내용물을 담는 것이다.
+			        
+			        long fileSize = 0;
+			        // 첨부파일의 크기 
+
+	                try {
+	                    // 기존 이미지 파일명 삭제
+	                    fileManager.doFileDelete(arr_room_img[i], path);
+
+	                    bytes = multiFileList.get(i).getBytes(); // 첨부파일의 크기 (단위는 byte임)
+	                    
+	                    newFileName = fileManager.doFileUpload(bytes, originalFilename, path);
+
+	                    rvo.setRoom_img(newFileName);
+	                    rvo.setFileName(newFileName);
+	                    rvo.setOrgFilename(originalFilename);
+	                    fileSize = multiFileList.get(i).getSize();
+	                    rvo.setFileSize(String.valueOf(fileSize));
+	                    rvo.setRoom_name(arr_room_name[i]);
+	                    rvo.setPrice(arr_price[i]);
+	                    rvo.setMin_person(Integer.parseInt(arr_min_person[i]));
+	                    rvo.setMax_person(Integer.parseInt(arr_max_person[i]));
+	                    rvo.setCheck_in(arr_check_in[i]);
+	                    rvo.setCheck_out(arr_check_out[i]);
+
+	                    int n = service.updateRoomDetail(rvo); // 객실 수정하기
+	                    
+	                    System.out.println(n + "번 객실 수정 완료");
+
+	                } catch (Exception e) {
+	                    
+	                	System.out.println(i + "번째 객실 수정 실패");
+	                    e.printStackTrace();
+	                    
+	                } // end of catch
+	                
+	            }// end of if 객실일련번호가 존재하면서 입력기준이 존재할때
+	            
+	        }// end of for 객실 수정하는 for문
+
+	        // 수정이 아니고 새로 추가된 객실정보일때
+	        for (int i = arr_room_detail_code.length; i < multiFileList.size(); i++) {
+	        	// 객실일련번호가 존재하지않는 새로 추가하는 객실일때
+	        	
+	            RoomDetailVO rvo = new RoomDetailVO();
+	            
+	            rvo.setFk_lodging_code(fk_lodging_code);
+
+	            String originalFilename = multiFileList.get(i).getOriginalFilename();
+	            String newFileName = "";
+		        // WAS(톰캣)의 디스크에 저장될 파일명
+		        
+		        byte[] bytes = null;
+		        // 첨부파일의 내용물을 담는 것이다.
+		        
+		        long fileSize = 0;
+		        // 첨부파일의 크기 
+
+	            try {
+	                bytes = multiFileList.get(i).getBytes(); // 첨부파일의 크기 (단위는 byte임)
+	                
+	                newFileName = fileManager.doFileUpload(bytes, originalFilename, path);
+
+	                rvo.setRoom_img(newFileName);
+	                rvo.setFileName(newFileName);
+	                rvo.setOrgFilename(originalFilename);
+	                fileSize = multiFileList.get(i).getSize();
+	                rvo.setFileSize(String.valueOf(fileSize));
+
+	                String room_seq = service.getRoomDetailSeq(); // 객실등록 채번해오기
+	                
+	                rvo.setRoom_detail_code(room_seq);
+
+	                rvo.setRoom_name(arr_room_name[i]);
+	                rvo.setPrice(arr_price[i]);
+	                rvo.setMin_person(Integer.parseInt(arr_min_person[i]));
+	                rvo.setMax_person(Integer.parseInt(arr_max_person[i]));
+	                rvo.setCheck_in(arr_check_in[i]);
+	                rvo.setCheck_out(arr_check_out[i]);
+
+	                int n = service.insertRoomDetail(rvo); // 객실 등록하기
+	                System.out.println(n + "번째 추가된 객실 등록");
+
+	            } catch (Exception e) {
+	                System.out.println(i + "번째 객실 추가 실패");
+	                e.printStackTrace();
+	                
+	            } // end of catch
+	            
+	        } // end of for 추가된 객실정보 insert
+
+	        String message = "객실 수정이 성공적으로 완료되었습니다!";
+	        String loc = "myRegisterHotel.trip";
+
+	        mav.addObject("message", message);
+	        mav.addObject("loc", loc);
+
+	        mav.setViewName("msg");
+
+	    } else {
+	    	
+	        String message = "객실 수정 데이터가 정상적이지 않습니다!";
+	        String loc = "javascript:history.back()";
+
+	        mav.addObject("message", message);
+	        mav.addObject("loc", loc);
+
+	        mav.setViewName("msg");
+	        
+	    } // end of else
+
+		return mav;
+		
+	} // end of public ModelAndView updateRoomDetailEnd 객실 수정하거나 추가된 객실 insert
+	
+	
+	// 객실 개별 삭제하기
+	@ResponseBody
+	@PostMapping(value="/deleteRoomDetails.trip", produces="text/plain;charset=UTF-8")
+	public String deleteRoomDetails(@RequestParam("room_detail_code") String room_detail_code) {
+		
+		JSONObject jsonObj = new JSONObject();
+		
+		if(room_detail_code !=null || !"".equals(room_detail_code)) {
+			
+			int n = service.deleteRoomDetail(room_detail_code); // 객실 삭제하기
+			
+			if (n == 1) {
+	        	
+	            System.out.println("객실 삭제성공");
+	            jsonObj.put("result", n);
+	            
+	        } else {
+	        	
+	        	jsonObj.put("result", n);
+	        	System.out.println("객실 삭제실패");
+	            
+	        } // end of else
+			
+		}else {
+			
+			System.out.println("뭔가 데이터가 잘못됨");
+			
+		} // end of else
+		
+	    return jsonObj.toString();
+	    
+	} // end of public String deleteRoomDetails
 	
 }

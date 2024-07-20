@@ -1062,7 +1062,10 @@ create table tbl_board
 	status NUMBER default 0 /* 채팅읽은상태 0이면 안읽음 1이면 읽음 */
     );
     
+    select * from tbl_lodging where lodging_code = 5404;
+    
     select * 
     from tbl_room_detail 
+    order by room_detail_code desc;
     where fk_lodging_code = 5338
     
