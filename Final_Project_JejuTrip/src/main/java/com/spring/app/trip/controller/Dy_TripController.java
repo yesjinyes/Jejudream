@@ -594,11 +594,15 @@ public class Dy_TripController {
 				jsonObj.put("result", 0);
 			}
 
+		} else if(n1 == 1 && n_attachCount <= 0) {
+			jsonObj.put("result", 1);
+			
 		} else {
 			jsonObj.put("result", 0);
 		}
 		
 		return jsonObj.toString();
+		
 	} // end of public String foodstoreRegisterEnd(...) -----------------------------------
 	
 	
