@@ -389,6 +389,29 @@ public class Js_TripDAO_imple implements Js_TripDAO {
 	} // end of public int deleteLodgingInfo(String lodgingCode) {
 
 
+	// ==== e메일을 발송할 회원 대상 알아오기 ==== 
+	@Override
+	public List<Map<String, String>> getReservationList() {
+		
+		List<Map<String, String>> reservationEmailList = sqlsession.selectList("js_trip.reservationEmailList");
+		
+		return reservationEmailList;
+		
+	} // end of public List<Map<String, String>> getReservationList() {
+
+
+	
+	// 이메일 발송하고나서 메일체크 update
+	@Override
+	public void updateMailSendCheck(Map<String, String[]> paraMap) {
+		
+		sqlsession.update("js_trip.updateMailSendCheck", paraMap);
+		
+	} // end of public void updateMailSendCheck(Map<String, String[]> paraMap) {
+
+	
+	
+
 
 	
 	

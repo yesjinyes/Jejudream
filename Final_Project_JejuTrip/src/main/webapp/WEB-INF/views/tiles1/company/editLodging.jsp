@@ -133,14 +133,21 @@
 
 	    $("input#mobile").keyup(function(e) {
 	        if(e.keyCode == 13) {
-	            goRegister();
+	        	goEditLodging();
 	        }
 	    });
 	}); // end of $(document).ready(function(){
 		
-	function goRegister(ctxPath) {
+	function goEditLodging() {
 
-	    if(checkLodging_name && checkLodging_tell && checkLodging_address_detail && checkLodging_content) {
+		const lodging_name = $("input#lodging_name").val().trim();
+		const lodging_tell = $("input#lodging_tell").val().trim();
+		const lodging_content = $("textarea#lodging_content").text();
+		const address = $("input#address").val().trim();
+				
+		
+	    if( (lodging_name != "" && lodging_tell !="" && lodging_content !="" && address !="") ||
+	    	(checkLodging_name && checkLodging_tell && checkLodging_address_detail && checkLodging_content) ) {
 			
 			const lodging_category = $("select[name='lodging_category']").val();
 			if(lodging_category=="숙소구분"){
@@ -175,7 +182,7 @@
 		   	frm.action = "<%= ctxPath%>/editLodgingEnd.trip";
 		   	frm.submit();
 	    } else {
-	        alert("가입 정보를 모두 입력하세요.");
+	        alert("숙소 정보를 모두 입력하세요.");
 	        return;
 	    }
 
@@ -262,7 +269,7 @@
         </div>
 
         <div style="text-align: center; margin-bottom: 13%;">
-            <button type="button" class="btn" id="registerBtn" onclick="goRegister('<%=ctxPath%>')">숙소 수정하기</button>
+            <button type="button" class="btn" id="registerBtn" onclick="goEditLodging()">숙소 수정하기</button>
             <button type="button" style="border-radius: 8px; height: 50px; margin: 1% auto;"class="btn btn-danger" onclick="javascript:history.back()">취소하기</button>
         </div>
 

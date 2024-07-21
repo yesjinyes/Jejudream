@@ -104,6 +104,12 @@ public interface Js_TripService {
 
 	// 숙소 정보 삭제하기
 	int deleteLodgingInfo(String lodging_code);
+	
+	// === Spring Scheduler 를 사용하여 email 발송하기 === 
+    // <주의> 스케줄러로 사용되어지는 메소드는 반드시 리턴타입은 void 이어야 하고, 파라미터가 없어야 한다.!!!!
+    // 고객들의 email 주소는 List<String(e메일주소)> 으로 만들면 된다.
+    // 또는 e메일 자동 발송 대신에 휴대폰 문자를 자동 발송하는 것도 가능하다.     
+    void reservationEmailSending() throws Exception;
 
 
 

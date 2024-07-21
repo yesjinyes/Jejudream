@@ -1069,17 +1069,15 @@ create table tbl_board
     order by room_detail_code desc;
     where fk_lodging_code = 5338
     
+    select * from tbl_reservation;
+    alter table tbl_reservation add mailSendCheck number(1) default 0;
+    -- Table TBL_RESERVATION이(가) 변경되었습니다.
     
+    SELECT R.reservation_code, M.userid, M.user_name, M.email,
+       		   to_char(R.check_in, 'yyyy-mm-dd hh24:mi') AS check_in
+		FROM tbl_member M JOIN (select * from tbl_reservation 
+        where mailsendcheck = 0 and status = 1 and
+              to_char(check_in,'yyyymmdd') = to_char(sysdate+1,'yyyymmdd') ) R 
+		ON M.userid = R.fk_userid
     
-    select lodging_code, local_status, lodging_category, lodging_name, lodging_tell, lodging_content, 
-           lodging_address, main_img
-            from tbl_lodging
-            where lodging_code = 5339;
-            
-            
-            
-            select * from tbl_lodging where lodging_code = 5406;
-            select * from tbl_lodging_convenient where fk_lodging_code =5406;
-            rollback;
-            delete from tbl_lodging_convenient where fk_lodging_code =5404;
-    
+   

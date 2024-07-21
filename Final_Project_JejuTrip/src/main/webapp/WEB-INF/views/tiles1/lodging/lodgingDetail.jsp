@@ -238,9 +238,9 @@ $(document).ready(function(){
             		// alert('히히');
             		$.each(json, function(index, item){
                     	
-                    	v_html += `<div class="single-post" style="display:flex; justify-content: space-between;">
+                    	v_html += `<div class="single-post d-flex justify-content-between">
                             		<div style="width: 35%;">
-                            			<img src="<%= ctxPath%>/resources/images/lodginglist/room/\${item.room_img}" style="width:100%; height:300px;" />
+                            			<img src="<%= ctxPath%>/resources/images/lodginglist/room/\${item.room_img}" class="img-fluid" style="width:100%; height:300px;" />
                         			</div>
                         			<div style="flex: 1; display: flex; flex-direction: column; padding-left: 20px;">
                             			<h3 class="mt-3">\${item.room_name}</h3>
@@ -313,12 +313,12 @@ $(document).ready(function(){
 		const check_in = $(e.target).parent().siblings('input:hidden[name="check_in1"]').val();
 		const check_out = $(e.target).parent().siblings('input:hidden[name="check_out1"]').val();
 		
-		
+		/*
 		alert(room_detail_code);
 	    alert(lodging_code);
 		alert(check_in);
 		alert(check_out);
-		
+		*/
 		
 		const frm = document.reserve;
 		
@@ -695,147 +695,151 @@ function goAddReview(){
 		
 } // end of function goAddReview(){}
 	
-	
-
 </script>
+
+
 <style>
-.select {
-    border: 2px solid #ebebeb;
-    border-radius: 15px;
-    width: 100%;
-    align-content: center;
-    padding-left: 3%;
-    position: sticky;
-    top: 20px;
-    background-color: white;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-.single-post {
-    width: 100%;
-    margin-bottom: 20px;
-    border: 1px solid #ebebeb;
-    border-radius: 5px;
-}
-.main-image {
-    width: 100%;
-    height: 400px;
-}
-@media (max-width: 768px) {
-    .main-image {
-        height: 200px;
+        
+
+    .select {
+        border: 2px solid #ebebeb;
+        border-radius: 15px;
+        width: 100%;
+        align-content: center;
+        padding-left: 3%;
+        position: sticky;
+        top: 20px;
+        background-color: white;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
-}
-@media (max-width: 480px) {
-    .main-image {
-        height: 150px;
+
+    .single-post {
+        width: 100%;
+        margin-bottom: 20px;
+        border: 1px solid #ebebeb;
+        border-radius: 5px;
     }
-}
-.lodging-name {
-    font-size: 36px;
-}
-.lodging-content {
-    border-radius: 5px;
-    background-color: rgb(250, 250, 250);
-}
-.review {
-	width:100%;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 15px;
-    margin: 10px 0;
-    background-color: #fff3e6;
-}
 
-.review-content {
-    margin: 10px 0;
-}
-.review-author {
-    font-size: 0.9em;
-    color: #555;
-}
-.address {
-    padding-left: 2%;
-    align-content: center;
-    width: 100%;
-    height: 100px;
-    background-color: #ffffff;
-}
-.recommendation {
-    border: 1px solid black;
-    border-radius: 5px;
-    padding: 10px;
-    margin-bottom: 10px;
-    background-color: #ffffff;
-}
+    .main-image {
+        width: 100%;
+        height: 400px;
+    }
 
+    @media (max-width: 768px) {
+        .main-image {
+            height: 200px;
+        }
+    }
 
-}
-.input-container textarea {
-    width:70%;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 10px;
-    resize: none;
-}
+    @media (max-width: 480px) {
+        .main-image {
+            height: 150px;
+        }
+    }
 
-.rand{
-	display: flex;
-}
+    .lodging-name {
+        font-size: 36px;
+    }
 
+    .lodging-content {
+        border-radius: 5px;
+        background-color: rgb(250, 250, 250);
+    }
 
-.mini_img{
+    .review {
+        width: 100%;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 15px;
+        margin: 10px 0;
+        background-color: #fff3e6;
+    }
 
-	width: 140px; 
-	height: 140px;
-	border-radius: 5px; /* 모서리 둥글게 */
-    margin-right: 10px;
-  	object-fit: cover;
+    .review-content {
+        margin: 10px 0;
+    }
 
-}
+    .review-author {
+        font-size: 0.9em;
+        color: #555;
+    }
 
-.icon-container {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    height: 100%;
-    margin-left: 10px;
-}
+    .address {
+        padding-left: 2%;
+        align-content: center;
+        width: 100%;
+        height: 100px;
+        background-color: #ffffff;
+    }
 
+    .recommendation {
+        border: 1px solid black;
+        border-radius: 5px;
+        padding: 10px;
+        margin-bottom: 10px;
+        background-color: #ffffff;
+    }
 
-	
+    .input-container textarea {
+        width: 70%;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+        resize: none;
+    }
 
+    .rand {
+        display: flex;
+    }
 
+    .mini_img {
+        width: 140px;
+        height: 140px;
+        border-radius: 5px; /* 모서리 둥글게 */
+        margin-right: 10px;
+        object-fit: cover;
+    }
+
+    .icon-container {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        height: 100%;
+        margin-left: 10px;
+    }
 </style>
 </head>
 <body>
     <div class="container">
-        <div class="col-md-12 d-flex justify-content-between" style="align-items: end;">
-		    <span class="lodging-name">${requestScope.lodgingDetail.lodging_name}</span>
-		    <div class="icon-container">
-		    	<c:if test="${not empty sessionScope.loginuser and not empty requestScope.dateSendMap.chkLike}">
-		        <i class="fa-solid fa-heart" id="cancelAddLike" style="cursor: pointer; color: #fbb623; font-size: 35px;"></i>
-		        </c:if>
-		        <c:if test="${empty sessionScope.loginuser or (not empty sessionScope.loginuser and empty requestScope.dateSendMap.chkLike)}">
-		        <i class="fa-regular fa-heart" id="addLike" style="cursor: pointer; color: #fbb623; font-size: 35px;"></i>
-		        </c:if>
-		    </div>
-		</div>
-        <div class="d-flex col-md-12">
-            <p style="margin-bottom: 0;">${requestScope.lodgingDetail.local_status} / ${requestScope.lodgingDetail.lodging_category}</p>
+        <div class="row">
+            <div class="col-12 d-flex justify-content-between align-items-end">
+                <span class="lodging-name">${requestScope.lodgingDetail.lodging_name}</span>
+                <div class="icon-container">
+                    <c:if test="${not empty sessionScope.loginuser and not empty requestScope.dateSendMap.chkLike}">
+                        <i class="fa-solid fa-heart" id="cancelAddLike" style="cursor: pointer; color: #fbb623; font-size: 35px;"></i>
+                    </c:if>
+                    <c:if test="${empty sessionScope.loginuser or (not empty sessionScope.loginuser and empty requestScope.dateSendMap.chkLike)}">
+                        <i class="fa-regular fa-heart" id="addLike" style="cursor: pointer; color: #fbb623; font-size: 35px;"></i>
+                    </c:if>
+                </div>
+            </div>
+            <div class="col-12">
+                <p>${requestScope.lodgingDetail.local_status} / ${requestScope.lodgingDetail.lodging_category}</p>
+            </div>
         </div>
 
-        <div style="display: flex;" class="mt-3">
-            <div class="image-gallery col-md-9">
+        <div class="row mt-3">
+            <div class="col-lg-9 col-md-8 col-sm-12">
                 <img src="<%= ctxPath%>/resources/images/lodginglist/${requestScope.lodgingDetail.main_img}" alt="숙소 이미지" class="main-image">
             </div>
-            
-            <div class="select">
+
+            <div class="col-lg-3 col-md-4 col-sm-12 select">
                 <h3>숙소 체크인 일정</h3>
                 <div class="fromDate">
                     <label>체크인</label>
                     <div class="date-container">
                         <span class="date-pick">
-                            <input class="datepicker" style="cursor: pointer; width:80%;" type="text" id="fromDate" name="datepicker" value="${requestScope.dateSendMap.check_in}" placeholder="입실일 선택">
+                            <input class="datepicker" style="cursor: pointer; width: 100%;" type="text" id="fromDate" name="datepicker" value="${requestScope.dateSendMap.check_in}" placeholder="입실일 선택">
                         </span>
                     </div>
                 </div>
@@ -843,7 +847,7 @@ function goAddReview(){
                     <label>체크아웃</label>
                     <div class="date-container">
                         <span class="date-pick">
-                            <input class="datepicker" style="cursor: pointer; width:80%;" type="text" id="toDate" name="datepicker" value="${requestScope.dateSendMap.check_out}" placeholder="퇴실일 선택">
+                            <input class="datepicker" style="cursor: pointer; width: 100%;" type="text" id="toDate" name="datepicker" value="${requestScope.dateSendMap.check_out}" placeholder="퇴실일 선택">
                         </span>
                     </div>
                 </div>
@@ -851,15 +855,15 @@ function goAddReview(){
                     <label>인원</label>
                     <div class="people-container">
                         <span class="people-pick">
-                            <input type="number" id="people" style="cursor: pointer; width:80%;" name="people" value="${requestScope.dateSendMap.people}" placeholder="인원 선택">
+                            <input type="number" id="people" style="cursor: pointer; width: 100%;" name="people" value="${requestScope.dateSendMap.people}" placeholder="인원 선택">
                         </span>
                     </div>
                 </div>
-                <button type="button" name="search" class="btn btn-danger" style="width: 80%;">재검색</button>
+                <button type="button" name="search" class="btn btn-danger" style="width: 100%;">재검색</button>
             </div>
         </div>
 
-        <div class="col-md-12 lodging-info">
+        <div class="col-12 lodging-info">
             <div class="lodging-content px-3 py-2 my-3">
                 <span>${requestScope.lodgingDetail.lodging_content}</span>
             </div>
@@ -873,9 +877,9 @@ function goAddReview(){
 
             <div class="roominfo">
                 <c:forEach var="roomDetail" items="${requestScope.roomDetailList}">
-                    <div class="single-post" style="display:flex; justify-content: space-between;">
+                    <div class="single-post d-flex justify-content-between">
                         <div style="width: 35%;">
-                            <img src="<%= ctxPath%>/resources/images/lodginglist/room/${roomDetail.room_img}" style="width:100%; height:300px;" />
+                            <img src="<%= ctxPath%>/resources/images/lodginglist/room/${roomDetail.room_img}" class="img-fluid" style="width:100%; height:300px;" />
                         </div>
                         <div style="flex: 1; display: flex; flex-direction: column; padding-left: 20px;">
                             <h3 class="mt-3">${roomDetail.room_name}</h3>
@@ -892,86 +896,76 @@ function goAddReview(){
                             <div class="mb-2">
                                 <button type="button" name="reservation" class="btn btn-success">예약하기</button>
                             </div>
-                            <input type="hidden" name="room_detail_code1" value="${roomDetail.room_detail_code}"/>
-		                    <input type="hidden" name="lodging_code1" value="${roomDetail.lodging_code}"/>
-		                    <input type="hidden" name="check_in1" value="" />
-		                    <input type="hidden" name="check_out1" value="" />
+                            <input type="hidden" name="room_detail_code1" value="${roomDetail.room_detail_code}" />
+                            <input type="hidden" name="lodging_code1" value="${roomDetail.lodging_code}" />
+                            <input type="hidden" name="check_in1" value="" />
+                            <input type="hidden" name="check_out1" value="" />
                         </div>
                     </div>
-                    
                 </c:forEach>
             </div>
 
-            <div class="d-flex"> 
-                <div style="flex: 7;">
-                    <div id="map" style="width:100%; height:300px;"></div>
-                    <div class="address mb-3">
-                        <h5>지도에서 클릭하여 여행을 떠나보세요!</h5>    
-				                        주소 &nbsp;:&nbsp;&nbsp;<span id="lodging-address">${requestScope.lodgingDetail.lodging_address}</span> <br>
-				                        연락처  &nbsp;:&nbsp;&nbsp;<span>${requestScope.lodgingDetail.lodging_tell}</span>
+            <div class="d-flex flex-wrap">
+                <div class="col-lg-7 col-md-6 col-sm-12 p-0">
+                    <div id="map" style="width: 100%; height: 300px;"></div>
+                    <div class="address mb-3 p-3">
+                        <h5>지도에서 클릭하여 여행을 떠나보세요!</h5>
+                        주소 &nbsp;:&nbsp;&nbsp;<span id="lodging-address">${requestScope.lodgingDetail.lodging_address}</span> <br>
+                        연락처  &nbsp;:&nbsp;&nbsp;<span>${requestScope.lodgingDetail.lodging_tell}</span>
                     </div>
                 </div>
-                <div style="flex: 3; margin-left: 20px;">
+                <div class="col-lg-5 col-md-6 col-sm-12 p-0">
                     <div class="recommendation">
                         <h5>같은 지역 맛집 추천</h5>
                         <div class="rand">
-                        	<div>
-                        		<a href="<%= ctxPath%>/foodstoreDetail.trip?food_store_code=${requestScope.randMap.fvo.food_store_code}"><img class="mini_img" alt="" src="<%= ctxPath%>/resources/images/foodstore/imgMain/${requestScope.randMap.fvo.food_main_img}"></a>
-                        	</div>
-                        	<div>
-                        		<a href="<%= ctxPath%>/foodstoreDetail.trip?food_store_code=${requestScope.randMap.fvo.food_store_code}"><h4>${requestScope.randMap.fvo.food_name}</h4></a>
-                        		<p>${requestScope.randMap.fvo.food_content}</p>
-                        	</div>
+                            <div>
+                                <a href="<%= ctxPath%>/foodstoreDetail.trip?food_store_code=${requestScope.randMap.fvo.food_store_code}"><img class="mini_img" alt="" src="<%= ctxPath%>/resources/images/foodstore/imgMain/${requestScope.randMap.fvo.food_main_img}"></a>
+                            </div>
+                            <div>
+                                <a href="<%= ctxPath%>/foodstoreDetail.trip?food_store_code=${requestScope.randMap.fvo.food_store_code}"><h4>${requestScope.randMap.fvo.food_name}</h4></a>
+                                <p>${requestScope.randMap.fvo.food_content}</p>
+                            </div>
                         </div>
                     </div>
                     <div class="recommendation">
                         <h5>같은 지역 즐길거리 추천</h5>
                         <div class="rand">
-                        	<div>
-                        		<a href="<%= ctxPath%>/goAddSchedule.trip?play_code=${requestScope.randMap.pvo.play_code}"><img class="mini_img" alt="" src="<%= ctxPath%>/resources/images/play/${requestScope.randMap.pvo.play_main_img}"></a>
-                        	</div>
-                        	<div>
-                        		<a href="<%= ctxPath%>/goAddSchedule.trip?play_code=${requestScope.randMap.pvo.play_code}"><h4>${requestScope.randMap.pvo.play_name}</h4></a>
-                        		<p>${requestScope.randMap.pvo.play_content}</p>
-                        	</div>
+                            <div>
+                                <a href="<%= ctxPath%>/goAddSchedule.trip?play_code=${requestScope.randMap.pvo.play_code}"><img class="mini_img" alt="" src="<%= ctxPath%>/resources/images/play/${requestScope.randMap.pvo.play_main_img}"></a>
+                            </div>
+                            <div>
+                                <a href="<%= ctxPath%>/goAddSchedule.trip?play_code=${requestScope.randMap.pvo.play_code}"><h4>${requestScope.randMap.pvo.play_name}</h4></a>
+                                <p>${requestScope.randMap.pvo.play_content}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <h3>방문자 리뷰</h3>
-            <c:if test="${not empty sessionScope.loginuser and 
-            			  not empty requestScope.dateSendMap.chkR and
-            			  empty requestScope.dateSendMap.chkC}">
-            <form name="review">
-            <div id="input-review">
-		        <div class="input-container" style="display: flex;">
-		            <div class="comment-avatar" style="text-align: center; align-content: center; margin-right: 1%;">
-		                <img id="logo" alt="작성자 사진" src="<%= ctxPath %>/resources/images/logo_circle.png" style="width: 50px;">
-		                <br>
-		                <span>${sessionScope.loginuser.user_name}</span>
-		            </div>
-		            <textarea style="width: 50%;" name="review_content" id="review_content" rows="4" placeholder="이용후기를 댓글로 남겨주세요!"></textarea>
-		            <div class="input-buttons" style="align-content: center; margin-left: 1%;">
-		            	<div>
-		                <button type="button" class="btn btn-warning btn-sm" onclick="goAddReivew()">작성</button>
-		                </div>
-		                <div class="mt-2">
-		                <button type="reset" class="btn btn-light btn-sm">취소</button>
-		                </div>
-		                <input type="hidden" name="fk_userid" value="${sessionScope.loginuser.userid}">
-		                <input type="hidden" name="review_division_R" value="${requestScope.lodgingDetail.review_division}">
-		                <input type="hidden" name="parent_code" value="${requestScope.lodgingDetail.lodging_code}" />
-		            </div>
-		        </div>
-		    </div>
-		    </form>
-		    </c:if>
-            <div id="comment">
-            </div>
-            
-            <div id="pageBar" style="text-align: center;"></div>
-            
+            <c:if test="${not empty sessionScope.loginuser and not empty requestScope.dateSendMap.chkR and empty requestScope.dateSendMap.chkC}">
+                <form name="review">
+                    <div id="input-review">
+                        <div class="input-container d-flex">
+                            <div class="comment-avatar text-center mr-3">
+                                <img id="logo" alt="작성자 사진" src="<%= ctxPath %>/resources/images/logo_circle.png" style="width: 50px;">
+                                <br>
+                                <span>${sessionScope.loginuser.user_name}</span>
+                            </div>
+                            <textarea class="flex-grow-1" name="review_content" id="review_content" rows="4" placeholder="이용후기를 댓글로 남겨주세요!"></textarea>
+                            <div class="input-buttons ml-3 d-flex flex-column justify-content-between">
+                                <button type="button" class="btn btn-warning btn-sm" onclick="goAddReivew()">작성</button>
+                                <button type="reset" class="btn btn-light btn-sm">취소</button>
+                                <input type="hidden" name="fk_userid" value="${sessionScope.loginuser.userid}">
+                                <input type="hidden" name="review_division_R" value="${requestScope.lodgingDetail.review_division}">
+                                <input type="hidden" name="parent_code" value="${requestScope.lodgingDetail.lodging_code}" />
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </c:if>
+            <div id="comment"></div>
+            <div id="pageBar" class="text-center"></div>
         </div>
     </div>
 

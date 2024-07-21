@@ -90,6 +90,9 @@
       </beans:bean>
    
    
+   <!-- ==== Spring Scheduler(스프링스케줄러) 어노테이션을 사용하여 스프링스케줄러를 구현하도록 한다. ====  -->
+	<task:annotation-driven/>
+   
    <!-- ==== #18. bean으로 자동 등록될 @Component 클래스가 위치하는 패키지명 지정하기 ====  -->
    <context:component-scan base-package="com.spring.app" />
    

@@ -113,12 +113,12 @@
         	
      	});  // end of $(document).on('click', "button:button[name='updateRoom']", function(e){})
      	
-     	// 모달창 내에서 객실 수정하기 버튼
+     	// 정수 모달창 내에서 객실 수정하기 버튼
         $(document).on("click", "button#editLodging", function(e){
         	
         	// alert('히히');
         	
-        	const lodgingCode = $(e.target).parent().prev().find("input:text[name='modal_lodging_code']").val();
+        	const lodgingCode = $(e.target).parent().prev().find("input:hidden[name='modal_lodging_code']").val();
         	// alert(lodgingCode);
         	
         	goEditLodging(lodgingCode);
@@ -126,12 +126,12 @@
         }); // end of $(document).on("click", "button#editLodging", function(e){})
      	
         
-        // 모달창 내에서 객실 삭제하기 버튼
+        // 정수 모달창 내에서 객실 삭제하기 버튼
 		$(document).on("click", "button#deleteLodging", function(e){
         	
 			// alert('히히');
         	
-			const lodgingCode = $(e.target).parent().prev().find("input:text[name='modal_lodging_code']").val();
+			const lodgingCode = $(e.target).parent().prev().find("input:hidden[name='modal_lodging_code']").val();
 			// alert(lodgingCode);
 			
 			goDeleteLodging(lodgingCode);
@@ -169,7 +169,7 @@
 					v_html += `<div style="margin-bottom:5px;">반려사유 : \${json.feedback_msg}</div>`;
 				}
 				
-				v_html += `<input type="text" name="modal_lodging_code" value="\${lodgingCode}" />`
+				v_html += `<input type="hidden" name="modal_lodging_code" value="\${lodgingCode}" />`
 				
 			    $("div.modal-body").html(v_html);
 			},

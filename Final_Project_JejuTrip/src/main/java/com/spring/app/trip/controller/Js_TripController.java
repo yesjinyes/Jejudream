@@ -522,8 +522,20 @@ public class Js_TripController {
 			// System.out.println("체크인시간 : " + check_inTime.substring(0,2));
 			// System.out.println("체크아웃시간 : " + check_outTime.substring(0,2));
 			
-			paraMap.put("check_in", check_in + " " + check_inTime.substring(0,2) + ":00:00");
-			paraMap.put("check_out", check_out + " " + check_outTime.substring(0,2) + ":00:00");
+			if(check_inTime.length() >2) {
+				
+				paraMap.put("check_in", check_in + " " + check_inTime.substring(0,2) + ":00:00");
+				paraMap.put("check_out", check_out + " " + check_outTime.substring(0,2) + ":00:00");
+				
+			}
+			else if (check_inTime.length() == 2) {
+				
+				paraMap.put("check_in", check_in + " 0" + check_inTime.substring(0,1) + ":00:00");
+				paraMap.put("check_out", check_out + " 0" + check_outTime.substring(0,1) + ":00:00");
+				
+			}
+			
+			
 			
 			System.out.println("체크인시간 : " + paraMap.get("check_in"));
 			System.out.println("체크아웃시간 : " + paraMap.get("check_out"));
@@ -1353,7 +1365,7 @@ public class Js_TripController {
 			String root = session.getServletContext().getRealPath("/"); 
 			
 			String path = root + "resources"+File.separator+"images"+File.separator+"lodginglist";     
-	        System.out.println(path);
+	        // System.out.println("경로명 : " + path);
 	        
 	        String newFileName = "";
 	        // WAS(톰캣)의 디스크에 저장될 파일명 
@@ -1462,6 +1474,16 @@ public class Js_TripController {
 		
 		return jsonObj.toString();
 		
-	} // end of public String JSONDeleteLodging (@RequestParam("lodgingCode") String lodgingCode) { 
+	} // end of public String JSONDeleteLodging (@RequestParam("lodgingCode") String lodgingCode) {
+	
+	
+	// === 기상청 XML 연결 하기 ===
+	@GetMapping("weatherXML.trip")
+	public String weatherXML() {
+		
+		return "weatherXML";
+		// /board/src/main/webapp/WEB-INF/views/weather/weatherXML.jsp 파일을 생성한다.
+		
+	} // end of public String weatherXML() { 
 	
 }

@@ -107,6 +107,12 @@ public interface Js_TripDAO {
 
 	// 숙소 정보 삭제하기
 	int deleteLodgingInfo(String lodging_code);
+
+	// ==== e메일을 발송할 회원 대상 알아오기 ==== 
+	List<Map<String, String>> getReservationList();
+
+	// 이메일 발송하고나서 메일체크 update
+	void updateMailSendCheck(Map<String, String[]> paraMap);
 	
 	
 

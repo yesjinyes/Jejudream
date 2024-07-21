@@ -75,7 +75,8 @@
 				  SELECT D.fk_lodging_code, D.room_name, COUNT(*) AS RESERVATION_CNT 
 				  FROM tbl_room_detail D JOIN tbl_reservation RSV
 				  ON D.room_detail_code = RSV.fk_room_detail_code
-				  WHERE RSV.check_in BETWEEN #{check_in} AND #{check_out}
+				  WHERE RSV.check_in <![CDATA[<=]]> #{check_in} AND RSV.check_out <![CDATA[>=]]> #{check_out}
+				  and RSV.status = 1
 				  GROUP BY D.fk_lodging_code, D.room_name
 				 ) B
 				 ON A.lodging_code || A.room_name = B.fk_lodging_code || B.room_name
@@ -159,7 +160,8 @@
 			  SELECT D.fk_lodging_code, D.room_name, COUNT(*) AS RESERVATION_CNT 
 			  FROM tbl_room_detail D JOIN tbl_reservation RSV
 			  ON D.room_detail_code = RSV.fk_room_detail_code
-			  WHERE RSV.check_in BETWEEN #{check_in} AND #{check_out}
+			  WHERE RSV.check_in <![CDATA[<=]]> #{check_in} AND RSV.check_out <![CDATA[>=]]> #{check_out}
+			  and RSV.status = 1
 			  GROUP BY D.fk_lodging_code, D.room_name
 			 ) B
 			 ON A.lodging_code || A.room_name = B.fk_lodging_code || B.room_name
@@ -545,10 +547,35 @@
 	</insert>
  	
  	
- 	
  	<!-- 등록된 숙소정보 삭제하기 -->
  	<delete id="deleteLodgingInfo" parameterType="String">
  		delete from tbl_lodging where lodging_code = #{lodging_code}
  	</delete>
+ 	
+ 	
+ 	<!-- ==== e메일을 발송할 회원 대상 알아오기 ==== -->
+ 	<resultMap type="HashMap" id="reservationEmailList_Map">
+       <result property="reservation_code"     column="reservation_code"     javaType="String" />
+       <result property="userid"        column="userid"        javaType="String" />
+       <result property="user_name"        column="user_name"        javaType="String" />
+       <result property="email"        column="email"        javaType="String" />
+       <result property="check_in"        column="check_in"        javaType="String" />
+   </resultMap>
+	<select id="reservationEmailList" resultMap="reservationEmailList_Map">
+ 	SELECT R.reservation_code, M.userid, M.user_name, M.email,
+       		   to_char(R.check_in, 'yyyy-mm-dd hh24:mi') AS check_in
+		FROM tbl_member M JOIN (select * from tbl_reservation 
+        where mailsendcheck = 0 and status = 1 and
+        	  
+              to_char(check_in,'yyyymmdd') = to_char(sysdate+1,'yyyymmdd') ) R 
+		ON M.userid = R.fk_userid
+ 	</select>
+ 	
+ 	
+ 	<!-- === 이메일 발송하고나서 메일체크 update  === -->
+	<update id="updateMailSendCheck" parameterType="HashMap">
+		update tbl_reservation set mailSendCheck = 1 
+		where reservation_code in <foreach collection="arr_reservationCode" index="i" open="(" separator="," close=")">${arr_reservationCode[i]}</foreach> 
+	</update>
  
 </mapper>
