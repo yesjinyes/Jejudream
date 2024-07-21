@@ -2168,19 +2168,39 @@ public class Ws_TripController {
 		return jsObj.toString();
 	}
 	
-	@GetMapping("/mypage_chatting_toCompany.trip")
-	public ModelAndView chat(ModelAndView mav) {
+	// 예약 코드를 가지고 업체아이디와 업체명을 가져오기
+	@ResponseBody
+	@PostMapping("/getCompanyIdAndNameJSON.trip")
+	public String getCompanyIdAndNameJSON(HttpServletRequest request) throws Throwable {
+		String reservation_code = request.getParameter("reservation_code");
 		
-		mav.setViewName("mypage_chatting_toCompany");
+		Map<String,String> map = service.getCompanyIdAndLodgingNameToTblReservationCode(reservation_code);
 		
-		return mav;
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("companyid", map.get("companyid"));
+		jsonObj.put("lodging_name", map.get("lodging_name"));
+		return jsonObj.toString();
 	}
 	
 	// === #222. (웹 채팅 관련4) === // 
-	@GetMapping("/chatting/multichat.trip")
-	public String requiredLogin_multichat(HttpServletRequest request, HttpServletResponse response) {
+	@GetMapping("/reservationChatToCompany.trip")
+	public String reservationChatToCompany(HttpServletRequest request, HttpServletResponse response) {
 		
-		return "mypage_chatting_toCompany";
+		String reservation_code = request.getParameter("reservation_code");
+		// 해당 예약에 관련된 companyid를 가져와야한다.
+		
+		String companyid = request.getParameter("companyid");
+		
+		String chatting_key = reservation_code + "_" + request.getParameter("userid") + "_" + companyid;
+		
+		MemberVO chattinguser = new MemberVO();
+		chattinguser.setUser_name(request.getParameter("name"));
+		chattinguser.setUserid(request.getParameter("userid"));
+		HttpSession session = request.getSession();
+		session.setAttribute("chattinguser", chattinguser);
+		session.setAttribute("chatting_key", chatting_key);
+		
+		return "reservationChatToCompany";
 	}
 	
 }

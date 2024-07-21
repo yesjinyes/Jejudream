@@ -987,5 +987,30 @@
 		delete from tbl_calendar_schedule 
 		where scheduleno = #{scheduleno} 
 	</delete>
+	
+    <!-- 예약 코드를 가지고 업체아이디와 업체명을 가져오기 -->
+    <resultMap type="HashMap" id="CompanyIdAndLodgingName">
+		<result property="companyid" 	column="companyid" 		javaType="String" />
+		<result property="lodging_name" column="lodging_name" 	javaType="String" />
+	</resultMap>
+    <select id="getCompanyIdAndLodgingNameToTblReservationCode" parameterType="String" resultMap="CompanyIdAndLodgingName">
+	    select C.companyid, L.lodging_name
+		from tbl_reservation R join tbl_room_detail D
+		on R.fk_room_detail_code = D.room_detail_code
+		join tbl_lodging L
+		on L.lodging_code = D.fk_lodging_code
+		join tbl_company C
+		on C.companyid = L.fk_companyid
+		where R.reservation_code = #{reservation_code}
+    </select>
     
+    <!-- 해당 예약에 관련된 companyid를 가져와야한다. -->
+    <select id="getCompanyidToTblReservation" parameterType="String" resultType="String">
+    	select fk_companyid
+		from tbl_reservation R join tbl_room_detail D
+		on R.fk_room_detail_code = D.room_detail_code
+		join tbl_lodging L
+		on L.lodging_code = D.fk_lodging_code
+		where R.reservation_code = #{reservation_code}
+    </select>
 </mapper>
