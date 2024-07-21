@@ -48,9 +48,9 @@ public class Js_TripDAO_imple implements Js_TripDAO {
 
 	// 숙소리스트에 표현할 편의시설 목록 구해오기
 	@Override
-	public List<String> getConvenientList(String lodging_code) {
+	public List<Map<String,String>> getConvenientList(String lodging_code) {
 		
-		List<String> convenientList = sqlsession.selectList("js_trip.getConvenientList", lodging_code);
+		List<Map<String,String>> convenientList = sqlsession.selectList("js_trip.getConvenientList", lodging_code);
 		
 		return convenientList;
 		
@@ -339,6 +339,59 @@ public class Js_TripDAO_imple implements Js_TripDAO {
 		return n;
 		
 	} // end of public int deleteRoomDetail(String room_detail_code) {
+
+
+	
+	// 숙소정보 수정하기
+	@Override
+	public int updateLodging(LodgingVO lvo) {
+		
+		int n = sqlsession.update("js_trip.updateLodging", lvo);
+		
+		return n;
+		
+	} // end of public int updateLodging(LodgingVO lvo) {
+
+
+	
+	// 트랜잭션 1 (존재하는 숙소에 대한 편의시설 정보 삭제하기)
+	@Override
+	public int t_deleteLodgingConvenient(String fk_lodging_code) {
+		
+		int n = sqlsession.delete("js_trip.t_deleteLodgingConvenient", fk_lodging_code);
+		
+		return n;
+		
+	} // end of public int t_deleteLodgingConvenient(String fk_lodging_code) {
+
+
+	
+	// 트랜잭션 2 (숙소에 대한 편의시설 정보 insert하기)
+	@Override
+	public int t_insertLodgingConvenient(Map<String, Object> arr_Map) {
+		
+		int n = sqlsession.insert("js_trip.t_insertLodgingConvenient", arr_Map);
+		
+		return n;
+		
+	} // end of public int t_insertLodgingConvenient(Map<String, String> paraMap) {
+
+
+	
+	// 숙소 정보 삭제하기
+	@Override
+	public int deleteLodgingInfo(String lodging_code) {
+		
+		int n = sqlsession.delete("js_trip.deleteLodgingInfo", lodging_code);
+		
+		return n;
+		
+	} // end of public int deleteLodgingInfo(String lodgingCode) {
+
+
+
+	
+	
 	 
 	
 	

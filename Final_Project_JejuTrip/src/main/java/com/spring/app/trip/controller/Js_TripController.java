@@ -50,7 +50,7 @@ public class Js_TripController {
 		
 		String lodging_code = "";
 		// 숙소리스트에 표현할 편의시설 목록 구해오기
-		List<String> convenientList =  service.getConvenientList(lodging_code);
+		List<Map<String,String>> convenientList = service.getConvenientList(lodging_code);
 		
 		
 		mav.addObject("convenientList", convenientList);
@@ -233,7 +233,7 @@ public class Js_TripController {
 		dateSendMap.put("check_out", detail_check_out);
 		dateSendMap.put("people", detail_people);
 		
-		List<String> convenientList = service.getConvenientList(lodging_code);
+		List<Map<String,String>> convenientList = service.getConvenientList(lodging_code);
 		// 한 숙소에대한 편의시설 가져오기 (메소드 재활용)
 		
 		List<Map<String,String>> roomDetailList = service.getRoomDetail(dateSendMap);
@@ -1289,5 +1289,179 @@ public class Js_TripController {
 	    return jsonObj.toString();
 	    
 	} // end of public String deleteRoomDetails
+	
+	
+	
+	// 숙소 정보 수정하는 페이지로 보내기
+	@GetMapping("/editLodging.trip")
+	public ModelAndView editLodging(ModelAndView mav, HttpServletRequest request,
+									@RequestParam("send_lodging_code") String lodging_code,
+									@RequestParam("send_companyid") String companyid) {
+		
+		
+		HttpSession session = request.getSession();
+		CompanyVO loginCompanyuser = (CompanyVO)session.getAttribute("loginCompanyuser");
+		
+		if(loginCompanyuser != null && companyid.equalsIgnoreCase(loginCompanyuser.getCompanyid())) {
+			// 로그인 한 업체가 맞는지 확인
+			
+			LodgingVO lvo = service.getLodgingDetail(lodging_code);
+			
+			// 숙소 수정을 위한 전체 편의시설 체크박스 데이터 가져오기
+			lodging_code = "";
+			List<Map<String,String>> convenientList = service.getConvenientList(lodging_code);
+			
+			lodging_code = lvo.getLodging_code();
+			List<Map<String,String>> selectedConvenientList = service.getConvenientList(lodging_code);
+			
+			
+			mav.addObject("lvo", lvo);
+			
+			mav.addObject("convenientList",convenientList);
+			mav.addObject("selectedConvenientList",selectedConvenientList); 
+			
+			mav.setViewName("/company/editLodging.tiles1");
+		}
+		else {
+			String message = "업체 계정으로 로그인을 하지 않았거나 잘못된 로그인 정보입니다.";
+			String loc = "javascript:history.back()";
+
+			mav.addObject("message", message);
+			mav.addObject("loc", loc);
+			
+			mav.setViewName("msg");
+		}
+		
+		return mav;
+		
+	} // end of public ModelAndView editLodging
+	
+	
+	// 받아온 정보로 숙소정보 수정하기
+	@PostMapping("/editLodgingEnd.trip")
+	public ModelAndView editLodgingEnd(ModelAndView mav, LodgingVO lvo, MultipartHttpServletRequest mrequest, 
+									   @RequestParam ("str_convenient") String str_convenient,
+									   @RequestParam ("address") String address,
+									   @RequestParam ("detail_address") String detail_address) {
+		
+		 
+		MultipartFile attach = lvo.getAttach();
+	      
+		if( !attach.isEmpty() ) {
+			          
+			HttpSession session = mrequest.getSession(); 
+			String root = session.getServletContext().getRealPath("/"); 
+			
+			String path = root + "resources"+File.separator+"images"+File.separator+"lodginglist";     
+	        System.out.println(path);
+	        
+	        String newFileName = "";
+	        // WAS(톰캣)의 디스크에 저장될 파일명 
+	         
+	        byte[] bytes = null;
+	        // 첨부파일의 내용물을 담는 것
+	         
+	        long fileSize = 0;
+	        // 첨부파일의 크기 
+	        
+	        try {
+	            bytes = attach.getBytes();
+	            
+	            // 기존 숙소 이미지파일 삭제하기
+	            fileManager.doFileDelete(lvo.getFileName(), path);
+	            
+	            String originalFilename = attach.getOriginalFilename();
+	            
+	            // 새로 받아온 이미지파일 업로드하기
+	            newFileName = fileManager.doFileUpload(bytes, originalFilename, path); 
+	            
+	            lvo.setFileName(newFileName);
+	                     
+	            lvo.setOrgFilename(attach.getOriginalFilename());
+	            lvo.setMain_img(newFileName);
+	                     
+	            fileSize = attach.getSize();  // 첨부파일의 크기(단위는 byte임) 
+	            lvo.setFileSize(String.valueOf(fileSize));
+	                     
+	         } catch (Exception e) {
+	            e.printStackTrace();
+	         }   
+		}
+
+		
+		lvo.setLodging_address((address + " " + detail_address).trim());
+		
+		// 입력된 정보로 숙소 정보 수정하기
+		int n = service.updateLodging(lvo);
+		
+		if(n == 1) {
+			
+			// 해당 숙소가 해당하는 편의시설 delete 후 insert 하기
+			
+			if(!str_convenient.equals("")) {
+				
+				Map<String,String> paraMap = new HashMap<>();
+				
+				paraMap.put("fk_lodging_code", lvo.getLodging_code());
+				paraMap.put("str_convenient",str_convenient);
+				
+				// 숙소에 해당하는 편의시설 정보 삭제하기 (트랜잭션 처리로 )
+				int m = 0;
+				
+				try {
+					
+					m = service.deleteInsertLodgingConvenient(paraMap);
+					
+				} catch (Throwable e) {
+					
+					System.out.println("트랜잭션 처리 오류");
+					e.printStackTrace();
+				}
+				
+				System.out.println("트랜잭션 처리 delete after insert " + m);
+				
+			} // 편의시설정보가 비어있지않다면
+			
+			String message = "숙소 정보수정 완료";
+			String loc = "myRegisterHotel.trip";
+
+			mav.addObject("message", message);
+			mav.addObject("loc", loc);
+			
+			mav.setViewName("msg");
+		}
+		else {
+			String message = "숙소 정보수정 실패";
+			String loc = "index.trip";
+
+			mav.addObject("message", message);
+			mav.addObject("loc", loc);
+			
+			mav.setViewName("msg");
+		}
+		
+		return mav;
+		
+	} // end of public ModelAndView editLodgingEnd
+	
+	
+	// 등록된 숙소 삭제하기
+	@ResponseBody
+	@PostMapping(value="/JSONDeleteLodging.trip", produces="text/plain;charset=UTF-8")
+	public String JSONDeleteLodging (@RequestParam("lodging_code") String lodging_code) {
+		
+		int n = service.deleteLodgingInfo(lodging_code);
+		
+		JSONObject jsonObj = new JSONObject();
+		
+		if(n==1) {
+			
+			jsonObj.put("result", n);
+			
+		}
+		
+		return jsonObj.toString();
+		
+	} // end of public String JSONDeleteLodging (@RequestParam("lodgingCode") String lodgingCode) { 
 	
 }

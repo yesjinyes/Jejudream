@@ -1069,3 +1069,17 @@ create table tbl_board
     order by room_detail_code desc;
     where fk_lodging_code = 5338
     
+    
+    
+    select lodging_code, local_status, lodging_category, lodging_name, lodging_tell, lodging_content, 
+           lodging_address, main_img
+            from tbl_lodging
+            where lodging_code = 5339;
+            
+            
+            
+            select * from tbl_lodging where lodging_code = 5406;
+            select * from tbl_lodging_convenient where fk_lodging_code =5406;
+            rollback;
+            delete from tbl_lodging_convenient where fk_lodging_code =5404;
+    

@@ -651,7 +651,7 @@ $(document).ready(function(){
                         
                         <c:forEach var="convenientList" items="${requestScope.convenientList}" varStatus="status">
                         <div>
-                        	<input type="checkbox" name="convenient" id="convenient${status.count}" value="${convenientList}" />
+                        	<input type="checkbox" name="convenient" id="convenient${status.count}" value="${convenientList.convenient_name}" />
                         	<label for="convenient${status.count}">${convenientList}</label>
                         </div>
                         </c:forEach>

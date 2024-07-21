@@ -867,7 +867,7 @@ function goAddReview(){
             <h3>편의 시설</h3>
             <ul>
                 <c:forEach var="convenient" items="${requestScope.convenientList}">
-                    <li>${convenient}</li>
+                    <li>${convenient.convenient_name}</li>
                 </c:forEach>
             </ul>
 

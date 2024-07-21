@@ -1,11 +1,15 @@
 package com.spring.app.trip.service;
 
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.LodgingVO;
@@ -43,9 +47,9 @@ public class Js_TripService_imple implements Js_TripService {
    
    // 숙소리스트에 표현할 편의시설 목록 구해오기
    @Override
-   public List<String> getConvenientList(String lodging_code) {
+   public List<Map<String,String>> getConvenientList(String lodging_code) {
 	   
-	   List<String> convenientList = dao.getConvenientList(lodging_code);
+	   List<Map<String,String>> convenientList = dao.getConvenientList(lodging_code);
 	   
 	   return convenientList;
 	   
@@ -332,6 +336,70 @@ public class Js_TripService_imple implements Js_TripService {
 		return n;
 		
 	} // end of public int deleteRoomDetail(String room_detail_code) {
+
+
+	// 숙소정보 수정하기
+	@Override
+	public int updateLodging(LodgingVO lvo) {
+		
+		int n = dao.updateLodging(lvo);
+		
+		return n;
+		
+	} // end of public int updateLodging(LodgingVO lvo) {
+
+
+	
+	// 숙소에 해당하는 편의시설 정보 삭제하기 (트랜잭션 처리로 )
+	@Override
+	@Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.READ_COMMITTED, rollbackFor= {Throwable.class})
+	public int deleteInsertLodgingConvenient(Map<String, String> paraMap) throws Throwable{
+		
+		int n1=0, n2 =0;
+		
+		// 트랜잭션 1 (존재하는 숙소에 대한 편의시설 정보 삭제하기)
+		n1 = dao.t_deleteLodgingConvenient(paraMap.get("fk_lodging_code"));
+		
+		if(n1 > 0) {
+			
+			String[] arr_convenient = paraMap.get("str_convenient").split(",");
+			
+			Map<String, Object> arr_Map = new HashMap<>(); 
+			
+	        arr_Map.put("lodging_code", paraMap.get("fk_lodging_code"));
+
+	        // 트랜잭션 2 (숙소에 대한 편의시설 정보 insert하기)
+	        for (String convenientCode : arr_convenient) {
+	        	
+	            arr_Map.put("convenient_code", convenientCode);
+	            
+	            n2 += dao.t_insertLodgingConvenient(arr_Map);
+	            
+	        } // end of for
+					
+		} // end of if
+		
+		return n1 * n2;
+		
+	} // end of public int deleteInsertLodgingConvenient(Map<String, String> paraMap) {
+
+
+	
+	// 숙소 정보 삭제하기
+	@Override
+	public int deleteLodgingInfo(String lodging_code) {
+		
+		int n = dao.deleteLodgingInfo(lodging_code);
+		
+		return n;
+		
+	} // end of public int deleteLodgingInfo(String lodgingCode) {
+
+
+	
+
+
+
 	
 
 	

@@ -19,7 +19,7 @@ public interface Js_TripService {
 	int getLodgingTotalCount(Map<String, Object> paraMap);
 
 	// 숙소리스트에 표현할 편의시설 목록 구해오기
-	List<String> getConvenientList(String lodging_code);
+	List<Map<String, String>> getConvenientList(String lodging_code);
 
 	// 숙소의 상세정보만 가져오기
 	LodgingVO getLodgingDetail(String lodgingCode);
@@ -95,6 +95,21 @@ public interface Js_TripService {
 
 	// 수정할때 객실 삭제하기
 	int deleteRoomDetail(String room_detail_code);
+
+	// 숙소정보 수정하기
+	int updateLodging(LodgingVO lvo);
+
+	// 숙소에 해당하는 편의시설 정보 삭제하기 (트랜잭션 처리로 )
+	int deleteInsertLodgingConvenient(Map<String, String> paraMap) throws Throwable;
+
+	// 숙소 정보 삭제하기
+	int deleteLodgingInfo(String lodging_code);
+
+
+
+
+
+
 
 	
 	

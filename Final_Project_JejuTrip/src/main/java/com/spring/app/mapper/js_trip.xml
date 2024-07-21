@@ -192,8 +192,12 @@
 	
 	
 	<!-- 숙소리스트에 표현할 편의시설 목록 구해오기 -->
-	<select id="getConvenientList" resultType="String">
-		select convenient_name from tbl_convenient C
+	<resultMap type="HashMap" id="convenientMap">
+		<result property="convenient_code" 	column="convenient_code" 	javaType="String" />
+		<result property="convenient_name" 	column="convenient_name" 	javaType="String" />
+	</resultMap>
+	<select id="getConvenientList" resultMap="convenientMap">
+		select convenient_name, convenient_code from tbl_convenient C
 		<if test='lodging_code != ""'>
 			join tbl_lodging_convenient LC
 		    on LC.fk_convenient_code = C.convenient_code
@@ -509,4 +513,42 @@
  	</delete>
  	
  	
+ 	
+ 	<!-- 숙소 정보 수정하기 -->
+ 	<update id="updateLodging" parameterType="lodgingVO">
+ 		update tbl_lodging set
+ 		lodging_name = #{lodging_name},
+ 		local_status = #{local_status},
+		lodging_category = #{lodging_category},
+		lodging_tell = #{lodging_tell},
+		lodging_content = #{lodging_content},
+		lodging_address = #{lodging_address},
+		main_img = #{main_img},
+		fileName = #{fileName},
+		orgFilename = #{orgFilename},
+		fileSize = #{fileSize}
+		where lodging_code = #{lodging_code}
+ 	</update>
+ 	
+	
+	<!-- 트랜잭션 1 (존재하는 숙소에 대한 편의시설 정보 삭제하기)  -->
+	<delete id="t_deleteLodgingConvenient" parameterType="String">
+		delete from tbl_lodging_convenient where fk_lodging_code = #{fk_lodging_code}
+	
+	</delete>
+	
+	
+	<!-- 트랜잭션 2 (숙소에 대한 편의시설 정보 insert하기) -->
+	<insert id="t_insertLodgingConvenient" parameterType="HashMap">
+		insert into tbl_lodging_convenient (fk_convenient_code,fk_lodging_code)
+		values (#{convenient_code}, #{lodging_code})
+	</insert>
+ 	
+ 	
+ 	
+ 	<!-- 등록된 숙소정보 삭제하기 -->
+ 	<delete id="deleteLodgingInfo" parameterType="String">
+ 		delete from tbl_lodging where lodging_code = #{lodging_code}
+ 	</delete>
+ 
 </mapper>
