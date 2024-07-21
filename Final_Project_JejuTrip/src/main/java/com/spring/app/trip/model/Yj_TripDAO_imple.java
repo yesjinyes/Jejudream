@@ -161,13 +161,31 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 	}
 
 
-	// == 맛집  수정하기 == //
+	// == 맛집  수정하기 (관리자) == //
 	@Override
 	public int editFoodEnd(FoodstoreVO foodstorevo) {
 		int n = sqlsession.update("yj_trip.editFoodEnd", foodstorevo);
 		return n;
 	}
 
+
+	// == 맛집 삭제하기 (관리자) == //
+	@Override
+	public int deleteFoodstore(String food_store_code) {
+		int n1 = sqlsession.delete("yj_trip.deleteFoodstore", food_store_code);
+		System.out.println("n1 확인 =>" + n1);
+		return n1;
+	}
+
+
+	// == 맛집 삭제 시 리뷰도 삭제 == //
+/*	@Override
+	public int deleteFoodstoreReview(String food_store_code) {
+		int n2 = sqlsession.delete("yj_trip.deleteFoodstoreReview", food_store_code);
+		System.out.println("n2 확인 =>" + n2);
+		return n2;
+	}
+*/
 
 
 

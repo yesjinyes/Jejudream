@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.ModelAndView;import org.springframework.web.servlet.ModelAndViewDefiningException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.spring.app.trip.common.FileManager;
@@ -394,7 +394,8 @@ public class Yj_TripController {
 		
 		List<ReviewVO> reviewList = service.getReviewList(paraMap);
 		
-		int totalCount = service.getReviewTotalCount(parent_code); // 리뷰 총 개수 구하기 => 나옴
+		int totalCount = service.getReviewTotalCount(parent_code); // 리뷰 총 개수 구하기
+		// System.out.println("~~ 리뷰 totalCount 확인 => " + totalCount);
 		
 		JSONArray jsonArr = new JSONArray();
 		
@@ -544,25 +545,6 @@ public class Yj_TripController {
 	@PostMapping("/editFoodEnd.trip")
 	public ModelAndView editFoodEnd(ModelAndView mav, FoodstoreVO foodstorevo, MultipartHttpServletRequest mrequest) {
 		
-		String food_name = mrequest.getParameter("food_name");
-		String food_category = mrequest.getParameter("food_category");
-		String local_status = mrequest.getParameter("local_status");
-		String food_businesshours = mrequest.getParameter("food_businesshours");
-		String food_mobile = mrequest.getParameter("food_mobile");
-		String food_address = mrequest.getParameter("food_address");
-		String food_content = mrequest.getParameter("food_content");
-		
-		System.out.println("~~ food_name 나와주세요 => " + food_name);
-		System.out.println("~~ food_category 나와주세요 => " + food_category);
-		System.out.println("~~ local_status 나와주세요 => " + local_status);
-		System.out.println("~~ food_businesshours 나와주세요 => " + food_businesshours);
-		System.out.println("~~ food_mobile 나와주세요 => " + food_mobile);
-		System.out.println("~~ food_address 나와주세요 => " + food_address);
-		System.out.println("~~ food_content 나와주세요 => " + food_content);
-		
-		
-		
-		
 		//  ============ 첨부파일 처리 시작 ============ // 
 		MultipartFile attach = foodstorevo.getAttach();
 		
@@ -599,25 +581,54 @@ public class Yj_TripController {
 		
 		if(n==1) {
 			String message = "맛집 정보가 수정되었습니다.";
-			//String loc = "javascript:history.back()";
+			String loc = mrequest.getContextPath() + "/foodstoreList.trip";
 			
 			mav.addObject("message", message);
-			//mav.addObject("loc", loc);
+			mav.addObject("loc", loc);
 			
 			mav.setViewName("msg");
 		}
 		else {
 			String message = "맛집 정보 수정에 실패했습니다.";
-			//String loc = "javascript:history.back()";
+			String loc = "javascript:history.back()";
 			
 			mav.addObject("message", message);
-			//mav.addObject("loc", loc);
+			mav.addObject("loc", loc);
 			
 			mav.setViewName("msg");
 		}
 		
 		return mav;
 	}
+	
+	
+	// == 맛집 삭제하기 (관리자) == //
+	@ResponseBody
+	@PostMapping("/deleteFoodstore.trip")
+	public String deleteFoodstore(HttpServletRequest request) {
+		
+		String food_store_code = request.getParameter("food_store_code");
+		// System.out.println("~~~ food_store_code 확인 => " + food_store_code);
+		
+		int n = 0;
+		
+		try {
+			 n = service.deleteFoodstore(food_store_code);
+		
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("n", n);
+		
+		//System.out.println("### controller 에서 insert 확인 : "+ jsonObj.toString());
+		
+		return jsonObj.toString();
+		
+	}
+	
+	
 	
 	
 	

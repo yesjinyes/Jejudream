@@ -172,7 +172,7 @@ label{
 	            checkFood_name = true;
 	        }
 	    });
-
+	    
 	    // == 영업시간 유효성 검사 == //
 	    $("input#food_businesshours").blur((e) => {
 
@@ -249,25 +249,31 @@ label{
 
 		///////////////////////////////////////////////////////////////////////////////
 
-		const category_selected = $("selectbox#category-selectbox option:selected").text();
-		console.log("선택된 카테고리 확인 => " + category_selected);
-		
-		$("input:text[id='food_category']").html(category_selected);
 		
 		
 		
 	}); // end of $(document).ready(function(){})----------------------------------
 		
 	
+	// == 맛집 수정하기 (관리자) == //
 	function goEdit() {
 
 		let queryString = $("form[name='editFoodFrm']").serialize();
+
+		const category_selected = $("select#category-selectbox option:selected").text();
+		// console.log("선택된 카테고리 확인 => " + category_selected);
+		
+		const local_selected = $("select#local-selectbox option:selected").text();
+		// console.log("선택된 지역 확인 => " + local_selected);
 		
 	    const frm = document.editFoodFrm;
-	    
+
+		frm.food_category.value = category_selected; // 선택된 카테고리 form 으로 보내기
+		frm.local_status.value = local_selected; // 선택된 지역 form 으로 보내기
+		
 	   	frm.method = "post";
-	   	//frm.action = "<%= ctxPath%>/editFoodEnd.trip";
-	   	//frm.submit();
+	   	frm.action = "<%= ctxPath%>/editFoodEnd.trip";
+	   	frm.submit();
 	}
 	
 	
@@ -295,8 +301,8 @@ label{
             <div class="info_block mt-3">
             	<div class="info-content">
 	            	<span>카테고리</span>
-					<select id="category-selectbox" name="local_status">
-						<%-- <option selected>${requestScope.foodstorevo.food_category}</option> --%>
+					<select id="category-selectbox" name="category-selectbox">
+						<option selected>${requestScope.foodstorevo.food_category}</option>
 						<option>한식</option>
 						<option>일식</option>
 						<option>양식</option>
@@ -304,13 +310,13 @@ label{
 						<option>기타</option>
 						<option>카페</option>
 					</select>
-					<input type="text" name="food_category" id="food_category" />
+					<input type="hidden" name="food_category" id="food_category" />
 	        	</div>
             </div>
             <div class="info_block mt-3">
             	<div class="info-content">
 	            	<span>지역구분</span>
-					<select name="local_status">
+					<select id="local-selectbox" name="local-selectbox">
 						<option selected>${requestScope.foodstorevo.local_status}</option>
 						<option>제주시 시내</option>
 						<option>제주시 서부</option>
@@ -319,6 +325,7 @@ label{
 						<option>서귀포 동부</option>
 						<option>서귀포 서부</option>
 					</select>
+					<input type="hidden" name="local_status" id="local_status" />
 	        	</div>
             </div>
             <div class="info_block mt-3">

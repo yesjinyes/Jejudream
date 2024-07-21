@@ -239,6 +239,7 @@
 		values(seq_scheduleno.nextval, to_date(#{startdate}, 'yyyy-mm-dd hh24:mi:ss'), to_date(#{enddate}, 'yyyy-mm-dd hh24:mi:ss'), #{scheduleTitle}, '#ffc2b3', #{food_address} , #{scheduleContent}, #{parent_code}, 'B', 2 , 1, #{login_userid})
 	</insert>
 
+
 	<!-- 맛집 수정을 위해 VO 에 있는 정보 불러오기  -->
 	<select id="getFoodstorevo" parameterType="String" resultType="FoodstoreVO">
 		select food_store_code, food_category, local_status, food_name, food_content, food_businesshours, food_mobile, food_address, food_main_img
@@ -246,7 +247,7 @@
 		where food_store_code = #{food_store_code}
 	</select>
 
-food_category, local_status, food_businesshours, food_mobile, food_address, food_content, 
+
 	<!-- 맛집  수정하기  -->
  	<update id="editFoodEnd" parameterType="FoodstoreVO">
 		update tbl_food_store
@@ -265,6 +266,20 @@ food_category, local_status, food_businesshours, food_mobile, food_address, food
 		</if>
 		where food_store_code = #{food_store_code} 
 	</update>
+	
+	
+	<!-- 맛집 삭제하기 (관리자) -->
+	<delete id="deleteFoodstore" parameterType="String">
+		delete from tbl_food_store
+		where food_store_code = #{food_store_code}
+	</delete>
+
+
+	<!-- 맛집 삭제 시 리뷰도 삭제  -->
+<!-- 	<delete id="deleteFoodstoreReview">
+		delete from tbl_review
+		where parent_code = #{food_store_code}
+	</delete> -->
 
 
 </mapper>

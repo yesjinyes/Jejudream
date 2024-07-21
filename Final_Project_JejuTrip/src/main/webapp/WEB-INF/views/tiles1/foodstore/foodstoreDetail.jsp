@@ -448,7 +448,6 @@ div#map {
 	    	else {
 	    		viewScheduleModal(); // 일정 모달 띄우기
 	    	}
-	    	
 	    });// end of $("button#btnSchedule").click(function() {})----------------
 	    
 
@@ -729,7 +728,7 @@ div#map {
 				, "currentShowPageNo":currentShowPageNo},
 			dataType:"json",
 			success:function(json) {
-				//console.log("리뷰 select 확인 : "+JSON.stringify(json));
+				console.log("리뷰 select 확인 : "+JSON.stringify(json));
 				
 				let v_html = ""; // 작성한 리뷰
 				let count_html = 0; // 리뷰 총 개수
@@ -835,35 +834,49 @@ div#map {
 	
 	/////////////// === 리뷰 끝 === ///////////////////////////////////////////////////////////////////////
 	
-	// == 숙소 랜덤 추천 == //
-/* 	function goRandomLodging() {
+
+	// == 맛집 삭제 == //
+	function goDeleteFoodstore(food_store_code) {
 		
-		$.ajax({
-			url:"randomLodging.trip",
-			data:form,
-			dataType:"json",
-			success:function(json) {
-				alert("숙소 랜덤 추천");
-				
-			},
-			error: function(request, status, error){
-            	alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
-            }
+		if(confirm("정말로 삭제하시겠습니까?")) {
 			
-		});// end of $.ajax--------------------- 
-		
-	}// end of function goRandomLodging()------------------------- */
+			$.ajax({
+				url:"<%= ctxPath%>/deleteFoodstore.trip",
+		        data: {"food_store_code" : food_store_code},
+		        type:"post",
+		        dataType:"json",
+		        success:function(json){
+		        	console.log("맛집 삭제 확인 : ", JSON.stringify(json));
+		        	
+		        	if(json.n == 1) {
+		        		alert("맛집이 삭제되었습니다.");
+		        		location.href = "<%= ctxPath%>/foodstoreList.trip"
+		        	}
+		        	else {
+		        		alert("맛집 삭제 실패");
+		        	}
+		        },
+		        error: function(request, status, error){
+					alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+				}
+				
+			});// end of $.ajax({})--------
+		}
+	
+	}// end of function goDelete()-------------------
+	
+	
 	
 </script>
 
 
 
 <div id="container">
-	<p>맛집 수정 및 삭제 / 하단 우측에 뭐 넣을지.. </p>
+	<p>하단 우측에 뭐 넣을지.. </p>
 	<c:if test="${sessionScope.loginuser.userid == 'admin'}">
 		<div style="width: 90%; margin: 3% auto;text-align: right;">
 			<button type="button" onclick="javascript:location.href='<%= ctxPath%>/editFoodstore.trip?food_store_code=${requestScope.foodstorevo.food_store_code}'" class="btn btn-secondary mr-2">맛집 수정</button>
-			<button type="button" onclick="goDelete()" class="btn btn-danger" >맛집 삭제</button>
+			<button type="button" onclick="goDeleteFoodstore('${requestScope.foodstorevo.food_store_code}')" class="btn btn-danger" >맛집 삭제</button>
 		</div>
 	</c:if>
 	

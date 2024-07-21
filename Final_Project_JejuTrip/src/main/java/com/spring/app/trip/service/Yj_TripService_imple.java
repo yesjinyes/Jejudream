@@ -171,12 +171,30 @@ public class Yj_TripService_imple implements Yj_TripService {
 	}
 
 
-	// == 맛집  수정하기 == //
+	// == 맛집  수정하기 (관리자) == //
 	@Override
 	public int editFoodEnd(FoodstoreVO foodstorevo) {
 		int n = dao.editFoodEnd(foodstorevo);
 		return n;
 	}
+
+
+	// == 맛집 삭제하기 (관리자) == //
+	@Override
+	public int deleteFoodstore(String food_store_code) {
+		
+		// 맛집 삭제
+		int n1 = dao.deleteFoodstore(food_store_code);
+		
+		// 맛집 삭제 시 리뷰도 삭제
+		// int n2 = dao.deleteFoodstoreReview(food_store_code);
+		
+		//System.out.println("n1*n2 확인 => " + n1*n2);
+		
+		//return n1*n2;
+		return n1;
+	}
+
 
 
 	
