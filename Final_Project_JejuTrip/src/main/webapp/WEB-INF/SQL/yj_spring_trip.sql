@@ -354,16 +354,37 @@ select *
 from tbl_food_store
 where food_store_code in (5316 , 5317);
 
-update tbl_food_store set food_name = '물꼬해녀의집' where food_store_code =5316;
+
+update tbl_food_store set orgfilename = '동백키친.jpg'
+where food_store_code = 5317
+
+commit;
+
+update tbl_food_store set food_category = '한식', local_status = '제주시 동부'
+where food_store_code =5316;
 commit;
 
 desc tbl_play;
 desc tbl_food_store;
 
 
+select *
+from tbl_food_store;
 
+select *
+from tbl_review
+where parent_code = 5323;
+
+commit;
 
 rollback;
+
+delete from tbl_food_store where food_store_code = 5407
+
+
+
+
+
 
 
 
