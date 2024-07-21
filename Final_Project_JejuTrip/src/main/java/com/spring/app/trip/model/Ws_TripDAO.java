@@ -77,5 +77,7 @@ public interface Ws_TripDAO {
 	List<MemberVO> searchJoinUserList(String joinUserName);// 공유자 명단 불러오기
 	int editSchedule_end(Calendar_schedule_VO svo);// 일정 수정 완료하기
 	int deleteSchedule(String scheduleno);// 일정삭제하기
+	String getCompanyidToTblReservation(String reservation_code);// 해당 예약에 관련된 companyid를 가져와야한다.
+	Map<String, String> getCompanyIdAndLodgingNameToTblReservationCode(String reservation_code);// 예약 코드를 가지고 업체아이디와 업체명을 가져오기
 
 }

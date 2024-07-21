@@ -1,7 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <% String ctxPath = request.getContextPath();%>
-
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <script type="text/javascript" src="<%=ctxPath%>/resources/js/jquery-3.7.1.min.js"></script>
 <%-- === #223. (웹채팅관련5) === --%>
@@ -41,15 +40,15 @@
 	
 	    const pathname = window.location.pathname; // 최초 '/' 부터 오른쪽에 있는 모든 주소창의 정보를 가져온다.
 	    // alert("pathname : " + pathname);
-	    // pathname : /board/chatting/multichat.action
+	    // pathname : /JejuDream/mypage_chatting_toCompany.trip
 	    
 	    const appCtx = pathname.substring(0,pathname.lastIndexOf("/")); // "전체 문자열".lastIndexOf("검사할 문자"); 
 	    // alert("appCtx : " + appCtx);
-	    // appCtx : /board/chatting
+	    // appCtx : /board
 	    
 	    const root = url + appCtx;
 	    // alert("root : " + root);
-	    // root : 192.168.0.191:9099/board/chatting
+	    // root : 192.168.0.191:9099/JejuDream
 	    
 	    const wsUrl = "ws://"+root+"/multichatstart.trip";
 		// 웹소켓통신을 하기위해서는 http:// 을 사용하는 것이 아니라 ws:// 을 사용해야 한다. 
@@ -250,9 +249,6 @@
    - 1:1 채팅(귓속말)을 하시려면 예를 들어, 채팅시 보이는 [이순신]대화내용 에서 이순신을 클릭하시면 됩니다.
    </div>
    <input type="hidden" id="to" placeholder="귓속말대상웹소켓.getId()"/>
-   <br/>
-   ♡ 귓속말대상 : <span id="privateWho" style="font-weight: bold; color: red;"></span>
-   <br>
    <button type="button" id="btnAllDialog" class="btn btn-secondary btn-sm">귀속말대화끊기</button>
    <br><br>
    현재접속자명단:<br/>
