@@ -101,7 +101,7 @@ div.info_block > textarea {
     color:gray;
 }
 
-input#food_main_img {
+input#attach {
 	width: 83.2%;
     max-width: 680px;
     height: 50px;

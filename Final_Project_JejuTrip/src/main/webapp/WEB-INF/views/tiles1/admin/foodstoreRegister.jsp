@@ -13,6 +13,9 @@ let checkName = false;
 let checkMobile = false;
 let checkContent = false;
 
+let file_arr = []; // 첨부된 파일 정보를 담아둘 배열
+let total_fileSize = 0;	
+
 $(function() {
 	
     $("span.error").hide();
@@ -192,7 +195,6 @@ $(function() {
     
     
 	<%-- === jQuery 를 사용하여 드래그앤드롭(DragAndDrop)을 통한 파일 업로드 시작 === --%>
-	let file_arr = []; // 첨부된 파일 정보를 담아둘 배열
 	
 	// == 파일 Drag & Drop 만들기 == //
 	$("div#fileDrop").on("dragenter", function(e) { /* "dragenter" 이벤트는 드롭대상인 박스 안에 Drag 한 파일이 최초로 들어왔을 때 */
@@ -609,7 +611,7 @@ function goRegister() {
             </div>
             <div class="d-flex justify-content-between mt-3">
             	<label for="food_main_img" class="mt-3 mr-2">대표 이미지</label>
-                <input type="file" name="food_main_img" id="food_main_img" class="ml-4">
+                <input type="file" name="attach" id="attach" class="ml-4">
                 <span class="error"></span>
             </div>
             <div class="d-flex justify-content-between mt-3">
@@ -622,7 +624,7 @@ function goRegister() {
         </div>
 
         <div style="text-align: center; margin-bottom: 13%;">
-            <button type="button" class="btn" id="registerBtn" onclick="goRegister('<%=ctxPath%>')">등록하기</button>
+            <button type="button" class="btn" id="registerBtn" onclick="goRegister()">등록하기</button>
         </div>
 
     </form>

@@ -616,5 +616,44 @@ public class Dy_TripService_imple implements Dy_TripService {
 		
 		return n;
 	}
+
+
+	// 댓글번호에 대한 댓글이 있는지 조회하기
+	@Override
+	public CommentVO getCommentInfo(String seq) {
+		
+		CommentVO commentvo = dao.getCommentInfo(seq);
+		
+		return commentvo;
+	}
+
+
+	// 커뮤니티 댓글 수정
+	@Override
+	public int updateComment(Map<String, String> paraMap) {
+		
+		int n = dao.updateComment(paraMap);
+		
+		return n;
+	}
+
+
+	// 커뮤니티 댓글 삭제 (Transaction 처리)
+	@Override
+	@Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.READ_COMMITTED, rollbackFor={Throwable.class})
+	public int deleteComment(Map<String, String> paraMap) throws Throwable {
+		
+		int n1=0, n2=0;
+		
+		// 댓글 삭제
+		n1 = dao.deleteComment(paraMap.get("seq"));
+		
+		if(n1 == 1) {
+			// 댓글 삭제 시 해당 글의 댓글 개수 1 감소
+			n2 = dao.decreaseCommentCount(paraMap.get("parentSeq"));
+		}
+		
+		return n1*n2;
+	}
 	
 }

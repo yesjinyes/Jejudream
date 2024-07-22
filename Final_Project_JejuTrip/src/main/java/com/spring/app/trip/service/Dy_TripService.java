@@ -100,5 +100,14 @@ public interface Dy_TripService {
 
 	// 커뮤니티 글 삭제 처리하기
 	int deleteBoard(Map<String, String> paraMap);
+
+	// 댓글번호에 대한 댓글이 있는지 조회하기
+	CommentVO getCommentInfo(String seq);
+
+	// 커뮤니티 댓글 수정
+	int updateComment(Map<String, String> paraMap);
+
+	// 커뮤니티 댓글 삭제 (Transaction 처리)
+	int deleteComment(Map<String, String> paraMap) throws Throwable;
 	
 }

@@ -183,6 +183,7 @@
 	    });
 	    
 	    
+	    // 내 댓글에서 '수정' 버튼을 누를 경우 (댓글 수정)
 	    $(document).on("click", "span#updateComment", function(e) {
 	    	
 	        // 클릭된 span#updateComment 요소에 대한 댓글 최상위 div
@@ -191,25 +192,36 @@
 	        // 원래 commentDiv의 html을 저장
 	        const originalHtml = commentDiv.html();
 	        
-	        const seq = $(this).parent().parent().siblings().find("input#cmt_seq").val();
-	        const orgContent = $(this).parent().parent().siblings().find("span#cmt_content").text();
+	        const seq = commentDiv.find("input#cmt_seq").val();
+	        const orgContent = commentDiv.find("span#cmt_content");
+	        const orgContentText = orgContent.text();
 	        
 	        let v_html = `<div style="border: solid 1px #a6a6a6; width: 97%; margin: 0 auto; padding: 1.5% 1%">
 	        				 <div class="d-flex justify-content-between">
 		        				 <span class="d-block mb-2">
+		        				 <%--
 		        				 	<input type="hidden" name="seq" value="\${seq}">
 		        				 	<input type="hidden" name="fk_userid" value="${sessionScope.loginuser.userid}">
+		        				 --%>
 		        				 	<input type="text" class="font-weight-bold" name="name" value="${sessionScope.loginuser.user_name}" style="border: none; background-color: #FAFAFA;" readonly>
 		        				 </span>
 		        				 <button type="button" class="btn cancel-btn" style="padding: 0 0.5% 0 0;">취소</button>
 	        				 </div>
-	        				 <textarea class="mb-2" id="new_content" name="content" style="width: 100%; height: 80px; border: none; background-color: #fafafa;" placeholder="댓글을 작성해주세요.">\${orgContent}</textarea>
-	 						 <div style="text-align: right;"><button type="button" class="btn" id="updateCommentBtn" onclick="goUpdateComment()" style="border: solid 1px #737373;">수정</button></div>
+	        				 <textarea class="mb-2" id="new_content" style="width: 100%; height: 80px; border: none; background-color: #fafafa;" placeholder="댓글을 작성해주세요.">\${orgContentText}</textarea>
+	 						 <div style="text-align: right;"><button type="button" class="btn" id="updateCommentBtn" style="border: solid 1px #737373;">수정</button></div>
 	        			  </div>`;
 	        
 	        commentDiv.html(v_html);
-	        $("textarea#new_content").focus();
 	        
+	     	// new_content에 포커스 될 때 커서를 맨 끝으로 이동
+            setTimeout(function() {
+		        const textarea = $("textarea#new_content");
+		        textarea.focus();
+		        const val = textarea.val();
+		        textarea.val('').val(val); // 텍스트 영역의 값을 업데이트 하여 커서를 끝으로 이동
+		    }, 0);
+	        
+	     	
 	        // 취소 버튼 클릭 이벤트 추가
 	        commentDiv.find(".cancel-btn").on("click", function() {
 	            commentDiv.html(originalHtml);
@@ -219,12 +231,13 @@
 	        // 댓글내용에서 엔터 클릭 시
 	        $("textarea#new_content").keyup(function(e) {
 	        	if(e.keyCode == 13) {
-	        		goUpdateComment();
+	        		$("button#updateCommentBtn").click();
 	        	}
 	        });
 	        
 	        
-	        function goUpdateComment() {
+	        // 댓글 수정
+	        $("button#updateCommentBtn").click(function() {
 	        	
 	        	const new_content = $("textarea#new_content").val().trim();
 	        	
@@ -232,14 +245,64 @@
 	        		alert("댓글 내용을 입력하세요!");
 	        		return;
 	        	}
-	        	/* 
+	        	
 	        	$.ajax({
-	        		
+	        		url: "<%=ctxPath%>/community/updateComment.trip",
+	        		data: {
+						"seq": seq,
+	        			"new_content": new_content
+	        		},
+	        		type: "post",
+	        		dataType: "json",
+	        		success: function(json) {
+	        			if(json.n == 1) {
+	        				// 현재 수정한 댓글이 있는 페이지를 보여준다.
+	        				const currentShowPageNo = commentDiv.parent().find("input.currentShowPageNo").val();
+	        				goViewComment(currentShowPageNo);
+	        			}
+	        		},
+	        		error: function(request, status, error){
+      					alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+      		      	}
 	        	});
-	        	 */
+	        	
+	        });
+	    }); // end of $(document).on("click", "span#updateComment", function(e) {}) ------------------
+	    
+	    
+	    // 내 댓글에서 '삭제' 버튼을 누를 경우 (댓글 삭제)
+	    $(document).on("click", "span#deleteComment", function(e) {
+	    	
+	    	// 클릭된 span#deleteComment 요소에 대한 댓글 최상위 div
+	        const commentDiv = $(this).parent().parent().parent();
+	    	
+	        const seq = commentDiv.find("input#cmt_seq").val();
+			
+	        if(confirm("댓글을 삭제하시겠습니까?")) {
+	        	
+	        	$.ajax({
+	        		url: "<%=ctxPath%>/community/deleteComment.trip",
+	        		data: {
+	        			"seq": seq,
+	        			"parentSeq": "${requestScope.boardvo.seq}"
+	        		},
+	        		type: "post",
+	        		dataType: "json",
+	        		success: function(json) {
+	        			if(json.n == 1) {
+	        				goViewComment(1);
+	        				
+	        				var commentText = (json.newCommentCount == 0) ? '댓글 쓰기' : `댓글 \${json.newCommentCount}`;
+	        			    $("span#commentText").html(commentText);
+	        			}
+	        		},
+	        		error: function(request, status, error){
+      					alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+      		      	}
+	        	});
 	        }
-	        
-	    });
+	    	
+	    }); // end of $(document).on("click", "span#deleteComment", function(e) {}) ---------------------------
 	    
 	}); // end of $(document).ready(function() {}) ---------------------
 	
@@ -390,6 +453,7 @@
 											<span class="font-weight-bold" style="margin-left: 1%; font-size: 1rem;">\${item.name}</span>
 										</div>
 										<input type="hidden" id="cmt_seq" value="\${item.seq}">
+										<input type="hidden" id="cmt_userid" value="\${item.fk_userid}">
 										<span class="d-block mb-2" id="cmt_content">\${item.content}</span>
 										<span class="d-block mb-2" id="cmt_regDate" style="font-size: 0.8rem; color: #8c8c8c;">\${item.regdate}</span>
 										<button type="button" class="btn" style="border: solid 1px #8c8c8c; font-size: 0.8rem; padding: 3px 6px;">답글</button>
@@ -402,12 +466,13 @@
 											<span><i class="fa-solid fa-ellipsis-vertical"></i></span>
 											<div class="options-menu" style="display: none;">
 												<span id="updateComment" class="d-block mb-1">수정</span>
-												<span class="d-block">삭제</span>
+												<span id="deleteComment" class="d-block">삭제</span>
 											</div>
 										 </div>`;
 						}
 						
-						v_html += `</div>`;
+						v_html += `</div>
+								   <input type="hidden" value="\${currentShowPageNo}" class="currentShowPageNo">`;
 						
 					}); // end of $.each() -------------------------------------------------
 					
@@ -556,8 +621,10 @@
 			<div id="cmtInfoBtn" class="cmt-no-drop text-center d-flex justify-content-between" style="width: 13%; padding: 0.5%;">
 				<div>
 					<i class="fa-solid fa-comment-dots"></i>
-					<c:if test="${requestScope.boardvo.commentCount == 0}">댓글 쓰기</c:if>
-					<c:if test="${requestScope.boardvo.commentCount > 0}">댓글 ${requestScope.boardvo.commentCount}</c:if>
+					<span id="commentText">
+						<c:if test="${sessionScope.commentCount == 0}">댓글 쓰기</c:if>
+						<c:if test="${sessionScope.commentCount > 0}">댓글 ${sessionScope.commentCount}</c:if>
+					</span>
 				</div>
 				<div id="cmtDropdownBar"><i class="fa-solid fa-angle-down"></i></div>
 			</div>
