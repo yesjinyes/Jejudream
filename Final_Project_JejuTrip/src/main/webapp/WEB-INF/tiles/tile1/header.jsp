@@ -99,8 +99,6 @@ $(document).ready(function() {
 	
 	whatWeather();
     
-	loopshowNowTime();
-	
 	// 1분마다 whatWeather 함수 호출
     setInterval(whatWeather, 60000);
 	
@@ -119,57 +117,7 @@ $(document).ready(function() {
     
 });
 
-function showNowTime() {
-	
-	const now = new Date();
 
-	let month = now.getMonth() + 1;
-	if(month < 10) {
-		month = "0"+month;
-	}
-	
-	let date = now.getDate();
-	if(date < 10) {
-		date = "0"+date;
-	}
-	
-	let strNow = now.getFullYear() + "/" + month + "/" + date;
-	
-	let hour = "";
-    if(now.getHours() < 10) {
-    	 hour = "0"+now.getHours();
-    } 
-    else {
-    	hour = now.getHours();
-    }
-	
-    
-	let minute = "";
-	if(now.getMinutes() < 10) {
-		minute = "0"+now.getMinutes();
-	} else {
-		minute = now.getMinutes();
-	}
-	
-
-	strNow += " "+hour + ":" + minute;
-	
-	t_html = "날씨기준 : " + strNow; 
-	
-	$("span#wtime").text(t_html);
-	
-}// end of showNowTime()
-	
-function loopshowNowTime() {
-	showNowTime();
-	
-	const timejugi = 1000 * 60;  // 시간을 1분 마다 자동 갱신하려고.
-	
-	setTimeout(function() {
-					loopshowNowTime();	
-				}, timejugi);
-	
-} // end of loopshowNowTime() --------------------------
 
 function whatWeather(){
 	
@@ -213,22 +161,27 @@ function whatWeather(){
 			    	local_desc = $(local).attr("desc");
 					
 					switch (local.attr("desc")) {
-					  
-					case "구름조금":
+					
 					case "구름많음":
 					case "흐림":
 					    icon = "흐린슉슉이.png";
 					    break;
 					    
 					case "맑음":
+					case "구름조금":	
 						icon = "맑음슉슉이.png";
 					    break;
+					    
+					case "천둥번개":
+					case "소나기":	
+						icon = "번개슉슉이.png";
+					    break;    
 					    
 					case "비":
 					case "가끔 비":
 					case "한때 비":
 					case "비 또는 눈":
-						icon = "맑음슉슉이.png";
+						icon = "비오는슉슉이.png";
 					    break;
 					    
 					case "눈":

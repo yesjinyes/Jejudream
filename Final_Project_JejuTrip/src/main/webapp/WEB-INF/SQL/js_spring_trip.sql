@@ -1041,8 +1041,7 @@ create table tbl_board
     
     select * from tbl_like where parent_code = 5214;
     
-    select * from tbl_food_add_img;
-    select * from tbl_play_add_img;
+   select * from tbl_member;
     
     
     select * from tbl_room_detail;
@@ -1077,6 +1076,7 @@ create table tbl_board
        		   to_char(R.check_in, 'yyyy-mm-dd hh24:mi') AS check_in
 		FROM tbl_member M JOIN (select * from tbl_reservation 
         where mailsendcheck = 0 and status = 1 and
+              reservation_date > check_in - (interval '5' hour) and 
               to_char(check_in,'yyyymmdd') = to_char(sysdate+1,'yyyymmdd') ) R 
 		ON M.userid = R.fk_userid
     
