@@ -69,6 +69,7 @@ delete from tbl_food_store purge;
 
 commit;
 
+desc tbl_food_store;
 
 
 
@@ -341,53 +342,20 @@ values(seq_scheduleno.nextval, '2024-07-30 17:30:00', 'yy6037');
 
 ------------------------------------------------------
 
-desc TBL_CALENDAR_SCHEDULE;
-
-delete from tbl_review
-where fk_userid = 'yejin'
-
-delete from TBL_CALENDAR_SCHEDULE
-where fk_userid = 'yy6037'
+delete from tbl_food_store
+where food_name = '물꼬해녀의집';
 
 commit;
-
-
-desc tbl_food_store;
-
 
 select *
-from tbl_food_store
-where food_store_code in (5316 , 5317);
+from tbl_food_add_img
 
 
-update tbl_food_store set orgfilename = '동백키친.jpg'
-where food_store_code = 5317
 
-commit;
-
-update tbl_food_store set food_category = '한식', local_status = '제주시 동부'
-where food_store_code =5316;
-commit;
-
-desc tbl_play;
-desc tbl_food_store;
-
-
-select *
-from tbl_food_store;
+delete from tbl_food_store;
 
 commit;
 
-rollback;
-
-select * from tbl_food_add_img;
 
 
-desc tbl_food_store;
 
-select * from user_sequences;
-
-select * from user_tables;
-
-
-select * from TBL_LOCAL;

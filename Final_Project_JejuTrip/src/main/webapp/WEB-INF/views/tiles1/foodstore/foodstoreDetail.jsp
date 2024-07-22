@@ -881,7 +881,9 @@ div#map {
 	</c:if>
 	
 	<div class="imgcrop">
-		<img class="imgAdd img-fluid" src="<%= ctxPath %>/resources/images/foodimg/${requestScope.foodstorevo.food_name}_add1.jpg" alt="..." />
+		<c:forEach var="addimgList" items="${requestScope.addimgList}" begin="0" end="0">
+			<img class="imgAdd img-fluid" src="<%= ctxPath %>/resources/images/foodimg/${addimgList.food_add_img}" alt="..." />
+		</c:forEach>
 		<div class="div_img_text">
 			<p class="main_img_title">${requestScope.foodstorevo.food_name}</p>
 			<p class="main_img_content">${requestScope.foodstorevo.food_content}</p>
@@ -901,7 +903,20 @@ div#map {
 					<li data-target="#carousel-images" data-slide-to="2"></li>
 				</ol>
 				<div class="carousel-inner">
-					<div class="carousel-item active">
+					<c:forEach var="addimgList" items="${requestScope.addimgList}" varStatus="status">
+						<c:if test="${status.index == 0}">
+							<div class="carousel-item active">
+								<img class="carousel-img" src="<%= ctxPath %>/resources/images/foodimg/${addimgList.food_add_img}" class="d-block w-100" alt="...">
+							</div>
+						</c:if>
+						<c:if test="${status.index > 0}">
+							<div class="carousel-item">
+								<img class="carousel-img" src="<%= ctxPath %>/resources/images/foodimg/${addimgList.food_add_img}" class="d-block w-100" alt="...">
+							</div>
+						</c:if>
+					</c:forEach>
+				
+					<%-- <div class="carousel-item active">
 						<img class="carousel-img" src="<%= ctxPath %>/resources/images/foodimg/${requestScope.foodstorevo.food_name}_add3.jpg" class="d-block w-100" alt="...">
 					</div>
 					<div class="carousel-item">
@@ -909,7 +924,7 @@ div#map {
 					</div>
 					<div class="carousel-item">
 						<img class="carousel-img" src="<%= ctxPath %>/resources/images/foodimg/${requestScope.foodstorevo.food_name}_add1.jpg" class="d-block w-100" alt="...">
-					</div>
+					</div> --%>
 				</div>
 				<a class="carousel-control-prev" href="#carousel-images" role="button" data-slide="prev">
 					<span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -1137,9 +1152,12 @@ div#map {
 			<div class="col-md-4 border rounded">
 				<div>
 					<h3 class="mb-4 mt-4 ml-3">어떤걸 넣지</h3>
-					<div> 
+					<div>
+						
+					 
 						<div id="randomLodging">
 						</div>
+						
 					</div>
 				</div>
 			</div>

@@ -305,7 +305,7 @@ span#data {
 						else if(item.status == 1){
 							v_html_side += `<div class="border rounded p-3 mb-3">
 											    <div class="recommend-img">
-										            <img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/\${item.food_main_img}" onclick="goDetailRecommend(\${item.random_recommend_code})" style="cursor: pointer;" alt="..." />
+										            <img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodimg/\${item.food_main_img}" onclick="goDetailRecommend(\${item.random_recommend_code})" style="cursor: pointer;" alt="..." />
 										        </div>
 										        <div class="mt-2">
 										        	<span>\${item.food_name}</span><br>

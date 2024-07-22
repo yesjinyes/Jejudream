@@ -72,6 +72,8 @@ public interface Yj_TripService {
 	int deleteFoodstore(String food_store_code);
 
 
+
+
 	
 
 

@@ -196,6 +196,7 @@ public class Yj_TripController {
 		String food_store_code = "";
 		food_store_code = request.getParameter("food_store_code");
 		
+		
 		// System.out.println("-------------------------------------------------------");
 		// System.out.println("## 확인용 food_store_code => "+ food_store_code);
 		// System.out.println("## 확인용 random_recommend_code => "+ random_recommend_code);
@@ -239,6 +240,10 @@ public class Yj_TripController {
 		///////////////////////////////////////////////////////
 	
 		List<Map<String, String>> addimgList = service.viewfoodaddImg(paraMap); // 맛집 상세 추가 이미지
+		
+//		for(Map<String, String> img : addimgList) {
+//			System.out.println("~~ 추가이미지 확인중 => "+img);
+//		}
 		
 		mav.addObject("foodstorevo", foodstorevo);
 		
