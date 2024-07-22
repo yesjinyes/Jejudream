@@ -425,7 +425,6 @@ public class Dy_TripController {
 //			System.out.println("~~~ 확인용 webapp 의 절대경로 => " + root); 
 			
 			path = root + "resources" + File.separator + "images" + File.separator + "foodimg";     
-	        System.out.println(path);
 //	        System.out.println("~~~ 확인용 path => " + path);
 	        // ~~~ 확인용 path => C:\NCS\workspace_spring_framework\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\Final_Project_JejuTrip\resources\images\foodimg
 	        
@@ -537,7 +536,7 @@ public class Dy_TripController {
                     e.printStackTrace();
                 }
             }
-        }
+        } // end of for --------------------------------
         // ★★★★★ ##### 추가이미지 처리해주기 끝 ##### ★★★★★
         
         
@@ -594,7 +593,7 @@ public class Dy_TripController {
 				jsonObj.put("result", 0);
 			}
 
-		} else if(n1 == 1 && n_attachCount <= 0) {
+		} else if(n1 == 1 && n_attachCount == 0) {
 			jsonObj.put("result", 1);
 			
 		} else {

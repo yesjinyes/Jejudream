@@ -7,6 +7,18 @@
 <%-- Main CSS --%>
 <link rel="stylesheet" href="<%=ctxPath%>/resources/css/admin/foodstoreRegister.css">
 
+<style>
+    div.fileList span.delete {
+        cursor: pointer;
+        color: red;
+        font-weight: bold;
+    }
+    
+    div.fileList span.delete:hover {
+    	opacity: 0.6;
+    }
+</style>
+
 <script type="text/javascript">
 
 let checkName = false;
@@ -71,7 +83,7 @@ $(function() {
             $(e.target).next().text("식당명을 입력해주세요.");
             checkName = false;
 
-    	} else if(food_name.length < 5 || food_name.length > 20) {
+    	} else if(food_name.length < 2 || food_name.length > 20) {
             $(e.target).addClass("input_error");
             $(e.target).next().show();
             $(e.target).next().text("식당명은 2자 이상 20자 이내로만 입력해주세요.");
@@ -274,11 +286,12 @@ $(function() {
 	            */
 	           
 				html += 
-                   "<div class='fileList'>" +
-                       "<span class='delete'>&times;</span>" +
+                   "<div class='fileList d-flex justify-content-between' style='width: 100%;'>" +
+                   	   "<div>" +
+                       "<span class='delete mr-2'>&times;</span>" +
                        "<span class='fileName'>" + fileName + "</span>" +
-                       "<span class='fileSize'>" + fileSize + " MB</span>" +
-                       "<span class='clear'></span>" +
+                       "</div>" +
+                       "<span class='fileSize mr-3'>" + fileSize + " MB</span>" +
                    "</div>";
 				$(this).append(html);
 				
@@ -308,7 +321,7 @@ $(function() {
 			               deleteCount - 삭제할 요소 개수
 		--%>
 		
-		$(e.target).parent().remove(); // div.fileList 태그 아예 삭제
+		$(e.target).parent().parent().remove(); // div.fileList 태그 아예 삭제
 		
 	});
 	<%-- === jQuery 를 사용하여 드래그앤드롭(DragAndDrop)을 통한 파일 업로드 끝 === --%>
@@ -457,13 +470,13 @@ function goRegister() {
             contentType: false,  // 파일 전송 시 설정 ★★★
             dataType: "json",
             success: function(json) {
-                if(json.n == 1) {
+                if(json.result == 1) {
                     alert("등록이 성공되었습니다.");
-                    location.href = ctxPath + "/index.trip";
+                    location.href = "<%=ctxPath%>/foodstoreList.trip";
 
                 } else {
                     alert("등록에 실패했습니다.");
-                    history.back();
+                    location.href = "<%=ctxPath%>/index.trip";
                 }
             },
             error: function(request, status, error) {
