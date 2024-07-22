@@ -361,16 +361,25 @@
 	<!-- 댓글 목록 불러오기 -->
 	<select id="getViewComment" parameterType="HashMap" resultType="CommentVO">
 		SELECT seq, fk_userid, name, content, regDate
-			 , groupno, fk_seq, depthno
+		     , parentseq, status, groupno, fk_seq, depthno
 		FROM
 		(
-		    select row_number() over(order by seq desc) AS rno
-		         , seq, fk_userid, name, content, to_char(regDate, 'yyyy-mm-dd hh24:mi') AS regDate
-		         , groupno, fk_seq, depthno
-		    from tbl_comment
-		    where status = 1 and parentSeq = #{parentSeq}
-		) V
-		where V.rno between #{startRno} and #{endRno}
+		    SELECT rownum AS RNO
+		         , seq, fk_userid, name, content, regDate
+		         , parentseq, status, groupno, fk_seq, depthno
+		    FROM
+		    (
+		        select seq, fk_userid, name, content
+		             , to_char(regDate, 'yyyy-mm-dd hh24:mi') AS regDate
+		             , parentseq, status, groupno, fk_seq, depthno
+		        from tbl_comment
+		        where parentSeq = #{parentSeq}
+		        start with fk_seq = 0
+		        connect by prior seq = fk_seq
+		        order siblings by groupno desc, seq asc
+		    ) V
+		) T  
+		WHERE RNO between #{startRno} and #{endRno}
 	</select>
 	
 	

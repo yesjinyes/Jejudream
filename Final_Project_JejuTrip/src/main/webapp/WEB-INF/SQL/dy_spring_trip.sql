@@ -249,3 +249,33 @@ from tbl_comment;
 
 
 
+
+-- 댓글 목록 조회 (답댓글 포함)
+SELECT seq, fk_userid, name, content, regDate
+     , parentseq, status, groupno, fk_seq, depthno
+FROM
+(
+    SELECT rownum AS RNO
+         , seq, fk_userid, name, content, regDate
+         , parentseq, status, groupno, fk_seq, depthno
+    FROM
+    (
+        select seq, fk_userid, name, content
+             , to_char(regDate, 'yyyy-mm-dd hh24:mi') AS regDate
+             , parentseq, status, groupno, fk_seq, depthno
+        from tbl_comment
+        where status = 1 and parentSeq = 14
+        start with fk_seq = 0
+        connect by prior seq = fk_seq
+        order siblings by groupno desc, seq asc
+    ) V
+) T  
+WHERE RNO between 1 and 5;
+
+
+
+
+
+
+
+

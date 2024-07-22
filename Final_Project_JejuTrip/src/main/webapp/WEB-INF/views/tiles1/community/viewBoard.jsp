@@ -396,6 +396,12 @@
 	    });
 	    
 	    
+	    $(document).on("keyup", "textarea#reply_content", function(e) {
+	    	if(e.keyCode == 13) {
+	    		$("button#replyCommentBtn").click();
+	    	}
+	    })
+	    
 	}); // end of $(document).ready(function() {}) ---------------------
 	
 	
@@ -539,6 +545,11 @@
 				
 				if(json.length > 0) {
 					$.each(json, function(index, item) {
+						
+						// status == 1일 때
+						// 자식이 있고, status == 0 일 때 => '삭제된 댓글입니다' 표시
+						// 자식이 없고, status == 1 일 때 => 그냥 안 보이게
+						// depthno > 0 일 때 (==> 답댓글)
 						
 						v_html += `<div id="comment\${index}" class="comment">
 									<div class="d-flex" style="padding: 1.5% 0">
