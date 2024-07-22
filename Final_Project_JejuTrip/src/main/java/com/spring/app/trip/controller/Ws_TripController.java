@@ -2192,6 +2192,7 @@ public class Ws_TripController {
 		String companyid = request.getParameter("companyid");
 		
 		String chatting_key = reservation_code + "_" + request.getParameter("userid") + "_" + companyid;
+		String status = request.getParameter("status");
 		
 		MemberVO chattinguser = new MemberVO();
 		chattinguser.setUser_name(request.getParameter("name"));
@@ -2199,6 +2200,7 @@ public class Ws_TripController {
 		HttpSession session = request.getSession();
 		session.setAttribute("chattinguser", chattinguser);
 		session.setAttribute("chatting_key", chatting_key);
+		session.setAttribute("status", status);
 		
 		return "reservationChatToCompany";
 	}

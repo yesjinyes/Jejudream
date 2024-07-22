@@ -79,5 +79,6 @@ public interface Ws_TripDAO {
 	int deleteSchedule(String scheduleno);// 일정삭제하기
 	String getCompanyidToTblReservation(String reservation_code);// 해당 예약에 관련된 companyid를 가져와야한다.
 	Map<String, String> getCompanyIdAndLodgingNameToTblReservationCode(String reservation_code);// 예약 코드를 가지고 업체아이디와 업체명을 가져오기
+	void insert_send_chatting(Map<String, String> chatMap);// 채팅을 보냈다는 기록을 남겨준다.
 
 }

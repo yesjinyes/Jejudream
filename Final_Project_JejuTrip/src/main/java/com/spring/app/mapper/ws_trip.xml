@@ -1013,4 +1013,9 @@
 		on L.lodging_code = D.fk_lodging_code
 		where R.reservation_code = #{reservation_code}
     </select>
+    
+    <!-- 채팅을 보냈다는 기록을 남겨준다. -->
+    <insert id="insert_send_chatting" parameterType="HashMap">
+    	insert into tbl_chattinglog (to_id, from_id, status) values(#{to_id},#{from_id},0)
+    </insert>
 </mapper>
