@@ -2197,6 +2197,8 @@ public class Ws_TripController {
 	@GetMapping("/reservationChatToCompany.trip")
 	public String reservationChatToCompany(HttpServletRequest request, HttpServletResponse response) {
 		
+		service.update_chattinglog(request.getParameter("reservation_code"));// 채팅 로그 테이블에 해당 예약건에 관련한 채팅을 읽음처리한다.
+		
 		String reservation_code = request.getParameter("reservation_code");
 		// 해당 예약에 관련된 companyid를 가져와야한다.
 		
@@ -2204,12 +2206,20 @@ public class Ws_TripController {
 		
 		String chatting_key = reservation_code + "_" + request.getParameter("userid") + "_" + companyid;
 		String status = request.getParameter("status");
-		
-		MemberVO chattinguser = new MemberVO();
-		chattinguser.setUser_name(request.getParameter("name"));
-		chattinguser.setUserid(request.getParameter("userid"));
 		HttpSession session = request.getSession();
-		session.setAttribute("chattinguser", chattinguser);
+		if(status.equals("1")) {
+			MemberVO chattinguser = new MemberVO();
+			chattinguser.setUser_name(request.getParameter("name"));
+			chattinguser.setUserid(request.getParameter("userid"));
+			session.setAttribute("chattinguser", chattinguser);
+		}
+		else {
+			MemberVO chattinguser = new MemberVO();
+			chattinguser.setUser_name(request.getParameter("lodging_name"));
+			chattinguser.setUserid(request.getParameter("companyid"));
+			session.setAttribute("chattinguser", chattinguser);
+		}
+		
 		session.setAttribute("chatting_key", chatting_key);
 		session.setAttribute("status", status);
 		
@@ -2221,7 +2231,8 @@ public class Ws_TripController {
 		
 		HttpSession session = request.getSession();
 		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
-		
+		CompanyVO loginCompanyuser = (CompanyVO)session.getAttribute("loginCompanyuser");
+		int newChattingCnt = 0;
 		if(loginuser != null && loginuser.getUserid().equals("admin")) {
 			// 로그인한 유저가 개인 유저이면서 그 아이디가 관리자 아이디라면
 			mav.setViewName("mypage/admin/support.tiles1");
@@ -2230,12 +2241,94 @@ public class Ws_TripController {
 			// 로그인한 유저가 개인 유저이면서 그 아이디가 일반 회원의 아이디라면
 			mav.setViewName("mypage/member/support.tiles1");
 		}
-		else {
+		else if(loginCompanyuser != null){
 			// 로그인한 유저가 기업유저라면
 			mav.setViewName("mypage/company/support.tiles1");
+			newChattingCnt = service.get_new_chatting(loginCompanyuser.getCompanyid());// 로그인을 하고 메인에 들어갔을 때 새로 온 채팅이 있는지 확인해준다.
+			mav.addObject("newChattingCnt",newChattingCnt);
 		}
 		
 		return mav;
 		
+	}
+	
+	@GetMapping("/mypage_company_chatting.trip")
+	public ModelAndView mypage_company_chatting(ModelAndView mav, HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		CompanyVO loginCompanyuser = (CompanyVO)session.getAttribute("loginCompanyuser");
+		int newChattingCnt = 0;
+		if(loginCompanyuser != null){
+			// 로그인한 유저가 기업유저라면
+			newChattingCnt = service.get_new_chatting(loginCompanyuser.getCompanyid());// 로그인을 하고 메인에 들어갔을 때 새로 온 채팅이 있는지 확인해준다.
+			mav.addObject("newChattingCnt",newChattingCnt);
+		}
+		
+		mav.setViewName("mypage/company/mypage_company_chatting.tiles1");
+		return mav;
+	}
+	
+	
+	// 페이징 처리한 업체의 채팅 리스트 가져오기
+	@ResponseBody
+	@PostMapping(value="/companyAllChattingListJSON.trip", produces="text/plain;charset=UTF-8") 
+	public String companyAllChattingListJSON(HttpServletRequest request) {
+
+		String currentShowPageNo = request.getParameter("currentShowPageNo"); 
+		
+		if(currentShowPageNo == null) {
+			currentShowPageNo = "1";
+		}
+		
+		
+		int sizePerPage = 5; // 한 페이지당 5개의 댓글을 보여줄 것임.
+		int startRno = ((Integer.parseInt(currentShowPageNo) - 1) * sizePerPage) + 1; // 시작 행번호 
+		int endRno = startRno + sizePerPage - 1; // 끝 행번호
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("startRno", String.valueOf(startRno));
+		paraMap.put("endRno", String.valueOf(endRno));
+		paraMap.put("companyid", request.getParameter("companyid"));
+		paraMap.put("status", request.getParameter("status"));
+		// 기업으로 온 모든 채팅 목록을 읽어온다.
+		List<Map<String,String>> chattingList = service.select_company_all_chatting_paging(paraMap);
+		int totalCount = service.getTotalCompanyChattingCount(paraMap); // 페이징 처리시 보여주는 순번을 나타내기 위한 것임.
+		
+		JSONArray jsonArr = new JSONArray(); // [] 
+		if(chattingList != null) {
+			for(Map<String,String> reservationMap : chattingList) {
+				JSONObject jsonObj = new JSONObject(); 
+				
+				jsonObj.put("fk_reservation_code", reservationMap.get("fk_reservation_code"));
+				jsonObj.put("lodging_name", reservationMap.get("lodging_name"));
+				jsonObj.put("room_name", reservationMap.get("room_name"));
+				jsonObj.put("user_name", reservationMap.get("user_name"));
+				jsonObj.put("chatting_date", reservationMap.get("chatting_date"));
+				jsonObj.put("status", reservationMap.get("status"));
+				
+				jsonObj.put("totalCount", totalCount);   // 페이징 처리시 보여주는 순번을 나타내기 위한 것임.
+				jsonObj.put("sizePerPage", sizePerPage); // 페이징 처리시 보여주는 순번을 나타내기 위한 것임. 
+				
+				jsonArr.put(jsonObj);
+			}// end of for-----------------------
+		}
+		
+		
+		return jsonArr.toString(); 
+	}
+	
+	// 채팅에 해당하는 고객 아이디와 이름을 가져온다.
+	@ResponseBody
+	@PostMapping(value="/getMemberIdAndNameJSON.trip", produces="text/plain;charset=UTF-8") 
+	public String getMemberIdAndNameJSON(HttpServletRequest request) {
+
+		String reservation_code = request.getParameter("reservation_code");
+		
+		Map<String,String> map = service.getMemberIdAndNameToTblReservationCode(reservation_code);
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("userid", map.get("userid"));
+		jsonObj.put("user_name", map.get("user_name"));
+		jsonObj.put("lodging_name", map.get("lodging_name"));
+		return jsonObj.toString();
 	}
 }

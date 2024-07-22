@@ -594,6 +594,41 @@ public class Ws_TripService_imple implements Ws_TripService {
 		return i;
 	}
 	
+	// 기업으로 온 모든 채팅 목록을 읽어온다.
+	@Override
+	public List<Map<String, String>> select_company_all_chatting_paging(Map<String, String> paraMap) {
+		List<Map<String, String>> mapList = dao.select_company_all_chatting_paging(paraMap);
+		return mapList;
+	}
+	
+	// 페이징 처리시 보여주는 순번을 나타내기 위한 것임.
+	@Override
+	public int getTotalCompanyChattingCount(Map<String, String> paraMap) {
+		int n = dao.getTotalCompanyChattingCount(paraMap);
+		return n;
+	}
+	
+	// 채팅에 해당하는 고객 아이디와 이름을 가져온다.
+	@Override
+	public Map<String, String> getMemberIdAndNameToTblReservationCode(String reservation_code) {
+		Map<String, String> map = dao.getMemberIdAndNameToTblReservationCode(reservation_code);
+		return map;
+	}
+	
+	// 채팅 로그 테이블에 해당 예약건에 관련한 채팅을 읽음처리한다.
+	@Override
+	public void update_chattinglog(String reservation_code) {
+		dao.update_chattinglog(reservation_code);
+		
+	}
+
+	// 채팅방에서 나가게되면 채팅 기록방에서 나가기 직전까지의 읽음 컬럼을 읽음처리로 바꿔준다.
+	@Override
+	public void update_chattinglog_after_chatting(Map<String, String> paraMap) {
+		dao.update_chattinglog_after_chatting(paraMap);
+		
+	}
+	
 	
 	
 
