@@ -230,6 +230,61 @@ public class Hs_TripService_imple implements Hs_TripService {
 	}
 	
 	
+	//모든 리뷰를 count 하기
+	@Override
+	public int getAllReviewCount(Map<String, String> paraMap) {
+		int n = dao.getAllReviewCount(paraMap);
+		return n;
+	}
+	
+	// 리뷰 List 
+	@Override
+	public List<ReviewVO> allReviewList(Map<String, String> paraMap) {
+		List<ReviewVO> allReviewList = dao.allReviewList(paraMap);
+		return allReviewList;
+	}
+	
+	
+	
+	
+	
+	@Override
+	public int getFoodReviewCount(Map<String, String> paraMap) {
+		int n = dao.getFoodReviewCount(paraMap);
+		return n;
+	}
+	@Override
+	public List<Map<String, String>> foodReviewList(Map<String, String> paraMap) {
+		List<Map<String, String>> foodReviewList = dao.foodReviewList(paraMap);
+		return foodReviewList;
+	}
+	
+	
+	@Override
+	public int getPlaytotalReviewCount(Map<String, String> paraMap) {
+		int n = dao.getPlaytotalReviewCount(paraMap);
+		return n;
+	}
+	@Override
+	public List<Map<String, String>> playReviewList(Map<String, String> paraMap) {
+		List<Map<String, String>> playReviewList = dao.playReviewList(paraMap);
+		return playReviewList;
+	}
+	
+	
+	
+	@Override
+	public int getLoginReviewCount(Map<String, String> paraMap) {
+		int n = dao.getLoginReviewCount(paraMap);
+		return n;
+	}
+	@Override
+	public List<Map<String, String>> loginReviewList(Map<String, String> paraMap) {
+		List<Map<String, String>> loginReviewList = dao.loginReviewList(paraMap);
+		return loginReviewList;
+	}
+	
+	
 	
 
 
