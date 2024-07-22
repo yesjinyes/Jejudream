@@ -290,10 +290,8 @@
 	        		dataType: "json",
 	        		success: function(json) {
 	        			if(json.n == 1) {
+	        				updateCommentCount();
 	        				goViewComment(1);
-	        				
-	        				var commentText = (json.newCommentCount == 0) ? '댓글 쓰기' : `댓글 \${json.newCommentCount}`;
-	        			    $("span#commentText").html(commentText);
 	        			}
 	        		},
 	        		error: function(request, status, error){
@@ -417,6 +415,7 @@
 				
 				if(json.n == 1) {
 //					alert("댓글 등록 성공!");
+					updateCommentCount();
 					goViewComment(1); // 페이징 처리한 댓글 읽어오기
 				}
 
@@ -430,6 +429,7 @@
 	} // end of function goAddComment() -----------------
 	
 	
+	// 댓글 목록 보기 (+페이징 처리)
 	function goViewComment(currentShowPageNo) {
 		
 		$.ajax({
@@ -534,6 +534,29 @@
 	} // end of function makeCommentPageBar(currentShowPageNo, totalPage) --------------
 	
 	
+	// 댓글 개수 업데이트하기
+	function updateCommentCount() {
+	    $.ajax({
+	        url: "<%=ctxPath%>/community/getCommentCount.trip",
+	        data: {
+	            "seq": "${requestScope.boardvo.seq}"
+	        },
+	        type: "post",
+	        dataType: "json",
+	        success: function(json) {
+	            	if(json.commentCount > 0) {
+		                $('span#commentText').html(`댓글 \${json.commentCount}`);
+	            		
+	            	} else {
+		                $('span#commentText').html(`댓글 쓰기`);
+	            	}
+	        },
+	        error: function(request, status, error){
+	            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+	        }
+	    });
+	}
+	
 </script>
 
 <div style="background-color: rgba(242, 242, 242, 0.4); border: solid 1px rgba(242, 242, 242, 0.4);">
@@ -622,8 +645,8 @@
 				<div>
 					<i class="fa-solid fa-comment-dots"></i>
 					<span id="commentText">
-						<c:if test="${sessionScope.commentCount == 0}">댓글 쓰기</c:if>
-						<c:if test="${sessionScope.commentCount > 0}">댓글 ${sessionScope.commentCount}</c:if>
+						<c:if test="${requestScope.boardvo.commentCount == 0}">댓글 쓰기</c:if>
+						<c:if test="${requestScope.boardvo.commentCount > 0}">댓글 ${requestScope.boardvo.commentCount}</c:if>
 					</span>
 				</div>
 				<div id="cmtDropdownBar"><i class="fa-solid fa-angle-down"></i></div>

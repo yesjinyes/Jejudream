@@ -125,5 +125,8 @@ public interface Dy_TripDAO {
 	// 커뮤니티 댓글 삭제 시 해당 글의 댓글 개수 1 감소
 	int decreaseCommentCount(String parentSeq);
 
+	// 게시판 댓글 개수 알아오기
+	int getCommentCount(String seq);
+
 	
 }

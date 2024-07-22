@@ -433,6 +433,16 @@ public class Dy_TripDAO_imple implements Dy_TripDAO {
 		
 		return n;
 	}
+
+
+	// 게시판 댓글 개수 알아오기
+	@Override
+	public int getCommentCount(String seq) {
+		
+		int commentCount = sqlsession.selectOne("dy_trip.getCommentCount", seq);
+		
+		return commentCount;
+	}
 	
 
 }
