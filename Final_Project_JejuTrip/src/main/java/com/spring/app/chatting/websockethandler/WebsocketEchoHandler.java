@@ -4,9 +4,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.socket.CloseStatus;
@@ -15,6 +18,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import com.spring.app.trip.domain.MemberVO;
+import com.spring.app.trip.service.Ws_TripService;
 
 
 // === #226. (웹채팅관련8) === //
@@ -34,6 +38,10 @@ public class WebsocketEchoHandler extends TextWebSocketHandler{
 	
 	// === 몽고 DB 종료 === // 
 	
+	 @Autowired // Type에 따라 알아서 Bean 을 주입해준다.
+	 private Ws_TripService service;
+	 
+	 
 	public void init() throws Exception{}
 
 	// === 클라이언트가 웹소켓서버에 연결했을때의 작업 처리하기 ===
@@ -194,6 +202,7 @@ public class WebsocketEchoHandler extends TextWebSocketHandler{
       
       Map<String, Object> map = wsession.getAttributes(); 
       MemberVO loginuser = (MemberVO) map.get("chattinguser");
+      String status = String.valueOf(map.get("status"));
       // "loginuser" 은 HttpSession에 저장된 키 값으로 로그인 되어진 사용자이다.
       
       // System.out.println("===> 웹채팅확인용 : 로그인ID : " + loginuser.getUserid());
@@ -275,7 +284,20 @@ public class WebsocketEchoHandler extends TextWebSocketHandler{
         dto.setChatting_key(String.valueOf(map.get("chatting_key")));
       	chattingMongo.insertMessage(dto);
       	// ================== 몽고DB 끝 ============================== //
-      
+      	
+      	String[] chatting_key_arr = String.valueOf(map.get("chatting_key")).split("_");
+      	
+      	if(status.equals("1")) {
+      		Map<String,String> chatMap = new HashMap<>();
+      		String to_id = chatting_key_arr[2];
+      		String from_id = chatting_key_arr[1];
+      		String fk_reservation_code = chatting_key_arr[0];
+      		chatMap.put("to_id", to_id);
+      		chatMap.put("from_id", from_id);
+      		chatMap.put("fk_reservation_code", fk_reservation_code);
+      		service.insert_send_chatting(chatMap);// 채팅을 보냈다는 기록을 남겨준다. 추후에 이 기록을 토대로 페이지에 신규 채팅이 있는지 없는지 표시를 해주기위함이다.
+      	}
+      	
 	}
 	
 	// === 클라이언트가 웹소켓서버와의 연결을 끊을때 작업 처리하기 ===

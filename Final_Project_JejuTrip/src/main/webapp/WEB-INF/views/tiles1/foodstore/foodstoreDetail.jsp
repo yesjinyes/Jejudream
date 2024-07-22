@@ -448,7 +448,6 @@ div#map {
 	    	else {
 	    		viewScheduleModal(); // 일정 모달 띄우기
 	    	}
-	    	
 	    });// end of $("button#btnSchedule").click(function() {})----------------
 	    
 
@@ -729,7 +728,7 @@ div#map {
 				, "currentShowPageNo":currentShowPageNo},
 			dataType:"json",
 			success:function(json) {
-				//console.log("리뷰 select 확인 : "+JSON.stringify(json));
+				console.log("리뷰 select 확인 : "+JSON.stringify(json));
 				
 				let v_html = ""; // 작성한 리뷰
 				let count_html = 0; // 리뷰 총 개수
@@ -835,40 +834,56 @@ div#map {
 	
 	/////////////// === 리뷰 끝 === ///////////////////////////////////////////////////////////////////////
 	
-	// == 숙소 랜덤 추천 == //
-/* 	function goRandomLodging() {
+
+	// == 맛집 삭제 == //
+	function goDeleteFoodstore(food_store_code) {
 		
-		$.ajax({
-			url:"randomLodging.trip",
-			data:form,
-			dataType:"json",
-			success:function(json) {
-				alert("숙소 랜덤 추천");
-				
-			},
-			error: function(request, status, error){
-            	alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
-            }
+		if(confirm("정말로 삭제하시겠습니까?")) {
 			
-		});// end of $.ajax--------------------- 
-		
-	}// end of function goRandomLodging()------------------------- */
+			$.ajax({
+				url:"<%= ctxPath%>/deleteFoodstore.trip",
+		        data: {"food_store_code" : food_store_code},
+		        type:"post",
+		        dataType:"json",
+		        success:function(json){
+		        	console.log("맛집 삭제 확인 : ", JSON.stringify(json));
+		        	
+		        	if(json.n == 1) {
+		        		alert("맛집이 삭제되었습니다.");
+		        		location.href = "<%= ctxPath%>/foodstoreList.trip"
+		        	}
+		        	else {
+		        		alert("맛집 삭제 실패");
+		        	}
+		        },
+		        error: function(request, status, error){
+					alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+				}
+				
+			});// end of $.ajax({})--------
+		}
+	
+	}// end of function goDelete()-------------------
+	
+	
 	
 </script>
 
 
 
 <div id="container">
-	<p>맛집 수정 및 삭제 / 리뷰insert 이상하게 되네.. / 하단 우측에 뭐 넣을지.. </p>
+	<p>하단 우측에 뭐 넣을지.. </p>
 	<c:if test="${sessionScope.loginuser.userid == 'admin'}">
 		<div style="width: 90%; margin: 3% auto;text-align: right;">
 			<button type="button" onclick="javascript:location.href='<%= ctxPath%>/editFoodstore.trip?food_store_code=${requestScope.foodstorevo.food_store_code}'" class="btn btn-secondary mr-2">맛집 수정</button>
-			<button type="button" onclick="goDelete()" class="btn btn-danger" >맛집 삭제</button>
+			<button type="button" onclick="goDeleteFoodstore('${requestScope.foodstorevo.food_store_code}')" class="btn btn-danger" >맛집 삭제</button>
 		</div>
 	</c:if>
 	
 	<div class="imgcrop">
-		<img class="imgAdd img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgAdd/${requestScope.foodstorevo.food_name}_add1.jpg" alt="..." />
+		<c:forEach var="addimgList" items="${requestScope.addimgList}" begin="0" end="0">
+			<img class="imgAdd img-fluid" src="<%= ctxPath %>/resources/images/foodimg/${addimgList.food_add_img}" alt="..." />
+		</c:forEach>
 		<div class="div_img_text">
 			<p class="main_img_title">${requestScope.foodstorevo.food_name}</p>
 			<p class="main_img_content">${requestScope.foodstorevo.food_content}</p>
@@ -888,15 +903,28 @@ div#map {
 					<li data-target="#carousel-images" data-slide-to="2"></li>
 				</ol>
 				<div class="carousel-inner">
-					<div class="carousel-item active">
-						<img class="carousel-img" src="<%= ctxPath %>/resources/images/foodstore/imgAdd/${requestScope.foodstorevo.food_name}_add3.jpg" class="d-block w-100" alt="...">
+					<c:forEach var="addimgList" items="${requestScope.addimgList}" varStatus="status">
+						<c:if test="${status.index == 0}">
+							<div class="carousel-item active">
+								<img class="carousel-img" src="<%= ctxPath %>/resources/images/foodimg/${addimgList.food_add_img}" class="d-block w-100" alt="...">
+							</div>
+						</c:if>
+						<c:if test="${status.index > 0}">
+							<div class="carousel-item">
+								<img class="carousel-img" src="<%= ctxPath %>/resources/images/foodimg/${addimgList.food_add_img}" class="d-block w-100" alt="...">
+							</div>
+						</c:if>
+					</c:forEach>
+				
+					<%-- <div class="carousel-item active">
+						<img class="carousel-img" src="<%= ctxPath %>/resources/images/foodimg/${requestScope.foodstorevo.food_name}_add3.jpg" class="d-block w-100" alt="...">
 					</div>
 					<div class="carousel-item">
-						<img class="carousel-img" src="<%= ctxPath %>/resources/images/foodstore/imgAdd/${requestScope.foodstorevo.food_name}_add2.jpg" class="d-block w-100" alt="...">	      
+						<img class="carousel-img" src="<%= ctxPath %>/resources/images/foodimg/${requestScope.foodstorevo.food_name}_add2.jpg" class="d-block w-100" alt="...">	      
 					</div>
 					<div class="carousel-item">
-						<img class="carousel-img" src="<%= ctxPath %>/resources/images/foodstore/imgAdd/${requestScope.foodstorevo.food_name}_add1.jpg" class="d-block w-100" alt="...">
-					</div>
+						<img class="carousel-img" src="<%= ctxPath %>/resources/images/foodimg/${requestScope.foodstorevo.food_name}_add1.jpg" class="d-block w-100" alt="...">
+					</div> --%>
 				</div>
 				<a class="carousel-control-prev" href="#carousel-images" role="button" data-slide="prev">
 					<span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -972,7 +1000,7 @@ div#map {
 				                    	<label for="food_name" class="col-form-label">맛집 이름</label>
 				                        <input type="text" class="form-control schedule-input mb-3" id="food_name" name="food_name" readonly="readonly" value="${requestScope.foodstorevo.food_name}">
 				                        
-				                        <input type="hidden" id="parent_code" name="parent_code" value="${requestScope.foodstorevo.food_store_code}" />
+				                        <input type="hidden" id="food_store_code" name="food_store_code" value="${requestScope.foodstorevo.food_store_code}" />
 				                        <input type="hidden" id="food_address" name="food_address" value="${requestScope.foodstorevo.food_address}" />
 				                        
 				                        <label for="scheduleTitle" class="col-form-label">일정 제목</label>
@@ -1124,9 +1152,12 @@ div#map {
 			<div class="col-md-4 border rounded">
 				<div>
 					<h3 class="mb-4 mt-4 ml-3">어떤걸 넣지</h3>
-					<div> 
+					<div>
+						
+					 
 						<div id="randomLodging">
 						</div>
+						
 					</div>
 				</div>
 			</div>
@@ -1134,6 +1165,7 @@ div#map {
 	
 </div>
 <!-- container 끝 -->
+
 
 
 

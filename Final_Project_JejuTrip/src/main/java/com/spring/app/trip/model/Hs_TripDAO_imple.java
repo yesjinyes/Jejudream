@@ -180,6 +180,61 @@ public class Hs_TripDAO_imple implements Hs_TripDAO {
 		List<Calendar_schedule_VO> checkSchedule = sqlsession.selectList("hs_trip.checkSchedule",paraMap);
 		return checkSchedule;
 	}
+
+	
+	//모든 리뷰를 count 하기
+	@Override
+	public int getAllReviewCount(Map<String, String> paraMap) {
+		int n = sqlsession.selectOne("hs_trip.getAllReviewCount",paraMap);
+		return n;
+	}
+	
+	
+	// 리뷰 List
+	@Override
+	public List<ReviewVO> allReviewList(Map<String, String> paraMap) {
+		List<ReviewVO> allReviewList = sqlsession.selectList("hs_trip.allReviewList",paraMap);
+		return allReviewList;
+	}
+
+	
+	@Override
+	public int getFoodReviewCount(Map<String, String> paraMap) {
+		int n = sqlsession.selectOne("hs_trip.getFoodReviewCount",paraMap);
+		return n;
+	}
+
+	@Override
+	public List<Map<String, String>> foodReviewList(Map<String, String> paraMap) {
+		List<Map<String, String>> foodReviewList = sqlsession.selectList("hs_trip.foodReviewList",paraMap);
+		return foodReviewList;
+	}
+
+	
+	
+	@Override
+	public int getPlaytotalReviewCount(Map<String, String> paraMap) {
+		int n = sqlsession.selectOne("hs_trip.getPlaytotalReviewCount",paraMap);
+		return n;
+	}
+
+	@Override
+	public List<Map<String, String>> playReviewList(Map<String, String> paraMap) {
+		List<Map<String, String>> playReviewList = sqlsession.selectList("hs_trip.playReviewList",paraMap);
+		return playReviewList;
+	}
+
+	@Override
+	public int getLoginReviewCount(Map<String, String> paraMap) {
+		int n = sqlsession.selectOne("hs_trip.getLoginReviewCount",paraMap);
+		return n;
+	}
+
+	@Override
+	public List<Map<String, String>> loginReviewList(Map<String, String> paraMap) {
+		List<Map<String, String>> loginReviewList = sqlsession.selectList("hs_trip.loginReviewList",paraMap);
+		return loginReviewList;
+	}
 	
 	
 	

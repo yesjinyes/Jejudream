@@ -286,11 +286,11 @@ span#data {
 						if(item.status == 0){
 							v_html_main += `<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
 												<div class="imgMainList">
-										            <img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/\${item.food_main_img}" onclick="goDetail(\${item.food_store_code})" style="cursor: pointer;" alt="..." />
+										            <img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodimg/\${item.food_main_img}" onclick="goDetail(\${item.food_store_code})" style="cursor: pointer;" alt="..." />
 									        	</div>
 										        <div class="contentList">
 										            <div class="mb-3">
-										            	<h3 class="pt-3 title"><a href="foodstoreDetail.trip?food_store_code=\${item.food_store_code}">\${item.food_name}</a></h3>
+										            	<h3 class="pt-3 title"><a href="<%= ctxPath %>/foodstoreDetail.trip?food_store_code=\${item.food_store_code}">\${item.food_name}</a></h3>
 										            	<span>\${item.food_content}</span>
 										            </div>
 										            <div class="pb-3">
@@ -305,7 +305,7 @@ span#data {
 						else if(item.status == 1){
 							v_html_side += `<div class="border rounded p-3 mb-3">
 											    <div class="recommend-img">
-										            <img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/\${item.food_main_img}" onclick="goDetailRecommend(\${item.random_recommend_code})" style="cursor: pointer;" alt="..." />
+										            <img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodimg/\${item.food_main_img}" onclick="goDetailRecommend(\${item.random_recommend_code})" style="cursor: pointer;" alt="..." />
 										        </div>
 										        <div class="mt-2">
 										        	<span>\${item.food_name}</span><br>

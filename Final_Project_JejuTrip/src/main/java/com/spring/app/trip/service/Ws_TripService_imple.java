@@ -580,6 +580,20 @@ public class Ws_TripService_imple implements Ws_TripService {
 		return map;
 	}
 	
+	// 채팅을 보냈다는 기록을 남겨준다.
+	@Override
+	public void insert_send_chatting(Map<String, String> chatMap) {
+		dao.insert_send_chatting(chatMap);
+		
+	}
+
+	// 로그인을 하고 메인에 들어갔을 때 새로 온 채팅이 있는지 확인해준다.
+	@Override
+	public int get_new_chatting(String userid) {
+		int i = dao.get_new_chatting(userid);
+		return i;
+	}
+	
 	
 	
 

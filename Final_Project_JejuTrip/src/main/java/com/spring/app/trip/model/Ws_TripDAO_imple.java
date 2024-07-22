@@ -509,5 +509,19 @@ public class Ws_TripDAO_imple implements Ws_TripDAO {
 		Map<String,String> map = sqlsession.selectOne("ws_trip.getCompanyIdAndLodgingNameToTblReservationCode",reservation_code);
 		return map;
 	}
+	
+	// 채팅을 보냈다는 기록을 남겨준다.
+	@Override
+	public void insert_send_chatting(Map<String, String> chatMap) {
+		sqlsession.insert("ws_trip.insert_send_chatting",chatMap);
+		
+	}
+	
+	// 로그인을 하고 메인에 들어갔을 때 새로 온 채팅이 있는지 확인해준다.
+	@Override
+	public int get_new_chatting(String userid) {
+		int n = sqlsession.selectOne("ws_trip.get_new_chatting",userid);
+		return n;
+	}
 
 }

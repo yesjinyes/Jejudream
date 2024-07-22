@@ -240,4 +240,46 @@
 	</insert>
 
 
+	<!-- 맛집 수정을 위해 VO 에 있는 정보 불러오기  -->
+	<select id="getFoodstorevo" parameterType="String" resultType="FoodstoreVO">
+		select food_store_code, food_category, local_status, food_name, food_content, food_businesshours, food_mobile, food_address, food_main_img
+		from tbl_food_store
+		where food_store_code = #{food_store_code}
+	</select>
+
+
+	<!-- 맛집  수정하기  -->
+ 	<update id="editFoodEnd" parameterType="FoodstoreVO">
+		update tbl_food_store
+		set food_name = #{food_name},
+		    food_category = #{food_category},
+		    local_status = #{local_status},
+		    food_businesshours = #{food_businesshours}, 
+		    food_mobile = #{food_mobile},
+		    food_address = #{food_address},
+		    food_content = #{food_content}
+		<if test="fileName != null">
+			, food_main_img = #{fileName}
+			, filename = #{fileName}
+			, orgfilename = #{orgFilename}
+			, filesize = #{fileSize}
+		</if>
+		where food_store_code = #{food_store_code} 
+	</update>
+	
+	
+	<!-- 맛집 삭제하기 (관리자) -->
+	<delete id="deleteFoodstore" parameterType="String">
+		delete from tbl_food_store
+		where food_store_code = #{food_store_code}
+	</delete>
+
+
+	<!-- 맛집 삭제 시 리뷰도 삭제  -->
+<!-- 	<delete id="deleteFoodstoreReview">
+		delete from tbl_review
+		where parent_code = #{food_store_code}
+	</delete> -->
+
+
 </mapper>
