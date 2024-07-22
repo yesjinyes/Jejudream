@@ -8,35 +8,20 @@
 
 <script type="text/javascript">
     $(document).ready(function(){
-
+		
+    	
+    	
     	let currentShowPageNo = 1; // currentShowPageNo 초기값
     	goViewAllReviewList(currentShowPageNo); // 페이징처리된 리뷰보여주는 함수
     	goViewfoodReviewList(currentShowPageNo);
     	goViewPlayReviewList(currentShowPageNo);
     	goViewLoginReviewList(currentShowPageNo)
-    	const list = document.querySelectorAll('.list');
 
+        
     	
-        function activeLink() {
-            // 모든 네비게이션 항목에서 active 클래스를 제거합니다.
-            list.forEach((item) => item.classList.remove('active'));
-            // 클릭된 네비게이션 항목에 active 클래스를 추가합니다.
-            this.classList.add('active');
-        }
-
-        list.forEach((item) => {
-            item.addEventListener('click', function () {
-                // active 클래스를 변경하는 함수 호출
-                activeLink.call(this);
-                // iframe의 src 속성을 변경하여 콘텐츠를 로드
-                const link = this.getAttribute('data-link');
-                document.getElementById('contentFrame').src = link;
-            });
-        });
-        
-
-        
-    }); // end of $(document).ready(function(){
+    	
+    	
+    }); // end of $(document).ready(function(){}------------------------------------------------------------------------
     	
     	
 function goViewAllReviewList(currentShowPageNo){
@@ -54,16 +39,19 @@ function goViewAllReviewList(currentShowPageNo){
 	        if (json.length > 0) {    
 	           $.each(json, function(index, item){ 
 	                             
-	              v_html += "<tr>";
+	                v_html += "<tr>";
 	              	v_html += "<td>"+item.rno+"</td>";
-					if(item.review_division_R == 'A'){
-						v_html += "<td><span style='color:blue; font-weight:bold;'>숙소</span></td>";
-					}
+	              	if(item.review_division_R == 'A'){
+	              	    v_html += "<td><span style='font-weight:bold;'>숙소</span></td>";
+	              	  v_html += "<input type='hidden' value='<%= ctxPath%>/lodgingDetail.trip?lodging_code="+item.parent_code+"'>";
+	              	}
 					if(item.review_division_R == 'B'){
-						v_html += "<td><span style='color:green; font-weight:bold;'>맛집</span></td>";
+						v_html += "<td><span style='font-weight:bold;'>맛집</span></td>";
+						v_html += "<input type='hidden' value='<%= ctxPath%>/foodstoreDetail.trip?food_store_code="+item.parent_code+"'>";
 					}
 					if(item.review_division_R == 'C'){
-						v_html += "<td><span style='color:red; font-weight:bold;'>즐길거리</span></td>";
+						v_html += "<td><span style='font-weight:bold;'>즐길거리</span></td>";
+						v_html += "<input type='hidden' value='<%= ctxPath%>/goAddSchedule.trip?play_code="+item.parent_code+"'>"
 					}
 					v_html += "<td>"+item.review_content+"</td>";
 					v_html += "<td>"+item.registerday+"</td>";
@@ -84,6 +72,13 @@ function goViewAllReviewList(currentShowPageNo){
 	        }// end of else ---------------------
 	        $("tbody#all_review_tbody").html(v_html);
 	        $("span#reservation_reception").html(r_html);
+	        
+	        $("tbody#all_review_tbody tr").each(function() {
+                var link = $(this).find('input[type=hidden]').val();
+                $(this).find('td').click(function() {
+                    window.location.href = link;
+                });
+            });
 	    },
 	    error: function(request, status, error){
 	        alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
@@ -155,8 +150,9 @@ function goViewAllReviewList(currentShowPageNo){
 			              v_html += "<tr>";
 			              	v_html += "<td>"+item.rno+"</td>";
 							v_html += "<td>"+item.food_name+"</td>";
-							v_html += "<td>"+item.review_content+"</td>";
+		              	    v_html += "<td>"+item.review_content+"</td>";
 							v_html += "<td>"+item.registerday+"</td>";
+							v_html += "<input type='hidden' value='<%= ctxPath%>/foodstoreDetail.trip?food_store_code="+item.parent_code+"'>";
 							v_html += "</tr>";
 					    	
 					    	
@@ -174,6 +170,14 @@ function goViewAllReviewList(currentShowPageNo){
 			        }// end of else ---------------------
 			        $("tbody#food_review_tbody").html(v_html);
 			        $("span#food_count").html(r_html);
+			        
+			        $("tbody#food_review_tbody tr").each(function() {
+		                var link = $(this).find('input[type=hidden]').val();
+		                $(this).find('td').click(function() {
+		                    window.location.href = link;
+		                });
+		            });
+			        
 			    },
 			    error: function(request, status, error){
 			        alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
@@ -246,6 +250,7 @@ function goViewAllReviewList(currentShowPageNo){
 								v_html += "<td>"+item.play_name+"</td>";
 								v_html += "<td>"+item.review_content+"</td>";
 								v_html += "<td>"+item.registerday+"</td>";
+								v_html += "<input type='hidden' value='<%= ctxPath%>/goAddSchedule.trip?play_code="+item.parent_code+"'>";
 								v_html += "</tr>";
 						    	
 						    	
@@ -253,7 +258,7 @@ function goViewAllReviewList(currentShowPageNo){
 				           }); 
 				           
 				           const totalPage = Math.ceil(json[0].totalCount / json[0].sizePerPage);
-				           foodPageBar(currentShowPageNo, totalPage);
+				           playPageBar(currentShowPageNo, totalPage);
 				        }// end of if -----------------------
 				        
 				        else {
@@ -263,6 +268,14 @@ function goViewAllReviewList(currentShowPageNo){
 				        }// end of else ---------------------
 				        $("tbody#play_review_tbody").html(v_html);
 				        $("span#play_count").html(r_html);
+				        
+				        $("tbody#play_review_tbody tr").each(function() {
+			                var link = $(this).find('input[type=hidden]').val();
+			                $(this).find('td').click(function() {
+			                    window.location.href = link;
+			                });
+			            });
+				        
 				    },
 				    error: function(request, status, error){
 				        alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
@@ -273,7 +286,7 @@ function goViewAllReviewList(currentShowPageNo){
 				
 			}
 		//goViewAllReviewList 페이지바 함수
-		 function foodPageBar(currentShowPageNo,totalPage){
+		 function playPageBar(currentShowPageNo,totalPage){
 		 	   
 		     const blockSize = 10;
 		 	let loop = 1;
@@ -337,8 +350,9 @@ function goViewAllReviewList(currentShowPageNo){
 									v_html += "<td>"+item.reservation_code+"</td>";
 									v_html += "<td>"+item.lodging_name+"</td>";
 									v_html += "<td>"+item.check_in+"</td>";
-									v_html += "<td>"+item.review_content+"</td>";
+				              	    v_html += "<td>"+item.review_content+"</td>";
 									v_html += "<td>"+item.registerday+"</td>";
+									v_html += "<input type='hidden' value='<%= ctxPath%>/lodgingDetail.trip?lodging_code="+item.parent_code+"'>";
 									v_html += "</tr>";
 							    	
 							    	
@@ -346,7 +360,7 @@ function goViewAllReviewList(currentShowPageNo){
 					           }); 
 					           
 					           const totalPage = Math.ceil(json[0].totalCount / json[0].sizePerPage);
-					           foodPageBar(currentShowPageNo, totalPage);
+					           logingPageBar(currentShowPageNo, totalPage);
 					        }// end of if -----------------------
 					        
 					        else {
@@ -356,6 +370,15 @@ function goViewAllReviewList(currentShowPageNo){
 					        }// end of else ---------------------
 					        $("tbody#login_review_tbody").html(v_html);
 					        $("span#lodging_count").html(r_html);
+					        
+					        
+					        $("tbody#login_review_tbody tr").each(function() {
+				                var link = $(this).find('input[type=hidden]').val();
+				                $(this).find('td').click(function() {
+				                    window.location.href = link;
+				                });
+				            });
+					        
 					    },
 					    error: function(request, status, error){
 					        alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
@@ -366,7 +389,7 @@ function goViewAllReviewList(currentShowPageNo){
 					
 				}
 			//goViewAllReviewList 페이지바 함수
-			 function foodPageBar(currentShowPageNo,totalPage){
+			 function logingPageBar(currentShowPageNo,totalPage){
 			 	   
 			     const blockSize = 10;
 			 	let loop = 1;
@@ -401,7 +424,7 @@ function goViewAllReviewList(currentShowPageNo){
 			 	pageBar_HTML += "</ul>";
 			 	
 			 	// 156.댓글 페이지바 출력하기
-			 	$("div#playpageBar").html(pageBar_HTML);
+			 	$("div#logingPageBar").html(pageBar_HTML);
 			 	
 			 }
 		
@@ -414,7 +437,7 @@ function goViewAllReviewList(currentShowPageNo){
 <div class="body">
     <div class="navigation">
         <ul>
-            <li class="list active">
+            <li class="list">
                 <a href="<%= ctxPath%>/requiredLogin_goMypage.trip">
                     <span class="icon"><ion-icon name="bed-outline"></ion-icon></span>
                     <span class="title">예약내역</span>
@@ -432,7 +455,7 @@ function goViewAllReviewList(currentShowPageNo){
                     <span class="title">내 일정</span>
                 </a>
             </li>
-            <li class="list">
+            <li class="list active">
                 <a href="<%= ctxPath%>/review.trip">
                     <span class="icon"><ion-icon name="clipboard-outline"></ion-icon></span>
                     <span class="title">이용후기</span>
@@ -508,7 +531,7 @@ function goViewAllReviewList(currentShowPageNo){
 			
 			<!-- Tab panes -->
 			<div class="tab-content">
-			  <div class="tab-pane active" id="all_review">
+			  <div class="tab-pane active" id="all_review" >
 				<table class="table table-hover">
 				  <thead>
 				    <tr>
@@ -518,12 +541,11 @@ function goViewAllReviewList(currentShowPageNo){
 				      <th>작성일자</th>
 				    </tr>
 				  </thead>
-				  <tbody id="all_review_tbody">
-					  
-				  </tbody>
+				  <tbody id="all_review_tbody"></tbody>
 				</table>
 				<div id="pageBar" class="pageBar"></div>
 			</div>
+			
 			  <div class="tab-pane fade" id="login_review">
 					<table class="table table-hover">
 				 		 <thead>
@@ -536,12 +558,11 @@ function goViewAllReviewList(currentShowPageNo){
 						      <th>작성일자</th>
 						    </tr>
 						  </thead>
-			    		 <tbody id="login_review_tbody">
-						    
-						 </tbody>
+			    		 <tbody id="login_review_tbody"></tbody>
 					</table>
-					<div id="loginpageBar" class="loginpageBar"></div>
+					<div id="logingPageBar" class="pageBar"></div>
 				</div>
+				
 				<div class="tab-pane fade" id="food_review">
 					<table class="table table-hover">
 				 		 <thead>
@@ -552,12 +573,11 @@ function goViewAllReviewList(currentShowPageNo){
 						      <th>작성일자</th>
 						    </tr>
 						  </thead>
-			    		 <tbody id="food_review_tbody">
-						    
-						 </tbody>
+			    		 <tbody id="food_review_tbody"></tbody>
 					</table>
-					<div id="foodpageBar" class="foodpageBar"></div>
+					<div id="foodpageBar" class="pageBar"></div>
 				</div>
+				
 				<div class="tab-pane fade" id="play_review">
 					<table class="table table-hover">
 				 		 <thead>
@@ -568,11 +588,9 @@ function goViewAllReviewList(currentShowPageNo){
 						      <th>작성일자</th>
 						    </tr>
 						  </thead>
-			    		 <tbody id="play_review_tbody">
-						    
-						 </tbody>
+			    		 <tbody id="play_review_tbody"></tbody>
 					</table>
-					<div id="playpageBar" class="playpageBar"></div>
+					<div id="playpageBar" class="pageBar"></div>
 				</div>
 			</div>
 		</div>

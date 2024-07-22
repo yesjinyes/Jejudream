@@ -780,10 +780,7 @@ public class Hs_TripController {
 				
 				
 			}
-			
-			
-			
-			mav.setViewName("mypage/review.tiles1");
+			mav.setViewName("mypage/member/review.tiles1");
 			
 			return mav;
 		}
@@ -826,6 +823,7 @@ public class Hs_TripController {
 					jsonObj.put("review_division_R",reviewvo.getReview_division_R());  // 리뷰구분
 					jsonObj.put("review_content",reviewvo.getReview_content()); //리뷰내용 
 					jsonObj.put("registerday",reviewvo.getRegisterday());  //작성일자
+					jsonObj.put("parent_code",reviewvo.getParent_code());  //부모코드
 					jsonObj.put("rno",reviewvo.getRno());  //작성일자
 					
 					jsonObj.put("allTotalCount", allTotalCount); //총 페이지 
@@ -880,6 +878,7 @@ public class Hs_TripController {
 					jsonObj.put("review_content",map.get("review_content"));  //후기내용
 					jsonObj.put("registerday",map.get("registerday"));  //작성일자
 					jsonObj.put("food_name",map.get("food_name"));  //가게이름
+					jsonObj.put("parent_code",map.get("parent_code"));  //부모코드
 					
 					jsonObj.put("totalCount", totalCount); //총 페이지 
 	            	jsonObj.put("sizePerPage", sizePerPage); //한페이지당 보여줄 개수
@@ -933,6 +932,7 @@ public class Hs_TripController {
 					jsonObj.put("play_name",map.get("play_name"));  
 					jsonObj.put("review_content",map.get("review_content"));  //후기내용
 					jsonObj.put("registerday",map.get("registerday"));  //작성일자
+					jsonObj.put("parent_code",map.get("parent_code"));  //부모코드
 					
 					jsonObj.put("totalCount", totalCount); //총 페이지 
 	            	jsonObj.put("sizePerPage", sizePerPage); //한페이지당 보여줄 개수
@@ -989,6 +989,7 @@ public class Hs_TripController {
 					jsonObj.put("check_in",map.get("check_in")); //체크인일자 reservationVO 
 					jsonObj.put("review_content",map.get("review_content")); // 후기내용 리뷰VO
 					jsonObj.put("registerday",map.get("registerday")); //작성일자 리뷰VO
+					jsonObj.put("parent_code",map.get("parent_code"));  //부모코드
 					
 					jsonObj.put("totalCount", totalCount); //총 페이지 
 	            	jsonObj.put("sizePerPage", sizePerPage); //한페이지당 보여줄 개수

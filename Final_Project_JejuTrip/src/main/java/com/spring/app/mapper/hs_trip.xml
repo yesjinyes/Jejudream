@@ -226,17 +226,16 @@ insert into tbl_calendar_schedule(scheduleno, startdate, enddate, subject, color
  
  
  <select id="allReviewList" parameterType="HashMap" resultType="com.spring.app.trip.domain.ReviewVO">
-SELECT review_content,registerday,RNO ,review_division_R
+SELECT review_content,registerday,RNO ,review_division_R ,parent_code
 FROM
 	(
-		select review_content,to_char(registerday,'yyyy-mm-dd')as registerday ,rownum as RNO , review_division_R
+		select review_content,to_char(registerday,'yyyy-mm-dd')as registerday ,row_number() over(order by registerday desc) as rno , review_division_R ,parent_code
 		from tbl_review
 		where fk_userid = #{fk_userid}
 		Order By registerday Desc
 		
 	)
 WHERE RNO between #{startRno} and #{endRno}
-order by RNO desc
  </select>
  
  
@@ -255,16 +254,17 @@ order by RNO desc
 	<result property="review_content" 		column="review_content" 	javaType="String"/>
 	<result property="registerday" 			column="registerday" 		javaType="String"/>
 	<result property="food_name" 			column="food_name" 		javaType="String"/>
+	<result property="parent_code" 			column="parent_code" 		javaType="String"/>
 </resultMap>
 	
 <select id="foodReviewList" resultMap="foodReviewList_map">
-select rno ,food_name ,review_content,registerday
+select rno ,food_name ,review_content,registerday,parent_code
 from
 (
-select rownum as RNO,R.review_content,to_char(R.registerday,'yyyy-mm-dd')as registerday , F.food_name
+select row_number() over(order by registerday desc) as rno,R.review_content,to_char(R.registerday,'yyyy-mm-dd')as registerday , F.food_name,parent_code
 from tbl_food_store F join tbl_review R
 on F.food_store_code = R.parent_code
-where R.fk_userid = #{fk_userid}
+where R.fk_userid = #{fk_userid} and review_division_R = 'B'
 order by r.registerday desc
 )
 order by rno desc
@@ -284,17 +284,18 @@ order by rno desc
 	<result property="review_content" 		column="review_content" 	javaType="String"/>
 	<result property="registerday" 			column="registerday" 		javaType="String"/>
 	<result property="food_name" 			column="food_name" 		javaType="String"/>
+	<result property="parent_code" 			column="parent_code" 		javaType="String"/>
 </resultMap>
 	
 <select id="playReviewList" resultMap="playReviewList_map">
-select rno ,play_name ,review_content,registerday
+select rno ,play_name ,review_content,registerday,parent_code
 from
 (
-select rownum as RNO, p.play_name,R.review_content, to_char(R.registerday,'yyyy-mm-dd')as registerday
+select row_number() over(order by registerday desc) as rno, p.play_name,R.review_content, to_char(R.registerday,'yyyy-mm-dd')as registerday,parent_code
 from tbl_play P join tbl_review R
 on p.play_code = R.parent_code
-where R.fk_userid = #{fk_userid}
-order by r.registerday desc
+where R.fk_userid = #{fk_userid} and review_division_R = 'C'
+order by r.registerday desc 
 )
 order by rno desc
 
@@ -315,21 +316,23 @@ order by rno desc
 	<result property="check_in" 			column="check_in" 			javaType="String"/>
 	<result property="review_content" 		column="review_content" 	javaType="String"/>
 	<result property="registerday" 			column="registerday" 		javaType="String"/>
+	<result property="parent_code" 			column="parent_code" 		javaType="String"/>
 </resultMap>
 	
 <select id="loginReviewList" resultMap="loginReviewList_map">
-	SELECT rno, reservation_code , lodging_name,review_content,registerday
+	SELECT rno, reservation_code , lodging_name,review_content,registerday,check_in,parent_code
 	FROM
 		(
-			select rownum as RNO, RV.reservation_code ,  LO.lodging_name , R.fk_userid , R.review_content , to_char(R.registerday,'yyyy-mm-dd')as registerday 
+			select row_number() over(order by registerday desc) as rno, RV.reservation_code ,  LO.lodging_name , R.fk_userid , R.review_content , 
+				   to_char(R.registerday,'yyyy-mm-dd')as registerday ,to_char(RV.check_in,'yyyy-mm-dd')as check_in ,parent_code
 			from tbl_lodging LO join tbl_room_detail RD    
 			on   LO.lodging_code = RD.fk_lodging_code
 			join tbl_reservation RV
 			on   RD.room_detail_code = RV.fk_room_detail_code
 			join tbl_review R
 			on   RV.fk_userid = R.fk_userid
-			where R.fk_userid = #{fk_userid}
-			order by R.registerday desc
+			where R.fk_userid = #{fk_userid} and review_division_R = 'A'
+			order by R.registerday desc 
 		)
 	order by rno desc
 </select> 
