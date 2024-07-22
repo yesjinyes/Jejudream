@@ -434,4 +434,12 @@
 	</update>
 	
 	
+	<!-- 게시판 댓글 개수 알아오기 -->
+	<select id="getCommentCount" parameterType="String" resultType="int">
+		select commentCount
+		from tbl_board
+		where seq = #{seq}
+	</select>
+	
+	
 </mapper>

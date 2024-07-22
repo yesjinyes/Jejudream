@@ -109,5 +109,8 @@ public interface Dy_TripService {
 
 	// 커뮤니티 댓글 삭제 (Transaction 처리)
 	int deleteComment(Map<String, String> paraMap) throws Throwable;
+
+	// 게시판 댓글 개수 알아오기
+	int getCommentCount(String seq);
 	
 }
