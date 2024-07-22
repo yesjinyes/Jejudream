@@ -1285,9 +1285,12 @@ public class Dy_TripController {
 	// 댓글 쓰기
 	@ResponseBody
 	@PostMapping(value="community/addComment.trip", produces="text/plain;charset=UTF-8")
-	public String addComment(CommentVO commentvo) {
+	public String addComment(CommentVO commentvo, 
+							 @RequestParam(defaultValue = "") String fk_seq) {
 		
 		int n = 0;
+		
+		commentvo.setFk_seq(fk_seq);
 		
 		try {
 			n = service.addComment(commentvo);

@@ -498,6 +498,14 @@ public class Dy_TripService_imple implements Dy_TripService {
 		
 		int n1=0, n2=0;
 		
+		if("".equals(commentvo.getFk_seq())) { // 원댓글일 경우
+			
+			int groupno = dao.getGroupnoMax() + 1;
+			// groupno 컬럼의 값은 groupno 컬럼의 최대값(max)+1 로 해야 한다.
+			
+			commentvo.setGroupno(String.valueOf(groupno));
+		}
+		
 		n1 = dao.addComment(commentvo); // 댓글 쓰기
 		
 		if(n1 == 1) {

@@ -443,6 +443,16 @@ public class Dy_TripDAO_imple implements Dy_TripDAO {
 		
 		return commentCount;
 	}
+
+
+	// 댓글  groupno 컬럼의 최대값 구하기
+	@Override
+	public int getGroupnoMax() {
+		
+		int maxGroupno = sqlsession.selectOne("dy_trip.getGroupnoMax");
+		
+		return maxGroupno;
+	}
 	
 
 }

@@ -178,6 +178,9 @@ WHERE V.seq = 5;
 
 
 ----- **** 댓글 테이블 생성 **** -----
+drop table tbl_comment purge;
+drop sequence commentSeq;
+
 create table tbl_comment
 (seq           number               not null   -- 댓글번호
 ,fk_userid     varchar2(20)         not null   -- 사용자ID
@@ -188,6 +191,21 @@ create table tbl_comment
 ,status        number(1) default 1  not null   -- 글삭제여부
                                                -- 1 : 사용가능한 글,  0 : 삭제된 글
                                                -- 댓글은 원글이 삭제되면 자동적으로 삭제되어야 한다.
+
+,groupno       number                not null    -- 답변글쓰기에 있어서 그룹번호 
+                                                 -- 원글(부모글)과 답변글은 동일한 groupno 를 가진다.
+                                                 -- 답변글이 아닌 원글(부모글)인 경우 groupno 의 값은 groupno 컬럼의 최대값(max)+1 로 한다.
+
+,fk_seq         number default 0      not null   -- fk_seq 컬럼은 절대로 foreign key가 아니다.!!!!!!
+                                                 -- fk_seq 컬럼은 자신의 글(답변글)에 있어서 
+                                                 -- 원글(부모글)이 누구인지에 대한 정보값이다.
+                                                 -- 답변글쓰기에 있어서 답변글이라면 fk_seq 컬럼의 값은 
+                                                 -- 원글(부모글)의 seq 컬럼의 값을 가지게 되며,
+                                                 -- 답변글이 아닌 원글일 경우 0 을 가지도록 한다.
+
+,depthno        number default 0       not null  -- 답변글쓰기에 있어서 답변글 이라면
+                                                 -- 원글(부모글)의 depthno + 1 을 가지게 되며,
+                                                 -- 답변글이 아닌 원글일 경우 0 을 가지도록 한다.
 ,constraint PK_tbl_comment_seq primary key(seq)
 ,constraint FK_tbl_comment_userid foreign key(fk_userid) references tbl_member(userid)
 ,constraint FK_tbl_comment_parentSeq foreign key(parentSeq) references tbl_board(seq) on delete cascade
@@ -224,6 +242,9 @@ select count(*)
 from tbl_comment
 where status = 1 and parentSeq = 5;
 
+
+select NVL(max(groupno), 0)
+from tbl_comment;
 
 
 

@@ -13,6 +13,13 @@ public class CommentVO {
 	private String regDate;		// 작성일자
 	private String parentSeq;	// 원게시물 글번호
 	private String status;		// 글삭제여부
+	
+	private String groupno;		// 그룹번호
+	
+	private String fk_seq;		// 원댓글번호
+	
+	private String depthno;		// 답댓글일 경우 원댓글의 depthno + 1
+								// 원댓글일 경우 depthno는 0
 
 /*	
 	private MultipartFile attach;
@@ -78,4 +85,28 @@ public class CommentVO {
 		this.status = status;
 	}
 
+	public String getGroupno() {
+		return groupno;
+	}
+
+	public void setGroupno(String groupno) {
+		this.groupno = groupno;
+	}
+
+	public String getFk_seq() {
+		return fk_seq;
+	}
+
+	public void setFk_seq(String fk_seq) {
+		this.fk_seq = fk_seq;
+	}
+
+	public String getDepthno() {
+		return depthno;
+	}
+
+	public void setDepthno(String depthno) {
+		this.depthno = depthno;
+	}
+	
 }

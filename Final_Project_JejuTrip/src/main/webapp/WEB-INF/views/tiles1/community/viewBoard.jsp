@@ -99,7 +99,8 @@
 		outline: none;
 	}
 	
-	button#addCommentBtn {
+	button#addCommentBtn,
+	button#replyCommentBtn {
 		border: solid 1px #737373;
 	}
 	
@@ -302,6 +303,77 @@
 	    	
 	    }); // end of $(document).on("click", "span#deleteComment", function(e) {}) ---------------------------
 	    
+	    
+	 	// 댓글의 '답글' 버튼 클릭 시 댓글 작성창 추가
+	    $(document).on("click", ".reply-btn", function() {
+	        // 기존에 열려있는 댓글 작성창이 있으면 제거
+	        $("form[name='replyCommentFrm']").remove();
+
+	        // 클릭된 '답글' 버튼의 부모 요소를 찾음
+	        const replyAreaDiv = $(this).closest('.comment').find('.reply-area');
+
+	        // 댓글 작성창 HTML
+	        const replyForm = `
+	        	<form name="replyCommentFrm">
+	        	<div class="d-flex justify-content-between mb-3">
+	        		<i class="fa-solid fa-reply"></i>
+					<div style="border: solid 1px #a6a6a6; width: 95%; padding: 1.5% 1%; background-color: #f2f2f2;">
+						<span class="d-block mb-2">
+							<c:if test="${not empty sessionScope.loginuser}">
+								<input type="hidden" name="fk_userid" value="${sessionScope.loginuser.userid}">
+								<input type="text" class="font-weight-bold" name="name" value="${sessionScope.loginuser.user_name}" style="border: none; background-color: #f2f2f2;" readonly>
+							</c:if>
+						</span>
+						<textarea class="mb-2" id="reply_content" name="content" style="width: 100%; height: 80px; border: none; background-color: #f2f2f2;" placeholder="답글을 작성해주세요."></textarea>
+						<input type="hidden" name="parentSeq" value="${requestScope.boardvo.seq}" readonly />
+						<input type="hidden" name="fk_seq" value="${requestScope.boardvo.seq}" readonly />
+						<div style="text-align: right;"><button type="button" class="btn" id="replyCommentBtn">등록</button></div>
+					</div>
+				</div>
+				</form>
+	        `;
+			
+	        replyAreaDiv.html(replyForm);
+	    });
+	    
+	    
+	    // 답댓글 등록
+	    $(document).on("click", "button#replyCommentBtn", function(e) {
+	    	
+			const reply_content = $("textarea#reply_content").val().trim();
+			
+			if(reply_content == "") {
+				alert("답글 내용을 입력하세요!");
+				return;
+			}
+			
+	    	const fk_seq = $(this).closest(".comment").find("input#cmt_seq").val();
+//	    	alert(fk_seq);
+	    	
+	    	const queryString = $("form[name='replyCommentBtn']").serialize();
+	    	
+			$.ajax({
+				url: "<%=ctxPath%>/community/addComment.trip",
+				data: queryString,
+				type: "post",
+				dataType: "json",
+				success: function(json) {
+					
+					if(json.n == 1) {
+//						alert("댓글 등록 성공!");
+						updateCommentCount();
+						goViewComment(1); // 페이징 처리한 댓글 읽어오기
+					}
+
+					$("textarea[name='content']").val(""); // 댓글 칸 내용 비우기
+				},
+				error: function(request, status, error){
+					alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+				}
+			});
+	    });
+	    
+	    
 	}); // end of $(document).ready(function() {}) ---------------------
 	
 	
@@ -355,7 +427,7 @@
 				}
 			});
 		}
-	}
+	} // end of function goDeleteBoard(seq) ---------------------------------
 	
 	
 	// === 이전글, 다음글 보기 ===
@@ -377,7 +449,7 @@
 		frm.action = "<%=ctxPath%>/community/viewBoard_2.trip";
 		frm.submit();
 		
-	} // end of function goView(seq) -------------------
+	} // end of function goView(seq) ------------------------------------
 	
 	
 	// === 첨부파일 다운로드 받기 ===
@@ -391,7 +463,7 @@
 			location.href = "<%=ctxPath%>/fileDownload.trip?seq=" + seq + "&category=" + category;
 		}
 		
-	}
+	} // end of function goFileDownload(seq, category) --------------------
 	
 	
 	// === 댓글 쓰기 ===
@@ -446,7 +518,8 @@
 				if(json.length > 0) {
 					$.each(json, function(index, item) {
 						
-						v_html += `<div id="comment\${index}" class="comment d-flex" style="padding: 1.5% 0">
+						v_html += `<div id="comment\${index}" class="comment">
+									<div class="d-flex" style="padding: 1.5% 0">
 				  					 <div style="width: 90%; padding: 1.5% 0">
 										<div class="mb-2 d-flex align-items-center">
 											<img src="<%=ctxPath%>/resources/images/logo_circle.png" width="30">
@@ -456,7 +529,7 @@
 										<input type="hidden" id="cmt_userid" value="\${item.fk_userid}">
 										<span class="d-block mb-2" id="cmt_content">\${item.content}</span>
 										<span class="d-block mb-2" id="cmt_regDate" style="font-size: 0.8rem; color: #8c8c8c;">\${item.regdate}</span>
-										<button type="button" class="btn" style="border: solid 1px #8c8c8c; font-size: 0.8rem; padding: 3px 6px;">답글</button>
+										<button type="button" class="btn reply-btn" style="border: solid 1px #8c8c8c; font-size: 0.8rem; padding: 3px 6px;">답글</button>
 									 </div>`;
 						
 						if(${sessionScope.loginuser != null} && 
@@ -471,8 +544,10 @@
 										 </div>`;
 						}
 						
-						v_html += `</div>
-								   <input type="hidden" value="\${currentShowPageNo}" class="currentShowPageNo">`;
+						v_html += `		<input type="hidden" value="\${currentShowPageNo}" class="currentShowPageNo">
+							   		  </div>
+								   	  <div class="reply-area"></div>
+								   </div>`;
 						
 					}); // end of $.each() -------------------------------------------------
 					
@@ -555,7 +630,10 @@
 	            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
 	        }
 	    });
-	}
+	} // end of function updateCommentCount() -----------------------
+	
+	
+
 	
 </script>
 

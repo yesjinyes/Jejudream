@@ -338,8 +338,16 @@
 	
 	<!-- 댓글 쓰기 -->
 	<insert id="addComment" parameterType="CommentVO">
-		insert into tbl_comment(seq, fk_userid, name, content, parentSeq)
-		values(commentSeq.nextval, #{fk_userid}, #{name}, #{content}, #{parentSeq})
+		<if test='fk_seq.equals("")'>
+			insert into tbl_comment(seq, fk_userid, name, content, parentSeq, groupno, fk_seq, depthno)
+			values(commentSeq.nextval, #{fk_userid}, #{name}, #{content}, #{parentSeq}, #{groupno}, default, default)
+		</if>
+		
+		<!-- 답댓글인 경우 -->
+		<if test='!fk_seq.equals("")'>
+			insert into tbl_comment(seq, fk_userid, name, content, parentSeq, groupno, fk_seq, depthno)
+			values(commentSeq.nextval, #{fk_userid}, #{name}, #{content}, #{parentSeq}, #{groupno}, #{fk_seq}, #{depthno}+1)
+		</if>
 	</insert>
 	
 	
@@ -439,6 +447,13 @@
 		select commentCount
 		from tbl_board
 		where seq = #{seq}
+	</select>
+	
+	
+	<!-- 댓글  groupno 컬럼의 최대값 구하기 -->
+	<select id="getGroupnoMax" resultType="int">
+		select NVL(max(groupno), 0)
+		from tbl_comment
 	</select>
 	
 	
