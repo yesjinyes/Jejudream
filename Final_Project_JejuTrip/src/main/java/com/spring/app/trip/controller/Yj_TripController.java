@@ -227,18 +227,6 @@ public class Yj_TripController {
 			foodstorevo = service.viewfoodstoreDetail_withReadCount(paraMap); // 맛집 상세 페이지 띄우기 (조회수 증가 O)
 			
 			session.removeAttribute("readCountPermission");
-			
-			String local_status = foodstorevo.getLocal_status();
-			
-			///////////////////////////////////////////////////
-			// 근처 숙소 랜덤 추천
-			lodgingList = service.getLodgingList(local_status);
-			
-		/*	for(LodgingVO lvo :lodgingList) {
-				//System.out.println("~~숙소 랜덤추천 확인 => "+lvo.getLodging_name());
-				System.out.println("~~숙소 랜덤추천 확인 => "+lvo.getMain_img());
-			}*/
-			///////////////////////////////////////////////////
 		}
 		
 		else {
@@ -249,6 +237,18 @@ public class Yj_TripController {
 				return mav;
 			}
 		}
+		
+		///////////////////////////////////////////////////
+		// 근처 숙소 랜덤 추천
+		String local_status = foodstorevo.getLocal_status();
+		lodgingList = service.getLodgingList(local_status);
+		
+	/*	for(LodgingVO lvo :lodgingList) {
+		//System.out.println("~~숙소 랜덤추천 확인 => "+lvo.getLodging_name());
+		System.out.println("~~숙소 랜덤추천 확인 => "+lvo.getMain_img());
+		}*/
+		///////////////////////////////////////////////////
+		
 		
 		////////////////////////////////////////////////////////////////
 	
