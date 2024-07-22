@@ -1080,4 +1080,18 @@ create table tbl_board
               to_char(check_in,'yyyymmdd') = to_char(sysdate+1,'yyyymmdd') ) R 
 		ON M.userid = R.fk_userid
     
+    select *
+    from tbl_board;
+    select *
+    from tbl_chattinglog
+    
+    select *
+    from tbl_reservation;
+    
+    alter table tbl_chattinglog add fk_reservation_code varchar2(20) default 0;
+    alter table tbl_chattinglog add chatting_date date default sysdate;
+    
+    
+    alter table tbl_chattinglog ADD CONSTRAINT FK_TBL_chatting_reservation FOREIGN KEY (fk_reservation_code)
+REFERENCES tbl_reservation (reservation_code) ON DELETE CASCADE;
    
