@@ -586,6 +586,13 @@ public class Ws_TripService_imple implements Ws_TripService {
 		dao.insert_send_chatting(chatMap);
 		
 	}
+
+	// 로그인을 하고 메인에 들어갔을 때 새로 온 채팅이 있는지 확인해준다.
+	@Override
+	public int get_new_chatting(String userid) {
+		int i = dao.get_new_chatting(userid);
+		return i;
+	}
 	
 	
 	

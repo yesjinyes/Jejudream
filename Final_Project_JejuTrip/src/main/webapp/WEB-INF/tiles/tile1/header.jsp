@@ -341,6 +341,7 @@ function whatWeather(){
 					
 					<li class="user_menu nav-item">
 						<a class="nav-link text-center" href="<%=ctxPath%>/requiredLogin_goMypage.trip">
+							<c:if test="${requestScope.i > 0}"><div style="float:right; width:10px; height:10px; border-radius:50%; background-color: red;"></div></c:if>
 							<i class="fa-solid fa-user"></i>
 							<div>마이페이지</div>
 						</a>

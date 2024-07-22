@@ -1016,6 +1016,13 @@
     
     <!-- 채팅을 보냈다는 기록을 남겨준다. -->
     <insert id="insert_send_chatting" parameterType="HashMap">
-    	insert into tbl_chattinglog (to_id, from_id, status) values(#{to_id},#{from_id},0)
+    	insert into tbl_chattinglog (to_id, from_id, status, fk_reservation_code) values(#{to_id},#{from_id},0,#{fk_reservation_code})
     </insert>
+    
+    <!-- 로그인을 하고 메인에 들어갔을 때 새로 온 채팅이 있는지 확인해준다. -->
+    <select id="get_new_chatting" parameterType="String" resultType="Integer">
+    	select count(*) as i
+		from tbl_chattinglog
+		where to_id = #{userid}
+    </select>
 </mapper>
