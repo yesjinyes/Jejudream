@@ -399,6 +399,11 @@ public class Yj_TripController {
 		
 		List<ReviewVO> reviewList = service.getReviewList(paraMap);
 		
+//		for(ReviewVO rvo : reviewList) {
+//			System.out.println("@@@ 리뷰 내용 나와주세요 => " +rvo.getReview_content());
+//		}
+		
+		
 		int totalCount = service.getReviewTotalCount(parent_code); // 리뷰 총 개수 구하기
 		// System.out.println("~~ 리뷰 totalCount 확인 => " + totalCount);
 		

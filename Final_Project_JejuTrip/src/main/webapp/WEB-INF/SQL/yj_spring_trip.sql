@@ -357,5 +357,5 @@ delete from tbl_food_store;
 commit;
 
 
-
+select * from tbl_review;
 

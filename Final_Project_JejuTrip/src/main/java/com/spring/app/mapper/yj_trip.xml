@@ -157,14 +157,14 @@
 	
 	<!-- 작성한 리뷰 보이기 -->
 	<select id="getReviewList" parameterType="HashMap" resultType="com.spring.app.trip.domain.ReviewVO">
-		SELECT review_code, fk_userid, review_content, registerday
+		SELECT review_code, fk_userid, parent_code, review_content, registerday
 		FROM
 		(
 		    select row_number() over(order by review_code desc) As rno
-		          , review_code, fk_userid, review_content
+		          , review_code, fk_userid, parent_code, review_content
 		          , to_char(registerday, 'yyyy-mm-dd') AS registerday
 		    from tbl_review
-		    where parent_code = 5316
+		    where parent_code = #{parent_code}
 		    order by review_code desc
 		)V
 		WHERE V.rno BETWEEN #{startRno} and #{endRno}

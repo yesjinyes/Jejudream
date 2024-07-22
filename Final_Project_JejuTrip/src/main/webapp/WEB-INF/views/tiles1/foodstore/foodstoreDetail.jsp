@@ -728,7 +728,7 @@ div#map {
 				, "currentShowPageNo":currentShowPageNo},
 			dataType:"json",
 			success:function(json) {
-				console.log("리뷰 select 확인 : "+JSON.stringify(json));
+				// console.log("리뷰 select 확인 : "+JSON.stringify(json));
 				
 				let v_html = ""; // 작성한 리뷰
 				let count_html = 0; // 리뷰 총 개수
@@ -754,8 +754,13 @@ div#map {
 								       }
 								        
 						v_html += `</tr>`;
-						count_html = item.totalCount;     
+						count_html = item.totalCount;  
 					});
+					
+					const totalPage = Math.ceil( json[0].totalCount / json[0].sizePerPage);
+					
+					makeReviewPageBar(currentShowPageNo, totalPage); // 리뷰 페이지바 함수 호출
+					
 				}// end of if(json.length > 0)---------
 				
 				else { // 리뷰가 없을 경우
@@ -767,9 +772,7 @@ div#map {
 				$("tbody#reviewDisplay").html(v_html); // 작성된 리뷰 자리에 넣어주기
 				$("p#reviewCount").html(count_html); // 리뷰 총 개수 넣어주기
 				
-				const totalPage = Math.ceil( json[0].totalCount / json[0].sizePerPage);
 				
-				makeReviewPageBar(currentShowPageNo, totalPage); // 리뷰 페이지바 함수 호출
 				
 			},
 			error: function(request, status, error){
