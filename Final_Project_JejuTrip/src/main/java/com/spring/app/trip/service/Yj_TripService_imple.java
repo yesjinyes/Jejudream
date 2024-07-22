@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.spring.app.trip.domain.FoodstoreVO;
+import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.ReviewVO;
 import com.spring.app.trip.model.Yj_TripDAO;
 
@@ -187,12 +188,19 @@ public class Yj_TripService_imple implements Yj_TripService {
 		int n1 = dao.deleteFoodstore(food_store_code);
 		
 		// 맛집 삭제 시 리뷰도 삭제
-		// int n2 = dao.deleteFoodstoreReview(food_store_code);
+		int n2 = dao.deleteFoodstoreReview(food_store_code);
 		
 		//System.out.println("n1*n2 확인 => " + n1*n2);
-		
-		//return n1*n2;
-		return n1;
+
+		return n1*n2;
+	}
+
+
+	// == 근처 숙소 랜덤 추천 == //
+	@Override
+	public List<LodgingVO> getLodgingList(String local_status) {
+		List<LodgingVO> lodgingList = dao.getLodgingList(local_status);
+		return lodgingList;
 	}
 
 

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import com.spring.app.trip.domain.FoodstoreVO;
+import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.ReviewVO;
 
 @Repository
@@ -173,19 +174,27 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 	@Override
 	public int deleteFoodstore(String food_store_code) {
 		int n1 = sqlsession.delete("yj_trip.deleteFoodstore", food_store_code);
-		System.out.println("n1 확인 =>" + n1);
+		// System.out.println("n1 확인 =>" + n1);
 		return n1;
 	}
 
 
 	// == 맛집 삭제 시 리뷰도 삭제 == //
-/*	@Override
+	@Override
 	public int deleteFoodstoreReview(String food_store_code) {
 		int n2 = sqlsession.delete("yj_trip.deleteFoodstoreReview", food_store_code);
-		System.out.println("n2 확인 =>" + n2);
+		// System.out.println("n2 확인 =>" + n2);
 		return n2;
 	}
-*/
+
+
+	// == 근처 숙소 랜덤 추천 == //
+	@Override
+	public List<LodgingVO> getLodgingList(String local_status) {
+		List<LodgingVO> lodgingList = sqlsession.selectList("yj_trip.getLodgingList", local_status);
+		return lodgingList;
+	}
+
 
 
 
