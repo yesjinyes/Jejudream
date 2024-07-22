@@ -6,47 +6,7 @@
     //    /JejuDream
 %>
 
-<style type="text/css">
-body {
-    font-family: 'Poppins', sans-serif;
-}
 
-li {
-
-list-style: none;
-}
-
-
-.single-post {
-    margin-bottom: 20px;
-    border: 1px solid #ebebeb;
-    border-radius: 5px;
-    overflow: hidden;
-    transition: all 0.3s ease;
-}
-
-.single-post:hover {
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-}
-
-
-.title a {
-    margin: 10px 0;
-    color: black;
-    text-decoration: none;
-    transition-duration: 300ms;
-    text-transform: capitalize;
-
-}
-
-.title a:hover {
-    color: #ffdccc;
-    text-decoration: none;
-}
-
-
-
-</style>
 
 <script type="text/javascript">
 
@@ -447,7 +407,7 @@ $(document).ready(function(){
 		                			  <div style="border-left: solid 2px #ffdccc; height:75%; align-self:center; margin-right: 1%;"></div>
 									  <div class="px-3" style="align-self: flex-end;">
 										  <span style="color:#b5aec4;">1박 기준</span>
-		                    			  <h4 class="pb-2" style="color: #ffdccc;">\${Number(item.price).toLocaleString('en')}원</h4>
+		                    			  <h4 class="pb-2" style="color: #ff9933;">\${Number(item.price).toLocaleString('en')}원</h4>
 									  </div>
 		            			   </div>`;
 		        		
@@ -570,53 +530,82 @@ $(document).ready(function(){
 	
 	
 </script>
+<style type="text/css">
 
+li {
+
+list-style: none;
+}
+
+
+.single-post {
+    margin-bottom: 20px;
+    border: 1px solid #ebebeb;
+    border-radius: 5px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.single-post:hover {
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+
+.title a {
+    margin: 10px 0;
+    color: black;
+    text-decoration: none;
+    transition-duration: 300ms;
+    text-transform: capitalize;
+
+}
+
+.title a:hover {
+    color: #ffdccc;
+    text-decoration: none;
+}
+
+</style>
 
     <div class="container">
-       
-    
         <div class="row">
-         	
-            <div class="col-md-3">
-           	 
-            	<div class="tab_check" style="display: flex;">
-			    	<div class="date_wrap mt-3">
-			    		
-			    		<h3>숙소 체크인 일정</h3>
-				        <div class="fromDate">
-				            <label>체크인</label>
-				            <div>
-				                <div class="date-container">
-				                    <span class="date-pick">
-				                        <input class="datepicker" style="cursor: pointer;" type="text" id="fromDate" name="datepicker" value="${requestScope.dateSendMap.detail_check_in}" placeholder="입실일 선택">
-				                    </span>
-				                </div>
-				            </div>
-				        </div>
-				        <div class="toDate">
-				            <label>체크아웃</label>
-				            <div>
-				                <div class="date-container">
-				                    <span class="date-pick">
-				                        <input class="datepicker" style="cursor: pointer;" type="text" id="toDate" name="datepicker" value="${requestScope.dateSendMap.detail_check_out}" placeholder="퇴실일 선택">
-				                    </span>
-				                </div>
-				            </div>
-				        </div>
-				        <div class="people">
-				            <label>인원</label>
-				            <div>
-				                <div class="people-container">
-				                    <span class="people-pick">
-				                        <input type="number" min="2" max="10" id="people" style="cursor: pointer; width:100px;" name="people" value="${requestScope.dateSendMap.detail_people}" placeholder="인원 선택">
-				                    </span>
-				                </div>
-				            </div>
-				        </div>
-				    </div>
-			    </div>
-            
-                
+            <div class="col-lg-3 col-md-4 col-sm-12">
+                <div class="tab_check" style="display: flex;">
+                    <div class="date_wrap mt-3">
+                        <h3>숙소 체크인 일정</h3>
+                        <div class="fromDate">
+                            <label>체크인</label>
+                            <div>
+                                <div class="date-container">
+                                    <span class="date-pick">
+                                        <input class="datepicker" style="cursor: pointer; width:60%;" type="text" id="fromDate" name="datepicker" value="${requestScope.dateSendMap.detail_check_in}" placeholder="입실일 선택">
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="toDate">
+                            <label>체크아웃</label>
+                            <div>
+                                <div class="date-container">
+                                    <span class="date-pick">
+                                        <input class="datepicker" style="cursor: pointer; width:60%;" type="text" id="toDate" name="datepicker" value="${requestScope.dateSendMap.detail_check_out}" placeholder="퇴실일 선택">
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="people">
+                            <label>인원</label>
+                            <div>
+                                <div class="people-container">
+                                    <span class="people-pick">
+                                        <input type="number" min="2" max="10" id="people" style="cursor: pointer; width:100px;" name="people" value="${requestScope.dateSendMap.detail_people}" placeholder="인원 선택">
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <ul class="nav flex-column">
                     <li class="nav-item lod">
                         <h4 class="py-3">숙소구분</h4>
@@ -641,120 +630,104 @@ $(document).ready(function(){
                             <label for="resort">리조트</label>
                         </div>
                     </li>
-                    
+
                     <li class="nav-item convenient">
                         <h4 class="py-3">편의시설</h4>
                         <div>
                             <input type="checkbox" name="convenient" id="all_con" value="" />
                             <label for="all_con">전체</label>
                         </div>
-                        
+
                         <c:forEach var="convenientList" items="${requestScope.convenientList}" varStatus="status">
-                        <div>
-                        	<input type="checkbox" name="convenient" id="convenient${status.count}" value="${convenientList}" />
-                        	<label for="convenient${status.count}">${convenientList}</label>
-                        </div>
+                            <div>
+                                <input type="checkbox" name="convenient" id="convenient${status.count}" value="${convenientList.convenient_name}" />
+                                <label for="convenient${status.count}">${convenientList.convenient_name}</label>
+                            </div>
                         </c:forEach>
-                        
                     </li>
-                    
-                    <%-- 
-                    <li class="nav-item">
-                    	<h4>숙소 가격범위</h4>
-                    	<div class="slider">
-					        <input type="range" id="input-left" min="1" max="100" value="1" />
-					        <input type="range" id="input-right" min="1" max="100" value="100" />
-					        <div class="track">
-					          <div class="range"></div>
-					          <div class="thumb left"></div>
-					          <div class="thumb right"></div>
-					        </div>
-					    </div>
-                    </li>
-                    --%>
                 </ul>
-               	 
             </div>
-            <div class="col-md-9 py-3">
-            	<div class="py-3">
-            		<div id="tabArea" class="tabArea1 text-center" style="display: flex; border: solid 0px black; align-items: center;">
-			            <div class="tabTitle pr-3" style="align-self: center; width:15%;">
-			                <span>여행하실 곳을 <br> 선택해주세요.</span>
-			            </div>
-			            <div class="areaMap" style="display: flex;">
-			                <div class="areamap mx-2" style="width: 15%;">
-			                    <img src="<%= ctxPath %>/resources/images/areamap_total.png" />
-			                    <div>
-			                        <input name="local_status" id="all_local" type="checkbox" class="are_map" value="">
-			                        <br><label for="all_local" class="label_chk">전체</label>
-			                    </div>
-			                </div>
-			                <div class="areamap mx-2" style="width: 15%;">
-			                    <img src="<%= ctxPath %>/resources/images/areamap_city.png" />
-			                    <div>
-			                        <input name="local_status" id="area02" type="checkbox" class="are_map" value="제주시 시내">
-			                        <label for="area02" class="label_chk">제주시 시내</label>
-			                    </div>
-			                </div>
-			                <div class="areamap mx-2" style="width: 15%;">
-			                    <img src="<%= ctxPath %>/resources/images/areamap_jeju_east.png" />
-			                    <div>
-			                        <input name="local_status" id="area03" type="checkbox" class="are_map" value="제주시 동부">
-			                        <label for="area03" class="label_chk">제주시 동부</label>
-			                    </div>
-			                </div>
-			                <div class="areamap mx-2" style="width: 15%;">
-			                    <img src="<%= ctxPath %>/resources/images/areamap_jeju_west.png" />
-			                    <div>
-			                        <input name="local_status" id="area04" type="checkbox" class="are_map" value="제주시 서부">
-			                        <label for="area04" class="label_chk">제주시 서부</label>
-			                    </div>
-			                </div>
-			                <div class="areamap mx-2" style="width: 15%;">
-			                    <img src="<%= ctxPath %>/resources/images/areamap_bt_city.png" />
-			                    <div>
-			                        <input name="local_status" id="area05" type="checkbox" class="are_map" value="서귀포시 시내">
-			                        <label for="area05" class="label_chk">서귀포시 시내</label>
-			                    </div>
-			                </div>
-			                <div class="areamap mx-2" style="width: 15%;">
-			                    <img src="<%= ctxPath %>/resources/images/areamap_bt_east.png" />
-			                    <div>
-			                        <input name="local_status" id="area06" type="checkbox" class="are_map" value="서귀포시 동부">
-			                        <label for="area06" class="label_chk">서귀포시 동부</label>
-			                    </div>
-			                </div>
-			                <div class="areamap mx-2" style="width: 15%;">
-			                    <img src="<%= ctxPath %>/resources/images/areamap_bt_west.png" />
-			                    <div>
-			                        <input name="local_status" id="area07" type="checkbox" class="are_map" value="서귀포시 서부">
-			                        <label for="area07" class="label_chk">서귀포시 서부</label>
-			                    </div>
-			                </div>
-			            </div>
-			        </div>
-            	</div>	
-            	<div class="sort-filter main" style="display: flex; justify-content:space-between; width:100%;">
-                  	<div> 
+
+            <div class="col-lg-9 col-md-8 col-sm-12 py-3">
+                <div class="py-3">
+                    <div id="tabArea" class="tabArea1 text-center d-flex align-items-center border-0">
+                        <div class="tabTitle pr-3" style="width: 15%;">
+                            <span>여행하실 곳을 <br> 선택해주세요.</span>
+                        </div>
+                        <div class="areaMap d-flex flex-wrap">
+                            <div class="areamap mx-2" style="width: 15%;">
+                                <img src="<%= ctxPath %>/resources/images/areamap_total.png" />
+                                <div>
+                                    <input name="local_status" id="all_local" type="checkbox" class="are_map" value="">
+                                    <br><label for="all_local" class="label_chk">전체</label>
+                                </div>
+                            </div>
+                            <div class="areamap mx-2" style="width: 15%;">
+                                <img src="<%= ctxPath %>/resources/images/areamap_city.png" />
+                                <div>
+                                    <input name="local_status" id="area02" type="checkbox" class="are_map" value="제주시 시내">
+                                    <label for="area02" class="label_chk">제주시 시내</label>
+                                </div>
+                            </div>
+                            <div class="areamap mx-2" style="width: 15%;">
+                                <img src="<%= ctxPath %>/resources/images/areamap_jeju_east.png" />
+                                <div>
+                                    <input name="local_status" id="area03" type="checkbox" class="are_map" value="제주시 동부">
+                                    <label for="area03" class="label_chk">제주시 동부</label>
+                                </div>
+                            </div>
+                            <div class="areamap mx-2" style="width: 15%;">
+                                <img src="<%= ctxPath %>/resources/images/areamap_jeju_west.png" />
+                                <div>
+                                    <input name="local_status" id="area04" type="checkbox" class="are_map" value="제주시 서부">
+                                    <label for="area04" class="label_chk">제주시 서부</label>
+                                </div>
+                            </div>
+                            <div class="areamap mx-2" style="width: 15%;">
+                                <img src="<%= ctxPath %>/resources/images/areamap_bt_city.png" />
+                                <div>
+                                    <input name="local_status" id="area05" type="checkbox" class="are_map" value="서귀포시 시내">
+                                    <label for="area05" class="label_chk">서귀포시 시내</label>
+                                </div>
+                            </div>
+                            <div class="areamap mx-2" style="width: 15%;">
+                                <img src="<%= ctxPath %>/resources/images/areamap_bt_east.png" />
+                                <div>
+                                    <input name="local_status" id="area06" type="checkbox" class="are_map" value="서귀포시 동부">
+                                    <label for="area06" class="label_chk">서귀포시 동부</label>
+                                </div>
+                            </div>
+                            <div class="areamap mx-2" style="width: 15%;">
+                                <img src="<%= ctxPath %>/resources/images/areamap_bt_west.png" />
+                                <div>
+                                    <input name="local_status" id="area07" type="checkbox" class="are_map" value="서귀포시 서부">
+                                    <label for="area07" class="label_chk">서귀포시 서부</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="sort-filter main d-flex justify-content-between w-100">
+                    <div>
                         <button type="button" class="sort btn btn-outline-warning" value="">최신등록순</button>
                         <button type="button" class="sort btn btn-outline-warning" value="price_asc">낮은가격순</button>
                         <button type="button" class="sort btn btn-outline-warning" value="price_desc">높은가격순</button>
                     </div>
                     <div>
-                        <input type="text" name="inputWord"  placeholder="검색 결과 내 숙소명 검색">
+                        <input type="text" name="inputWord" placeholder="검색 결과 내 숙소명 검색">
                         <button type="button" id="search" title="검색">검색</button>
                     </div>
                 </div>
-                
+
                 <div class="mt-3" id="result_list">
-                  	<!-- ajax 뿌릴곳 -->
+                    <!-- ajax 뿌릴곳 -->
                 </div>
-                    
-                <div id="pageBar" style="text-align: center;">
+
+                <div id="pageBar" class="text-center">
                 </div>
-           	</div>
+            </div>
         </div>
-    </div> 
+    </div>
 		
 		
           <form name="filterForm">

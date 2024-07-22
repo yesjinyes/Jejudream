@@ -1,12 +1,19 @@
 package com.spring.app.trip.service;
 
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.spring.app.trip.common.AES256;
+import com.spring.app.trip.common.GoogleMail;
 import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.PlayVO;
@@ -19,6 +26,12 @@ public class Js_TripService_imple implements Js_TripService {
    
    @Autowired
    private Js_TripDAO dao;
+   
+   @Autowired
+   private AES256 aES256;
+   
+   @Autowired
+   private GoogleMail mail;
 
    // 조건에 따른 숙소리스트 select 해오기
    @Override
@@ -43,9 +56,9 @@ public class Js_TripService_imple implements Js_TripService {
    
    // 숙소리스트에 표현할 편의시설 목록 구해오기
    @Override
-   public List<String> getConvenientList(String lodging_code) {
+   public List<Map<String,String>> getConvenientList(String lodging_code) {
 	   
-	   List<String> convenientList = dao.getConvenientList(lodging_code);
+	   List<Map<String,String>> convenientList = dao.getConvenientList(lodging_code);
 	   
 	   return convenientList;
 	   
@@ -264,6 +277,190 @@ public class Js_TripService_imple implements Js_TripService {
 		return n;
 		
 	} // end of public int insertLodgingSchedule(Map<String, String> paraMap) {
+
+
+	
+	// 한 숙소에대한 객실 등록하기
+	@Override
+	public int insertRoomDetail(RoomDetailVO rvo) {
+		
+		int n = dao.insertRoomDetail(rvo);
+		
+		return n;
+		
+	} // end of public int insertRoomDetail(RoomDetailVO rvo) {
+
+
+	// 객실등록 채번해오기
+	@Override
+	public String getRoomDetailSeq() {
+		
+		String room_seq = dao.getRoomDetailSeq();
+		
+		return room_seq;
+		
+	} // end of public String getRoomDetailSeq() {
+
+
+	// 등록한 숙소개수가 몇개인지 알아오기
+	@Override
+	public int getRoomCnt(String fk_lodging_code) {
+		
+		int n = dao.getRoomCnt(fk_lodging_code);
+		
+		return n;
+		
+	} // end of public int getRoomCnt(String fk_lodging_code) { 
+
+
+	
+	// 등록된 객실정보 가져오기
+	@Override
+	public List<RoomDetailVO> getForUpdateRoomList(String fk_lodging_code) {
+		
+		List<RoomDetailVO> roomList = dao.getForUpdateRoomList(fk_lodging_code);
+		
+		return roomList;
+		
+	} // end of public List<RoomDetailVO> getForUpdateRoomList(String fk_lodging_code) { 
+
+
+	// 객실 수정하기
+	@Override
+	public int updateRoomDetail(RoomDetailVO rvo) {
+		
+		int n = dao.updateRoomDetail(rvo);
+		
+		return n;
+		
+	} // end of public int updateRoomDetail(RoomDetailVO rvo) {
+
+
+	// 수정할때 객실 삭제하기
+	@Override
+	public int deleteRoomDetail(String room_detail_code) {
+		
+		int n = dao.deleteRoomDetail(room_detail_code);
+		
+		return n;
+		
+	} // end of public int deleteRoomDetail(String room_detail_code) {
+
+
+	// 숙소정보 수정하기
+	@Override
+	public int updateLodging(LodgingVO lvo) {
+		
+		int n = dao.updateLodging(lvo);
+		
+		return n;
+		
+	} // end of public int updateLodging(LodgingVO lvo) {
+
+
+	
+	// 숙소에 해당하는 편의시설 정보 삭제하기 (트랜잭션 처리로 )
+	@Override
+	@Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.READ_COMMITTED, rollbackFor= {Throwable.class})
+	public int deleteInsertLodgingConvenient(Map<String, String> paraMap) throws Throwable{
+		
+		int n1=0, n2 =0;
+		
+		// 트랜잭션 1 (존재하는 숙소에 대한 편의시설 정보 삭제하기)
+		n1 = dao.t_deleteLodgingConvenient(paraMap.get("fk_lodging_code"));
+		
+		if(n1 > 0) {
+			
+			String[] arr_convenient = paraMap.get("str_convenient").split(",");
+			
+			Map<String, Object> arr_Map = new HashMap<>(); 
+			
+	        arr_Map.put("lodging_code", paraMap.get("fk_lodging_code"));
+
+	        // 트랜잭션 2 (숙소에 대한 편의시설 정보 insert하기)
+	        for (String convenientCode : arr_convenient) {
+	        	
+	            arr_Map.put("convenient_code", convenientCode);
+	            
+	            n2 += dao.t_insertLodgingConvenient(arr_Map);
+	            
+	        } // end of for
+					
+		} // end of if
+		
+		return n1 * n2;
+		
+	} // end of public int deleteInsertLodgingConvenient(Map<String, String> paraMap) {
+
+
+	
+	// 숙소 정보 삭제하기
+	@Override
+	public int deleteLodgingInfo(String lodging_code) {
+		
+		int n = dao.deleteLodgingInfo(lodging_code);
+		
+		return n;
+		
+	} // end of public int deleteLodgingInfo(String lodgingCode) {
+
+
+	// ==== Spring Scheduler(스프링 스케줄러)를 사용한 email 발송하기 ====
+    // <주의> 스케줄러로 사용되어지는 메소드는 반드시 파라미터가 없어야 한다.!!!!
+    // 고객들의 email 주소는 List<String(e메일주소)> 으로 만들면 된다.
+    // 또는 e메일 자동 발송 대신에 휴대폰 문자를 자동 발송하는 것도 가능하다.
+	@Override
+	@Scheduled(cron="0 50 20 * * *")
+	public void reservationEmailSending() throws Exception {
+		
+		// !!! <주의> !!!
+	    // 스케줄러로 사용되어지는 메소드는 반드시 파라미터는 없어야 한다.!!!!!
+		
+		// ==== e메일을 발송할 회원 대상 알아오기 ==== 
+		List<Map<String,String>> reservationList = dao.getReservationList();
+		
+		// **** e메일 발송하기 **** //
+		if(reservationList != null && reservationList.size() > 0) {
+			
+			String[] arr_reservationCode = new String[reservationList.size()]; // 밖에서 선언하면 null포인트 뜰수 있어서 if 안에다가
+			// String[] arr_reservationSeq 을 생성하는 이유는 
+            // e메일 발송 후 tbl_reservation 테이블의 mailSendCheck 컬럼의 값을 0 에서 1로 update 하기 위한 용도로 
+            // update 되어질 예약번호를 기억하기 위한 것임.
+			
+			
+			for(int i=0; i<reservationList.size(); i++) {
+				
+				String emailContents = "사용자 ID: " + reservationList.get(i).get("userid") + "<br>" +
+										"예약자명: " + reservationList.get(i).get("user_name") + 
+										"님의 방문 예약일은 <span style='color:red'>" + 
+										reservationList.get(i).get("check_in") + "</span> 입니다."; 
+				
+				mail.sendmail_Reservation(aES256.decrypt(reservationList.get(i).get("email")), emailContents);
+				
+				arr_reservationCode[i] = reservationList.get(i).get("reservation_code");
+				
+			} // end of for
+			
+			// e메일을 발송한 행은 발송했다는 표시해주기 
+	        Map<String, String[]> paraMap = new HashMap<>();
+	    
+	        // paraMap.putIfAbsent(key, value); ==> 맵에 동일한key값이 없을때만 넣어주고 있으면 덮어씌우지않는다.
+	        
+	        paraMap.put("arr_reservationCode", arr_reservationCode);
+	        
+	        // 이메일 발송하고나서 메일체크 update
+	        dao.updateMailSendCheck(paraMap); 
+	        
+			
+		} // end of if(reservationList != null && reservationList.size() > 0) { 
+		
+	}// end of public void reservationEmailSending() throws Exception { 
+
+
+	
+
+
+
 	
 
 	

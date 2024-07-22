@@ -19,7 +19,7 @@ public interface Js_TripDAO {
 	int getLodgingTotalCount(Map<String, Object> paraMap);
 
 	// 숙소리스트에서 조건에 따른 숙소 개수 구해오기
-	List<String> getConvenientList(String lodging_code);
+	List<Map<String, String>> getConvenientList(String lodging_code);
 
 	// 숙소의상세정보만 가져오기
 	LodgingVO getLodgingDetail(String lodgingCode);
@@ -77,6 +77,50 @@ public interface Js_TripDAO {
 
 	// 숙소 예약시 일정테이블에 insert
 	int insertLodgingSchedule(Map<String, String> paraMap);
+
+	// 한 숙소에대한 객실 등록하기
+	int insertRoomDetail(RoomDetailVO rvo);
+
+	// 객실등록 채번해오기
+	String getRoomDetailSeq();
+
+	// 등록한 숙소개수가 몇개인지 알아오기
+	int getRoomCnt(String fk_lodging_code);
+	
+	// 등록된 객실정보 가져오기
+	List<RoomDetailVO> getForUpdateRoomList(String fk_lodging_code);
+
+	// 객실 수정하기
+	int updateRoomDetail(RoomDetailVO rvo);
+
+	// 수정할때 객실 삭제하기
+	int deleteRoomDetail(String room_detail_code);
+
+	// 숙소정보 수정하기
+	int updateLodging(LodgingVO lvo);
+
+	// 트랜잭션 1 (존재하는 숙소에 대한 편의시설 정보 삭제하기)
+	int t_deleteLodgingConvenient(String fk_lodging_code);
+
+	// 트랜잭션 2 (숙소에 대한 편의시설 정보 insert하기)
+	int t_insertLodgingConvenient(Map<String, Object> arr_Map);
+
+	// 숙소 정보 삭제하기
+	int deleteLodgingInfo(String lodging_code);
+
+	// ==== e메일을 발송할 회원 대상 알아오기 ==== 
+	List<Map<String, String>> getReservationList();
+
+	// 이메일 발송하고나서 메일체크 update
+	void updateMailSendCheck(Map<String, String[]> paraMap);
+	
+	
+
+	
+
+
+
+
 
 	
 

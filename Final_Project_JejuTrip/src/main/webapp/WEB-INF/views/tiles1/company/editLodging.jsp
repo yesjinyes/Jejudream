@@ -80,7 +80,7 @@
 
 		});
 
-	 // ===== 상세주소 유효성 검사 =====
+	    // ===== 상세주소 유효성 검사 =====
 	    $("input#detail_address").blur((e) => {
 
 	        const lodging_address_detail = $(e.target).val().trim();
@@ -133,14 +133,21 @@
 
 	    $("input#mobile").keyup(function(e) {
 	        if(e.keyCode == 13) {
-	            goRegister();
+	        	goEditLodging();
 	        }
 	    });
 	}); // end of $(document).ready(function(){
 		
-	function goRegister(ctxPath) {
+	function goEditLodging() {
 
-	    if(checkLodging_name && checkLodging_tell && checkLodging_address_detail && checkLodging_content) {
+		const lodging_name = $("input#lodging_name").val().trim();
+		const lodging_tell = $("input#lodging_tell").val().trim();
+		const lodging_content = $("textarea#lodging_content").text();
+		const address = $("input#address").val().trim();
+				
+		
+	    if( (lodging_name != "" && lodging_tell !="" && lodging_content !="" && address !="") ||
+	    	(checkLodging_name && checkLodging_tell && checkLodging_address_detail && checkLodging_content) ) {
 			
 			const lodging_category = $("select[name='lodging_category']").val();
 			if(lodging_category=="숙소구분"){
@@ -169,13 +176,13 @@
 			const str_convenient = convenient_arr.join();
 
 	        // 숙소 등록 처리하기.
-	        const frm = document.registerFrm;
+	        const frm = document.editFrm;
 			frm.str_convenient.value = str_convenient;
 		   	frm.method = "post";
-		   	frm.action = "<%= ctxPath%>/registerHotelEnd.trip";
+		   	frm.action = "<%= ctxPath%>/editLodgingEnd.trip";
 		   	frm.submit();
 	    } else {
-	        alert("가입 정보를 모두 입력하세요.");
+	        alert("숙소 정보를 모두 입력하세요.");
 	        return;
 	    }
 
@@ -183,24 +190,25 @@
 </script>
 
 <div class="container">
-
+	<c:set var="lvo" value="${requestScope.lvo}"/>
     <div style="width: 80%; margin: 7% auto;">
-        <h2 style="margin-top: 20%;" class="font-weight-bold">숙소 등록</h2>
-        <h5>숙소를 등록해서 돈을 긁어모아봅시다!</h5>
+        <h2 style="margin-top: 20%;" class="font-weight-bold">숙소 수정</h2>
+        <h5>변경된 사항이 있다면 최신화 해주세요!</h5>
     </div>
 
-    <form name="registerFrm" enctype="multipart/form-data">
+    <form name="editFrm" enctype="multipart/form-data">
 
         <div class="info">
 
             <!-- 유효성 검사 시 input 테두리 색 변경 및 span error 띄우기 -->
             <div class="info_block">
-                <input type="text" name="lodging_name" id="lodging_name" placeholder="숙소 명 입력">
-                <span class="error"></span>
+            	<input type="text" name="lodging_name" id="lodging_name" value="${lvo.lodging_name}" placeholder="숙소 명 입력">
+            	<span class="error"></span>
+                <input type="hidden" name="lodging_code" value="${lvo.lodging_code}" />
             </div>
             <div class="info_block mt-3">
 				<select name="lodging_category">
-					<option selected>숙소구분</option>
+					<option selected>${lvo.lodging_category}</option>
 					<option>호텔</option>
 					<option>펜션</option>
 					<option>리조트</option>
@@ -212,7 +220,7 @@
             </div>
             <div class="info_block mt-3">
 				<select name="local_status">
-					<option selected>지역구분</option>
+					<option selected>${lvo.local_status}</option>
 					<option>제주시 시내</option>
 					<option>제주시 서부</option>
 					<option>제주시 동부</option>
@@ -223,11 +231,11 @@
                 <span class="error"></span>
             </div>
             <div class="info_block mt-3">
-                <input type="text" name="lodging_tell" id="lodging_tell" placeholder="숙소 연락처" maxlength="20">
+                <input type="text" name="lodging_tell" id="lodging_tell" placeholder="숙소 연락처" maxlength="20" value="${lvo.lodging_tell}">
                 <span class="error"></span>
             </div>
             <div class="info_block mt-3">
-	            <input type="text" name="address" id="address" placeholder="주소">
+	            <input type="text" name="address" id="address" placeholder="주소" value="${lvo.lodging_address}">
 	        </div>
 	        <div class="info_block mt-3">
 	            <input type="text" name="detail_address" id="detail_address" placeholder="상세주소">
@@ -236,27 +244,33 @@
 	        <div class="mt-3 convenient">
 	        	편의시설
 	        </div>
-        	<c:forEach var="map" items="${requestScope.mapList}" varStatus="status">
+        	<c:forEach var="convenient" items="${requestScope.convenientList}" varStatus="status">
         		<c:if test="${status.index % 6 == 0}">
         			<div></div>
         		</c:if>
-        		<label class="checkbox_label" for="fk_convenient_code${status.index}">${map.convenient_name}
-        			<input type="checkbox" class="fk_convenient_code" name="fk_convenient_code" id="fk_convenient_code${status.index}" value="${map.convenient_code}"/>
+        		<label class="checkbox_label" for="fk_convenient_code${status.index}">${convenient.convenient_name}
+        			<input type="checkbox" class="fk_convenient_code" name="fk_convenient_code" id="fk_convenient_code${status.index}" value="${convenient.convenient_code}"
+        			<c:forEach var="selected" items="${requestScope.selectedConvenientList}">
+            		<c:if test="${selected.convenient_code eq convenient.convenient_code}">checked</c:if>
+        			</c:forEach> />
+					
 				</label>
 			</c:forEach>    
 			<input type="hidden" name="str_convenient"/>
             <div class="info_block mt-3">
-                <textarea name="lodging_content" id="lodging_content" placeholder="숙소 설명"></textarea>
+                <textarea name="lodging_content" id="lodging_content" placeholder="숙소 설명" >${lvo.lodging_content}</textarea>
                 <span class="error"></span>
             </div>
             <div class="mt-3">
+            	<span>현재 숙소 이미지 파일명 : ${lvo.orgFilename}</span><br>
                 <input type="file" name="attach" id="attach">
                 <span class="error"></span>
             </div>
         </div>
 
         <div style="text-align: center; margin-bottom: 13%;">
-            <button type="button" class="btn" id="registerBtn" onclick="goRegister('<%=ctxPath%>')">가입하기</button>
+            <button type="button" class="btn" id="registerBtn" onclick="goEditLodging()">숙소 수정하기</button>
+            <button type="button" style="border-radius: 8px; height: 50px; margin: 1% auto;"class="btn btn-danger" onclick="javascript:history.back()">취소하기</button>
         </div>
 
     </form>

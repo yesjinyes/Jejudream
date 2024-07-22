@@ -1,5 +1,7 @@
 package com.spring.app.trip.domain;
 
+import org.springframework.web.multipart.MultipartFile;
+
 // == 객실상세 VO == //
 public class RoomDetailVO {
 
@@ -15,6 +17,15 @@ public class RoomDetailVO {
 	private int max_person;				// 최대인원
 	private String room_img;			// 객실 이미지
 	
+	
+	private MultipartFile attach;
+	
+	
+	private String fileName;
+	
+	private String orgFilename;
+	
+	private String fileSize;
     //////////////////////////////////////////////////////////////////
     // == Getter, Setter == //
 	
@@ -81,7 +92,30 @@ public class RoomDetailVO {
 
 	
 
-	
+	public MultipartFile getAttach() {
+		return attach;
+	}
+	public void setAttach(MultipartFile attach) {
+		this.attach = attach;
+	}
+	public String getFileName() {
+		return fileName;
+	}
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+	public String getOrgFilename() {
+		return orgFilename;
+	}
+	public void setOrgFilename(String orgFilename) {
+		this.orgFilename = orgFilename;
+	}
+	public String getFileSize() {
+		return fileSize;
+	}
+	public void setFileSize(String fileSize) {
+		this.fileSize = fileSize;
+	}
 	
 	
 	

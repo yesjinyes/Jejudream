@@ -13,6 +13,7 @@ import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.PlayVO;
 import com.spring.app.trip.domain.ReviewVO;
+import com.spring.app.trip.domain.RoomDetailVO;
 
 
 @Component
@@ -47,9 +48,9 @@ public class Js_TripDAO_imple implements Js_TripDAO {
 
 	// 숙소리스트에 표현할 편의시설 목록 구해오기
 	@Override
-	public List<String> getConvenientList(String lodging_code) {
+	public List<Map<String,String>> getConvenientList(String lodging_code) {
 		
-		List<String> convenientList = sqlsession.selectList("js_trip.getConvenientList", lodging_code);
+		List<Map<String,String>> convenientList = sqlsession.selectList("js_trip.getConvenientList", lodging_code);
 		
 		return convenientList;
 		
@@ -127,7 +128,7 @@ public class Js_TripDAO_imple implements Js_TripDAO {
 	@Override
 	public int getCommentTotalCount(String lodging_code) {
 		
-		int totalCount = sqlsession.selectOne("js_trip.getCommentTotalCount",lodging_code);
+		int totalCount = sqlsession.selectOne("js_trip.getLodgingReviewTotalCount",lodging_code);
 		
 		return totalCount;
 		
@@ -139,7 +140,7 @@ public class Js_TripDAO_imple implements Js_TripDAO {
 	@Override
 	public List<Map<String, String>> getCommentList_Paging(Map<String, String> paraMap) {
 		
-		List<Map<String, String>> reviewList = sqlsession.selectList("js_trip.getCommentList_Paging", paraMap);
+		List<Map<String, String>> reviewList = sqlsession.selectList("js_trip.getLodgingReviewList_Paging", paraMap);
 		
 		return reviewList;
 		
@@ -269,7 +270,152 @@ public class Js_TripDAO_imple implements Js_TripDAO {
 		return n;
 		
 	} // end of public int insertLodgingSchedule(Map<String, String> paraMap) { 
+
+
 	
+	// 한 숙소에대한 객실 등록하기
+	@Override
+	public int insertRoomDetail(RoomDetailVO rvo) {
+		
+		int n = sqlsession.insert("js_trip.insertRoomDetail",rvo);
+		
+		return n;
+		
+	} // end of public int insertRoomDetail(RoomDetailVO rvo) {
+
+
+	
+	// 객실등록 채번해오기
+	@Override
+	public String getRoomDetailSeq() {
+		
+		String room_seq = sqlsession.selectOne("js_trip.getRoomDetailSeq");
+		
+		return room_seq;
+		
+	} // end of public String getRoomDetailSeq() {
+
+
+	// 등록한 숙소개수가 몇개인지 알아오기
+	@Override
+	public int getRoomCnt(String fk_lodging_code) {
+		
+		int n = sqlsession.selectOne("js_trip.getRoomCnt", fk_lodging_code);
+		
+		return n;
+		 
+	} // end of public int getRoomCnt(String fk_lodging_code) {
+
+
+	// 등록된 객실정보 가져오기
+	@Override
+	public List<RoomDetailVO> getForUpdateRoomList(String fk_lodging_code) {
+		
+		List<RoomDetailVO> roomList = sqlsession.selectList("js_trip.getForUpdateRoomList", fk_lodging_code);
+		
+		return roomList;
+		
+	} // end of public List<RoomDetailVO> getForUpdateRoomList(String fk_lodging_code) { 
+
+
+	
+	// 객실 수정하기
+	@Override
+	public int updateRoomDetail(RoomDetailVO rvo) {
+		
+		int n = sqlsession.update("js_trip.updateRoomDetail", rvo);
+		
+		return n;
+		
+	} // end of public int updateRoomDetail(RoomDetailVO rvo) {
+
+
+	// 수정할때 객실 삭제하기
+	@Override
+	public int deleteRoomDetail(String room_detail_code) {
+		
+		int n = sqlsession.delete("js_trip.deleteRoomDetail", room_detail_code);
+		
+		return n;
+		
+	} // end of public int deleteRoomDetail(String room_detail_code) {
+
+
+	
+	// 숙소정보 수정하기
+	@Override
+	public int updateLodging(LodgingVO lvo) {
+		
+		int n = sqlsession.update("js_trip.updateLodging", lvo);
+		
+		return n;
+		
+	} // end of public int updateLodging(LodgingVO lvo) {
+
+
+	
+	// 트랜잭션 1 (존재하는 숙소에 대한 편의시설 정보 삭제하기)
+	@Override
+	public int t_deleteLodgingConvenient(String fk_lodging_code) {
+		
+		int n = sqlsession.delete("js_trip.t_deleteLodgingConvenient", fk_lodging_code);
+		
+		return n;
+		
+	} // end of public int t_deleteLodgingConvenient(String fk_lodging_code) {
+
+
+	
+	// 트랜잭션 2 (숙소에 대한 편의시설 정보 insert하기)
+	@Override
+	public int t_insertLodgingConvenient(Map<String, Object> arr_Map) {
+		
+		int n = sqlsession.insert("js_trip.t_insertLodgingConvenient", arr_Map);
+		
+		return n;
+		
+	} // end of public int t_insertLodgingConvenient(Map<String, String> paraMap) {
+
+
+	
+	// 숙소 정보 삭제하기
+	@Override
+	public int deleteLodgingInfo(String lodging_code) {
+		
+		int n = sqlsession.delete("js_trip.deleteLodgingInfo", lodging_code);
+		
+		return n;
+		
+	} // end of public int deleteLodgingInfo(String lodgingCode) {
+
+
+	// ==== e메일을 발송할 회원 대상 알아오기 ==== 
+	@Override
+	public List<Map<String, String>> getReservationList() {
+		
+		List<Map<String, String>> reservationEmailList = sqlsession.selectList("js_trip.reservationEmailList");
+		
+		return reservationEmailList;
+		
+	} // end of public List<Map<String, String>> getReservationList() {
+
+
+	
+	// 이메일 발송하고나서 메일체크 update
+	@Override
+	public void updateMailSendCheck(Map<String, String[]> paraMap) {
+		
+		sqlsession.update("js_trip.updateMailSendCheck", paraMap);
+		
+	} // end of public void updateMailSendCheck(Map<String, String[]> paraMap) {
+
+	
+	
+
+
+	
+	
+	 
 	
 	
 	

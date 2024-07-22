@@ -34,6 +34,113 @@
         	}
         });
         
+        
+        // 정수 객실 등록하기 버튼
+        $("button:button[name='register_room']").click(function(e){
+        	
+        	// alert('히히');
+        	
+        	const fk_lodging_code = $(e.target).parent().parent().next().val();
+        	const companyid = "${sessionScope.loginCompanyuser.companyid}";
+        	
+        	// alert(companyid);
+        	// alert(fk_lodging_code);
+        	
+        	const frm = document.registerRoom;
+        	
+        	frm.send_fk_lodging_code.value = fk_lodging_code;
+        	frm.send_companyid.value = companyid;
+        	frm.method = "post";
+        	frm.action = "<%= ctxPath%>/registerRoomDetail.trip";
+        	frm.submit();
+        	
+        }); // end of $("button:button[name='register_room']").click(function(e){ })
+        
+        
+     	// 정수 객실등록했으면 객실 수정/삭제 버튼 생성
+     	$("button[name='register_room']").each(function(){
+  			
+   			const $this = $(this);
+   			
+          	let fk_lodging_code = $this.parent().parent().next().val();
+          	
+          	//	alert(fk_lodging_code);
+          	
+       		$.ajax({
+           		
+           		url:"<%= ctxPath%>/JSONFindRoomRegister.trip",
+       			data:{"lodging_code":fk_lodging_code}, 
+       			type:"get",
+       			dataType:"json",
+       			success:function(json){
+               	
+               		if(Number(json.result) > 0){
+               			
+               			$this.removeClass("btn-light");
+               			$this.addClass("btn-danger");
+               			$this.attr("name","updateRoom");
+               			$this.text("수정/삭제");
+               		}			
+               	
+       			},
+       			error: function(request, status, error){
+       			   alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+       			}
+               	
+            }); // end of $.ajax 객실을 등록했는지 안했는지
+          
+       	
+        }); // end of $("input:hidden[name='lodginvo_lodgingCode']").each(function(){})
+     		
+     		
+        // 정수 객실 수정/삭제 버튼 클릭시
+     	$(document).on('click', "button:button[name='updateRoom']", function(e){
+     			
+   			// alert('히히');
+   			const $this = $(e.target);
+   			
+   			const fk_lodging_code = $this.parent().parent().next().val();
+   			const companyid = "${sessionScope.loginCompanyuser.companyid}";
+   			// alert(fk_lodging_code);
+   			
+   			const frm = document.updateRoom;
+     			
+   			frm.send_fk_lodging_code.value = fk_lodging_code;
+        	frm.send_companyid.value = companyid;
+        	frm.method = "post";
+        	frm.action = "<%= ctxPath%>/updateRoomDetail.trip";
+        	frm.submit();
+        	
+     	});  // end of $(document).on('click', "button:button[name='updateRoom']", function(e){})
+     	
+     	// 정수 모달창 내에서 객실 수정하기 버튼
+        $(document).on("click", "button#editLodging", function(e){
+        	
+        	// alert('히히');
+        	
+        	const lodgingCode = $(e.target).parent().prev().find("input:hidden[name='modal_lodging_code']").val();
+        	// alert(lodgingCode);
+        	
+        	goEditLodging(lodgingCode);
+        	
+        }); // end of $(document).on("click", "button#editLodging", function(e){})
+     	
+        
+        // 정수 모달창 내에서 객실 삭제하기 버튼
+		$(document).on("click", "button#deleteLodging", function(e){
+        	
+			// alert('히히');
+        	
+			const lodgingCode = $(e.target).parent().prev().find("input:hidden[name='modal_lodging_code']").val();
+			// alert(lodgingCode);
+			
+			goDeleteLodging(lodgingCode);
+        	
+        }); // end of $(document).on("click", "button#deleteLodging", function(e){})
+     	
+    	  
+         
+        
     }); // end of $(document).ready(function(){
     	
     function open_modal(lodgingCode){
@@ -61,6 +168,9 @@
 					v_html += `<div style="margin-bottom:5px;">처리상태 : <span style="color:red; font-weight:bold;">반려</span></div>`;
 					v_html += `<div style="margin-bottom:5px;">반려사유 : \${json.feedback_msg}</div>`;
 				}
+				
+				v_html += `<input type="hidden" name="modal_lodging_code" value="\${lodgingCode}" />`
+				
 			    $("div.modal-body").html(v_html);
 			},
 			error: function(request, status, error){
@@ -72,6 +182,67 @@
     	
     	$('#modal_showDetail').modal('show'); // 모달창 보여주기
     }
+    
+    // 숙소 정보 수정하는 페이지로 이동
+    function goEditLodging(lodgingCode){
+    	
+    	// alert(lodgingCode);
+    	// alert("${sessionScope.loginCompanyuser.companyid}");
+    	
+    	const companyid = "${sessionScope.loginCompanyuser.companyid}";
+    	
+    	const frm = document.updateLodging;
+    	
+    	frm.send_lodging_code.value = lodgingCode;
+    	frm.send_companyid.value = companyid;
+    	
+    	frm.method = "get";
+    	frm.action = "<%= ctxPath%>/editLodging.trip";
+    	
+    	// $("button.modal_close").click();
+    	
+    	frm.submit();
+    
+    } // end of function goEditLodging(lodgingCode){})
+    
+    
+    // 등록된 숙소 삭제하기
+	function goDeleteLodging(lodgingCode){
+		
+    	if(confirm('정말 등록된 숙소를 삭제하시겠습니까?')){
+    		
+    		// alert('히히');
+    	
+    		$.ajax({
+    			
+    			url:"<%= ctxPath%>/JSONDeleteLodging.trip",
+    			data:{"lodging_code":lodgingCode}, 
+    			type:"post",
+    			dataType:"json",
+    			success:function(json){
+    				
+    				if(json.result == "1"){
+    					
+    					alert('숙소 삭제 성공');
+    					$("button.modal_close").click();
+    					
+    					location.reload(true);
+        				
+    				}
+    				
+    			},
+    			error: function(request, status, error){
+    			   alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+    			}
+    		
+    		}); // end of $.ajax
+    		
+    		location.reload(true);
+    	
+    	} // end of if confirm
+    	
+	} // end of function goDeleteLodging(){})
+	
 </script>
 
 <div class="body">
@@ -217,7 +388,7 @@
 				      			<c:if test="${lodgingvo.status == 0}"><td style="color:blue; font-weight:bold;">처리중</td></c:if>
 				      			<c:if test="${lodgingvo.status == 1}"><td style="color:green; font-weight:bold;">승인</td></c:if>
 				      			<c:if test="${lodgingvo.status == 2}"><td style="color:red; font-weight:bold;">반려</td></c:if>
-				      			<c:if test="${lodgingvo.status == 1}"><td><button type="button" class="btn btn-light">객실등록</button></td></c:if>
+				      			<c:if test="${lodgingvo.status == 1}"><td><button type="button" name="register_room" class="btn btn-light">객실등록</button></td></c:if>
 					    	</tr>
 					    	<input type="hidden" name="lodginvo_lodgingCode" value="${lodgingvo.lodging_code}"/>
 				    	</c:forEach>
@@ -276,7 +447,7 @@
 						      			<c:if test="${lodgingvo.status == 0}"><td style="color:blue; font-weight:bold;">처리중</td></c:if>
 						      			<c:if test="${lodgingvo.status == 1}"><td style="color:green; font-weight:bold;">승인</td></c:if>
 						      			<c:if test="${lodgingvo.status == 2}"><td style="color:red; font-weight:bold;">반려</td></c:if>
-						      			<c:if test="${lodgingvo.status == 1}"><td><button type="button" class="btn btn-light">객실등록</button></td></c:if>
+						      			<c:if test="${lodgingvo.status == 1}"><td><button type="button" name="register_room" class="btn btn-light">객실등록</button></td></c:if>
 							    	</tr>
 							    </c:if>
 							    <input type="hidden" name="lodginvo_lodgingCode" value="${lodgingvo.lodging_code}"/>
@@ -336,10 +507,26 @@
       
       <!-- Modal footer -->
       <div class="modal-footer">
-      	  <!-- <button type="button" id="addCom" class="btn btn-success btn-sm" onclick="goEditMyCal()">수정</button> -->
+      	  <button type="button" id="editLodging" class="btn btn-success btn-sm">숙소 수정</button>
+      	  <button type="button" id="deleteLodging" class="btn btn-warning btn-sm">숙소 삭제</button>
           <button type="button" class="btn btn-danger btn-sm modal_close" data-dismiss="modal">취소</button>
       </div>
       
     </div>
   </div>
 </div>
+
+<form name="registerRoom">
+	<input name="send_fk_lodging_code" type="hidden" value="" />
+	<input name="send_companyid" type="hidden" value="" />
+</form>
+
+<form name="updateRoom">
+	<input name="send_fk_lodging_code" type="hidden" value="" />
+	<input name="send_companyid" type="hidden" value="" />
+</form>
+
+<form name="updateLodging">
+	<input name="send_lodging_code" type="hidden" value="" />
+	<input name="send_companyid" type="hidden" value="" />
+</form>

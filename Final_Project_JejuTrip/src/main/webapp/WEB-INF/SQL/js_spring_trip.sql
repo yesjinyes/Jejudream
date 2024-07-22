@@ -462,8 +462,12 @@ REFERENCES tbl_company (companyid) ON DELETE CASCADE;
     and status != 1
     order by room_detail_code asc;
     
-    select * from tbl_room_detail;
+    select * from tbl_room_detail order by room_detail_code desc;
     select * from tbl_reservation;
+    
+    delete from tbl_room_detail where room_detail_code in (671, 672);
+    
+    commit;
     delete from tbl_reservation where reservation_code = 5;
     commit;  
          
@@ -1037,11 +1041,10 @@ create table tbl_board
     
     select * from tbl_like where parent_code = 5214;
     
-    select * from tbl_food_add_img;
-    select * from tbl_play_add_img;
+   select * from tbl_member;
     
     
-    
+    select * from tbl_room_detail;
     
     
     select * from tbl_calendar_schedule;
@@ -1049,3 +1052,32 @@ create table tbl_board
     insert into tbl_calendar_schedule(scheduleno, startdate, enddate, subject, color, place, content, fk_smcatgono, fk_lgcatgono, fk_userid ,schedule_divison ,parent_code) 
     					   values(seq_scheduleno.nextval, to_date(#{check_in}, 'yyyy-mm-dd hh24:mi:ss'), to_date(#{check_out}, 'yyyy-mm-dd hh24:mi:ss'), 
     					   		  #{lodging_name}, '', #{lodging_address}, #{room_name}, 1, 1, #{userid} , 'A',#{lodging_code} )  
+
+
+
+    create table tbl_chattinglog(
+    to_id VARCHAR2(20) NOT NULL, /* 말거는사람 */
+	from_id VARCHAR2(20) NOT NULL, /* 받는사람 */
+	status NUMBER default 0 /* 채팅읽은상태 0이면 안읽음 1이면 읽음 */
+    );
+    
+    select * from tbl_lodging where lodging_code = 5404;
+    
+    select * 
+    from tbl_room_detail 
+    order by room_detail_code desc;
+    where fk_lodging_code = 5338
+    
+    select * from tbl_reservation;
+    alter table tbl_reservation add mailSendCheck number(1) default 0;
+    -- Table TBL_RESERVATION이(가) 변경되었습니다.
+    
+    SELECT R.reservation_code, M.userid, M.user_name, M.email,
+       		   to_char(R.check_in, 'yyyy-mm-dd hh24:mi') AS check_in
+		FROM tbl_member M JOIN (select * from tbl_reservation 
+        where mailsendcheck = 0 and status = 1 and
+              reservation_date > check_in - (interval '5' hour) and 
+              to_char(check_in,'yyyymmdd') = to_char(sysdate+1,'yyyymmdd') ) R 
+		ON M.userid = R.fk_userid
+    
+   

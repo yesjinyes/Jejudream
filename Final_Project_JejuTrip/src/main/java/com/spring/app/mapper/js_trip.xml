@@ -75,7 +75,8 @@
 				  SELECT D.fk_lodging_code, D.room_name, COUNT(*) AS RESERVATION_CNT 
 				  FROM tbl_room_detail D JOIN tbl_reservation RSV
 				  ON D.room_detail_code = RSV.fk_room_detail_code
-				  WHERE RSV.check_in BETWEEN #{check_in} AND #{check_out}
+				  WHERE RSV.check_in <![CDATA[<=]]> #{check_in} AND RSV.check_out <![CDATA[>=]]> #{check_out}
+				  and RSV.status = 1
 				  GROUP BY D.fk_lodging_code, D.room_name
 				 ) B
 				 ON A.lodging_code || A.room_name = B.fk_lodging_code || B.room_name
@@ -159,7 +160,8 @@
 			  SELECT D.fk_lodging_code, D.room_name, COUNT(*) AS RESERVATION_CNT 
 			  FROM tbl_room_detail D JOIN tbl_reservation RSV
 			  ON D.room_detail_code = RSV.fk_room_detail_code
-			  WHERE RSV.check_in BETWEEN #{check_in} AND #{check_out}
+			  WHERE RSV.check_in <![CDATA[<=]]> #{check_in} AND RSV.check_out <![CDATA[>=]]> #{check_out}
+			  and RSV.status = 1
 			  GROUP BY D.fk_lodging_code, D.room_name
 			 ) B
 			 ON A.lodging_code || A.room_name = B.fk_lodging_code || B.room_name
@@ -192,8 +194,12 @@
 	
 	
 	<!-- 숙소리스트에 표현할 편의시설 목록 구해오기 -->
-	<select id="getConvenientList" resultType="String">
-		select convenient_name from tbl_convenient C
+	<resultMap type="HashMap" id="convenientMap">
+		<result property="convenient_code" 	column="convenient_code" 	javaType="String" />
+		<result property="convenient_name" 	column="convenient_name" 	javaType="String" />
+	</resultMap>
+	<select id="getConvenientList" resultMap="convenientMap">
+		select convenient_name, convenient_code from tbl_convenient C
 		<if test='lodging_code != ""'>
 			join tbl_lodging_convenient LC
 		    on LC.fk_convenient_code = C.convenient_code
@@ -252,7 +258,7 @@
 	</select>
 	
 	
-	
+	<!-- 결제페이지에서 예약하려는 숙소와 객실정보 가져오기 -->
 	<resultMap type="HashMap" id="ReserveRoomDetail">
 		<result property="lodging_name" column="lodging_name" javaType="String" />
 		<result property="lodging_address" column="lodging_address" javaType="String" />
@@ -277,19 +283,20 @@
 		       where lodging_code = #{lodging_code} and R.room_detail_code = #{room_detail_code}
 	</select>
 
-
+	<!-- 예약번호 채번해오기 -->
 	<select id="getReservationNum" resultType="String">
 		select seq_reserve.nextval
 		from dual
 	</select>
 	
+	<!-- 예약테이블 insert 하기 -->
 	<insert id="insertReservation" parameterType="HashMap">
 		insert into tbl_reservation (RESERVATION_CODE, FK_USERID, FK_ROOM_DETAIL_CODE, CHECK_IN, CHECK_OUT, RESERVATION_PRICE)
 		values(#{num}, #{userid}, #{room_detail_code}, to_date(#{check_in}, 'yyyy-mm-dd hh24:mi:ss') , to_date(#{check_out}, 'yyyy-mm-dd hh24:mi:ss'), #{totalPrice})
 	</insert>
 	
 	
-	
+	<!-- 예약정보 알아오기 -->
 	<resultMap type="HashMap" id="reservationInfo">
 		<result property="reservation_code" column="reservation_code" javaType="String" />
 		<result property="reservation_price" column="reservation_price" javaType="String" />
@@ -339,13 +346,14 @@
 	</select>
 	
 	
-	
-	<select id="getCommentTotalCount" parameterType="String" resultType="int">
+	<!-- 한 숙소 리뷰 페이징 처리를 위한 토탈 카운트 구해오기 -->
+	<select id="getLodgingReviewTotalCount" parameterType="String" resultType="int">
 		select count(*) from tbl_review
      	where parent_code = #{lodging_code}
 	</select>
 	
 	
+	<!-- 한 숙소에 대한 리뷰 페이징처리해서 보여주기 -->
 	<resultMap type="HashMap" id="reviewList">
 		<result property="rno" column="rno" javaType="String" />
 		<result property="review_code" column="review_code" javaType="String" />
@@ -355,7 +363,7 @@
 		<result property="review_content" column="review_content" javaType="String" />
 		<result property="registerday" column="registerday" javaType="String" />
 	</resultMap>
-	<select id="getCommentList_Paging" parameterType="HashMap" resultMap="reviewList">
+	<select id="getLodgingReviewList_Paging" parameterType="HashMap" resultMap="reviewList">
 		select rno, review_code, fk_userid, user_name,
 			   parent_code, review_content, registerday
 		from
@@ -370,6 +378,7 @@
 	</select>
 	
 	
+	<!-- 한 숙소에 대해 리뷰를 작성을 위해 해당숙소를 예약했는지 안했는지 알아오기 -->
 	<select id="chkReservation" parameterType="HashMap" resultType="int">
 		select count(*) as chk
      	from tbl_reservation R
@@ -379,6 +388,7 @@
 	</select>
 	
 	
+	<!-- 한 숙소에 대해 리뷰를 작성했는지 안했는지 판단해오기 -->
 	<select id="chkReview" parameterType="HashMap" resultType="int">
 		select count(*) as cnt
      	from tbl_review
@@ -386,22 +396,26 @@
 	</select>
 	
 	
+	<!-- 한 숙소의 리뷰 수정하기 -->
 	<update id="updateLodgingComment" parameterType="HashMap">
 		update tbl_review set review_content = #{content} , registerday = sysdate 
 		where review_code = #{review_code}
 	</update>
 	
-	
+	<!-- 한 숙소의 리뷰 삭제하기 -->
 	<delete id="deleteLodgingComment">
 		delete from tbl_review where review_code = #{review_code}
 	</delete>
  
  
+ 	<!-- 한 숙소의 리뷰 작성하기 -->
  	<insert id="addLodgingReview" parameterType="ReviewVO">
  		insert into tbl_review (review_code, fk_userid, parent_code, review_content, review_division_r)
  		values(seq_review.nextval , #{fk_userid}, #{parent_code}, #{review_content}, #{review_division_R})
  	</insert>
  	
+ 	
+ 	<!-- 랜덤 맛집 추천을 위한 sql문 -->
  	<select id="getRandomFood" parameterType="String" resultType="FoodstoreVO">
  		select food_store_code, local_status, food_name, food_content, food_main_img
 		from (
@@ -414,7 +428,7 @@
  	
  	</select>
  	
- 	
+ 	<!-- 랜덤 즐길거리 추천을 위한 sql문 -->
  	<select id="getRandomPlay" parameterType="String" resultType="PlayVO">
  		select play_code, local_status, play_name, play_content, play_main_img
 		from (
@@ -427,29 +441,141 @@
  	
  	</select>
  	
- 	
+ 	<!-- 한 숙소에대해 좋아요를 했는지 안했는데 판단하기 -->
  	<select id="getLodgingLike" parameterType="HashMap" resultType="int">
  		select count(*) from tbl_like where parent_code = #{lodging_code} and fk_userid = #{userid}
  	</select>
  	
  	
- 	
+ 	<!-- 로그인이 되어있고 한 숙소에 대해 좋아요 취소하기 -->
  	<delete id="lodgingCancelAddLike" parameterType="HashMap">
  		delete from tbl_like where parent_code = #{lodging_code} and fk_userid = #{userid}	
  	</delete>
  
  
- 
+ 	<!-- 로그인이 되어있고 한 숙소에 대해 좋아요 표시하기  -->
  	<insert id="lodgingAddLike" parameterType="HashMap">
  		insert into tbl_like (fk_userid, parent_code, like_division_r) values(#{userid}, #{lodging_code}, 'A')
  	</insert>
  	
  	
- 	
+ 	<!-- 숙소 예약시 일정테이블에다가 insert 하기 -->
  	<insert id="insertLodgingSchedule" parameterType="HashMap">
  		insert into tbl_calendar_schedule(scheduleno, startdate, enddate, subject, color, place, content, fk_smcatgono, fk_lgcatgono, fk_userid ,schedule_divison ,parent_code) 
     	values(seq_scheduleno.nextval, to_date(#{check_in}, 'yyyy-mm-dd hh24:mi:ss'), to_date(#{check_out}, 'yyyy-mm-dd hh24:mi:ss'), 
     		  #{lodging_name}, '#ffcc80', #{lodging_address}, #{room_name}, 1, 1, #{userid} , 'A',#{lodging_code} )
  	</insert>
  	
+ 	
+ 	<!-- 객실등록과 활용을 위한 객실등록 시퀀스 채번해오기 -->
+ 	<select id="getRoomDetailSeq" resultType="String">
+ 		select seq_room.nextval
+ 		from dual
+ 	</select>
+ 	
+ 	
+ 	<!-- 객실등록하는 insert -->
+ 	<insert id="insertRoomDetail" parameterType="RoomDetailVO">
+ 		INSERT INTO tbl_room_detail (room_detail_code, fk_lodging_code, room_name, price, check_in, check_out, min_person, max_person, room_img,fileName,orgFilename,fileSize)
+ 		values (#{room_detail_code}, #{fk_lodging_code}, #{room_name}, #{price}, #{check_in}, #{check_out}, #{min_person}, #{max_person}, #{room_img}, #{fileName}, #{orgFilename}, #{fileSize})
+ 	</insert>
+ 	
+ 	<!-- 등록된 숙소 개수 구해오기 -->
+ 	<select id="getRoomCnt" parameterType="String" resultType="int">
+ 		select count(*) from tbl_room_detail where fk_lodging_code = #{fk_lodging_code}
+ 	</select>
+ 	
+ 	
+ 	<!-- 수정을 위한 한 숙소에 객실정보 가져오기 -->
+ 	<select id="getForUpdateRoomList" parameterType="String" resultType="RoomDetailVO">
+ 		select * from tbl_room_detail where fk_lodging_code = #{fk_lodging_code}
+ 	</select>
+ 	
+ 	
+ 	<!-- 객실 정보 수정하기 -->
+ 	<update id="updateRoomDetail" parameterType="RoomDetailVO">
+ 		update tbl_room_detail set 
+ 		room_name = #{room_name},
+ 		price = #{price},
+ 		check_in = #{check_in},
+ 		check_out = #{check_out},
+ 		min_person = #{min_person}, 
+ 		max_person = #{max_person},
+ 		room_img = #{room_img},
+ 		fileName = #{fileName},
+ 		orgFilename = #{orgFilename},
+ 		fileSize = #{fileSize}
+ 		where room_detail_code = #{room_detail_code}
+ 	</update>
+ 	
+ 	
+ 	<!-- 수정할때 객실 삭제하기 -->
+ 	<delete id="deleteRoomDetail" parameterType="String">
+ 		delete from tbl_room_detail where room_detail_code = #{room_detail_code}
+ 	</delete>
+ 	
+ 	
+ 	
+ 	<!-- 숙소 정보 수정하기 -->
+ 	<update id="updateLodging" parameterType="lodgingVO">
+ 		update tbl_lodging set
+ 		lodging_name = #{lodging_name},
+ 		local_status = #{local_status},
+		lodging_category = #{lodging_category},
+		lodging_tell = #{lodging_tell},
+		lodging_content = #{lodging_content},
+		lodging_address = #{lodging_address},
+		main_img = #{main_img},
+		fileName = #{fileName},
+		orgFilename = #{orgFilename},
+		fileSize = #{fileSize}
+		where lodging_code = #{lodging_code}
+ 	</update>
+ 	
+	
+	<!-- 트랜잭션 1 (존재하는 숙소에 대한 편의시설 정보 삭제하기)  -->
+	<delete id="t_deleteLodgingConvenient" parameterType="String">
+		delete from tbl_lodging_convenient where fk_lodging_code = #{fk_lodging_code}
+	
+	</delete>
+	
+	
+	<!-- 트랜잭션 2 (숙소에 대한 편의시설 정보 insert하기) -->
+	<insert id="t_insertLodgingConvenient" parameterType="HashMap">
+		insert into tbl_lodging_convenient (fk_convenient_code,fk_lodging_code)
+		values (#{convenient_code}, #{lodging_code})
+	</insert>
+ 	
+ 	
+ 	<!-- 등록된 숙소정보 삭제하기 -->
+ 	<delete id="deleteLodgingInfo" parameterType="String">
+ 		delete from tbl_lodging where lodging_code = #{lodging_code}
+ 	</delete>
+ 	
+ 	
+ 	<!-- ==== e메일을 발송할 회원 대상 알아오기 ==== -->
+ 	<resultMap type="HashMap" id="reservationEmailList_Map">
+       <result property="reservation_code"     column="reservation_code"     javaType="String" />
+       <result property="userid"        column="userid"        javaType="String" />
+       <result property="user_name"        column="user_name"        javaType="String" />
+       <result property="email"        column="email"        javaType="String" />
+       <result property="check_in"        column="check_in"        javaType="String" />
+   </resultMap>
+	<select id="reservationEmailList" resultMap="reservationEmailList_Map">
+ 	SELECT R.reservation_code, M.userid, M.user_name, M.email,
+       		   to_char(R.check_in, 'yyyy-mm-dd hh24:mi') AS check_in
+		FROM tbl_member M JOIN (select * from tbl_reservation 
+        where mailsendcheck = 0 and status = 1 and
+        	  
+              to_char(check_in,'yyyymmdd') = to_char(sysdate+1,'yyyymmdd') ) R 
+		ON M.userid = R.fk_userid
+ 	</select>
+ 	
+ 	
+ 	<!-- === 이메일 발송하고나서 메일체크 update  === -->
+	<update id="updateMailSendCheck" parameterType="HashMap">
+		update tbl_reservation set mailSendCheck = 1 
+		where reservation_code in <foreach collection="arr_reservationCode" index="i" open="(" separator="," close=")">${arr_reservationCode[i]}</foreach> 
+	</update>
+ 
 </mapper>
