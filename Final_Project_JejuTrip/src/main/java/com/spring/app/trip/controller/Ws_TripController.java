@@ -51,8 +51,19 @@ public class Ws_TripController {
     private AES256 aES256;
 	
 	@GetMapping("/index.trip") 
-	public ModelAndView readComment(ModelAndView mav) {
+	public ModelAndView readComment(ModelAndView mav, HttpServletRequest request) {
 		
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
+		CompanyVO loginCompanyuser = (CompanyVO)session.getAttribute("loginCompanyuser");
+		int i = 0;
+		if(loginuser != null) {
+			i = service.get_new_chatting(loginuser.getUserid());// 로그인을 하고 메인에 들어갔을 때 새로 온 채팅이 있는지 확인해준다.
+		}
+		else if(loginCompanyuser != null) {
+			i = service.get_new_chatting(loginCompanyuser.getCompanyid());// 로그인을 하고 메인에 들어갔을 때 새로 온 채팅이 있는지 확인해준다.
+		}
+		mav.addObject("i",i);
 		mav.setViewName("main/main.tiles1");
 		
 		return mav;
@@ -2192,6 +2203,7 @@ public class Ws_TripController {
 		String companyid = request.getParameter("companyid");
 		
 		String chatting_key = reservation_code + "_" + request.getParameter("userid") + "_" + companyid;
+		String status = request.getParameter("status");
 		
 		MemberVO chattinguser = new MemberVO();
 		chattinguser.setUser_name(request.getParameter("name"));
@@ -2199,8 +2211,31 @@ public class Ws_TripController {
 		HttpSession session = request.getSession();
 		session.setAttribute("chattinguser", chattinguser);
 		session.setAttribute("chatting_key", chatting_key);
+		session.setAttribute("status", status);
 		
 		return "reservationChatToCompany";
 	}
 	
+	@GetMapping("/support.trip")
+	public ModelAndView support(ModelAndView mav, HttpServletRequest request) {
+		
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
+		
+		if(loginuser != null && loginuser.getUserid().equals("admin")) {
+			// 로그인한 유저가 개인 유저이면서 그 아이디가 관리자 아이디라면
+			mav.setViewName("mypage/admin/support.tiles1");
+		}
+		else if(loginuser != null && !loginuser.getUserid().equals("admin")) {
+			// 로그인한 유저가 개인 유저이면서 그 아이디가 일반 회원의 아이디라면
+			mav.setViewName("mypage/member/support.tiles1");
+		}
+		else {
+			// 로그인한 유저가 기업유저라면
+			mav.setViewName("mypage/company/support.tiles1");
+		}
+		
+		return mav;
+		
+	}
 }

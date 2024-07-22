@@ -474,8 +474,12 @@ div#content4 > ul > li {
 span.jejuBang_eon{
   margin-right: 4%;
   color: gray;
+  font-weight: bold;
 }
-
+span#jejuBang_eonText{
+  font-size: 14pt;
+  color: #999B99;
+}
 
 #content4::-webkit-scrollbar {
     width: 10px;
@@ -491,6 +495,9 @@ span.jejuBang_eon{
   border-radius: 10px;
   box-shadow: inset 0px 0px 5px white;
 }
+
+
+
 
 /*-------------------------------------------------------*/
 

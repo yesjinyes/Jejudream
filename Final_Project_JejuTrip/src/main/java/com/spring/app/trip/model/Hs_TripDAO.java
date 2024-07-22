@@ -61,6 +61,21 @@ public interface Hs_TripDAO {
 
 	List<Calendar_schedule_VO> checkSchedule(Map<String, String> paraMap); //일정추가했는지알아오기
 
+	
+	
+	int getAllReviewCount(Map<String, String> paraMap);//모든 리뷰를 count 하기
+	List<ReviewVO> allReviewList(Map<String, String> paraMap);// 리뷰 List
+
+	int getFoodReviewCount(Map<String, String> paraMap);
+	List<Map<String, String>> foodReviewList(Map<String, String> paraMap);
+
+	int getPlaytotalReviewCount(Map<String, String> paraMap);
+	List<Map<String, String>> playReviewList(Map<String, String> paraMap);
+
+	
+	int getLoginReviewCount(Map<String, String> paraMap);
+	List<Map<String, String>> loginReviewList(Map<String, String> paraMap);
+
 
 	
 

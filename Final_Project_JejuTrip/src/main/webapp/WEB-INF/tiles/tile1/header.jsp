@@ -54,11 +54,33 @@ input:focus {
     outline: none;
 }
 
+#weather {
+    display: flex;
+    align-items: center;
+}
+
+.weather-icon {
+    width: 24px; /* 원하는 크기로 설정 */
+    height: 24px; /* 원하는 크기로 설정 */
+    margin-right: 8px; /* 텍스트와 아이콘 사이의 간격 */
+}
+
+.weather-text {
+    font-size: 14px; /* 원하는 폰트 크기로 설정 */
+}
 </style>
 
 <script type="text/javascript">
+
+let t_html = ``;
+
 $(document).ready(function() {
+	
+	whatWeather();
     
+	// 1분마다 whatWeather 함수 호출
+    setInterval(whatWeather, 60000);
+	
     // 초기 상태 설정
     $("div.menu_bar_line").css("width", "0");
     
@@ -73,6 +95,124 @@ $(document).ready(function() {
     });
     
 });
+
+
+
+function whatWeather(){
+	
+	let icon_src;
+	let local_text;
+	let local_desc;
+	let local_icon;
+	let local_ta;
+	
+	let v_html = ``;
+	
+	$.ajax({
+		url:"<%= ctxPath%>/weatherXML.trip",
+		type:"get",
+		dataType:"xml",
+		success:function(xml){
+			const rootElement = $(xml).find(":root"); // 맨꼭대기 태그를 찾아준다!
+			
+			const weather = rootElement.find("weather"); 
+			const updateTime = $(weather).attr("year")+"/"+$(weather).attr("month")+"/"+$(weather).attr("day")+" "+$(weather).attr("hour")+":00"; 
+		
+			const localArr = rootElement.find("local");
+		
+		    
+		    // ====== XML 을 JSON 으로 변경하기  시작 ====== //
+				var jsonObjArr = [];
+			// ====== XML 을 JSON 으로 변경하기  끝 ====== //    
+		        
+		    for(let i=0; i<localArr.length; i++){
+		    	
+		    	let local = $(localArr).eq(i);
+		    	
+				let icon = "";  
+				
+				if(local.attr("stn_id") == "184"){
+					// 위치가 제주시일 경우의 api 받아오기
+					
+					local_icon = $(local).attr("icon");
+			    	local_ta = $(local).attr("ta");
+			    	local_text = $(local).text();
+			    	local_desc = $(local).attr("desc");
+					
+					switch (local.attr("desc")) {
+					
+					case "구름많음":
+					case "흐림":
+					    icon = "흐린슉슉이.png";
+					    break;
+					    
+					case "맑음":
+					case "구름조금":	
+						icon = "맑음슉슉이.png";
+					    break;
+					    
+					case "천둥번개":
+					case "소나기":	
+						icon = "번개슉슉이.png";
+					    break;    
+					    
+					case "비":
+					case "가끔 비":
+					case "한때 비":
+					case "비 또는 눈":
+						icon = "비오는슉슉이.png";
+					    break;
+					    
+					case "눈":
+					case "눈 또는 비":
+					case "가끔 눈":
+					case "한때 눈":
+						icon = "눈슉슉이.png";
+					    break;     
+					  
+					default:
+					    icon = "logo.png";
+					
+					} // end of switch
+					
+					icon_src = "<%= ctxPath%>/resources/images/" + icon;
+					
+					v_html += `<span class="weather-text">\${local_text}</span>
+								<img src="<%= ctxPath%>/resources/images/weather/\${local_icon}.png" alt="Weather Icon" class="weather-icon">
+        						<span class="weather-text">\${local_desc} \${local_ta}°C</span>`;
+					
+					
+				} // end of if 제주
+		    	
+				if(local.attr("stn_id") == "189"){
+					
+					local_icon = $(local).attr("icon");
+			    	local_ta = $(local).attr("ta");
+			    	local_text = $(local).text();
+			    	local_desc = $(local).attr("desc");
+					
+			    	v_html += `<span>&nbsp;&nbsp;/&nbsp;&nbsp;</span><span class="weather-text">\${local_text}</span>
+									<img src="<%= ctxPath%>/resources/images/weather/\${local_icon}.png" alt="Weather Icon" class="weather-icon">
+									<span class="weather-text">\${local_desc} \${local_ta}°C</span>`;
+					
+				} // end of if 서귀포
+				
+		    }// end of for------------------------ 
+		    
+		    $("div#weather").html(v_html);
+		    
+		    $("img#weatherlogo").attr("src",icon_src);
+		
+		},// end of success: function(xml){ }------------------
+		error: function(request, status, error){
+			alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+		}
+		
+		
+	}); // end of $.ajax weather
+	
+}// end of function showWeather()--------------------
+
 </script>
 
 <div style="background-color: #F5F5F5;">
@@ -81,6 +221,8 @@ $(document).ready(function() {
 		<nav class="navbar navbar-expand-lg navbar-light" style="font-size: 0.8rem;">
 			
 			<div class="collapse navbar-collapse" id="inner_bar">
+			
+				<div id="weather"></div>&nbsp;&nbsp;<span id="wtime" style="color:gray; font-size:8pt; align-self: end;"></span>
 				
 				<ul class="navbar-nav ml-auto my-2 my-lg-0">
 					<c:if test="${empty sessionScope.loginuser && empty sessionScope.loginCompanyuser}">
@@ -127,7 +269,7 @@ $(document).ready(function() {
 		<nav class="navbar navbar-expand-lg navbar-light">
 			
 			<a class="navbar-brand mr-4" href="<%=ctxPath%>/index.trip" title="Jeju Dream">
-				<img src="<%=ctxPath%>/resources/images/logo.png" width="80">
+				<img id="weatherlogo" src="<%=ctxPath%>/resources/images/logo.png" width="80">
 				<p id="header_title">제주드림</p>
 			</a>
 					
@@ -199,6 +341,7 @@ $(document).ready(function() {
 					
 					<li class="user_menu nav-item">
 						<a class="nav-link text-center" href="<%=ctxPath%>/requiredLogin_goMypage.trip">
+							<c:if test="${requestScope.i > 0}"><div style="float:right; width:10px; height:10px; border-radius:50%; background-color: red;"></div></c:if>
 							<i class="fa-solid fa-user"></i>
 							<div>마이페이지</div>
 						</a>

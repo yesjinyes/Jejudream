@@ -80,22 +80,35 @@
 
 		});
 
-	    // ===== 상세주소 유효성 검사 =====
+	 // ===== 상세주소 유효성 검사 =====
 	    $("input#detail_address").blur((e) => {
 
 	        const lodging_address_detail = $(e.target).val().trim();
 
 	        if(lodging_address_detail == "") {
-	            $(e.target).addClass("input_error");
+	        	
+	        	if(confirm('상세주소가 없습니까?')){
+	        		
+	        		$(e.target).removeClass("input_error");
+		            $(e.target).next().hide();
+		            checkLodging_address_detail = true;
+	        		
+	        	}else{
+	        		
+	        		$(e.target).addClass("input_error");
+		            $(e.target).next().show();
+		            $(e.target).next().text("상세주소를 입력해주세요.");
+		            checkLodging_address_detail = false;
+	        		
+	        	}
+	           
+	        } 
+			else {
+				$(e.target).addClass("input_error");
 	            $(e.target).next().show();
 	            $(e.target).next().text("상세주소를 입력해주세요.");
 	            checkLodging_address_detail = false;
-
-	        } 
-			else {
-	            $(e.target).removeClass("input_error");
-	            $(e.target).next().hide();
-	            checkLodging_address_detail = true;
+	            
 	        }
 	    });
 
@@ -203,7 +216,7 @@
 					<option>제주시 시내</option>
 					<option>제주시 서부</option>
 					<option>제주시 동부</option>
-					<option>서귀포시</option>
+					<option>서귀포시 시내</option>
 					<option>서귀포 동부</option>
 					<option>서귀포 서부</option>
 				</select>

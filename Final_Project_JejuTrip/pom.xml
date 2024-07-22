@@ -462,6 +462,13 @@
          <artifactId>spring-data-mongodb</artifactId>
          <version>${org.spring-data-mongodb-version}</version>
       </dependency>
+      
+      <!-- https://mvnrepository.com/artifact/net.nurigo/javaSDK -->
+		<dependency>
+	    	<groupId>net.nurigo</groupId>
+	    	<artifactId>javaSDK</artifactId>
+	    	<version>2.2</version>
+		</dependency>
 		        
 	</dependencies>
     <build>

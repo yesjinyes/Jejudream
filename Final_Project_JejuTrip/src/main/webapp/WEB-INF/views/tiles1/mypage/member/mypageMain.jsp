@@ -80,7 +80,7 @@
 	 			success:function(json){
 	 				companyid = json.companyid
 	 				lodging_name = json.lodging_name;
-	 				const url = "<%= serverName%><%=ctxPath%>/reservationChatToCompany.trip?reservation_code=" + reservation_code +"&name="+name+"&userid="+userid+"&companyid="+companyid+"&lodging_name="+lodging_name;
+	 				const url = "<%= serverName%><%=ctxPath%>/reservationChatToCompany.trip?reservation_code=" + reservation_code +"&name="+name+"&userid="+userid+"&companyid="+companyid+"&lodging_name="+lodging_name+"&status=1";
 	 				window.open(url, "mypage_chatting_toCompany",
  		               `left=\${left}, top=\${top}, width=\${width}, height=\${height}`);
 	 			},

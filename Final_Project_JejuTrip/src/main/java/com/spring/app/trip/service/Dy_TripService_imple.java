@@ -655,5 +655,15 @@ public class Dy_TripService_imple implements Dy_TripService {
 		
 		return n1*n2;
 	}
+
+
+	// 게시판 댓글 개수 알아오기
+	@Override
+	public int getCommentCount(String seq) {
+		
+		int commentCount = dao.getCommentCount(seq);
+		
+		return commentCount;
+	}
 	
 }

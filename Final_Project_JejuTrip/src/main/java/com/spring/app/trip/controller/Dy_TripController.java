@@ -425,7 +425,6 @@ public class Dy_TripController {
 //			System.out.println("~~~ 확인용 webapp 의 절대경로 => " + root); 
 			
 			path = root + "resources" + File.separator + "images" + File.separator + "foodimg";     
-	        System.out.println(path);
 //	        System.out.println("~~~ 확인용 path => " + path);
 	        // ~~~ 확인용 path => C:\NCS\workspace_spring_framework\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\Final_Project_JejuTrip\resources\images\foodimg
 	        
@@ -537,7 +536,7 @@ public class Dy_TripController {
                     e.printStackTrace();
                 }
             }
-        }
+        } // end of for --------------------------------
         // ★★★★★ ##### 추가이미지 처리해주기 끝 ##### ★★★★★
         
         
@@ -594,7 +593,7 @@ public class Dy_TripController {
 				jsonObj.put("result", 0);
 			}
 
-		} else if(n1 == 1 && n_attachCount <= 0) {
+		} else if(n1 == 1 && n_attachCount == 0) {
 			jsonObj.put("result", 1);
 			
 		} else {
@@ -1006,7 +1005,7 @@ public class Dy_TripController {
 		
 		if(attach != null) {
 			
-			HttpSession session = mrequest.getSession(); 
+			HttpSession session = mrequest.getSession();
 			String root = session.getServletContext().getRealPath("/"); 
 			// WAS의 webapp의 절대경로
 			
@@ -1229,9 +1228,6 @@ public class Dy_TripController {
 			
 			mav.addObject("boardvo", boardvo);
 			
-			// 게시판 상세에서 댓글 삭제 시 댓글 개수가 바로 반영되도록 하기 위해 세션에 저장
-			session.setAttribute("commentCount", Integer.parseInt(boardvo.getCommentCount()));
-
 			// === #140. 이전글제목, 다음글제목 보기 ===
 			mav.addObject("paraMap", paraMap);
 			
@@ -1996,7 +1992,6 @@ public class Dy_TripController {
 											  @RequestParam(defaultValue = "") String parentSeq) {
 		
 		int n = 0;
-		int newCommentCount = 0;
 		
 		// 댓글번호에 대한 댓글이 있는지 조회하기
 		CommentVO commentvo = service.getCommentInfo(seq);
@@ -2013,11 +2008,6 @@ public class Dy_TripController {
 			try {
 				n = service.deleteComment(paraMap);
 				
-				if(n==1) {
-					newCommentCount = (int)session.getAttribute("commentCount") - 1;
-	                session.setAttribute("commentCount", newCommentCount);
-				}
-				
 			} catch (Throwable e) {
 				e.printStackTrace();
 			}			
@@ -2025,7 +2015,28 @@ public class Dy_TripController {
 		
 		JSONObject jsonObj = new JSONObject();
 		jsonObj.put("n", n);
-		jsonObj.put("newCommentCount", newCommentCount);
+		
+		return jsonObj.toString();
+	}
+	
+	
+	// 게시판 댓글 개수 알아오기 
+	@ResponseBody
+	@PostMapping(value="community/getCommentCount.trip", produces="text/plain;charset=UTF-8")
+	public String getCommentCount(@RequestParam(defaultValue = "") String seq) {
+		
+		int commentCount = 0;
+		
+		try {
+			Integer.parseInt(seq);
+			commentCount = service.getCommentCount(seq);
+			
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		}
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("commentCount", commentCount);
 		
 		return jsonObj.toString();
 	}

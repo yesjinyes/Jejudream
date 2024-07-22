@@ -11,12 +11,3 @@ create user final_orauser2 identified by gclass default tablespace users;
 grant connect, resource, create view, unlimited tablespace to final_orauser2;
 -- Grant을(를) 성공했습니다.
 
-select 
-from tbl_reservation R join tbl_room_detail D
-on R.fk_room_detail_code = D.room_detail_code
-join tbl_lodging L
-on L.lodging_code = D.lodging_code
-where R.reservation_code = 22;
-
-select *
-from tbl_room_detail

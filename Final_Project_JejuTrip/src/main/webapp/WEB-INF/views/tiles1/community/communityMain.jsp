@@ -246,7 +246,7 @@
 		<!-- === 실시간 인기글 === -->
 		<!-- 조회수 순으로 정렬할 예정 -->
 		<!-- 테이블 제목 길어지면 뒤에 내용 '...' 처리해야함 -->
-		<div id="content2" style = "width: 35%">
+		<div id="content2" style = "width: 39%">
 			<h4>실시간 인기글</h4>
 			<main>
 				<table id="rankTable">
@@ -330,7 +330,7 @@
 		<!-- === 스텝 게시판 === -->
 		<!-- 최신순으로 정렬할 예정 -->
 		<!-- 테이블 제목 길어지면 뒤에 내용 '...' 처리해야함 -->
-		<div style = "width: 64%">
+		<div style = "width: 60%">
 			<div id="content3">
 				<h4>게하 스텝 구해요</h4>
 				<ul>
@@ -350,24 +350,25 @@
 			   <ul>
 					<li>
 						<span class="jejuBang_eon">[ 방언 ]</span><br>
-						<span class="name"></span>
+						<span class="name" id="jejuBang_eonText"></span>
 					</li>
 					<li>
 						<span class="jejuBang_eon"> [ 표준어 ]</span><br>
-			            <span class="sitename"></span>
+			            <span class="sitename" id="jejuBang_eonText"></span>
 					</li>
 					<li>
 						<span class="jejuBang_eon"> [ 방언 활용 문장 ]</span><br>
-			            <span class="contents"></span>
+			            <span class="contents" id="jejuBang_eonText"></span>
 					</li>
 					
 					<li>
 						<span class="jejuBang_eon"> [ 표준어 문장 ]</span><br>
-			            <span class="solution"></span>
+			            <span class="solution" id="jejuBang_eonText"></span>
 					</li>
 					
 				</ul>
 			</div>
+			
 		</div>
 	</div>
 	
