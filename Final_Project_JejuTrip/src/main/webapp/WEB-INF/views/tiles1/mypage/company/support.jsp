@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <% String ctxPath = request.getContextPath(); %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="java.net.InetAddress" %>
 <link rel="stylesheet" href="<%=ctxPath%>/resources/css/mypage/member/mypageMain.css"/>
 <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
@@ -46,9 +47,9 @@
                 </a>
             </li>
             <li class="list">
-                <a href="<%= ctxPath%>/my_schedule.trip">
+                <a href="<%= ctxPath%>/mypage_company_chatting.trip">
                     <span class="icon"><ion-icon name="calendar-number-outline"></ion-icon></span>
-                    <span class="title">내 일정</span>
+                    <span class="title">채팅</span><c:if test="${requestScope.newChattingCnt > 0}"><span style="border:solid 1px red; color:white; background-color:red; font-weight:bold; font-size:10px; width:40px; height:20px; border-radius:8px; text-align:center;">new</span></c:if>
                 </a>
             </li>
             <li class="list">

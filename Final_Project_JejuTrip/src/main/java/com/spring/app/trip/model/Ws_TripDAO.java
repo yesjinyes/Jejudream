@@ -81,5 +81,10 @@ public interface Ws_TripDAO {
 	Map<String, String> getCompanyIdAndLodgingNameToTblReservationCode(String reservation_code);// 예약 코드를 가지고 업체아이디와 업체명을 가져오기
 	void insert_send_chatting(Map<String, String> chatMap);// 채팅을 보냈다는 기록을 남겨준다.
 	int get_new_chatting(String userid);// 로그인을 하고 메인에 들어갔을 때 새로 온 채팅이 있는지 확인해준다.
+	List<Map<String, String>> select_company_all_chatting_paging(Map<String, String> paraMap);// 기업으로 온 모든 채팅 목록을 읽어온다.
+	int getTotalCompanyChattingCount(Map<String, String> paraMap);// 페이징 처리시 보여주는 순번을 나타내기 위한 것임.
+	Map<String, String> getMemberIdAndNameToTblReservationCode(String reservation_code);// 채팅에 해당하는 고객 아이디와 이름을 가져온다.
+	void update_chattinglog(String reservation_code);// 채팅 로그 테이블에 해당 예약건에 관련한 채팅을 읽음처리한다.
+	void update_chattinglog_after_chatting(Map<String, String> paraMap);// 채팅방에서 나가게되면 채팅 기록방에서 나가기 직전까지의 읽음 컬럼을 읽음처리로 바꿔준다.
 
 }
