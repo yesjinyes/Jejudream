@@ -881,7 +881,7 @@ div#map {
 	</c:if>
 	
 	<div class="imgcrop">
-		<img class="imgAdd img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgAdd/${requestScope.foodstorevo.food_name}_add1.jpg" alt="..." />
+		<img class="imgAdd img-fluid" src="<%= ctxPath %>/resources/images/foodimg/${requestScope.foodstorevo.food_name}_add1.jpg" alt="..." />
 		<div class="div_img_text">
 			<p class="main_img_title">${requestScope.foodstorevo.food_name}</p>
 			<p class="main_img_content">${requestScope.foodstorevo.food_content}</p>
@@ -902,13 +902,13 @@ div#map {
 				</ol>
 				<div class="carousel-inner">
 					<div class="carousel-item active">
-						<img class="carousel-img" src="<%= ctxPath %>/resources/images/foodstore/imgAdd/${requestScope.foodstorevo.food_name}_add3.jpg" class="d-block w-100" alt="...">
+						<img class="carousel-img" src="<%= ctxPath %>/resources/images/foodimg/${requestScope.foodstorevo.food_name}_add3.jpg" class="d-block w-100" alt="...">
 					</div>
 					<div class="carousel-item">
-						<img class="carousel-img" src="<%= ctxPath %>/resources/images/foodstore/imgAdd/${requestScope.foodstorevo.food_name}_add2.jpg" class="d-block w-100" alt="...">	      
+						<img class="carousel-img" src="<%= ctxPath %>/resources/images/foodimg/${requestScope.foodstorevo.food_name}_add2.jpg" class="d-block w-100" alt="...">	      
 					</div>
 					<div class="carousel-item">
-						<img class="carousel-img" src="<%= ctxPath %>/resources/images/foodstore/imgAdd/${requestScope.foodstorevo.food_name}_add1.jpg" class="d-block w-100" alt="...">
+						<img class="carousel-img" src="<%= ctxPath %>/resources/images/foodimg/${requestScope.foodstorevo.food_name}_add1.jpg" class="d-block w-100" alt="...">
 					</div>
 				</div>
 				<a class="carousel-control-prev" href="#carousel-images" role="button" data-slide="prev">

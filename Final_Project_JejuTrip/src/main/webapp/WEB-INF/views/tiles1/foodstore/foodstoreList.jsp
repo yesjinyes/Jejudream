@@ -286,7 +286,7 @@ span#data {
 						if(item.status == 0){
 							v_html_main += `<div class="fadeInUp single-post" data-wow-delay="0.1s" style="display: flex; width: 100%;">
 												<div class="imgMainList">
-										            <img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodstore/imgMain/\${item.food_main_img}" onclick="goDetail(\${item.food_store_code})" style="cursor: pointer;" alt="..." />
+										            <img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodimg/\${item.food_main_img}" onclick="goDetail(\${item.food_store_code})" style="cursor: pointer;" alt="..." />
 									        	</div>
 										        <div class="contentList">
 										            <div class="mb-3">

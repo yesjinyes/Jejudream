@@ -261,7 +261,7 @@
 		<if test="fileName != null">
 			, food_main_img = #{fileName}
 			, filename = #{fileName}
-			, orgfilename = #{orgfilename}
+			, orgfilename = #{orgFilename}
 			, filesize = #{fileSize}
 		</if>
 		where food_store_code = #{food_store_code} 

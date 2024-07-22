@@ -553,7 +553,7 @@ public class Yj_TripController {
 			HttpSession session = mrequest.getSession();
 			String root = session.getServletContext().getRealPath("/");
 			
-			String path = root + "resources" + File.separator + "images" + File.separator + "foodstore";
+			String path = root + "resources" + File.separator + "images" + File.separator + "foodimg";
 			String newFileName = "";
 			
 			byte[] bytes = null; // 첨부파일 내용물 담을 배열
@@ -565,7 +565,7 @@ public class Yj_TripController {
 				newFileName = fileManager.doFileUpload(bytes, originalFilename, path);
 				
 				foodstorevo.setFileName(newFileName);
-				foodstorevo.setOrgFilename(foodstorevo.getFood_name()+".jpg");
+				foodstorevo.setOrgFilename(originalFilename);
 				
 				fileSize = attach.getSize();
 				foodstorevo.setFileSize(String.valueOf(fileSize));
