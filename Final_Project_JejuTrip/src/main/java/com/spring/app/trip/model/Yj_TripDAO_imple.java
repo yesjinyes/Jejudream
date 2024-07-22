@@ -173,19 +173,19 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 	@Override
 	public int deleteFoodstore(String food_store_code) {
 		int n1 = sqlsession.delete("yj_trip.deleteFoodstore", food_store_code);
-		System.out.println("n1 확인 =>" + n1);
+		// System.out.println("n1 확인 =>" + n1);
 		return n1;
 	}
 
 
 	// == 맛집 삭제 시 리뷰도 삭제 == //
-/*	@Override
+	@Override
 	public int deleteFoodstoreReview(String food_store_code) {
 		int n2 = sqlsession.delete("yj_trip.deleteFoodstoreReview", food_store_code);
-		System.out.println("n2 확인 =>" + n2);
+		// System.out.println("n2 확인 =>" + n2);
 		return n2;
 	}
-*/
+
 
 
 

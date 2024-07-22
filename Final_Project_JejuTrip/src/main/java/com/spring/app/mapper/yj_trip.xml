@@ -276,10 +276,10 @@
 
 
 	<!-- 맛집 삭제 시 리뷰도 삭제  -->
-<!-- 	<delete id="deleteFoodstoreReview">
+ 	<delete id="deleteFoodstoreReview" parameterType="String">
 		delete from tbl_review
 		where parent_code = #{food_store_code}
-	</delete> -->
+	</delete>
 
 
 </mapper>

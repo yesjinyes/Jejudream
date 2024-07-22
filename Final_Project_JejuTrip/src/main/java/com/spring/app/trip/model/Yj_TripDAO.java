@@ -75,7 +75,7 @@ public interface Yj_TripDAO {
 	int deleteFoodstore(String food_store_code);
 
 	// == 맛집 삭제 시 리뷰도 삭제 == //
-	// int deleteFoodstoreReview(String food_store_code);
+	int deleteFoodstoreReview(String food_store_code);
 
 	
 
