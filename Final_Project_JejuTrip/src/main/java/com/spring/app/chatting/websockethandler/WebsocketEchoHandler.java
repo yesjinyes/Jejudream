@@ -291,8 +291,10 @@ public class WebsocketEchoHandler extends TextWebSocketHandler{
       		Map<String,String> chatMap = new HashMap<>();
       		String to_id = chatting_key_arr[2];
       		String from_id = chatting_key_arr[1];
+      		String fk_reservation_code = chatting_key_arr[0];
       		chatMap.put("to_id", to_id);
       		chatMap.put("from_id", from_id);
+      		chatMap.put("fk_reservation_code", fk_reservation_code);
       		service.insert_send_chatting(chatMap);// 채팅을 보냈다는 기록을 남겨준다. 추후에 이 기록을 토대로 페이지에 신규 채팅이 있는지 없는지 표시를 해주기위함이다.
       	}
       	

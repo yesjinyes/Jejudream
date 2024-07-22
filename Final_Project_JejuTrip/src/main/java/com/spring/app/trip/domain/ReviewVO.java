@@ -9,7 +9,8 @@ public class ReviewVO {
 	private String registerday; 		// 리뷰작성일자 
 	private String review_division_R; 	// 리뷰구분 A,B,C 
 	
-	
+	//select 용 
+	private String rno;
 	
 	public String getReview_code() {
 		return review_code;
@@ -46,6 +47,12 @@ public class ReviewVO {
 	}
 	public void setReview_division_R(String review_division_R) {
 		this.review_division_R = review_division_R;
+	}
+	public String getRno() {
+		return rno;
+	}
+	public void setRno(String rno) {
+		this.rno = rno;
 	}
 	
 	

@@ -269,7 +269,7 @@ $(document).ready(function() {
     });
 
     
-    // 카드 클릭 시 play_code 전달 (이벤트 위임 사용)
+    // 카드 클릭 시 play_code 전달 
     $(document).on('click', '.container_card', function() {
         const playCode = $(this).find('input[name="play_code"]').val(); // 클릭된 카드의 play_code 값 가져오기
         goAddSchedule(playCode);
