@@ -222,6 +222,12 @@ div#map {
 }
 
 
+/*--------------------------------------------------------*/
+/* 근처 숙소 랜덤 추천 */
+
+
+
+
 
 </style>
 
@@ -869,6 +875,11 @@ div#map {
 	}// end of function goDelete()-------------------
 	
 	
+	// == 근처 숙소 랜덤 추천 == //
+	function goDetailLodging() {
+		
+	}// end of function goDetailLodging()--------------------
+	
 	
 </script>
 
@@ -918,16 +929,6 @@ div#map {
 							</div>
 						</c:if>
 					</c:forEach>
-				
-					<%-- <div class="carousel-item active">
-						<img class="carousel-img" src="<%= ctxPath %>/resources/images/foodimg/${requestScope.foodstorevo.food_name}_add3.jpg" class="d-block w-100" alt="...">
-					</div>
-					<div class="carousel-item">
-						<img class="carousel-img" src="<%= ctxPath %>/resources/images/foodimg/${requestScope.foodstorevo.food_name}_add2.jpg" class="d-block w-100" alt="...">	      
-					</div>
-					<div class="carousel-item">
-						<img class="carousel-img" src="<%= ctxPath %>/resources/images/foodimg/${requestScope.foodstorevo.food_name}_add1.jpg" class="d-block w-100" alt="...">
-					</div> --%>
 				</div>
 				<a class="carousel-control-prev" href="#carousel-images" role="button" data-slide="prev">
 					<span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -1154,13 +1155,18 @@ div#map {
 			<!-- 랜덤추천 -->
 			<div class="col-md-4 border rounded">
 				<div>
-					<h3 class="mb-4 mt-4 ml-3">어떤걸 넣지</h3>
-					<div>
-						
-					 
-						<div id="randomLodging">
-						</div>
-						
+					<h3 class="mb-4 mt-4 ml-3">근처 숙소 추천</h3>
+					<div class="recommend-lodging">
+						<c:forEach var="lodgingList" items="${requestScope.lodgingList}" begin="0" end="1">
+							<div class="border rounded p-3 mb-3">
+							    <div class="recommend-lodging-img">
+						            <img class="imgLodging img-fluid" src="<%= ctxPath %>/resources/images/lodginglist/${lodgingList.main_img}" onclick="goDetailLodging()" style="cursor: pointer; width:50%;" alt="..." />
+						        </div>
+						        <div class="mt-2">
+						        	<span>${lodgingList.lodging_name}</span><br>
+						        </div>
+					      	</div>
+				      	</c:forEach>
 					</div>
 				</div>
 			</div>
@@ -1168,8 +1174,6 @@ div#map {
 	
 </div>
 <!-- container 끝 -->
-
-
 
 
 

@@ -24,6 +24,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.spring.app.trip.common.FileManager;
 import com.spring.app.trip.domain.FoodstoreVO;
+import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.domain.ReviewVO;
 import com.spring.app.trip.service.Yj_TripService;
@@ -196,7 +197,6 @@ public class Yj_TripController {
 		String food_store_code = "";
 		food_store_code = request.getParameter("food_store_code");
 		
-		
 		// System.out.println("-------------------------------------------------------");
 		// System.out.println("## 확인용 food_store_code => "+ food_store_code);
 		// System.out.println("## 확인용 random_recommend_code => "+ random_recommend_code);
@@ -217,15 +217,28 @@ public class Yj_TripController {
 		paraMap.put("random_recommend_code", random_recommend_code);
 		paraMap.put("login_userid", login_userid);
 		
-		///////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////
 		
 		FoodstoreVO foodstorevo = null;
+		List<LodgingVO> lodgingList = null;
 		
 		if("yes".equals((String)session.getAttribute("readCountPermission"))) {
 			
 			foodstorevo = service.viewfoodstoreDetail_withReadCount(paraMap); // 맛집 상세 페이지 띄우기 (조회수 증가 O)
 			
 			session.removeAttribute("readCountPermission");
+			
+			String local_status = foodstorevo.getLocal_status();
+			
+			///////////////////////////////////////////////////
+			// 근처 숙소 랜덤 추천
+			lodgingList = service.getLodgingList(local_status);
+			
+		/*	for(LodgingVO lvo :lodgingList) {
+				//System.out.println("~~숙소 랜덤추천 확인 => "+lvo.getLodging_name());
+				System.out.println("~~숙소 랜덤추천 확인 => "+lvo.getMain_img());
+			}*/
+			///////////////////////////////////////////////////
 		}
 		
 		else {
@@ -237,20 +250,18 @@ public class Yj_TripController {
 			}
 		}
 		
-		///////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////
 	
 		List<Map<String, String>> addimgList = service.viewfoodaddImg(paraMap); // 맛집 상세 추가 이미지
-		
-//		for(Map<String, String> img : addimgList) {
-//			System.out.println("~~ 추가이미지 확인중 => "+img);
-//		}
-		
+
 		mav.addObject("foodstorevo", foodstorevo);
+		mav.addObject("lodgingList", lodgingList);
 		
  		mav.addObject("addimgList", addimgList);
 		
  		mav.setViewName("foodstore/foodstoreDetail.tiles1");
- 		
+		
+		
  		return mav;
 	}
 	
@@ -480,7 +491,7 @@ public class Yj_TripController {
 	
 	
 	///////////////////////////////////////////////////////////////////////////////////
-	
+	// ***** 관리자 기능 ***** //
 	
 	// == 맛집 일정 추가 == //
 	@ResponseBody

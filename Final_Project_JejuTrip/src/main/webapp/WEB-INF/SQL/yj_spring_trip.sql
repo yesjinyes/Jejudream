@@ -342,20 +342,28 @@ values(seq_scheduleno.nextval, '2024-07-30 17:30:00', 'yy6037');
 
 ------------------------------------------------------
 
-delete from tbl_food_store
-where food_name = '물꼬해녀의집';
-
-commit;
-
-select *
-from tbl_food_add_img
-
-
-
-delete from tbl_food_store;
-
-commit;
+-- 숙소 랜덤 추천
+select LODGING_CODE, main_img, lodging_name
+from (
+    select LODGING_CODE, main_img, lodging_name
+    from tbl_lodging
+    order by DBMS_RANDOM.RANDOM
+)
+where rownum <= 2;
 
 
-select * from tbl_review;
+
+select lodging_code, main_img, lodging_name
+from (
+    select lodging_code, main_img, lodging_name
+    from tbl_lodging
+    where local_status = '제주시 동부'
+    order by DBMS_RANDOM.RANDOM
+)
+where rownum <= 2
+
+desc tbl_lodging;
+
+
+desc tbl_food_store;
 
