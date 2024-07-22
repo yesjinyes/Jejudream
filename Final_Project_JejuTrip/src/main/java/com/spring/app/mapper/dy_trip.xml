@@ -361,10 +361,12 @@
 	<!-- 댓글 목록 불러오기 -->
 	<select id="getViewComment" parameterType="HashMap" resultType="CommentVO">
 		SELECT seq, fk_userid, name, content, regDate
+			 , groupno, fk_seq, depthno
 		FROM
 		(
 		    select row_number() over(order by seq desc) AS rno
 		         , seq, fk_userid, name, content, to_char(regDate, 'yyyy-mm-dd hh24:mi') AS regDate
+		         , groupno, fk_seq, depthno
 		    from tbl_comment
 		    where status = 1 and parentSeq = #{parentSeq}
 		) V

@@ -306,34 +306,45 @@
 	    
 	 	// 댓글의 '답글' 버튼 클릭 시 댓글 작성창 추가
 	    $(document).on("click", ".reply-btn", function() {
-	        // 기존에 열려있는 댓글 작성창이 있으면 제거
-	        $("form[name='replyCommentFrm']").remove();
-
+	    	
 	        // 클릭된 '답글' 버튼의 부모 요소를 찾음
 	        const replyAreaDiv = $(this).closest('.comment').find('.reply-area');
-
-	        // 댓글 작성창 HTML
-	        const replyForm = `
-	        	<form name="replyCommentFrm">
-	        	<div class="d-flex justify-content-between mb-3">
-	        		<i class="fa-solid fa-reply"></i>
-					<div style="border: solid 1px #a6a6a6; width: 95%; padding: 1.5% 1%; background-color: #f2f2f2;">
-						<span class="d-block mb-2">
-							<c:if test="${not empty sessionScope.loginuser}">
-								<input type="hidden" name="fk_userid" value="${sessionScope.loginuser.userid}">
-								<input type="text" class="font-weight-bold" name="name" value="${sessionScope.loginuser.user_name}" style="border: none; background-color: #f2f2f2;" readonly>
-							</c:if>
-						</span>
-						<textarea class="mb-2" id="reply_content" name="content" style="width: 100%; height: 80px; border: none; background-color: #f2f2f2;" placeholder="답글을 작성해주세요."></textarea>
-						<input type="hidden" name="parentSeq" value="${requestScope.boardvo.seq}" readonly />
-						<input type="hidden" name="fk_seq" value="${requestScope.boardvo.seq}" readonly />
-						<div style="text-align: right;"><button type="button" class="btn" id="replyCommentBtn">등록</button></div>
+	        
+	        if(replyAreaDiv.find("form[name='replyCommentFrm']").length > 0) {
+	        	replyAreaDiv.empty();
+	        	
+	        } else {
+	        	
+		        // 기존에 열려있는 댓글 작성창이 있으면 제거
+		        $("form[name='replyCommentFrm']").remove();
+		        
+		        // 답글 작성창 HTML
+		        const replyForm = `
+		        	<form name="replyCommentFrm">
+		        	<div class="d-flex justify-content-between mb-3">
+		        		<i class="fa-solid fa-reply"></i>
+						<div style="border: solid 1px #a6a6a6; width: 95%; padding: 1.5% 1%; background-color: #f2f2f2;">
+							<span class="d-block mb-2">
+								<c:if test="${not empty sessionScope.loginuser}">
+									<input type="hidden" name="fk_userid" value="${sessionScope.loginuser.userid}">
+									<input type="text" class="font-weight-bold" name="name" value="${sessionScope.loginuser.user_name}" style="border: none; background-color: #f2f2f2;" readonly>
+								</c:if>
+							</span>
+							<textarea class="mb-2" id="reply_content" name="content" style="width: 100%; height: 80px; border: none; background-color: #f2f2f2;" placeholder="답글을 작성해주세요."></textarea>
+							<input type="hidden" name="parentSeq" value="${requestScope.boardvo.seq}" readonly />
+							<input type="hidden" name="groupno">
+							<input type="hidden" name="fk_seq">
+							<input type="hidden" name="depthno">
+							<div style="text-align: right;"><button type="button" class="btn" id="replyCommentBtn">등록</button></div>
+						</div>
 					</div>
-				</div>
-				</form>
-	        `;
-			
-	        replyAreaDiv.html(replyForm);
+					</form>
+		        `;
+				
+		        replyAreaDiv.html(replyForm);
+	        }
+
+
 	    });
 	    
 	    
@@ -347,10 +358,18 @@
 				return;
 			}
 			
+	    	const groupno = $(this).closest(".comment").find("input[name='groupno']").val();
 	    	const fk_seq = $(this).closest(".comment").find("input#cmt_seq").val();
-//	    	alert(fk_seq);
+	    	const depthno = $(this).closest(".comment").find("input[name='depthno']").val();
+//	    	alert("groupno : " + groupno + ", fk_seq : " + fk_seq + ", depthno : " + depthno);
+
+			const frm = document.replyCommentFrm;
+			frm.groupno.value = groupno;
+			frm.fk_seq.value = fk_seq;
+			frm.depthno.value = depthno;
+
+	    	const queryString = $("form[name='replyCommentFrm']").serialize();
 	    	
-	    	const queryString = $("form[name='replyCommentBtn']").serialize();
 	    	
 			$.ajax({
 				url: "<%=ctxPath%>/community/addComment.trip",
@@ -363,14 +382,17 @@
 //						alert("댓글 등록 성공!");
 						updateCommentCount();
 						goViewComment(1); // 페이징 처리한 댓글 읽어오기
+						
+					} else {
+						alert("댓글 등록 실패");
 					}
-
-					$("textarea[name='content']").val(""); // 댓글 칸 내용 비우기
+					
 				},
 				error: function(request, status, error){
 					alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
 				}
 			});
+	    	
 	    });
 	    
 	    
@@ -545,6 +567,8 @@
 						}
 						
 						v_html += `		<input type="hidden" value="\${currentShowPageNo}" class="currentShowPageNo">
+										<input type="hidden" value="\${item.groupno}" name="groupno">
+										<input type="hidden" value="\${item.depthno}" name="depthno">
 							   		  </div>
 								   	  <div class="reply-area"></div>
 								   </div>`;

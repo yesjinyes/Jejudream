@@ -1285,12 +1285,14 @@ public class Dy_TripController {
 	// 댓글 쓰기
 	@ResponseBody
 	@PostMapping(value="community/addComment.trip", produces="text/plain;charset=UTF-8")
-	public String addComment(CommentVO commentvo, 
-							 @RequestParam(defaultValue = "") String fk_seq) {
+	public String addComment(CommentVO commentvo) {
 		
 		int n = 0;
 		
-		commentvo.setFk_seq(fk_seq);
+		if(commentvo.getFk_seq() == null) { // 원댓글일 경우
+			
+			commentvo.setFk_seq("");
+		}
 		
 		try {
 			n = service.addComment(commentvo);
@@ -1342,6 +1344,9 @@ public class Dy_TripController {
 				jsonObj.put("name", cmtvo.getName());
 				jsonObj.put("content", cmtvo.getContent());
 				jsonObj.put("regdate", cmtvo.getRegDate());
+				jsonObj.put("groupno", cmtvo.getGroupno());
+				jsonObj.put("fk_seq", cmtvo.getFk_seq());
+				jsonObj.put("depthno", cmtvo.getDepthno());
 				
 				jsonObj.put("totalCount", totalCount); // 페이징 처리 시 보여주는 순번을 나타내기 위함
 				jsonObj.put("sizePerPage", sizePerPage); // 페이징 처리 시 보여주는 순번을 나타내기 위함
