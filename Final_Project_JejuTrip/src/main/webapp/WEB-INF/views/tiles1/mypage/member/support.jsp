@@ -35,9 +35,9 @@
     <div class="navigation">
         <ul>
             <li class="list active">
-                <a href="<%= ctxPath%>/support.trip">
+                <a href="<%= ctxPath%>/requiredLogin_goMypage.trip">
                     <span class="icon"><ion-icon name="bed-outline"></ion-icon></span>
-                    <span class="title">자주묻는질문</span>
+                    <span class="title">예약내역</span>
                 </a>
             </li>
             <li class="list">
@@ -49,172 +49,148 @@
         </ul>
     </div>
 	
- 	<form class="reservationFrm" name="reservationFrm">
-		
-		<div>
-			<div>
-				<h2 style="margin-bottom: 3%; font-weight: bold;">자주 묻는 질문</h2>
-				<p>고객님들이 제주드림 상품 및 서비스에 대해 자주 문의하는 내용입니다.<br>원하는 내용을 찾지 못하실 경우 <span style="color: orange;">웹채팅</span>으로 문의해 주시면 친절하게 안내해 드리겠습니다.
+    <form class = "reservationFrm" name="reservationFrm">
+		<div id="reservation">
+			<div id="top_color">
+				<p style="font-size: 20px; font-weight: bold; color:white;">나의 예약현황</p>
 			</div>
-			
-			<div style="margin-top: 5%;">
-				<span>
-					<select class="category-select-box">
-						<option>제목</option>
-						<option>내용</option>
-					</select>
-				</span>
-				<span>
-					<input type="text" name="searchWord" placeholder="검색어를 입력하세요."/>
-				</span>
+			<div class="liblock">
+				<ul class="reservation flex-col" style="margin-top: 15px;">
+					<li>
+						<strong style="font-size: 18px">예약전체 <br><br></strong> 
+						 <a href="#" class="count">
+						 	<span id="reservation_reception" style="color: ff8000; font-weight: bold; font-size: 30px;" >${requestScope.all_reservation}</span>
+						 	<span style="color: gray; font-weight: bold;">건</span>
+					 	 </a>
+					</li>
+					
+					<li>
+						<strong style="font-size: 18px">예약접수중 <br><br></strong> 
+						<a href="#" class="count">
+							<span id="reservation_confirmed"  style="color: ff8000; font-weight: bold; font-size: 30px;">${requestScope.ready_reservation}</span>
+							<span style="color: gray; font-weight: bold;">건</span>
+						</a>
+					</li>
+					
+					<li>
+						<strong style="font-size: 18px">예약확정 <br><br></strong>
+						<a href="#" class="count">
+							<span id="trip_complete" style="color: ff8000; font-weight: bold; font-size: 30px;">${requestScope.success_reservation}</span>
+							<span style="color: gray; font-weight: bold;">건</span>
+						</a>
+					</li>
+					
+					<li><strong style="font-size: 18px">예약취소 <br><br></strong>
+						 <a href="#" class="count">
+						 	<span id="cancel_Reservation" style="color: ff8000; font-weight: bold; font-size: 30px;">${requestScope.fail_reservation}</span>
+					 		<span style="color: gray; font-weight: bold;">건</span>
+					 	</a>
+					</li>
+					
+				</ul>
 			</div>
 		</div>
-		
-		<div class="faq_bar" style="margin-top: 5%;">
-			<!-- Nav tabs -->
+		<div class="reservation_bar" style="margin-top: 10%;">
+		 <!-- Nav tabs -->
 			<ul class="nav nav-tabs">
-				<li class="nav-item">
-					<a class="nav-link active" data-toggle="tab" href="#faq_all">전체</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" data-toggle="tab" href="#faq_reservation">예약</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" data-toggle="tab" href="#faq_payment">카드/결제</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" data-toggle="tab" href="#faq_lodging">숙소</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" data-toggle="tab" href="#faq_foodstore">맛집</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" data-toggle="tab" href="#faq_play">즐길거리</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" data-toggle="tab" href="#faq_etc">기타</a>
-				</li>
+			  <li class="nav-item">
+			    <a class="nav-link active" data-toggle="tab" href="#all_reservation">전체예약내역</a>
+			  </li>
+			  <li class="nav-item">
+			    <a class="nav-link" data-toggle="tab" href="#ready_reservation_success">예약승인대기목록</a>
+			  </li>
+			  <li class="nav-item">
+			    <a class="nav-link" data-toggle="tab" href="#reservation_success">예약확정목록</a>
+			  </li>
+			  <li class="nav-item">
+			    <a class="nav-link" data-toggle="tab" href="#reservation_quit">예약취소목록</a>
+			  </li>
 			</ul>
 			
 			<!-- Tab panes -->
 			<div class="tab-content">
-				<!-- 질문(전체) -->
-				<div class="tab-pane active" id="faq_all">
-					<table class="table table-hover">
-						<thead>
-							<tr>
-								<th>번호</th>
-								<th>분류</th>
-								<th>제목</th>
-							</tr>
-						</thead>
-						<tbody id="faq_all_tbody">
-						</tbody>
-					</table>
-					<div id="faq_all_pageBar" class="pageBar"></div>
-				</div>
-				
-				<!-- 질문(예약) -->
-				<div class="tab-pane fade" id="faq_reservation">
-					<table class="table table-hover">
-						<thead>
-							<tr>
-								<th>번호</th>
-								<th>분류</th>
-								<th>제목</th>
-							</tr>
-						</thead>
-				   		<tbody id="faq_reservation_tbody">
-						</tbody>
-					</table>
-					<div id="faq_reservation_pageBar" class="pageBar"></div>
-				</div>
-				
-				<!-- 질문(카드/결제) -->
-				<div class="tab-pane fade" id="faq_payment">
-					<table class="table table-hover">
-				 		 <thead>
-						    <tr>
-						      <th>번호</th>
-						      <th>분류</th>
-						      <th>제목</th>
-						    </tr>
-						  </thead>
-				   		 <tbody id="faq_payment_tbody">
-						 </tbody>
-					</table>
-					<div id="faq_payment_pageBar" class="pageBar"></div>
-				</div>
-				
-				<!-- 질문(숙소) -->
-				<div class="tab-pane fade" id="faq_lodging">
-					<table class="table table-hover">
-				 		 <thead>
-						    <tr>
-						      <th>번호</th>
-						      <th>분류</th>
-						      <th>제목</th>
-						    </tr>
-						  </thead>
-				   		 <tbody id="faq_lodging_tbody">
-						 </tbody>
-					</table>
-					<div id="faq_lodging_pageBar" class="pageBar"></div>
-				</div>
-				
-				<!-- 질문(맛집) -->
-				<div class="tab-pane fade" id="faq_foodstore">
-					<table class="table table-hover">
-				 		 <thead>
-						    <tr>
-						      <th>번호</th>
-						      <th>분류</th>
-						      <th>제목</th>
-						    </tr>
-						  </thead>
-				   		 <tbody id="faq_foodstore_tbody">
-						 </tbody>
-					</table>
-					<div id="faq_foodstore_pageBar" class="pageBar"></div>
-				</div>
-				
-				<!-- 질문(즐길거리) -->
-				<div class="tab-pane fade" id="faq_play">
-					<table class="table table-hover">
-				 		 <thead>
-						    <tr>
-						      <th>번호</th>
-						      <th>분류</th>
-						      <th>제목</th>
-						    </tr>
-						  </thead>
-				   		 <tbody id="faq_play_tbody">
-						 </tbody>
-					</table>
-					<div id="faq_play_pageBar" class="pageBar"></div>
-				</div>
-				
-				<!-- 질문(기타) -->
-				<div class="tab-pane fade" id="faq_etc">
-					<table class="table table-hover">
-				 		 <thead>
-						    <tr>
-						      <th>번호</th>
-						      <th>분류</th>
-						      <th>제목</th>
-						    </tr>
-						  </thead>
-				   		 <tbody id="faq_etc_tbody">
-						 </tbody>
-					</table>
-					<div id="faq_etc_pageBar" class="pageBar"></div>
-				</div>
-				
+			  <div class="tab-pane active" id="all_reservation">
+				<table class="table table-hover">
+				  <thead>
+				    <tr>
+				      <th>예약번호</th>
+				      <th>숙소명</th>
+				      <th>룸타입</th>
+				      <th>고객명</th>
+				      <th>체크인</th>
+				      <th>체크아웃</th>
+				      <th>예약상태</th>
+				      <th>1:1문의</th>
+				    </tr>
+				  </thead>
+				  <tbody id="all_reservation_tbody">
+					  
+				  </tbody>
+				</table>
+				<div id="all_reservation_pageBar" class="pageBar"></div>
 			</div>
-			
-			
+			  <div class="tab-pane fade" id="ready_reservation_success">
+					<table class="table table-hover">
+				 		 <thead>
+						    <tr>
+						      <th>예약번호</th>
+						      <th>숙소명</th>
+						      <th>룸타입</th>
+						      <th>고객명</th>
+						      <th>체크인</th>
+						      <th>체크아웃</th>
+						      <th>예약상태</th>
+						      <th>1:1문의</th>
+						    </tr>
+						  </thead>
+			    		 <tbody id="send_reservation_tbody">
+						    
+						 </tbody>
+					</table>
+					<div id="send_reservation_pageBar" class="pageBar"></div>
+				</div>
+				<div class="tab-pane fade" id="reservation_success">
+					<table class="table table-hover">
+				 		 <thead>
+						    <tr>
+						      <th>예약번호</th>
+						      <th>숙소명</th>
+						      <th>룸타입</th>
+						      <th>고객명</th>
+						      <th>체크인</th>
+						      <th>체크아웃</th>
+						      <th>예약상태</th>
+						      <th>1:1문의</th>
+						    </tr>
+						  </thead>
+			    		 <tbody id="success_reservation_tbody">
+						    
+						 </tbody>
+					</table>
+					<div id="success_reservation_pageBar" class="pageBar"></div>
+				</div>
+				<div class="tab-pane fade" id="reservation_quit">
+					<table class="table table-hover">
+				 		 <thead>
+						    <tr>
+						      <th>예약번호</th>
+						      <th>숙소명</th>
+						      <th>룸타입</th>
+						      <th>고객명</th>
+						      <th>체크인</th>
+						      <th>체크아웃</th>
+						      <th>예약상태</th>
+						      <th>1:1문의</th>
+						    </tr>
+						  </thead>
+			    		 <tbody id="fail_reservation_tbody">
+						    
+						 </tbody>
+					</table>
+					<div id="fail_reservation_pageBar" class="pageBar"></div>
+				</div>
+			</div>
 		</div>
 	</form>
-
 
 </div>

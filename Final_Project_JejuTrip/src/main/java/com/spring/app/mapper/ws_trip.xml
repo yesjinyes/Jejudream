@@ -1027,10 +1027,30 @@
     <select id="get_new_chatting" parameterType="String" resultType="Integer">
     	select count(*) as i
 		from tbl_chattinglog
-		where to_id = #{userid} and status = 0
+		where to_id = #{userid} and status = 0 and fk_reservation_code > 0
     </select>
     <!-- 로그인을 했을 때 모든 채팅의 개수를 읽어온다. -->
     <select id="get_all_chatting" parameterType="String" resultType="Integer">
+    	select count(*) as i
+		from tbl_chattinglog
+		where to_id = #{userid} and fk_reservation_code > 0
+    </select>
+    
+    <!-- 새로 온 관리자 메세지가 있는지 확인한다. -->
+    <select id="get_from_admin_chatting_exist" parameterType="String" resultType="Integer">
+    	select count(*) as i
+    	from tbl_chattinglog
+    	where to_id = #{userid} and fk_reservation_code = '0' and status = 0
+    </select>
+    
+    <!-- 로그인을 하고 메인에 들어갔을 때 새로 온 채팅이 있는지 확인해준다. -->
+    <select id="get_new_chatting_admin" parameterType="String" resultType="Integer">
+    	select count(*) as i
+		from tbl_chattinglog
+		where to_id = #{userid} and status = 0
+    </select>
+    <!-- 로그인을 했을 때 모든 채팅의 개수를 읽어온다. -->
+    <select id="get_all_chatting_admin" parameterType="String" resultType="Integer">
     	select count(*) as i
 		from tbl_chattinglog
 		where to_id = #{userid}
@@ -1165,6 +1185,54 @@
 		select count(*) as cnt
 		from tbl_chattinglog
 		where to_id = #{to_id} and from_id = #{from_id} and fk_reservation_code = #{fk_reservation_code}
+	</select>
+	
+	<!-- 기업으로 온 모든 채팅 목록을 읽어온다. -->
+    <resultMap type="HashMap" id="admin_chatting_map_paging">
+		<result property="user_name" 		column="user_name" 	javaType="String" />
+		<result property="chatting_date" 	column="chatting_date" javaType="String" />
+		<result property="status" 			column="status" javaType="String" />
+		<result property="from_id" 			column="from_id" javaType="String" />
+	</resultMap>
+	
+	<select id="select_admin_all_chatting_paging" parameterType="String" resultMap="admin_chatting_map_paging">
+		SELECT user_name, chatting_date, status,from_id
+		FROM 
+		(
+		    SELECT rownum AS RNO
+		         ,user_name, chatting_date, status,from_id
+		    FROM
+		    (
+		        select distinct C.from_id, M.user_name, to_char(chatting_date,'yyyy-mm-dd') as chatting_date, C.status
+				from tbl_chattinglog C 
+				join tbl_member M
+				on C.from_id = M.userid
+				where C.to_id = #{userid}
+		        <if test="status != null">
+		        	and C.status = #{status}
+		        </if>
+		        order by chatting_date desc
+		    )V
+		) T
+		where RNO between #{startRno} and #{endRno}
+	</select>
+	
+	<select id="getTotalAdminChattingCount" resultType="Integer">
+		SELECT count(*) as cnt
+		FROM 
+		(
+		select count(*) as cnt
+		from tbl_chattinglog
+		where to_id = #{userid}
+		group by fk_reservation_code
+		)
+	</select>
+	
+	<!-- 유저 아이디로 이름 가져오기 -->
+	<select id="getUserName" parameterType="String" resultType="String">
+		select user_name
+		from tbl_member
+		where userid = #{userid}
 	</select>
 	
 </mapper>
