@@ -162,12 +162,12 @@ public class WebsocketEchoHandler extends TextWebSocketHandler{
              	   else { // 다른 사람이 작성한 채팅메시지일 경우라면.. 작성자명이 나오고 흰배경색으로 보이게 한다.
              		   if("all".equals(list.get(i).getType())) { // 귀속말이 아닌 경우
                  		  wsession.sendMessage(
-             				  new TextMessage("<img style='float:right; width:50px;' src='/JejuDream/resources/images/chatting_icon.jpg'/>[<span style='font-weight:bold; cursor:pointer;' class='loginuserName'>" +list.get(i).getName()+ "</span>]<br><div style='background-color: white; display: inline-block; max-width: 60%; padding: 7px; border-radius: 15%; word-break: break-all;'>"+ list.get(i).getMessage() +"</div> <div style='display: inline-block; padding: 20px 0 0 5px; font-size: 7pt;'>"+list.get(i).getCurrentTime()+"</div> <div>&nbsp;</div>" ) 
+             				  new TextMessage("<img style='width:50px;' src='/JejuDream/resources/images/chatting_icon.jpg'/>[<span style='font-weight:bold; cursor:pointer;' class='loginuserName'>" +list.get(i).getName()+ "</span>]<br><div style='background-color: white; display: inline-block; max-width: 60%; padding: 7px; border-radius: 15%; word-break: break-all;'>"+ list.get(i).getMessage() +"</div> <div style='display: inline-block; padding: 20px 0 0 5px; font-size: 7pt;'>"+list.get(i).getCurrentTime()+"</div> <div>&nbsp;</div>" ) 
          				  );
              		   }
              		   else { // 귀속말인 경우. 글자색을 빨강색으로 함.
                  		  	wsession.sendMessage(
-             		  			new TextMessage("<img style='float:right; width:50px;' src='/JejuDream/resources/images/chatting_icon.jpg'/>[<span style='font-weight:bold; cursor:pointer;' class='loginuserName'>" +list.get(i).getName()+ "</span>]<br><div style='background-color: white; display: inline-block; max-width: 60%; padding: 7px; border-radius: 15%; word-break: break-all; color: red;'>"+ list.get(i).getMessage() +"</div> <div style='display: inline-block; padding: 20px 0 0 5px; font-size: 7pt;'>"+list.get(i).getCurrentTime()+"</div> <div>&nbsp;</div>" ) 
+             		  			new TextMessage("<img style='width:50px;' src='/JejuDream/resources/images/chatting_icon.jpg'/>[<span style='font-weight:bold; cursor:pointer;' class='loginuserName'>" +list.get(i).getName()+ "</span>]<br><div style='background-color: white; display: inline-block; max-width: 60%; padding: 7px; border-radius: 15%; word-break: break-all; color: red;'>"+ list.get(i).getMessage() +"</div> <div style='display: inline-block; padding: 20px 0 0 5px; font-size: 7pt;'>"+list.get(i).getCurrentTime()+"</div> <div>&nbsp;</div>" ) 
          		  			);
              		   }
              	   }

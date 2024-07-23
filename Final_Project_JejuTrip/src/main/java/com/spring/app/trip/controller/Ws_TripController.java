@@ -2223,7 +2223,7 @@ public class Ws_TripController {
 		session.setAttribute("chatting_key", chatting_key);
 		session.setAttribute("status", status);
 		
-		return "reservationChatToCompany";
+		return "chatting";
 	}
 	
 	@GetMapping("/support.trip")
@@ -2240,6 +2240,8 @@ public class Ws_TripController {
 		else if(loginuser != null && !loginuser.getUserid().equals("admin")) {
 			// 로그인한 유저가 개인 유저이면서 그 아이디가 일반 회원의 아이디라면
 			mav.setViewName("mypage/member/support.tiles1");
+			newChattingCnt = service.get_new_chatting(loginuser.getUserid());// 로그인을 하고 메인에 들어갔을 때 새로 온 채팅이 있는지 확인해준다.
+			mav.addObject("newChattingCnt",newChattingCnt);
 		}
 		else if(loginCompanyuser != null){
 			// 로그인한 유저가 기업유저라면
@@ -2257,10 +2259,13 @@ public class Ws_TripController {
 		HttpSession session = request.getSession();
 		CompanyVO loginCompanyuser = (CompanyVO)session.getAttribute("loginCompanyuser");
 		int newChattingCnt = 0;
+		int allChattingCnt = 0;
 		if(loginCompanyuser != null){
 			// 로그인한 유저가 기업유저라면
 			newChattingCnt = service.get_new_chatting(loginCompanyuser.getCompanyid());// 로그인을 하고 메인에 들어갔을 때 새로 온 채팅이 있는지 확인해준다.
+			allChattingCnt = service.get_all_chatting(loginCompanyuser.getCompanyid());// 로그인을 했을 때 모든 채팅의 개수를 읽어온다.
 			mav.addObject("newChattingCnt",newChattingCnt);
+			mav.addObject("allChattingCnt",allChattingCnt);
 		}
 		
 		mav.setViewName("mypage/company/mypage_company_chatting.tiles1");
@@ -2331,4 +2336,72 @@ public class Ws_TripController {
 		jsonObj.put("lodging_name", map.get("lodging_name"));
 		return jsonObj.toString();
 	}
+	
+	
+	@GetMapping("/mypage_member_chatting.trip")
+	public ModelAndView mypage_member_chatting(ModelAndView mav, HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
+		int newChattingCnt = 0;
+		int allChattingCnt = 0;
+		if(loginuser != null){
+			// 로그인한 유저가 기업유저라면
+			newChattingCnt = service.get_new_chatting(loginuser.getUserid());// 로그인을 하고 메인에 들어갔을 때 새로 온 채팅이 있는지 확인해준다.
+			allChattingCnt = service.get_all_chatting(loginuser.getUserid());// 로그인을 했을 때 모든 채팅의 개수를 읽어온다.
+			mav.addObject("newChattingCnt",newChattingCnt);
+			mav.addObject("allChattingCnt",allChattingCnt);
+		}
+		
+		mav.setViewName("mypage/member/mypage_member_chatting.tiles1");
+		return mav;
+	}
+	
+	// 페이징 처리한 업체의 채팅 리스트 가져오기
+	@ResponseBody
+	@PostMapping(value="/memberAllChattingListJSON.trip", produces="text/plain;charset=UTF-8") 
+	public String memberAllChattingListJSON(HttpServletRequest request) {
+
+		String currentShowPageNo = request.getParameter("currentShowPageNo"); 
+		
+		if(currentShowPageNo == null) {
+			currentShowPageNo = "1";
+		}
+		
+		
+		int sizePerPage = 5; // 한 페이지당 5개의 댓글을 보여줄 것임.
+		int startRno = ((Integer.parseInt(currentShowPageNo) - 1) * sizePerPage) + 1; // 시작 행번호 
+		int endRno = startRno + sizePerPage - 1; // 끝 행번호
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("startRno", String.valueOf(startRno));
+		paraMap.put("endRno", String.valueOf(endRno));
+		paraMap.put("userid", request.getParameter("userid"));
+		paraMap.put("status", request.getParameter("status"));
+		// 회원으로 온 모든 채팅 목록을 읽어온다.
+		List<Map<String,String>> chattingList = service.select_member_all_chatting_paging(paraMap);
+		int totalCount = service.getTotalMemberChattingCount(paraMap); // 페이징 처리시 보여주는 순번을 나타내기 위한 것임.
+		
+		JSONArray jsonArr = new JSONArray(); // [] 
+		if(chattingList != null) {
+			for(Map<String,String> reservationMap : chattingList) {
+				JSONObject jsonObj = new JSONObject(); 
+				
+				jsonObj.put("fk_reservation_code", reservationMap.get("fk_reservation_code"));
+				jsonObj.put("lodging_name", reservationMap.get("lodging_name"));
+				jsonObj.put("room_name", reservationMap.get("room_name"));
+				jsonObj.put("user_name", reservationMap.get("user_name"));
+				jsonObj.put("chatting_date", reservationMap.get("chatting_date"));
+				jsonObj.put("status", reservationMap.get("status"));
+				
+				jsonObj.put("totalCount", totalCount);   // 페이징 처리시 보여주는 순번을 나타내기 위한 것임.
+				jsonObj.put("sizePerPage", sizePerPage); // 페이징 처리시 보여주는 순번을 나타내기 위한 것임. 
+				
+				jsonArr.put(jsonObj);
+			}// end of for-----------------------
+		}
+		
+		
+		return jsonArr.toString(); 
+	}
+	
 }

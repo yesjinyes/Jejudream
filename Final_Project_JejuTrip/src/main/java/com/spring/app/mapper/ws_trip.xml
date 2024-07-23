@@ -1019,11 +1019,21 @@
     	insert into tbl_chattinglog (to_id, from_id, status, fk_reservation_code) values(#{to_id},#{from_id},0,#{fk_reservation_code})
     </insert>
     
+    <update id="update_chattinglog_no_read" parameterType="HashMap">
+    	update tbl_chattinglog set status = 0, chatting_date = sysdate where to_id = #{to_id} and from_id = #{from_id} and fk_reservation_code = #{fk_reservation_code}
+    </update>
+    
     <!-- 로그인을 하고 메인에 들어갔을 때 새로 온 채팅이 있는지 확인해준다. -->
     <select id="get_new_chatting" parameterType="String" resultType="Integer">
     	select count(*) as i
 		from tbl_chattinglog
 		where to_id = #{userid} and status = 0
+    </select>
+    <!-- 로그인을 했을 때 모든 채팅의 개수를 읽어온다. -->
+    <select id="get_all_chatting" parameterType="String" resultType="Integer">
+    	select count(*) as i
+		from tbl_chattinglog
+		where to_id = #{userid}
     </select>
     
     <!-- 기업으로 온 모든 채팅 목록을 읽어온다. -->
@@ -1102,4 +1112,59 @@
 		update tbl_chattinglog set status = 1 where fk_reservation_code = #{fk_reservation_code} and to_id = #{to_id} and chatting_date < sysdate
 		]]> 
 	</update>
+	
+	<!-- 기업으로 온 모든 채팅 목록을 읽어온다. -->
+    <resultMap type="HashMap" id="member_chatting_map_paging">
+		<result property="fk_reservation_code" 	column="fk_reservation_code" 	javaType="String" />
+		<result property="lodging_name" 		column="lodging_name" javaType="String" />
+		<result property="room_name" 			column="room_name" javaType="String" />
+		<result property="user_name" 			column="user_name" javaType="String" />
+		<result property="chatting_date" 		column="chatting_date" javaType="String" />
+		<result property="status" 				column="status" javaType="String" />
+	</resultMap>
+	
+	<select id="select_member_all_chatting_paging" parameterType="String" resultMap="member_chatting_map_paging">
+		SELECT fk_reservation_code, lodging_name, room_name, user_name, chatting_date, status
+		FROM 
+		(
+		    SELECT rownum AS RNO
+		         ,fk_reservation_code, lodging_name, room_name, user_name, chatting_date, status
+		    FROM
+		    (
+		        select distinct C.fk_reservation_code, L.lodging_name, room_name, M.user_name, to_char(chatting_date,'yyyy-mm-dd') as chatting_date, C.status
+		        from tbl_chattinglog C join tbl_reservation R
+		        on C.fk_reservation_code = R.reservation_code
+		        join tbl_room_detail D
+		        on R.fk_room_detail_code = D.room_detail_code
+		        join tbl_lodging L
+		        on D.fk_lodging_code = L.lodging_code
+		        join tbl_member M
+		        on C.to_id = M.userid
+		        where to_id = #{userid}
+		        <if test="status != null">
+		        	and C.status = #{status}
+		        </if>
+		        order by chatting_date desc
+		    )V
+		) T
+		where RNO between #{startRno} and #{endRno}
+	</select>
+	
+	<select id="getTotalMemberChattingCount" resultType="Integer">
+		SELECT count(*) as cnt
+		FROM 
+		(
+		select count(*) as cnt
+		from tbl_chattinglog
+		where to_id = #{userid}
+		group by fk_reservation_code
+		)
+	</select>
+	<!-- 동일한 사람과 진행한 채팅기록이 남아있는지 확인하기위함이다. -->
+	<select id="get_chatting_log" parameterType="HashMap" resultType="Integer">
+		select count(*) as cnt
+		from tbl_chattinglog
+		where to_id = #{to_id} and from_id = #{from_id} and fk_reservation_code = #{fk_reservation_code}
+	</select>
+	
 </mapper>

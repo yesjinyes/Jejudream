@@ -86,5 +86,10 @@ public interface Ws_TripDAO {
 	Map<String, String> getMemberIdAndNameToTblReservationCode(String reservation_code);// 채팅에 해당하는 고객 아이디와 이름을 가져온다.
 	void update_chattinglog(String reservation_code);// 채팅 로그 테이블에 해당 예약건에 관련한 채팅을 읽음처리한다.
 	void update_chattinglog_after_chatting(Map<String, String> paraMap);// 채팅방에서 나가게되면 채팅 기록방에서 나가기 직전까지의 읽음 컬럼을 읽음처리로 바꿔준다.
+	List<Map<String, String>> select_member_all_chatting_paging(Map<String, String> paraMap);// 회원으로 온 모든 채팅 목록을 읽어온다.
+	int getTotalMemberChattingCount(Map<String, String> paraMap);// 페이징 처리시 보여주는 순번을 나타내기 위한 것임.
+	int get_chatting_log(Map<String, String> chatMap);// 동일한 사람과 진행한 채팅기록이 남아있는지 확인하기위함이다.
+	void update_chattinglog_no_read(Map<String, String> chatMap);// 이미 해당 채팅방에 있는 로그가 insert되어있는 경우에는 해당 커럼의 값들을 바꿔준다.
+	int get_all_chatting(String companyid);// 로그인을 했을 때 모든 채팅의 개수를 읽어온다.
 
 }

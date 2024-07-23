@@ -57,7 +57,8 @@ where reservation_code = 21;
 
 
 select *
-from tbl_chattinglog;
+from tbl_chattinglog
+order by chatting_date desc;
 
 SELECT count(*) as cnt
 FROM 
@@ -90,3 +91,29 @@ FROM
     )V
 ) T
 where RNO between 1 and 5
+
+SELECT fk_reservation_code, lodging_name, room_name, user_name, chatting_date, status
+FROM 
+(
+    SELECT rownum AS RNO
+         ,fk_reservation_code, lodging_name, room_name, user_name, chatting_date, status
+    FROM
+    (
+        select distinct C.fk_reservation_code, L.lodging_name, room_name, M.user_name, to_char(chatting_date,'yyyy-mm-dd') as chatting_date, C.status
+        from tbl_chattinglog C join tbl_reservation R
+        on C.fk_reservation_code = R.reservation_code
+        join tbl_room_detail D
+        on R.fk_room_detail_code = D.room_detail_code
+        join tbl_lodging L
+        on D.fk_lodging_code = L.lodging_code
+        join tbl_member M
+        on C.to_id = M.userid
+        where C.to_id = 'jeongws'
+        order by chatting_date desc
+    )V
+) T
+where RNO between 0 and 5
+
+select *
+from tbl_chattinglog
+where to_id = 'jeongws';
