@@ -240,7 +240,14 @@ where V.rno between 1 and 5;
 -- 게시물당 댓글 개수
 select count(*)
 from tbl_comment
-where status = 1 and parentSeq = 5;
+where parentSeq = 9
+and (status = 1 
+    or (status = 0 and exists (
+       select 1 
+       from tbl_comment sub 
+       where sub.fk_seq = tbl_comment.seq
+    ))
+);
 
 
 select NVL(max(groupno), 0)
@@ -264,7 +271,7 @@ FROM
              , to_char(regDate, 'yyyy-mm-dd hh24:mi') AS regDate
              , parentseq, status, groupno, fk_seq, depthno
         from tbl_comment
-        where parentSeq = 10
+        where parentSeq = 9
         start with fk_seq = 0
         connect by prior seq = fk_seq
         order siblings by groupno desc, seq asc
@@ -283,6 +290,35 @@ from tbl_comment
 order by seq desc;
 
 
+
+
+SELECT seq, fk_userid, name, content, regDate
+     , parentseq, status, groupno, fk_seq, depthno
+FROM
+(
+    SELECT rownum AS RNO
+         , seq, fk_userid, name, content, regDate
+         , parentseq, status, groupno, fk_seq, depthno
+    FROM
+    (
+        select seq, fk_userid, name, content
+             , to_char(regDate, 'yyyy-mm-dd hh24:mi') AS regDate
+             , parentseq, status, groupno, fk_seq, depthno
+        from tbl_comment
+        where parentSeq = 9
+          and (status = 1 
+               or (status = 0 and exists (
+                   select 1 
+                   from tbl_comment sub 
+                   where sub.fk_seq = tbl_comment.seq
+               ))
+          )
+        start with fk_seq = 0
+        connect by prior seq = fk_seq
+        order siblings by groupno desc, seq asc
+    ) V
+) T  
+WHERE RNO between 1 and 5;
 
 
 

@@ -374,6 +374,13 @@
 		             , parentseq, status, groupno, fk_seq, depthno
 		        from tbl_comment
 		        where parentSeq = #{parentSeq}
+                and (status = 1 
+               			or (status = 0 and exists (
+		                   select 1 
+		                   from tbl_comment sub 
+		                   where sub.fk_seq = tbl_comment.seq
+		               	))
+		          	)
 		        start with fk_seq = 0
 		        connect by prior seq = fk_seq
 		        order siblings by groupno desc, seq asc
@@ -388,6 +395,13 @@
 		select count(*)
 		from tbl_comment
 		where parentSeq = #{parentSeq}
+		and (status = 1 
+		    or (status = 0 and exists (
+		       select 1 
+		       from tbl_comment sub 
+		       where sub.fk_seq = tbl_comment.seq
+		    ))
+		)
 	</select>
 	
 	

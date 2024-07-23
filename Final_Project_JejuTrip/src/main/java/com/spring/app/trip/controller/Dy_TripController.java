@@ -2050,8 +2050,4 @@ public class Dy_TripController {
 		return jsonObj.toString();
 	}
 	
-	
-	
-	
-	
 }

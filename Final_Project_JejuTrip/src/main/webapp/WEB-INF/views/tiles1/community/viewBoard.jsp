@@ -258,8 +258,9 @@
 	        		success: function(json) {
 	        			if(json.n == 1) {
 	        				// 현재 수정한 댓글이 있는 페이지를 보여준다.
-	        				const currentShowPageNo = commentDiv.parent().find("input.currentShowPageNo").val();
-	        				goViewComment(currentShowPageNo);
+	        				const currentShowPageNo = commentDiv.find("input.currentShowPageNo").val();
+	        				alert("currentShowPageNo : " + currentShowPageNo);
+//	        				goViewComment(currentShowPageNo);
 	        			}
 	        		},
 	        		error: function(request, status, error){
@@ -548,7 +549,7 @@
 				
 				if(json.length > 0) {
 					
-					console.log(JSON.stringify(json));
+//						console.log(JSON.stringify(json));
 					
 					$.each(json, function(index, item) {
 						
