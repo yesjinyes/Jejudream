@@ -439,9 +439,9 @@
     <div class="navigation">
         <ul>
             <li class="list">
-                <a href="<%= ctxPath%>/requiredLogin_goMypage.trip">
+                <a href="<%= ctxPath%>/support.trip">
                     <span class="icon"><ion-icon name="bed-outline"></ion-icon></span>
-                    <span class="title">예약내역</span>
+                    <span class="title">자주묻는질문</span>
                 </a>
             </li>
             <li class="list active">
