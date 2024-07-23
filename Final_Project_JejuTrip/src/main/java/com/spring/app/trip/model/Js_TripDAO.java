@@ -3,6 +3,7 @@ package com.spring.app.trip.model;
 import java.util.List;
 import java.util.Map;
 
+import com.spring.app.trip.domain.BoardVO;
 import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.PlayVO;
@@ -113,6 +114,12 @@ public interface Js_TripDAO {
 
 	// 이메일 발송하고나서 메일체크 update
 	void updateMailSendCheck(Map<String, String[]> paraMap);
+
+	// db에서 sysdate에 해당하는 축제가져오기
+	List<Map<String, String>> getCurrentFestival();
+
+	// 글 작성일이 3일이내인 조회수 높은 커뮤니티 글목록 가져오기
+	List<BoardVO> getPopularBoard();
 	
 	
 
