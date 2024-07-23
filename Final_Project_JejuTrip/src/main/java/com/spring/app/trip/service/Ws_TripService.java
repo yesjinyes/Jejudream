@@ -89,6 +89,12 @@ public interface Ws_TripService {
 	List<Map<String, String>> select_member_all_chatting_paging(Map<String, String> paraMap);// 회원으로 온 모든 채팅 목록을 읽어온다.
 	int getTotalMemberChattingCount(Map<String, String> paraMap);// 페이징 처리시 보여주는 순번을 나타내기 위한 것임.
 	int get_all_chatting(String companyid);// 로그인을 했을 때 모든 채팅의 개수를 읽어온다.
+	List<Map<String, String>> select_admin_all_chatting_paging(Map<String, String> paraMap);// 관리자로 온 모든 채팅 목록을 읽어온다.
+	int getTotalAdminChattingCount(Map<String, String> paraMap);// 페이징 처리시 보여주는 순번을 나타내기 위한 것임.
+	String getUserName(String userid);// 유저 아이디로 이름 가져오기
+	int get_from_admin_chatting_exist(String userid);// 새로 온 관리자 메세지가 있는지 확인한다.
+	int get_new_chatting_admin(String userid);// 로그인을 하고 메인에 들어갔을 때 새로 온 채팅이 있는지 확인해준다.
+	int get_all_chatting_admin(String userid);// 로그인을 했을 때 모든 채팅의 개수를 읽어온다.
 	
 
 }

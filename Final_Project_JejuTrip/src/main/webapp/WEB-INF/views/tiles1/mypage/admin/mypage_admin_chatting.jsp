@@ -57,10 +57,7 @@
         
         
         $(document).on('click','.go_chat',function(){
-       		const reservation_code = $(this).find("input").val();
-       		
-       		const name = "${sessionScope.loginuser.user_name}";
-       		const userid = "${sessionScope.loginuser.userid}";
+       		const from_id = $(this).find("input").val();
        		
    			// >>> 팝업창 띄우기 <<<
    		    // 너비 1000, 높이 600 인 팝업창을 화면 가운데 위치시키기
@@ -69,48 +66,24 @@
 
    		    const left = Math.ceil( (window.screen.width - width)/2 ); // 정수로 만듬
    		    const top = Math.ceil( (window.screen.height - height)/2 ); // 정수로 만듬
-   		    
-   		 	let companyid = "";
-   	   		let lodging_name = "";
    	   		
-	   		 $.ajax({
-	 			url:"<%= ctxPath%>/getCompanyIdAndNameJSON.trip",
-	 			data:{"reservation_code":reservation_code},
+	   	   	$.ajax({
+	 			url:"<%= ctxPath%>/getMemberNameToFrom_IdJSON.trip",
+	 			data:{"from_id":from_id},
 	 			type:"post",
 	 			dataType:"json",
 	 			success:function(json){
-	 				companyid = json.companyid
-	 				lodging_name = json.lodging_name;
-	 				const url = "<%= serverName%><%=ctxPath%>/reservationChatToCompany.trip?reservation_code=" + reservation_code +"&name="+name+"&userid="+userid+"&companyid="+companyid+"&lodging_name="+lodging_name+"&status=1";
+	 				const user_name = json.user_name
+	 				const url = "<%= serverName%><%=ctxPath%>/ChatToAdmin.trip?name="+user_name+"&userid="+from_id+"&admin=admin&status=4";
 	 				window.open(url, "mypage_chatting_toCompany",
- 		               `left=\${left}, top=\${top}, width=\${width}, height=\${height}`);
+	 	               `left=\${left}, top=\${top}, width=\${width}, height=\${height}`);
 	 			},
 	 			error: function(request, status, error){
 	 			   alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
 	 			}
 	 		});
-
-   		   
-       		
-       	})
-       	
-       	$(document).on('click','.click_go_admin_chat',function(){
-       		const reservation_code = $(this).find("input").val();
-       		
-       		const name = "${sessionScope.loginuser.user_name}";
-       		const userid = "${sessionScope.loginuser.userid}";
-       		
-   			// >>> 팝업창 띄우기 <<<
-   		    // 너비 1000, 높이 600 인 팝업창을 화면 가운데 위치시키기
-   			const width = 500;
-   			const height = 700;
-
-   		    const left = Math.ceil( (window.screen.width - width)/2 ); // 정수로 만듬
-   		    const top = Math.ceil( (window.screen.height - height)/2 ); // 정수로 만듬
-   		    
-			const url = "<%= serverName%><%=ctxPath%>/ChatToAdmin.trip?name="+name+"&userid="+userid+"&admin=admin&status=3";
-			window.open(url, "mypage_chatting_toCompany",
-               `left=\${left}, top=\${top}, width=\${width}, height=\${height}`);
+   	   		
+   	   		
        		
        	})
 	});// end of ready   
@@ -119,7 +92,7 @@
 	function goViewAllChattingList(currentShowPageNo){
 		
 		$.ajax({
-			url:"<%= ctxPath%>/memberAllChattingListJSON.trip",
+			url:"<%= ctxPath%>/adminAllChattingListJSON.trip",
 			data:{"currentShowPageNo":currentShowPageNo,"userid":"${sessionScope.loginuser.userid}"},
 			type:"post",
 			dataType:"json",
@@ -135,19 +108,15 @@
 					let check_reservation_code = 0;
 					$.each(json, function(index, item){
 					    	v_html_all += "<tr>";
-						    v_html_all += "<th>"+item.fk_reservation_code+"</th>";
-						   
-							v_html_all += "<td>"+item.lodging_name+"</td>";
-							v_html_all += "<td>"+item.room_name+"</td>";
-							v_html_all += "<td>"+item.user_name+"</td>";
+						    v_html_all += "<th>"+item.user_name+"</th>";
 							v_html_all += "<td>"+item.chatting_date+"</td>";
-							v_html_all += "<td class='go_chat'><ion-icon name='chatbubble-sharp'><input type='button' value='"+item.fk_reservation_code+"'/></ion-icon>";
+							v_html_all += "<td class='go_chat'><ion-icon name='chatbubble-sharp'><input type='button' value='"+item.from_id+"'/></ion-icon>";
 							if(item.status == 0){
 						    	v_html_all += "<span style='margin-left:5px; border:solid 1px red; color:white; background-color:red; font-weight:bold; font-size:10px; width:40px; height:20px; border-radius:8px; text-align:center;'>new</span>"
 						    }
 							 v_html_all += "</td>";
 					    	v_html_all += "</tr>";
-						
+							
 				    	check_reservation_code = item.fk_reservation_code;
 					}); // end of $.each(json, function(index, item){})-------- 
 				}
@@ -288,7 +257,7 @@
 	function goViewNoReadChattingList(currentShowPageNo){
 		
 		$.ajax({
-			url:"<%= ctxPath%>/memberAllChattingListJSON.trip",
+			url:"<%= ctxPath%>/adminAllChattingListJSON.trip",
 			data:{"currentShowPageNo":currentShowPageNo,"userid":"${sessionScope.loginuser.userid}","status":"0"},
 			type:"post",
 			dataType:"json",
@@ -303,19 +272,15 @@
 				if(json.length > 0){
 					let check_reservation_code = 0;
 					$.each(json, function(index, item){
-					    	v_html_all += "<tr>";
-						    v_html_all += "<th>"+item.fk_reservation_code+"</th>";
-						   
-							v_html_all += "<td>"+item.lodging_name+"</td>";
-							v_html_all += "<td>"+item.room_name+"</td>";
-							v_html_all += "<td>"+item.user_name+"</td>";
-							v_html_all += "<td>"+item.chatting_date+"</td>";
-							v_html_all += "<td class='go_chat'><ion-icon name='chatbubble-sharp'><input type='button' value='"+item.fk_reservation_code+"'/></ion-icon>";
-							if(item.status == 0){
-						    	v_html_all += "<span style='margin-left:5px; border:solid 1px red; color:white; background-color:red; font-weight:bold; font-size:10px; width:40px; height:20px; border-radius:8px; text-align:center;'>new</span>"
-						    }
-							 v_html_all += "</td>";
-					    	v_html_all += "</tr>";
+						v_html_all += "<tr>";
+					    v_html_all += "<th>"+item.user_name+"</th>";
+						v_html_all += "<td>"+item.chatting_date+"</td>";
+						v_html_all += "<td class='go_chat'><ion-icon name='chatbubble-sharp'><input type='button' value='"+item.user_name+"'/></ion-icon>";
+						if(item.status == 0){
+					    	v_html_all += "<span style='margin-left:5px; border:solid 1px red; color:white; background-color:red; font-weight:bold; font-size:10px; width:40px; height:20px; border-radius:8px; text-align:center;'>new</span>"
+					    }
+						 v_html_all += "</td>";
+				    	v_html_all += "</tr>";
 						
 				    	check_reservation_code = item.fk_reservation_code;
 					}); // end of $.each(json, function(index, item){})-------- 
@@ -514,12 +479,9 @@
 					<table class="table table-hover">
 					  <thead>
 					    <tr>
-					      <th>예약번호</th>
-					      <th>숙소명</th>
-					      <th>룸타입</th>
-					      <th>고객명</th>
-					      <th>채팅시간</th>
-					      <th>1:1문의</th>
+					      <th>유저명</th>
+					      <th>채팅일자</th>
+					      <th>1:1채팅</th>
 					    </tr>
 					  </thead>
 					  <tbody id="all_chatting_tbody">
@@ -533,12 +495,9 @@
 					<table class="table table-hover">
 					  <thead>
 					    <tr>
-					      <th>예약번호</th>
-					      <th>숙소명</th>
-					      <th>룸타입</th>
-					      <th>고객명</th>
-					      <th>채팅시간</th>
-					      <th>1:1문의</th>
+					      <th>유저명</th>
+					      <th>채팅일자</th>
+					      <th>1:1채팅</th>
 					    </tr>
 					  </thead>
 					  <tbody id="no_read_chatting_tbody">
@@ -550,11 +509,4 @@
 			</div>
 		</div>
 	</form>
-</div>
-<div class="click_go_admin_chat" style="position: fixed; top:65%; left:90%; text-align:center; cursor: pointer;">
-	<c:if test="${requestScope.get_from_admin_chatting_exist > 0}">
-		<div style="float:right; width:10px; height:10px; border-radius:50%; background-color:red;"></div>
-	</c:if>
-	<img style='width:70px;' src='/JejuDream/resources/images/chatting_icon.jpg'/>
-	<div style="font-weight:bold;">1:1문의</div>
 </div>

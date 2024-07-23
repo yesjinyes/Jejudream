@@ -59,6 +59,9 @@ public class Ws_TripController {
 		int i = 0;
 		if(loginuser != null) {
 			i = service.get_new_chatting(loginuser.getUserid());// 로그인을 하고 메인에 들어갔을 때 새로 온 채팅이 있는지 확인해준다.
+			if(i==0) {
+				i = service.get_from_admin_chatting_exist(loginuser.getUserid());
+			}
 		}
 		else if(loginCompanyuser != null) {
 			i = service.get_new_chatting(loginCompanyuser.getCompanyid());// 로그인을 하고 메인에 들어갔을 때 새로 온 채팅이 있는지 확인해준다.
@@ -2226,6 +2229,35 @@ public class Ws_TripController {
 		return "chatting";
 	}
 	
+	
+	// === #222. (웹 채팅 관련4) === // 
+	@GetMapping("/ChatToAdmin.trip")
+	public String ChatToAdmin(HttpServletRequest request, HttpServletResponse response) {
+		
+		// service.update_chattinglog(request.getParameter("reservation_code"));// 채팅 로그 테이블에 해당 예약건에 관련한 채팅을 읽음처리한다.
+		
+		String chatting_key = request.getParameter("userid") + "_admin";
+		String status = request.getParameter("status");
+		HttpSession session = request.getSession();
+		if(status.equals("3")) {
+			MemberVO chattinguser = new MemberVO();
+			chattinguser.setUser_name(request.getParameter("name"));
+			chattinguser.setUserid(request.getParameter("userid"));
+			session.setAttribute("chattinguser", chattinguser);
+		}
+		else if(status.equals("4")){
+			MemberVO chattinguser = new MemberVO();
+			chattinguser.setUser_name("관리자");
+			chattinguser.setUserid(request.getParameter("admin"));
+			session.setAttribute("chattinguser", chattinguser);
+		}
+		
+		session.setAttribute("chatting_key", chatting_key);
+		session.setAttribute("status", status);
+		
+		return "chatting";
+	}
+	
 	@GetMapping("/support.trip")
 	public ModelAndView support(ModelAndView mav, HttpServletRequest request) {
 		
@@ -2235,12 +2267,17 @@ public class Ws_TripController {
 		int newChattingCnt = 0;
 		if(loginuser != null && loginuser.getUserid().equals("admin")) {
 			// 로그인한 유저가 개인 유저이면서 그 아이디가 관리자 아이디라면
+			newChattingCnt = service.get_new_chatting_admin(loginuser.getUserid());// 로그인을 하고 메인에 들어갔을 때 새로 온 채팅이 있는지 확인해준다.
+			mav.addObject("newChattingCnt",newChattingCnt);
 			mav.setViewName("mypage/admin/support.tiles1");
 		}
 		else if(loginuser != null && !loginuser.getUserid().equals("admin")) {
 			// 로그인한 유저가 개인 유저이면서 그 아이디가 일반 회원의 아이디라면
 			mav.setViewName("mypage/member/support.tiles1");
 			newChattingCnt = service.get_new_chatting(loginuser.getUserid());// 로그인을 하고 메인에 들어갔을 때 새로 온 채팅이 있는지 확인해준다.
+			if(newChattingCnt == 0) {
+				newChattingCnt = service.get_from_admin_chatting_exist(loginuser.getUserid());// 관리자 채팅이 있는지 없는지도 확인해본다.
+			}
 			mav.addObject("newChattingCnt",newChattingCnt);
 		}
 		else if(loginCompanyuser != null){
@@ -2344,12 +2381,18 @@ public class Ws_TripController {
 		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
 		int newChattingCnt = 0;
 		int allChattingCnt = 0;
+		int get_from_admin_chatting_exist = 0;
 		if(loginuser != null){
 			// 로그인한 유저가 기업유저라면
 			newChattingCnt = service.get_new_chatting(loginuser.getUserid());// 로그인을 하고 메인에 들어갔을 때 새로 온 채팅이 있는지 확인해준다.
+			if(newChattingCnt == 0) {
+				newChattingCnt = service.get_from_admin_chatting_exist(loginuser.getUserid());// 관리자 채팅이 있는지 없는지도 확인해본다.
+			}
 			allChattingCnt = service.get_all_chatting(loginuser.getUserid());// 로그인을 했을 때 모든 채팅의 개수를 읽어온다.
+			get_from_admin_chatting_exist = service.get_from_admin_chatting_exist(loginuser.getUserid());// 새로 온 관리자 메세지가 있는지 확인한다.
 			mav.addObject("newChattingCnt",newChattingCnt);
 			mav.addObject("allChattingCnt",allChattingCnt);
+			mav.addObject("get_from_admin_chatting_exist",get_from_admin_chatting_exist);
 		}
 		
 		mav.setViewName("mypage/member/mypage_member_chatting.tiles1");
@@ -2402,6 +2445,83 @@ public class Ws_TripController {
 		
 		
 		return jsonArr.toString(); 
+	}
+	
+	@GetMapping("/mypage_admin_chatting.trip")
+	public ModelAndView mypage_admin_chatting(ModelAndView mav, HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
+		int newChattingCnt = 0;
+		int allChattingCnt = 0;
+		if(loginuser != null && loginuser.getUserid().equals("admin")){
+			// 로그인한 유저가 관리자라면
+			newChattingCnt = service.get_new_chatting_admin(loginuser.getUserid());// 로그인을 하고 메인에 들어갔을 때 새로 온 채팅이 있는지 확인해준다.
+			allChattingCnt = service.get_all_chatting_admin(loginuser.getUserid());// 로그인을 했을 때 모든 채팅의 개수를 읽어온다.
+			mav.addObject("newChattingCnt",newChattingCnt);
+			mav.addObject("allChattingCnt",allChattingCnt);
+		}
+		
+		mav.setViewName("mypage/admin/mypage_admin_chatting.tiles1");
+		return mav;
+	}
+	
+	
+	// 페이징 처리한 업체의 채팅 리스트 가져오기
+	@ResponseBody
+	@PostMapping(value="/adminAllChattingListJSON.trip", produces="text/plain;charset=UTF-8") 
+	public String adminAllChattingListJSON(HttpServletRequest request) {
+
+		String currentShowPageNo = request.getParameter("currentShowPageNo"); 
+		
+		if(currentShowPageNo == null) {
+			currentShowPageNo = "1";
+		}
+		
+		
+		int sizePerPage = 5; // 한 페이지당 5개의 댓글을 보여줄 것임.
+		int startRno = ((Integer.parseInt(currentShowPageNo) - 1) * sizePerPage) + 1; // 시작 행번호 
+		int endRno = startRno + sizePerPage - 1; // 끝 행번호
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("startRno", String.valueOf(startRno));
+		paraMap.put("endRno", String.valueOf(endRno));
+		paraMap.put("userid", request.getParameter("userid"));
+		paraMap.put("status", request.getParameter("status"));
+		// 관리자로 온 모든 채팅 목록을 읽어온다.
+		List<Map<String,String>> chattingList = service.select_admin_all_chatting_paging(paraMap);
+		int totalCount = service.getTotalAdminChattingCount(paraMap); // 페이징 처리시 보여주는 순번을 나타내기 위한 것임.
+		
+		JSONArray jsonArr = new JSONArray(); // [] 
+		if(chattingList != null) {
+			for(Map<String,String> reservationMap : chattingList) {
+				JSONObject jsonObj = new JSONObject(); 
+				jsonObj.put("from_id", reservationMap.get("from_id"));
+				jsonObj.put("user_name", reservationMap.get("user_name"));
+				jsonObj.put("chatting_date", reservationMap.get("chatting_date"));
+				jsonObj.put("status", reservationMap.get("status"));
+				
+				jsonObj.put("totalCount", totalCount);   // 페이징 처리시 보여주는 순번을 나타내기 위한 것임.
+				jsonObj.put("sizePerPage", sizePerPage); // 페이징 처리시 보여주는 순번을 나타내기 위한 것임. 
+				
+				jsonArr.put(jsonObj);
+			}// end of for-----------------------
+		}
+		
+		
+		return jsonArr.toString(); 
+	}
+	
+	// 유저 아이디로 이름 가져오기
+	@ResponseBody
+	@PostMapping(value="/getMemberNameToFrom_IdJSON.trip", produces="text/plain;charset=UTF-8") 
+	public String getMemberNameToFrom_IdJSON(HttpServletRequest request) {
+		String userid = request.getParameter("from_id");
+		
+		String user_name = service.getUserName(userid);
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("user_name", user_name);
+		
+		return jsonObj.toString(); 
 	}
 	
 }

@@ -658,6 +658,48 @@ public class Ws_TripService_imple implements Ws_TripService {
 		return n;
 	}
 	
+	// 관리자로 온 모든 채팅 목록을 읽어온다.
+	@Override
+	public List<Map<String, String>> select_admin_all_chatting_paging(Map<String, String> paraMap) {
+		List<Map<String, String>> mapList = dao.select_admin_all_chatting_paging(paraMap);
+		return mapList;
+	}
+	
+	// 페이징 처리시 보여주는 순번을 나타내기 위한 것임.
+	@Override
+	public int getTotalAdminChattingCount(Map<String, String> paraMap) {
+		int n = dao.getTotalAdminChattingCount(paraMap);
+		return n;
+	}
+	
+	// 유저 아이디로 이름 가져오기
+	@Override
+	public String getUserName(String userid) {
+		String user_name = dao.getUserName(userid);
+		return user_name;
+	}
+	
+	// 새로 온 관리자 메세지가 있는지 확인한다.
+	@Override
+	public int get_from_admin_chatting_exist(String userid) {
+		int n = dao.get_from_admin_chatting_exist(userid);
+		return n;
+	}
+	
+	// 로그인을 하고 메인에 들어갔을 때 새로 온 채팅이 있는지 확인해준다.
+	@Override
+	public int get_new_chatting_admin(String userid) {
+		int n = dao.get_new_chatting_admin(userid);
+		return n;
+	}
+
+	// 로그인을 했을 때 모든 채팅의 개수를 읽어온다.
+	@Override
+	public int get_all_chatting_admin(String userid) {
+		int n = dao.get_all_chatting_admin(userid);
+		return n;
+	}
+	
 	
 	
 

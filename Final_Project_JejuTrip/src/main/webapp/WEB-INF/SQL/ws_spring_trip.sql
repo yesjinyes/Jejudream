@@ -114,6 +114,10 @@ FROM
 ) T
 where RNO between 0 and 5
 
-select *
-from tbl_chattinglog
-where to_id = 'jeongws';
+select distinct  M.user_name, to_char(chatting_date,'yyyy-mm-dd') as chatting_date, C.status
+from tbl_chattinglog C 
+join tbl_member M
+on C.from_id = M.userid
+where C.to_id = 'admin'
+
+commit;
