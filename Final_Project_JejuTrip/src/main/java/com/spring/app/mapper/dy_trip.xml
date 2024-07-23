@@ -338,8 +338,16 @@
 	
 	<!-- 댓글 쓰기 -->
 	<insert id="addComment" parameterType="CommentVO">
-		insert into tbl_comment(seq, fk_userid, name, content, parentSeq)
-		values(commentSeq.nextval, #{fk_userid}, #{name}, #{content}, #{parentSeq})
+		<if test='fk_seq.equals("")'>
+			insert into tbl_comment(seq, fk_userid, name, content, parentSeq, groupno, fk_seq, depthno)
+			values(commentSeq.nextval, #{fk_userid}, #{name}, #{content}, #{parentSeq}, #{groupno}, default, default)
+		</if>
+		
+		<!-- 답댓글인 경우 -->
+		<if test='!fk_seq.equals("")'>
+			insert into tbl_comment(seq, fk_userid, name, content, parentSeq, groupno, fk_seq, depthno)
+			values(commentSeq.nextval, #{fk_userid}, #{name}, #{content}, #{parentSeq}, #{groupno}, #{fk_seq}, #{depthno}+1)
+		</if>
 	</insert>
 	
 	
@@ -353,14 +361,33 @@
 	<!-- 댓글 목록 불러오기 -->
 	<select id="getViewComment" parameterType="HashMap" resultType="CommentVO">
 		SELECT seq, fk_userid, name, content, regDate
+		     , parentseq, status, groupno, fk_seq, depthno
 		FROM
 		(
-		    select row_number() over(order by seq desc) AS rno
-		         , seq, fk_userid, name, content, to_char(regDate, 'yyyy-mm-dd hh24:mi') AS regDate
-		    from tbl_comment
-		    where status = 1 and parentSeq = #{parentSeq}
-		) V
-		where V.rno between #{startRno} and #{endRno}
+		    SELECT rownum AS RNO
+		         , seq, fk_userid, name, content, regDate
+		         , parentseq, status, groupno, fk_seq, depthno
+		    FROM
+		    (
+		        select seq, fk_userid, name, content
+		             , to_char(regDate, 'yyyy-mm-dd hh24:mi') AS regDate
+		             , parentseq, status, groupno, fk_seq, depthno
+		        from tbl_comment
+		        where parentSeq = #{parentSeq}
+                and (status = 1 
+               			or (status = 0 and exists (
+		                   select 1 
+		                   from tbl_comment sub 
+		                   where sub.fk_seq = tbl_comment.seq
+		                   and sub.status = 1
+		               	))
+		          	)
+		        start with fk_seq = 0
+		        connect by prior seq = fk_seq
+		        order siblings by groupno desc, seq asc
+		    ) V
+		) T  
+		WHERE RNO between #{startRno} and #{endRno}
 	</select>
 	
 	
@@ -368,7 +395,15 @@
 	<select id="getCommentTotalCount" parameterType="String" resultType="int">
 		select count(*)
 		from tbl_comment
-		where status = 1 and parentSeq = #{parentSeq}
+		where parentSeq = #{parentSeq}
+		and (status = 1 
+		    or (status = 0 and exists (
+	       		select 1 
+	            from tbl_comment sub 
+	            where sub.fk_seq = tbl_comment.seq
+	            and sub.status = 1
+		    ))
+		)
 	</select>
 	
 	
@@ -421,10 +456,10 @@
 	
 	
 	<!-- 커뮤니티 댓글 삭제 -->
-	<delete id="deleteComment" parameterType="String">
-		delete from tbl_comment
+	<update id="deleteComment" parameterType="String">
+		update tbl_comment set status = 0
 		where seq = #{seq}
-	</delete>
+	</update>
 	
 	
 	<!-- 커뮤니티 댓글 삭제 시 해당 글의 댓글 개수 1 감소 -->
@@ -439,6 +474,13 @@
 		select commentCount
 		from tbl_board
 		where seq = #{seq}
+	</select>
+	
+	
+	<!-- 댓글  groupno 컬럼의 최대값 구하기 -->
+	<select id="getGroupnoMax" resultType="int">
+		select NVL(max(groupno), 0)
+		from tbl_comment
 	</select>
 	
 	

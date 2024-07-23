@@ -1289,6 +1289,11 @@ public class Dy_TripController {
 		
 		int n = 0;
 		
+		if(commentvo.getFk_seq() == null) { // 원댓글일 경우
+			
+			commentvo.setFk_seq("");
+		}
+		
 		try {
 			n = service.addComment(commentvo);
 			// 댓글 쓰기 및 원게시물에 댓글 개수 증가하기
@@ -1339,6 +1344,10 @@ public class Dy_TripController {
 				jsonObj.put("name", cmtvo.getName());
 				jsonObj.put("content", cmtvo.getContent());
 				jsonObj.put("regdate", cmtvo.getRegDate());
+				jsonObj.put("status", cmtvo.getStatus());
+				jsonObj.put("groupno", cmtvo.getGroupno());
+				jsonObj.put("fk_seq", cmtvo.getFk_seq());
+				jsonObj.put("depthno", cmtvo.getDepthno());
 				
 				jsonObj.put("totalCount", totalCount); // 페이징 처리 시 보여주는 순번을 나타내기 위함
 				jsonObj.put("sizePerPage", sizePerPage); // 페이징 처리 시 보여주는 순번을 나타내기 위함
@@ -2040,9 +2049,5 @@ public class Dy_TripController {
 		
 		return jsonObj.toString();
 	}
-	
-	
-	
-	
 	
 }

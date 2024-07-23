@@ -128,5 +128,8 @@ public interface Dy_TripDAO {
 	// 게시판 댓글 개수 알아오기
 	int getCommentCount(String seq);
 
+	// 댓글  groupno 컬럼의 최대값 구하기
+	int getGroupnoMax();
+
 	
 }

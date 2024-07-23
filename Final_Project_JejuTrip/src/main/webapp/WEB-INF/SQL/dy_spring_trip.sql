@@ -178,6 +178,9 @@ WHERE V.seq = 5;
 
 
 ----- **** 댓글 테이블 생성 **** -----
+drop table tbl_comment purge;
+drop sequence commentSeq;
+
 create table tbl_comment
 (seq           number               not null   -- 댓글번호
 ,fk_userid     varchar2(20)         not null   -- 사용자ID
@@ -188,6 +191,21 @@ create table tbl_comment
 ,status        number(1) default 1  not null   -- 글삭제여부
                                                -- 1 : 사용가능한 글,  0 : 삭제된 글
                                                -- 댓글은 원글이 삭제되면 자동적으로 삭제되어야 한다.
+
+,groupno       number                not null    -- 답변글쓰기에 있어서 그룹번호 
+                                                 -- 원글(부모글)과 답변글은 동일한 groupno 를 가진다.
+                                                 -- 답변글이 아닌 원글(부모글)인 경우 groupno 의 값은 groupno 컬럼의 최대값(max)+1 로 한다.
+
+,fk_seq         number default 0      not null   -- fk_seq 컬럼은 절대로 foreign key가 아니다.!!!!!!
+                                                 -- fk_seq 컬럼은 자신의 글(답변글)에 있어서 
+                                                 -- 원글(부모글)이 누구인지에 대한 정보값이다.
+                                                 -- 답변글쓰기에 있어서 답변글이라면 fk_seq 컬럼의 값은 
+                                                 -- 원글(부모글)의 seq 컬럼의 값을 가지게 되며,
+                                                 -- 답변글이 아닌 원글일 경우 0 을 가지도록 한다.
+
+,depthno        number default 0       not null  -- 답변글쓰기에 있어서 답변글 이라면
+                                                 -- 원글(부모글)의 depthno + 1 을 가지게 되며,
+                                                 -- 답변글이 아닌 원글일 경우 0 을 가지도록 한다.
 ,constraint PK_tbl_comment_seq primary key(seq)
 ,constraint FK_tbl_comment_userid foreign key(fk_userid) references tbl_member(userid)
 ,constraint FK_tbl_comment_parentSeq foreign key(parentSeq) references tbl_board(seq) on delete cascade
@@ -222,7 +240,87 @@ where V.rno between 1 and 5;
 -- 게시물당 댓글 개수
 select count(*)
 from tbl_comment
-where status = 1 and parentSeq = 5;
+where parentSeq = 9
+and (status = 1 
+    or (status = 0 and exists (
+       select 1 
+       from tbl_comment sub 
+       where sub.fk_seq = tbl_comment.seq
+    ))
+);
+
+
+select NVL(max(groupno), 0)
+from tbl_comment;
+
+
+
+
+
+-- 댓글 목록 조회 (답댓글 포함)
+SELECT seq, fk_userid, name, content, regDate
+     , parentseq, status, groupno, fk_seq, depthno
+FROM
+(
+    SELECT rownum AS RNO
+         , seq, fk_userid, name, content, regDate
+         , parentseq, status, groupno, fk_seq, depthno
+    FROM
+    (
+        select seq, fk_userid, name, content
+             , to_char(regDate, 'yyyy-mm-dd hh24:mi') AS regDate
+             , parentseq, status, groupno, fk_seq, depthno
+        from tbl_comment
+        where parentSeq = 9
+        start with fk_seq = 0
+        connect by prior seq = fk_seq
+        order siblings by groupno desc, seq asc
+    ) V
+) T  
+WHERE RNO between 1 and 5;
+
+
+select *
+from tbl_board
+where category = 1
+order by seq desc;
+
+select *
+from tbl_comment
+order by seq desc;
+
+
+
+-- 댓글 목록 조회 (답댓글 포함, 답글 없는 댓글 제외)
+SELECT seq, fk_userid, name, content, regDate
+     , parentseq, status, groupno, fk_seq, depthno
+FROM
+(
+    SELECT rownum AS RNO
+         , seq, fk_userid, name, content, regDate
+         , parentseq, status, groupno, fk_seq, depthno
+    FROM
+    (
+        select seq, fk_userid, name, content
+             , to_char(regDate, 'yyyy-mm-dd hh24:mi') AS regDate
+             , parentseq, status, groupno, fk_seq, depthno
+        from tbl_comment
+        where parentSeq = 2
+        and (status = 1 
+           or (status = 0 and exists (
+               select 1 
+               from tbl_comment sub
+               where sub.fk_seq = tbl_comment.seq
+               and sub.status = 1
+           )))
+        start with fk_seq = 0
+        connect by prior seq = fk_seq
+        order siblings by groupno desc, seq asc
+    ) V
+) T  
+WHERE RNO between 1 and 5;
+
+
 
 
 
