@@ -286,6 +286,43 @@ public class Hs_TripService_imple implements Hs_TripService {
 	
 	
 	
+	@Override
+	public int lodgingLikeCount(Map<String, String> paraMap) {
+		int n = dao.lodgingLikeCount(paraMap);
+		return n;
+	}
+	@Override
+	public List<Map<String, String>> lodginglikeList(Map<String, String> paraMap) {
+		List<Map<String, String>> lodginglikeList = dao.lodginglikeList(paraMap);
+		return lodginglikeList;
+	}
+	
+	
+	@Override
+	public int foodLikeCount(Map<String, String> paraMap) {
+		int n = dao.foodLikeCount(paraMap);
+		return n;
+	}
+	@Override
+	public List<Map<String, String>> foodlikeList(Map<String, String> paraMap) {
+		List<Map<String, String>> foodlikeList = dao.foodlikeList(paraMap);
+		return foodlikeList;
+	}
+	
+	@Override
+	public int playLikeCount(Map<String, String> paraMap) {
+		int n = dao.playLikeCount(paraMap);
+		return n;
+	}
+	@Override
+	public List<Map<String, String>> playlikeList(Map<String, String> paraMap) {
+		List<Map<String, String>> playlikeList = dao.playlikeList(paraMap);
+		return playlikeList;
+	}
+	
+	
+	
+	
 
 
 	

@@ -6,7 +6,8 @@ public class LikeVO {
 	private String parent_code; 	  /* 부모일련번호 */
 	private String like_division_R;   /* 좋아요구분 A,B,C */
 	
-	
+	//select 용 
+	private String rno;
 	
 	public String getFk_userid() {
 		return fk_userid;
@@ -25,6 +26,12 @@ public class LikeVO {
 	}
 	public void setLike_division_R(String like_division_R) {
 		this.like_division_R = like_division_R;
+	}
+	public String getRno() {
+		return rno;
+	}
+	public void setRno(String rno) {
+		this.rno = rno;
 	}
 
 	
