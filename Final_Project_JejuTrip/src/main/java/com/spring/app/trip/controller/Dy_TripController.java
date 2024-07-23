@@ -1344,6 +1344,7 @@ public class Dy_TripController {
 				jsonObj.put("name", cmtvo.getName());
 				jsonObj.put("content", cmtvo.getContent());
 				jsonObj.put("regdate", cmtvo.getRegDate());
+				jsonObj.put("status", cmtvo.getStatus());
 				jsonObj.put("groupno", cmtvo.getGroupno());
 				jsonObj.put("fk_seq", cmtvo.getFk_seq());
 				jsonObj.put("depthno", cmtvo.getDepthno());

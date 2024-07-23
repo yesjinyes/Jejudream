@@ -264,7 +264,7 @@ FROM
              , to_char(regDate, 'yyyy-mm-dd hh24:mi') AS regDate
              , parentseq, status, groupno, fk_seq, depthno
         from tbl_comment
-        where status = 1 and parentSeq = 14
+        where parentSeq = 10
         start with fk_seq = 0
         connect by prior seq = fk_seq
         order siblings by groupno desc, seq asc
@@ -273,6 +273,14 @@ FROM
 WHERE RNO between 1 and 5;
 
 
+select *
+from tbl_board
+where category = 1
+order by seq desc;
+
+select *
+from tbl_comment
+order by seq desc;
 
 
 

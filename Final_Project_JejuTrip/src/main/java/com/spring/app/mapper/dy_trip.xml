@@ -387,7 +387,7 @@
 	<select id="getCommentTotalCount" parameterType="String" resultType="int">
 		select count(*)
 		from tbl_comment
-		where status = 1 and parentSeq = #{parentSeq}
+		where parentSeq = #{parentSeq}
 	</select>
 	
 	
@@ -440,10 +440,10 @@
 	
 	
 	<!-- 커뮤니티 댓글 삭제 -->
-	<delete id="deleteComment" parameterType="String">
-		delete from tbl_comment
+	<update id="deleteComment" parameterType="String">
+		update tbl_comment set status = 0
 		where seq = #{seq}
-	</delete>
+	</update>
 	
 	
 	<!-- 커뮤니티 댓글 삭제 시 해당 글의 댓글 개수 1 감소 -->

@@ -361,7 +361,8 @@
 	    	const groupno = $(this).closest(".comment").find("input[name='groupno']").val();
 	    	const fk_seq = $(this).closest(".comment").find("input#cmt_seq").val();
 	    	const depthno = $(this).closest(".comment").find("input[name='depthno']").val();
-//	    	alert("groupno : " + groupno + ", fk_seq : " + fk_seq + ", depthno : " + depthno);
+	    	const currentShowPageNo = $(this).closest(".comment").find("input.currentShowPageNo").val();
+//	    	alert("currentShowPageNo : " + currentShowPageNo);
 
 			const frm = document.replyCommentFrm;
 			frm.groupno.value = groupno;
@@ -379,9 +380,8 @@
 				success: function(json) {
 					
 					if(json.n == 1) {
-//						alert("댓글 등록 성공!");
 						updateCommentCount();
-						goViewComment(1); // 페이징 처리한 댓글 읽어오기
+						goViewComment(currentShowPageNo); // 페이징 처리한 댓글 읽어오기
 						
 					} else {
 						alert("댓글 등록 실패");
@@ -393,14 +393,14 @@
 				}
 			});
 	    	
-	    });
+	    }); // $(document).on("click", "button#replyCommentBtn", function(e) {}) ----------------
 	    
 	    
 	    $(document).on("keyup", "textarea#reply_content", function(e) {
 	    	if(e.keyCode == 13) {
 	    		$("button#replyCommentBtn").click();
 	    	}
-	    })
+	    });
 	    
 	}); // end of $(document).ready(function() {}) ---------------------
 	
@@ -517,6 +517,9 @@
 //					alert("댓글 등록 성공!");
 					updateCommentCount();
 					goViewComment(1); // 페이징 처리한 댓글 읽어오기
+					
+				} else {
+					alert("댓글 등록 실패");
 				}
 
 				$("textarea[name='content']").val(""); // 댓글 칸 내용 비우기
@@ -544,6 +547,9 @@
 				let v_html = ``;
 				
 				if(json.length > 0) {
+					
+					console.log(JSON.stringify(json));
+					
 					$.each(json, function(index, item) {
 						
 						// status == 1일 때
@@ -551,38 +557,66 @@
 						// 자식이 없고, status == 1 일 때 => 그냥 안 보이게
 						// depthno > 0 일 때 (==> 답댓글)
 						
-						v_html += `<div id="comment\${index}" class="comment">
-									<div class="d-flex" style="padding: 1.5% 0">
-				  					 <div style="width: 90%; padding: 1.5% 0">
-										<div class="mb-2 d-flex align-items-center">
-											<img src="<%=ctxPath%>/resources/images/logo_circle.png" width="30">
-											<span class="font-weight-bold" style="margin-left: 1%; font-size: 1rem;">\${item.name}</span>
-										</div>
-										<input type="hidden" id="cmt_seq" value="\${item.seq}">
-										<input type="hidden" id="cmt_userid" value="\${item.fk_userid}">
-										<span class="d-block mb-2" id="cmt_content">\${item.content}</span>
-										<span class="d-block mb-2" id="cmt_regDate" style="font-size: 0.8rem; color: #8c8c8c;">\${item.regdate}</span>
-										<button type="button" class="btn reply-btn" style="border: solid 1px #8c8c8c; font-size: 0.8rem; padding: 3px 6px;">답글</button>
-									 </div>`;
 						
-						if(${sessionScope.loginuser != null} && 
-							("${sessionScope.loginuser.userid}" == item.fk_userid)) {
-										 
-							v_html += `  <div class="more-options" style="width: 10%; padding-top: 1.5%; text-align: right;">
-											<span><i class="fa-solid fa-ellipsis-vertical"></i></span>
-											<div class="options-menu" style="display: none;">
-												<span id="updateComment" class="d-block mb-1">수정</span>
-												<span id="deleteComment" class="d-block">삭제</span>
+						if(item.status == 0) { // status가 0인 경우, 자식 댓글이 있는지 확인
+							
+							let hasChild = json.some(innerItem => innerItem.fk_seq == item.seq);
+							
+	                        if (hasChild) { // 자식 댓글이 있을 경우 '삭제된 댓글입니다.'로 표시
+	                            v_html += `<div id="comment${index}" class="comment">
+	                                        <div class="d-flex" style="padding: 1.5% 0">
+	                                            <div style="width: 90%; padding: 1.5% 0">
+	                                                <span class="d-block mb-2">삭제된 댓글입니다.</span>
+	                                                <span class="d-block mb-2" style="font-size: 0.8rem; color: #8c8c8c;">\${item.regdate}</span>
+	                                            </div>
+	                                        </div>
+	                                        <input type="hidden" value="\${currentShowPageNo}" class="currentShowPageNo">
+											<input type="hidden" value="\${item.groupno}" name="groupno">
+											<input type="hidden" value="\${item.depthno}" name="depthno">
+	                                    </div>`;
+	                        }
+	                        
+						} else {
+							
+							v_html += `<div id="comment\${index}" class="comment">
+										<div class="d-flex" style="padding: 1.5% 0">`;
+							
+							if(item.depthno > 0) {
+								v_html += `<i class="fa-solid fa-reply d-flex mt-3" style="width: 5%;"></i>`;
+							}
+							
+							v_html += `	   <div style="width: 90%; padding: 1.5% 0">
+											<div class="mb-2 d-flex align-items-center">
+												<img src="<%=ctxPath%>/resources/images/logo_circle.png" width="30">
+												<span class="font-weight-bold" style="margin-left: 1%; font-size: 1rem;">\${item.name}</span>
 											</div>
+											<input type="hidden" id="cmt_seq" value="\${item.seq}">
+											<input type="hidden" id="cmt_userid" value="\${item.fk_userid}">
+											<span class="d-block mb-2" id="cmt_content">\${item.content}</span>
+											<span class="d-block mb-2" id="cmt_regDate" style="font-size: 0.8rem; color: #8c8c8c;">\${item.regdate}</span>
+											<button type="button" class="btn reply-btn" style="border: solid 1px #8c8c8c; font-size: 0.8rem; padding: 3px 6px;">답글</button>
 										 </div>`;
+							
+							if(${sessionScope.loginuser != null} && 
+								("${sessionScope.loginuser.userid}" == item.fk_userid)) {
+											 
+								v_html += `  <div class="more-options" style="width: 10%; padding-top: 1.5%; text-align: right;">
+												<span><i class="fa-solid fa-ellipsis-vertical"></i></span>
+												<div class="options-menu" style="display: none;">
+													<span id="updateComment" class="d-block mb-1">수정</span>
+													<span id="deleteComment" class="d-block">삭제</span>
+												</div>
+											 </div>`;
+							}
+							
+							v_html += `		<input type="hidden" value="\${currentShowPageNo}" class="currentShowPageNo">
+											<input type="hidden" value="\${item.groupno}" name="groupno">
+											<input type="hidden" value="\${item.depthno}" name="depthno">
+								   		  </div>
+									   	  <div class="reply-area"></div>
+									   </div>`;
+							
 						}
-						
-						v_html += `		<input type="hidden" value="\${currentShowPageNo}" class="currentShowPageNo">
-										<input type="hidden" value="\${item.groupno}" name="groupno">
-										<input type="hidden" value="\${item.depthno}" name="depthno">
-							   		  </div>
-								   	  <div class="reply-area"></div>
-								   </div>`;
 						
 					}); // end of $.each() -------------------------------------------------
 					

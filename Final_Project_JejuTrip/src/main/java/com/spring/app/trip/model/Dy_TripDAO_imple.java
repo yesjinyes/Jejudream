@@ -419,7 +419,7 @@ public class Dy_TripDAO_imple implements Dy_TripDAO {
 	@Override
 	public int deleteComment(String seq) {
 		
-		int n = sqlsession.delete("dy_trip.deleteComment", seq);
+		int n = sqlsession.update("dy_trip.deleteComment", seq);
 		
 		return n;
 	}
