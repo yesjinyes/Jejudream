@@ -224,7 +224,22 @@ div#map {
 
 /*--------------------------------------------------------*/
 /* 근처 숙소 랜덤 추천 */
+div.recommend-img-box {
+  overflow:hidden;
+  height: 200px;
+}
 
+img.recommend-img {
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+
+
+a.recommend-lodging-title {
+  text-decoration: none;
+}
 
 
 
@@ -855,9 +870,9 @@ div#map {
 		        type:"post",
 		        dataType:"json",
 		        success:function(json){
-		        	console.log("맛집 삭제 확인 : ", JSON.stringify(json));
+		        	// console.log("맛집 삭제 확인 : ", JSON.stringify(json));
 		        	
-		        	if(json.n == 1) {
+		        	if(json.n == 1 || json.totalCount == 0) {
 		        		alert("맛집이 삭제되었습니다.");
 		        		location.href = "<%= ctxPath%>/foodstoreList.trip"
 		        	}
@@ -874,19 +889,11 @@ div#map {
 	
 	}// end of function goDelete()-------------------
 	
-	
-	// == 근처 숙소 랜덤 추천 == //
-	function goDetailLodging() {
-		
-	}// end of function goDetailLodging()--------------------
-	
-	
 </script>
 
 
 
 <div id="container">
-	<p>하단 우측에 뭐 넣을지.. </p>
 	<c:if test="${sessionScope.loginuser.userid == 'admin'}">
 		<div style="width: 90%; margin: 3% auto;text-align: right;">
 			<button type="button" onclick="javascript:location.href='<%= ctxPath%>/editFoodstore.trip?food_store_code=${requestScope.foodstorevo.food_store_code}'" class="btn btn-secondary mr-2">맛집 수정</button>
@@ -1159,11 +1166,15 @@ div#map {
 					<div class="recommend-lodging">
 						<c:forEach var="lodgingList" items="${requestScope.lodgingList}" begin="0" end="1">
 							<div class="border rounded p-3 mb-3">
-							    <div class="recommend-lodging-img">
-						            <img class="imgLodging img-fluid" src="<%= ctxPath %>/resources/images/lodginglist/${lodgingList.main_img}" onclick="goDetailLodging()" style="cursor: pointer; width:50%;" alt="..." />
+							    <div class="recommend-img-box">
+							    	<a href="<%= ctxPath%>/lodgingDetail.trip?lodging_code=${lodgingList.lodging_code}"> 
+						            	<img class="recommend-img img-fluid" src="<%= ctxPath %>/resources/images/lodginglist/${lodgingList.main_img}" alt="..." />
+						        	</a>
 						        </div>
 						        <div class="mt-2">
-						        	<span>${lodgingList.lodging_name}</span><br>
+							        <a href="<%= ctxPath%>/lodgingDetail.trip?lodging_code=${lodgingList.lodging_code}" class="recommend-lodging-title" > 
+							        	<span style="color: black; font-size: 14pt;">${lodgingList.lodging_name}</span><br>
+						        	</a>
 						        </div>
 					      	</div>
 				      	</c:forEach>
@@ -1173,6 +1184,7 @@ div#map {
 		</div>
 	
 </div>
+<br><br>
 <!-- container 끝 -->
 
 

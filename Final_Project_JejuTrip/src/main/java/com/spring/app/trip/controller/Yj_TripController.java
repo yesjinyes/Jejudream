@@ -626,10 +626,12 @@ public class Yj_TripController {
 	// == 맛집 삭제하기 (관리자) == //
 	@ResponseBody
 	@PostMapping("/deleteFoodstore.trip")
-	public String deleteFoodstore(HttpServletRequest request) {
+	public String deleteFoodstore(HttpServletRequest request, @RequestParam(defaultValue="") String parent_code) {
 		
 		String food_store_code = request.getParameter("food_store_code");
 		// System.out.println("~~~ food_store_code 확인 => " + food_store_code);
+		
+		int totalCount = service.getReviewTotalCount(parent_code);
 		
 		int n = 0;
 		
@@ -642,6 +644,7 @@ public class Yj_TripController {
 		
 		JSONObject jsonObj = new JSONObject();
 		jsonObj.put("n", n);
+		jsonObj.put("totalCount", totalCount);
 		
 		//System.out.println("### controller 에서 insert 확인 : "+ jsonObj.toString());
 		

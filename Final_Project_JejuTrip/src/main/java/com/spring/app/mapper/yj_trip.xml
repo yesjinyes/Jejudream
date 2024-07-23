@@ -151,9 +151,9 @@
 	<!-- 근처 숙소 추천을 위해 숙소 상세정보 가져오기  -->
 	<select id="getLodgingList" parameterType="String" resultType="LodgingVO">
 		<![CDATA[
-			select lodging_code, main_img, lodging_name
+			select lodging_code, local_status, main_img, lodging_name
 			from (
-			    select lodging_code, main_img, lodging_name
+			    select lodging_code, local_status, main_img, lodging_name
 			    from tbl_lodging
 			    where local_status = #{local_status}
 			    order by DBMS_RANDOM.RANDOM
