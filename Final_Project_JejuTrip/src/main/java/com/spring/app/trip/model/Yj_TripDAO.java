@@ -74,12 +74,17 @@ public interface Yj_TripDAO {
 
 	// == 맛집  수정하기 (관리자) == //
 	int editFoodEnd(FoodstoreVO foodstorevo);
+	
+	// == 이미지 수정 및 삭제를 위해 업로드 된 이미지 불러오기 == //
+	Map<String, String> getImg(String food_store_code);
 
 	// == 맛집 삭제하기 (관리자) == //
 	int deleteFoodstore(String food_store_code);
 
 	// == 맛집 삭제 시 리뷰도 삭제 == //
 	int deleteFoodstoreReview(String food_store_code);
+
+
 
 	
 
