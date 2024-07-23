@@ -258,9 +258,9 @@
 	        		success: function(json) {
 	        			if(json.n == 1) {
 	        				// 현재 수정한 댓글이 있는 페이지를 보여준다.
-	        				const currentShowPageNo = commentDiv.find("input.currentShowPageNo").val();
-	        				alert("currentShowPageNo : " + currentShowPageNo);
-//	        				goViewComment(currentShowPageNo);
+	        				const currentShowPageNo = commentDiv.parent().find("input.currentShowPageNo").val();
+//	        				alert("currentShowPageNo : " + currentShowPageNo);
+	        				goViewComment(currentShowPageNo);
 	        			}
 	        		},
 	        		error: function(request, status, error){
@@ -553,30 +553,20 @@
 					
 					$.each(json, function(index, item) {
 						
-						// status == 1일 때
-						// 자식이 있고, status == 0 일 때 => '삭제된 댓글입니다' 표시
-						// 자식이 없고, status == 1 일 때 => 그냥 안 보이게
-						// depthno > 0 일 때 (==> 답댓글)
+						if(item.status == 0) { // 답글이 있는 댓글이 삭제될 경우
 						
-						
-						if(item.status == 0) { // status가 0인 경우, 자식 댓글이 있는지 확인
-							
-							let hasChild = json.some(innerItem => innerItem.fk_seq == item.seq);
-							
-	                        if (hasChild) { // 자식 댓글이 있을 경우 '삭제된 댓글입니다.'로 표시
-	                            v_html += `<div id="comment${index}" class="comment">
-	                                        <div class="d-flex" style="padding: 1.5% 0">
-	                                            <div style="width: 90%; padding: 1.5% 0">
-	                                                <span class="d-block mb-2">삭제된 댓글입니다.</span>
-	                                                <span class="d-block mb-2" style="font-size: 0.8rem; color: #8c8c8c;">\${item.regdate}</span>
-	                                            </div>
-	                                        </div>
-	                                        <input type="hidden" value="\${currentShowPageNo}" class="currentShowPageNo">
-											<input type="hidden" value="\${item.groupno}" name="groupno">
-											<input type="hidden" value="\${item.depthno}" name="depthno">
-	                                    </div>`;
-	                        }
-	                        
+                            v_html += `<div id="comment${index}" class="comment">
+                                        <div class="d-flex" style="padding: 1.5% 0">
+                                            <div style="width: 90%; padding: 1.5% 0">
+                                                <span class="d-block mb-2">삭제된 댓글입니다.</span>
+                                                <span class="d-block mb-2" style="font-size: 0.8rem; color: #8c8c8c;">\${item.regdate}</span>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" value="\${currentShowPageNo}" class="currentShowPageNo">
+										<input type="hidden" value="\${item.groupno}" name="groupno">
+										<input type="hidden" value="\${item.depthno}" name="depthno">
+                                    </div>`;
+                        
 						} else {
 							
 							v_html += `<div id="comment\${index}" class="comment">
@@ -610,10 +600,10 @@
 											 </div>`;
 							}
 							
-							v_html += `		<input type="hidden" value="\${currentShowPageNo}" class="currentShowPageNo">
-											<input type="hidden" value="\${item.groupno}" name="groupno">
-											<input type="hidden" value="\${item.depthno}" name="depthno">
-								   		  </div>
+							v_html += `	  </div>
+										  <input type="hidden" value="\${currentShowPageNo}" class="currentShowPageNo">
+										  <input type="hidden" value="\${item.groupno}" name="groupno">
+										  <input type="hidden" value="\${item.depthno}" name="depthno">
 									   	  <div class="reply-area"></div>
 									   </div>`;
 							
