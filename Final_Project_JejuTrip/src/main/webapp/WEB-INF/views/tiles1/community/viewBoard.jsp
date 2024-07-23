@@ -397,8 +397,9 @@
 	    }); // $(document).on("click", "button#replyCommentBtn", function(e) {}) ----------------
 	    
 	    
-	    $(document).on("keyup", "textarea#reply_content", function(e) {
+	    $(document).on("keydown", "textarea#reply_content", function(e) {
 	    	if(e.keyCode == 13) {
+	    		e.preventDefault();
 	    		$("button#replyCommentBtn").click();
 	    	}
 	    });
@@ -553,20 +554,25 @@
 					
 					$.each(json, function(index, item) {
 						
-						if(item.status == 0) { // 답글이 있는 댓글이 삭제될 경우
+						if(item.status == 0) { // status가 0인 경우, 자식 댓글이 있는지 확인
+							
+							let hasChild = json.some(innerItem => innerItem.fk_seq == item.seq);
 						
-                            v_html += `<div id="comment${index}" class="comment">
-                                        <div class="d-flex" style="padding: 1.5% 0">
-                                            <div style="width: 90%; padding: 1.5% 0">
-                                                <span class="d-block mb-2">삭제된 댓글입니다.</span>
-                                                <span class="d-block mb-2" style="font-size: 0.8rem; color: #8c8c8c;">\${item.regdate}</span>
-                                            </div>
-                                        </div>
-                                        <input type="hidden" value="\${currentShowPageNo}" class="currentShowPageNo">
-										<input type="hidden" value="\${item.groupno}" name="groupno">
-										<input type="hidden" value="\${item.depthno}" name="depthno">
-                                    </div>`;
-                        
+							if (hasChild) { // 자식 댓글이 있을 경우 '삭제된 댓글입니다.'로 표시
+								
+	                            v_html += `<div id="comment${index}" class="comment">
+	                                        <div class="d-flex" style="padding: 1.5% 0">
+	                                            <div style="width: 90%; padding: 1.5% 0">
+	                                                <span class="d-block mb-2">삭제된 댓글입니다.</span>
+	                                                <span class="d-block mb-2" style="font-size: 0.8rem; color: #8c8c8c;">\${item.regdate}</span>
+	                                            </div>
+	                                        </div>
+	                                        <input type="hidden" value="\${currentShowPageNo}" class="currentShowPageNo">
+											<input type="hidden" value="\${item.groupno}" name="groupno">
+											<input type="hidden" value="\${item.depthno}" name="depthno">
+	                                    </div>`;
+							}
+							
 						} else {
 							
 							v_html += `<div id="comment\${index}" class="comment">

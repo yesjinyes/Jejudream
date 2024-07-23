@@ -379,6 +379,7 @@
 		                   select 1 
 		                   from tbl_comment sub 
 		                   where sub.fk_seq = tbl_comment.seq
+		                   and sub.status = 1
 		               	))
 		          	)
 		        start with fk_seq = 0
@@ -397,9 +398,10 @@
 		where parentSeq = #{parentSeq}
 		and (status = 1 
 		    or (status = 0 and exists (
-		       select 1 
-		       from tbl_comment sub 
-		       where sub.fk_seq = tbl_comment.seq
+	       		select 1 
+	            from tbl_comment sub 
+	            where sub.fk_seq = tbl_comment.seq
+	            and sub.status = 1
 		    ))
 		)
 	</select>

@@ -291,7 +291,7 @@ order by seq desc;
 
 
 
-
+-- 댓글 목록 조회 (답댓글 포함, 답글 없는 댓글 제외)
 SELECT seq, fk_userid, name, content, regDate
      , parentseq, status, groupno, fk_seq, depthno
 FROM
@@ -305,14 +305,14 @@ FROM
              , to_char(regDate, 'yyyy-mm-dd hh24:mi') AS regDate
              , parentseq, status, groupno, fk_seq, depthno
         from tbl_comment
-        where parentSeq = 9
-          and (status = 1 
-               or (status = 0 and exists (
-                   select 1 
-                   from tbl_comment sub 
-                   where sub.fk_seq = tbl_comment.seq
-               ))
-          )
+        where parentSeq = 2
+        and (status = 1 
+           or (status = 0 and exists (
+               select 1 
+               from tbl_comment sub
+               where sub.fk_seq = tbl_comment.seq
+               and sub.status = 1
+           )))
         start with fk_seq = 0
         connect by prior seq = fk_seq
         order siblings by groupno desc, seq asc
