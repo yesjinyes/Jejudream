@@ -7,6 +7,76 @@
 <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 
+
+<style type="text/css">
+
+/* 아코디언 컨테이너 스타일 */
+.accordion {
+    width: 100%;
+    max-width: 600px; /* 최대 너비 설정 */
+    /* margin: 0 auto; */ /* 가운데 정렬 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
+}
+
+/* 아코디언 아이템 스타일 */
+.accordion-item {
+    background-color: #ffffff;
+     border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    overflow: hidden; /* 내용이 넘칠 경우를 대비하여 오버플로우 숨김 */
+}
+
+/* 아코디언 헤더 스타일 */
+.accordion-header {
+    background-color: #fff2e6;
+    color: #333333;
+    padding: 15px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    position: relative;
+}
+
+.accordion-header:hover {
+    background-color: #ffe5cc;
+}
+
+/* 화살표 아이콘 스타일 */
+.arrow {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    width: 0;
+    height: 0;
+    border: 6px solid transparent; /* 투명한 삼각형 만들기 */
+    border-top-color: #333333; /* 위아래로 열린 삼각형 색상 */
+    transform: translateY(-50%);
+    transition: transform 0.3s ease; /* 변화가 일어나는 속도 */
+}
+
+/* 활성화된 아코디언 헤더의 화살표 회전 */
+.accordion-item.active .arrow {
+    transform: translateY(-50%) rotate(180deg); /* 화살표가 열린 상태를 나타냄 */
+}
+
+/* 아코디언 컨텐츠 스타일 */
+.accordion-content {
+    padding: 15px;
+    font-size: 14px;
+    line-height: 1.6;
+    display: none;
+}
+
+/* 활성화된 아코디언 아이템의 컨텐츠 스타일 */
+.accordion-item.active .accordion-content {
+    display: block;
+}
+
+</style>
+
+
+
 <script type="text/javascript">
 	
 	$(document).ready(function(){
@@ -28,7 +98,33 @@
             });
         });
         
-	});// end of ready   	
+	});// end of $(document).ready(function(){})-----------------------------------------
+	
+	
+	// == 아코디언 적용 == //
+	document.addEventListener('DOMContentLoaded', function() {
+        const accordionItems = document.querySelectorAll('.accordion-item');
+
+        accordionItems.forEach(item => {
+            const header = item.querySelector('.accordion-header');
+
+            header.addEventListener('click', function() {
+                const isActive = item.classList.contains('active');
+
+                // 모든 아코디언 아이템에서 active 클래스 제거
+                accordionItems.forEach(item => {
+                    item.classList.remove('active');
+                });
+
+                // 클릭한 아이템에 active 클래스 추가
+                if (!isActive) {
+                    item.classList.add('active');
+                }
+            });
+        });
+    });
+	
+
 </script>
 
 <div class="body">
@@ -98,7 +194,33 @@
 			
 			<!-- Tab panes -->
 			<div class="tab-content">
-				<!-- 질문(전체) -->
+				<br>
+				<div class="accordion">
+				    <div class="accordion-item">
+				        <div class="accordion-header">
+				        	<span>Q.</span>&nbsp;&nbsp;예약은 어디서 확인하나요?
+				        	<span class="arrow"></span>
+				        </div>
+				        <div class="accordion-content">
+				            <p>마이페이지의 예약 내역에서 확인 가능합니다.</p>
+				        </div>
+				    </div>
+				    <div class="accordion-item">
+				        <div class="accordion-header">
+				        	<span>Q.</span>&nbsp;&nbsp;맛집 리뷰를 달고 싶어요.
+				        	<span class="arrow"></span>
+				        	</div>
+				        <div class="accordion-content">
+				            <p>리뷰는 로그인 후에 작성 가능합니다.</p>
+				        </div>
+				    </div>
+				    <!-- Add more sections as needed -->
+				</div>
+				
+				
+				
+				
+<%-- 				<!-- 질문(전체) -->
 				<div class="tab-pane active" id="faq_all">
 					<table class="table table-hover">
 						<thead>
@@ -209,7 +331,7 @@
 					</table>
 					<div id="faq_etc_pageBar" class="pageBar"></div>
 				</div>
-				
+--%>				
 			</div>
 			
 			
