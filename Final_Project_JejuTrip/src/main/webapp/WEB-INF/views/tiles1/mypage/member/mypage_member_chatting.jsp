@@ -58,7 +58,9 @@
         
         $(document).on('click','.go_chat',function(){
        		const reservation_code = $(this).find("input").val();
-       		const companyid = "${sessionScope.loginCompanyuser.companyid}";
+       		
+       		const name = "${sessionScope.loginuser.user_name}";
+       		const userid = "${sessionScope.loginuser.userid}";
        		
    			// >>> 팝업창 띄우기 <<<
    		    // 너비 1000, 높이 600 인 팝업창을 화면 가운데 위치시키기
@@ -67,19 +69,19 @@
 
    		    const left = Math.ceil( (window.screen.width - width)/2 ); // 정수로 만듬
    		    const top = Math.ceil( (window.screen.height - height)/2 ); // 정수로 만듬
-   		    let userid = "";
-   		    let user_name="";
+   		    
+   		 	let companyid = "";
    	   		let lodging_name = "";
+   	   		
 	   		 $.ajax({
-	 			url:"<%= ctxPath%>/getMemberIdAndNameJSON.trip",
+	 			url:"<%= ctxPath%>/getCompanyIdAndNameJSON.trip",
 	 			data:{"reservation_code":reservation_code},
 	 			type:"post",
 	 			dataType:"json",
 	 			success:function(json){
-	 				userid = json.userid
-	 				user_name = json.user_name;
+	 				companyid = json.companyid
 	 				lodging_name = json.lodging_name;
-	 				const url = "<%= serverName%><%=ctxPath%>/reservationChatToCompany.trip?reservation_code=" + reservation_code +"&name="+user_name+"&userid="+userid+"&companyid="+companyid+"&lodging_name="+lodging_name+"&status=2";
+	 				const url = "<%= serverName%><%=ctxPath%>/reservationChatToCompany.trip?reservation_code=" + reservation_code +"&name="+name+"&userid="+userid+"&companyid="+companyid+"&lodging_name="+lodging_name+"&status=1";
 	 				window.open(url, "mypage_chatting_toCompany",
  		               `left=\${left}, top=\${top}, width=\${width}, height=\${height}`);
 	 			},
@@ -98,8 +100,8 @@
 	function goViewAllChattingList(currentShowPageNo){
 		
 		$.ajax({
-			url:"<%= ctxPath%>/companyAllChattingListJSON.trip",
-			data:{"currentShowPageNo":currentShowPageNo,"companyid":"${sessionScope.loginCompanyuser.companyid}"},
+			url:"<%= ctxPath%>/memberAllChattingListJSON.trip",
+			data:{"currentShowPageNo":currentShowPageNo,"userid":"${sessionScope.loginuser.userid}"},
 			type:"post",
 			dataType:"json",
 			success:function(json){
@@ -263,11 +265,12 @@
 		
 	}// end of function goViewComment(currentShowPageNo)------
 	
+	
 	function goViewNoReadChattingList(currentShowPageNo){
 		
 		$.ajax({
-			url:"<%= ctxPath%>/companyAllChattingListJSON.trip",
-			data:{"currentShowPageNo":currentShowPageNo,"companyid":"${sessionScope.loginCompanyuser.companyid}","status":"0"},
+			url:"<%= ctxPath%>/memberAllChattingListJSON.trip",
+			data:{"currentShowPageNo":currentShowPageNo,"userid":"${sessionScope.loginuser.userid}","status":"0"},
 			type:"post",
 			dataType:"json",
 			success:function(json){
@@ -442,7 +445,7 @@
                 </a>
             </li>
             <li class="list active">
-                <a href="<%= ctxPath%>/mypage_company_chatting.trip">
+                <a href="<%= ctxPath%>/mypage_member_chatting.trip">
                     <span class="icon"><ion-icon name="chatbubble-ellipses-outline"></ion-icon></span>
                     <span class="title">채팅</span><c:if test="${requestScope.newChattingCnt > 0}"><span style="border:solid 1px red; color:white; background-color:red; font-weight:bold; font-size:10px; width:40px; height:20px; border-radius:8px; text-align:center;">new</span></c:if>
                 </a>
@@ -525,7 +528,6 @@
 					</table>
 					<div id="no_read_chatting_pageBar" class="pageBar"></div>
 				</div>
-				
 			</div>
 		</div>
 	</form>
