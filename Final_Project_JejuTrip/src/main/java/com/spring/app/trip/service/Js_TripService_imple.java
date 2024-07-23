@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.spring.app.trip.common.AES256;
 import com.spring.app.trip.common.GoogleMail;
+import com.spring.app.trip.domain.BoardVO;
 import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.PlayVO;
@@ -455,6 +456,30 @@ public class Js_TripService_imple implements Js_TripService {
 		} // end of if(reservationList != null && reservationList.size() > 0) { 
 		
 	}// end of public void reservationEmailSending() throws Exception { 
+
+
+	
+	// db에서 sysdate에 해당하는 축제가져오기
+	@Override
+	public List<Map<String, String>> getCurrentFestival() {
+		
+		List<Map<String, String>> festivalList = dao.getCurrentFestival();
+		
+		return festivalList;
+		
+	} // end of public List<Map<String, String>> getCurrentFestival() {
+
+
+	
+	// 글 작성일이 3일이내인 조회수 높은 커뮤니티 글목록 가져오기
+	@Override
+	public List<BoardVO> getPopularBoard() {
+		
+		List<BoardVO> popularBoardList = dao.getPopularBoard();
+		
+		return popularBoardList;
+		
+	} // end of public List<BoardVO> getPopularBoard() {
 
 
 	

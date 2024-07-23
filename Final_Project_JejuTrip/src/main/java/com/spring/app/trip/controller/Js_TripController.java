@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.app.trip.common.FileManager;
+import com.spring.app.trip.domain.BoardVO;
 import com.spring.app.trip.domain.CompanyVO;
 import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.LodgingVO;
@@ -1485,5 +1486,64 @@ public class Js_TripController {
 		// /board/src/main/webapp/WEB-INF/views/weather/weatherXML.jsp 파일을 생성한다.
 		
 	} // end of public String weatherXML() { 
+	
+	
+	// 크롤링해온 축제와 행사중 현재일에 포함되는 것만 가져오기
+	@ResponseBody
+	@GetMapping(value="JSONcurrent_festival.trip", produces="text/plain;charset=UTF-8")
+	public String current_festival() {
+		
+		// db에서 sysdate에 해당하는 축제가져오기
+		List<Map<String,String>> festivalList = service.getCurrentFestival();
+								
+		JSONArray json_arr = new JSONArray();
+		
+		for(Map<String,String> map : festivalList) {
+			
+			JSONObject jsonObj = new JSONObject();
+			
+			jsonObj.put("festival_no", map.get("festival_no"));
+			jsonObj.put("title_name", map.get("title_name"));
+			jsonObj.put("img", map.get("img"));
+			jsonObj.put("startdate", map.get("startdate"));
+			jsonObj.put("enddate", map.get("enddate"));
+			jsonObj.put("local_status", map.get("local_status"));
+			jsonObj.put("link", map.get("link"));
+			
+			json_arr.put(jsonObj);
+			
+		} // end of for 
+		
+		return json_arr.toString();
+		
+	} // end of String current_festival() {
+	
+	
+	
+	// 실시간 인기글 가져오기
+	@ResponseBody
+	@GetMapping(value="JSONgetPopularBoard.trip", produces="text/plain;charset=UTF-8")
+	public String getPopularBoard() {
+		
+		// 글 작성일이 3일이내인 조회수 높은 커뮤니티 글목록 가져오기
+		List<BoardVO> popularBoardList = service.getPopularBoard();
+								
+		JSONArray json_arr = new JSONArray();
+		
+		for(BoardVO bvo : popularBoardList) {
+			
+			JSONObject jsonObj = new JSONObject();
+			
+			jsonObj.put("category", bvo.getCategory());
+			jsonObj.put("seq", bvo.getSeq());
+			jsonObj.put("subject", bvo.getSubject());
+			
+			json_arr.put(jsonObj);
+			
+		} // end of for 
+		
+		return json_arr.toString();
+		
+	} // end of String current_festival() {
 	
 }

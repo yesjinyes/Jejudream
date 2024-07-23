@@ -1080,4 +1080,92 @@ create table tbl_board
               to_char(check_in,'yyyymmdd') = to_char(sysdate+1,'yyyymmdd') ) R 
 		ON M.userid = R.fk_userid
     
+    select *
+    from tbl_board;
+    select *
+    from tbl_chattinglog
+    
+    select *
+    from tbl_reservation;
+    
+    alter table tbl_chattinglog add fk_reservation_code varchar2(20) default 0;
+    alter table tbl_chattinglog add chatting_date date default sysdate;
+    
+    
+    alter table tbl_chattinglog ADD CONSTRAINT FK_TBL_chatting_reservation FOREIGN KEY (fk_reservation_code)
+REFERENCES tbl_reservation (reservation_code) ON DELETE CASCADE;
+
+
+    create sequence seq_festival
+    start with 1
+    increment by 1
+    nomaxvalue
+    nominvalue
+    nocycle
+    nocache;
+
+    -- 축제행사 테이블
+    create table tbl_festival 
+    (festival_no   number                 -- 축제 일련번호
+    ,title_name    varchar2(200)          -- 종료일자
+    ,img           varchar2(100)          -- 파일명
+    ,startdate     date                   -- 시작일자
+    ,enddate       date                   -- 종료일자
+    ,local_status  varchar2(100)          -- 지역구분   
+    ,link          varchar2(500)          -- 상세링크주소
+    );
+    
+ 
+    select * from tbl_festival;
+   update tbl_festival set title_name = '9.81파크 (하늘 나는 피카츄 프로젝트)', img = '9.81파크 (하늘 나는 피카츄 프로젝트).jpg' where festival_no = 60;
    
+   UPDATE tbl_festival
+    SET enddate = enddate + INTERVAL '1' YEAR
+    WHERE to_char(enddate, 'yyyy') = '2023';
+   
+   commit;
+   
+   select festival_no, title_name, img, startdate, enddate, local_status, link 
+   from 
+   (
+   select festival_no, title_name, img, startdate, enddate, local_status, link 
+   from tbl_festival
+   where startdate <= sysdate and enddate >= sysdate
+   )
+   where rownum <= 6
+   select *
+   from tbl_like
+   
+   select parent_code
+   from tbl_like L  join tbl_play P
+   on L.parent_code = P.play_code
+    join tbl_lodging G
+   on L.parent_code = G.lodging_code;
+   
+   
+   select W.parent_code, W.like_division_R , nvl(V.name , Q.name ) as vvname 
+   from tbl_like W left join
+   (
+   select parent_code, like_division_R, play_name as name
+   from tbl_like L  join tbl_play P
+   on L.parent_code = P.play_code
+   )V
+   on W.parent_code = V.parent_code
+    left join
+   (
+   select parent_code, like_division_R, lodging_name as name
+   from tbl_like L
+   join tbl_lodging G
+   on L.parent_code = G.lodging_code
+   )Q
+   on W.parent_code = Q.parent_code
+   
+   select *
+   from
+   (
+   select * 
+   from tbl_board
+   where regdate >= sysdate-3
+   order by readcount desc
+   )
+   where rownum <=7;

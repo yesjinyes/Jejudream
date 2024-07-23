@@ -3,6 +3,7 @@ package com.spring.app.trip.service;
 import java.util.List;
 import java.util.Map;
 
+import com.spring.app.trip.domain.BoardVO;
 import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.PlayVO;
@@ -110,6 +111,12 @@ public interface Js_TripService {
     // 고객들의 email 주소는 List<String(e메일주소)> 으로 만들면 된다.
     // 또는 e메일 자동 발송 대신에 휴대폰 문자를 자동 발송하는 것도 가능하다.     
     void reservationEmailSending() throws Exception;
+
+    // db에서 sysdate에 해당하는 축제가져오기
+	List<Map<String, String>> getCurrentFestival();
+
+	// 글 작성일이 3일이내인 조회수 높은 커뮤니티 글목록 가져오기
+	List<BoardVO> getPopularBoard();
 
 
 
