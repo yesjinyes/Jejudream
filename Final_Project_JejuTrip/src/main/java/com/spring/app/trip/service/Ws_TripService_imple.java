@@ -583,7 +583,15 @@ public class Ws_TripService_imple implements Ws_TripService {
 	// 채팅을 보냈다는 기록을 남겨준다.
 	@Override
 	public void insert_send_chatting(Map<String, String> chatMap) {
-		dao.insert_send_chatting(chatMap);
+		int n = dao.get_chatting_log(chatMap);// 동일한 사람과 진행한 채팅기록이 남아있는지 확인하기위함이다.
+		if(n > 0) {
+			
+			dao.update_chattinglog_no_read(chatMap);// 이미 해당 채팅방에 있는 로그가 insert되어있는 경우에는 해당 커럼의 값들을 바꿔준다.
+		}
+		else {
+			dao.insert_send_chatting(chatMap);
+		}
+		
 		
 	}
 
@@ -627,6 +635,27 @@ public class Ws_TripService_imple implements Ws_TripService {
 	public void update_chattinglog_after_chatting(Map<String, String> paraMap) {
 		dao.update_chattinglog_after_chatting(paraMap);
 		
+	}
+	
+	// 회원으로 온 모든 채팅 목록을 읽어온다.
+	@Override
+	public List<Map<String, String>> select_member_all_chatting_paging(Map<String, String> paraMap) {
+		List<Map<String, String>> mapList = dao.select_member_all_chatting_paging(paraMap);
+		return mapList;
+	}
+	
+	// 페이징 처리시 보여주는 순번을 나타내기 위한 것임.
+	@Override
+	public int getTotalMemberChattingCount(Map<String, String> paraMap) {
+		int n = dao.getTotalMemberChattingCount(paraMap);
+		return n;
+	}
+	
+	// 로그인을 했을 때 모든 채팅의 개수를 읽어온다.
+	@Override
+	public int get_all_chatting(String companyid) {
+		int n = dao.get_all_chatting(companyid);
+		return n;
 	}
 	
 	
