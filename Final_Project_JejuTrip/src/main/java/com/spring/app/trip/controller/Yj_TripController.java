@@ -495,7 +495,7 @@ public class Yj_TripController {
 	
 	// == 맛집 일정 추가 == //
 	@ResponseBody
-	@PostMapping("addFoodSchedule.trip")
+	@PostMapping(value="addFoodSchedule.trip", produces="text/plain;charset=UTF-8")
 	public ModelAndView addFoodSchedule(ModelAndView mav, HttpServletRequest request,
 										@RequestParam(defaultValue="") String parent_code,
 										@RequestParam(defaultValue="") String food_address,
@@ -581,13 +581,17 @@ public class Yj_TripController {
 			long fileSize = 0; // 첨부파일의 크기
 			
 			try {
-				bytes = attach.getBytes();
 				String originalFilename = attach.getOriginalFilename();
 				newFileName = fileManager.doFileUpload(bytes, originalFilename, path);
+				
+				if(originalFilename == null) {
+					fileManager.doFileDelete(newFileName, path);
+				}
 				
 				foodstorevo.setFileName(newFileName);
 				foodstorevo.setOrgFilename(originalFilename);
 				
+				bytes = attach.getBytes();
 				fileSize = attach.getSize();
 				foodstorevo.setFileSize(String.valueOf(fileSize));
 				
@@ -625,7 +629,7 @@ public class Yj_TripController {
 	
 	// == 맛집 삭제하기 (관리자) == //
 	@ResponseBody
-	@PostMapping("/deleteFoodstore.trip")
+	@PostMapping(value="/deleteFoodstore.trip", produces="text/plain;charset=UTF-8")
 	public String deleteFoodstore(HttpServletRequest request, @RequestParam(defaultValue="") String parent_code) {
 		
 		String food_store_code = request.getParameter("food_store_code");
