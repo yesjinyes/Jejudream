@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.spring.app.trip.domain.FoodstoreVO;
+import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.ReviewVO;
 
 public interface Yj_TripService {
@@ -27,6 +28,10 @@ public interface Yj_TripService {
 
 	// == 맛집 상세 추가 이미지 == //
 	List<Map<String, String>> viewfoodaddImg(Map<String, String> paraMap);
+
+	// == 근처 숙소 랜덤 추천 == //
+	List<LodgingVO> getLodgingList(String local_status);
+	
 	
 	/////////////////////////////////////////////////////////////////////////////
 	
@@ -62,7 +67,20 @@ public interface Yj_TripService {
 	// == 맛집 일정 추가 == //
 	int addFoodSchedule(Map<String, String> paraMap);
 
+	// == 맛집 수정을 위해 VO 에 있는 정보 불러오기 == //
+	FoodstoreVO getFoodstorevo(String food_store_code);
+
+	// == 맛집  수정하기 (관리자)== //
+	int editFoodEnd(FoodstoreVO foodstorevo);
+
+	// == 맛집 삭제하기 (관리자) == //
+	int deleteFoodstore(String food_store_code);
+
 	
+
+
+
+
 
 	
 

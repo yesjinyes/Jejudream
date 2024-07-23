@@ -162,12 +162,12 @@ public class WebsocketEchoHandler extends TextWebSocketHandler{
              	   else { // 다른 사람이 작성한 채팅메시지일 경우라면.. 작성자명이 나오고 흰배경색으로 보이게 한다.
              		   if("all".equals(list.get(i).getType())) { // 귀속말이 아닌 경우
                  		  wsession.sendMessage(
-             				  new TextMessage("<img style='float:right; width:50px;' src='/JejuDream/resources/images/chatting_icon.jpg'/>[<span style='font-weight:bold; cursor:pointer;' class='loginuserName'>" +list.get(i).getName()+ "</span>]<br><div style='background-color: white; display: inline-block; max-width: 60%; padding: 7px; border-radius: 15%; word-break: break-all;'>"+ list.get(i).getMessage() +"</div> <div style='display: inline-block; padding: 20px 0 0 5px; font-size: 7pt;'>"+list.get(i).getCurrentTime()+"</div> <div>&nbsp;</div>" ) 
+             				  new TextMessage("<img style='width:50px;' src='/JejuDream/resources/images/chatting_icon.jpg'/>[<span style='font-weight:bold; cursor:pointer;' class='loginuserName'>" +list.get(i).getName()+ "</span>]<br><div style='background-color: white; display: inline-block; max-width: 60%; padding: 7px; border-radius: 15%; word-break: break-all;'>"+ list.get(i).getMessage() +"</div> <div style='display: inline-block; padding: 20px 0 0 5px; font-size: 7pt;'>"+list.get(i).getCurrentTime()+"</div> <div>&nbsp;</div>" ) 
          				  );
              		   }
              		   else { // 귀속말인 경우. 글자색을 빨강색으로 함.
                  		  	wsession.sendMessage(
-             		  			new TextMessage("<img style='float:right; width:50px;' src='/JejuDream/resources/images/chatting_icon.jpg'/>[<span style='font-weight:bold; cursor:pointer;' class='loginuserName'>" +list.get(i).getName()+ "</span>]<br><div style='background-color: white; display: inline-block; max-width: 60%; padding: 7px; border-radius: 15%; word-break: break-all; color: red;'>"+ list.get(i).getMessage() +"</div> <div style='display: inline-block; padding: 20px 0 0 5px; font-size: 7pt;'>"+list.get(i).getCurrentTime()+"</div> <div>&nbsp;</div>" ) 
+             		  			new TextMessage("<img style='width:50px;' src='/JejuDream/resources/images/chatting_icon.jpg'/>[<span style='font-weight:bold; cursor:pointer;' class='loginuserName'>" +list.get(i).getName()+ "</span>]<br><div style='background-color: white; display: inline-block; max-width: 60%; padding: 7px; border-radius: 15%; word-break: break-all; color: red;'>"+ list.get(i).getMessage() +"</div> <div style='display: inline-block; padding: 20px 0 0 5px; font-size: 7pt;'>"+list.get(i).getCurrentTime()+"</div> <div>&nbsp;</div>" ) 
          		  			);
              		   }
              	   }
@@ -297,6 +297,16 @@ public class WebsocketEchoHandler extends TextWebSocketHandler{
       		chatMap.put("fk_reservation_code", fk_reservation_code);
       		service.insert_send_chatting(chatMap);// 채팅을 보냈다는 기록을 남겨준다. 추후에 이 기록을 토대로 페이지에 신규 채팅이 있는지 없는지 표시를 해주기위함이다.
       	}
+      	if(status.equals("2")) {
+      		Map<String,String> chatMap = new HashMap<>();
+      		String from_id = chatting_key_arr[2];
+      		String to_id = chatting_key_arr[1];
+      		String fk_reservation_code = chatting_key_arr[0];
+      		chatMap.put("to_id", to_id);
+      		chatMap.put("from_id", from_id);
+      		chatMap.put("fk_reservation_code", fk_reservation_code);
+      		service.insert_send_chatting(chatMap);// 채팅을 보냈다는 기록을 남겨준다. 추후에 이 기록을 토대로 페이지에 신규 채팅이 있는지 없는지 표시를 해주기위함이다.
+      	}
       	
 	}
 	
@@ -345,6 +355,14 @@ public class WebsocketEchoHandler extends TextWebSocketHandler{
             webSocketSession.sendMessage(new TextMessage(connectingUserName));
         }// end of for------------------------------------------
         ///// ===== 접속을 끊을시 접속자명단을 알려주기 위한 것 끝 ===== /////
+        
+        String to_id = loginuser.getUserid();
+        String[] chatting_key_arr = String.valueOf(map.get("chatting_key")).split("_");
+        String fk_reservation_code = chatting_key_arr[0];
+        Map<String,String> paraMap = new HashMap<>();
+        paraMap.put("to_id",to_id);
+        paraMap.put("fk_reservation_code", fk_reservation_code);
+        service.update_chattinglog_after_chatting(paraMap);// 채팅방에서 나가게되면 채팅 기록방에서 나가기 직전까지의 읽음 컬럼을 읽음처리로 바꿔준다.
         
     }
 	

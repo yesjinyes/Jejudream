@@ -523,5 +523,75 @@ public class Ws_TripDAO_imple implements Ws_TripDAO {
 		int n = sqlsession.selectOne("ws_trip.get_new_chatting",userid);
 		return n;
 	}
+	
+	// 기업으로 온 모든 채팅 목록을 읽어온다.
+	@Override
+	public List<Map<String, String>> select_company_all_chatting_paging(Map<String, String> paraMap) {
+		List<Map<String, String>> mapList = sqlsession.selectList("ws_trip.select_company_all_chatting_paging",paraMap);
+		return mapList;
+	}
+	
+	// 페이징 처리시 보여주는 순번을 나타내기 위한 것임.
+	@Override
+	public int getTotalCompanyChattingCount(Map<String, String> paraMap) {
+		int n = sqlsession.selectOne("ws_trip.getTotalCompanyChattingCount",paraMap);
+		return n;
+	}
+	
+	// 채팅에 해당하는 고객 아이디와 이름을 가져온다.
+	@Override
+	public Map<String, String> getMemberIdAndNameToTblReservationCode(String reservation_code) {
+		Map<String,String> map = sqlsession.selectOne("ws_trip.getMemberIdAndNameToTblReservationCode",reservation_code);
+		return map;
+	}
+	
+	// 채팅 로그 테이블에 해당 예약건에 관련한 채팅을 읽음처리한다.
+	@Override
+	public void update_chattinglog(String reservation_code) {
+		sqlsession.update("ws_trip.update_chattinglog",reservation_code);
+		
+	}
+
+	// 채팅방에서 나가게되면 채팅 기록방에서 나가기 직전까지의 읽음 컬럼을 읽음처리로 바꿔준다.
+	@Override
+	public void update_chattinglog_after_chatting(Map<String, String> paraMap) {
+		sqlsession.update("ws_trip.update_chattinglog_after_chatting",paraMap);
+		
+	}
+	
+	// 회원으로 온 모든 채팅 목록을 읽어온다.
+	@Override
+	public List<Map<String, String>> select_member_all_chatting_paging(Map<String, String> paraMap) {
+		List<Map<String, String>> mapList = sqlsession.selectList("ws_trip.select_member_all_chatting_paging",paraMap);
+		return mapList;
+	}
+
+	// 페이징 처리시 보여주는 순번을 나타내기 위한 것임.
+	@Override
+	public int getTotalMemberChattingCount(Map<String, String> paraMap) {
+		int n = sqlsession.selectOne("ws_trip.getTotalMemberChattingCount",paraMap);
+		return n;
+	}
+	
+	// 동일한 사람과 진행한 채팅기록이 남아있는지 확인하기위함이다.
+	@Override
+	public int get_chatting_log(Map<String, String> chatMap) {
+		int n = sqlsession.selectOne("ws_trip.get_chatting_log",chatMap);
+		return n;
+	}
+	
+	// 이미 해당 채팅방에 있는 로그가 insert되어있는 경우에는 해당 커럼의 값들을 바꿔준다.
+	@Override
+	public void update_chattinglog_no_read(Map<String, String> chatMap) {
+		sqlsession.update("ws_trip.update_chattinglog_no_read",chatMap);
+		
+	}
+	
+	// 로그인을 했을 때 모든 채팅의 개수를 읽어온다.
+	@Override
+	public int get_all_chatting(String companyid) {
+		int n = sqlsession.selectOne("ws_trip.get_all_chatting",companyid);
+		return n;
+	}
 
 }

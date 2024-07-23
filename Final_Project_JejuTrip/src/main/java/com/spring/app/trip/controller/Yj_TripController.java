@@ -1,5 +1,6 @@
 package com.spring.app.trip.controller;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,10 +17,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.servlet.ModelAndView;import org.springframework.web.servlet.ModelAndViewDefiningException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.spring.app.trip.common.FileManager;
 import com.spring.app.trip.domain.FoodstoreVO;
+import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.domain.ReviewVO;
 import com.spring.app.trip.service.Yj_TripService;
@@ -29,6 +34,10 @@ public class Yj_TripController {
 	
 	@Autowired // Type에 따라 알아서 Bean 을 주입해준다.
 	private Yj_TripService service;
+	
+	@Autowired
+	private FileManager fileManager;
+	
 	
 
 	// == 커뮤니티 메인 페이지 보이기 == //
@@ -208,9 +217,10 @@ public class Yj_TripController {
 		paraMap.put("random_recommend_code", random_recommend_code);
 		paraMap.put("login_userid", login_userid);
 		
-		///////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////
 		
 		FoodstoreVO foodstorevo = null;
+		List<LodgingVO> lodgingList = null;
 		
 		if("yes".equals((String)session.getAttribute("readCountPermission"))) {
 			
@@ -228,16 +238,30 @@ public class Yj_TripController {
 			}
 		}
 		
-		///////////////////////////////////////////////////////
+		///////////////////////////////////////////////////
+		// 근처 숙소 랜덤 추천
+		String local_status = foodstorevo.getLocal_status();
+		lodgingList = service.getLodgingList(local_status);
+		
+	/*	for(LodgingVO lvo :lodgingList) {
+		//System.out.println("~~숙소 랜덤추천 확인 => "+lvo.getLodging_name());
+		System.out.println("~~숙소 랜덤추천 확인 => "+lvo.getMain_img());
+		}*/
+		///////////////////////////////////////////////////
+		
+		
+		////////////////////////////////////////////////////////////////
 	
 		List<Map<String, String>> addimgList = service.viewfoodaddImg(paraMap); // 맛집 상세 추가 이미지
-		
+
 		mav.addObject("foodstorevo", foodstorevo);
+		mav.addObject("lodgingList", lodgingList);
 		
  		mav.addObject("addimgList", addimgList);
 		
  		mav.setViewName("foodstore/foodstoreDetail.tiles1");
- 		
+		
+		
  		return mav;
 	}
 	
@@ -386,7 +410,13 @@ public class Yj_TripController {
 		
 		List<ReviewVO> reviewList = service.getReviewList(paraMap);
 		
-		int totalCount = service.getReviewTotalCount(parent_code); // 리뷰 총 개수 구하기 => 나옴
+//		for(ReviewVO rvo : reviewList) {
+//			System.out.println("@@@ 리뷰 내용 나와주세요 => " +rvo.getReview_content());
+//		}
+		
+		
+		int totalCount = service.getReviewTotalCount(parent_code); // 리뷰 총 개수 구하기
+		// System.out.println("~~ 리뷰 totalCount 확인 => " + totalCount);
 		
 		JSONArray jsonArr = new JSONArray();
 		
@@ -461,11 +491,11 @@ public class Yj_TripController {
 	
 	
 	///////////////////////////////////////////////////////////////////////////////////
-	
+	// ***** 관리자 기능 ***** //
 	
 	// == 맛집 일정 추가 == //
 	@ResponseBody
-	@PostMapping("addFoodSchedule.trip")
+	@PostMapping(value="addFoodSchedule.trip", produces="text/plain;charset=UTF-8")
 	public ModelAndView addFoodSchedule(ModelAndView mav, HttpServletRequest request,
 										@RequestParam(defaultValue="") String parent_code,
 										@RequestParam(defaultValue="") String food_address,
@@ -473,14 +503,6 @@ public class Yj_TripController {
 										@RequestParam(defaultValue="") String scheduleContent,
 										@RequestParam(defaultValue="") String startdate,
 										@RequestParam(defaultValue="") String enddate) {
-		
-		//System.out.println("~~~ parent_code 확인 =>" + parent_code);
-		//System.out.println("~~~ food_address 확인 =>" + food_address);
-		//System.out.println("~~~ scheduleTitle 확인 => " + scheduleTitle);
-		//System.out.println("~~~ scheduleContent 확인 => " + scheduleContent);
-		//System.out.println("~~~ scheduleDate 확인 => " + scheduleDate);
-		//System.out.println("~~~ startdate 확인 => " + startdate);
-		//System.out.println("~~~ enddate 확인 => " + enddate);
 		
 		HttpSession session = request.getSession();
 		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
@@ -520,9 +542,119 @@ public class Yj_TripController {
 	}
 	
 	
+	// == 맛집 수정 페이지 요청 (관리자) == //
+	@GetMapping("/editFoodstore.trip")
+	public ModelAndView editFoodstore(ModelAndView mav, HttpServletRequest request) {
+		
+		String food_store_code = request.getParameter("food_store_code");
+		// System.out.println("~~~~ food_store_code 확인 => " + food_store_code);
+		
+		// 맛집 수정을 위해 VO 에 있는 정보 불러오기
+		FoodstoreVO foodstorevo = service.getFoodstorevo(food_store_code);
+		
+		// System.out.println("~~ 수정용 맛집이름 확인 => " + foodstorevo.getFood_name()); 
+		
+		mav.addObject("foodstorevo", foodstorevo);
+		
+		mav.setViewName("foodstore/editFoodstore.tiles1");
+		
+		return mav;
+	}
 	
 	
+	// == 맛집 수정 데이터 처리 (관리자) == //
+	@PostMapping("/editFoodEnd.trip")
+	public ModelAndView editFoodEnd(ModelAndView mav, FoodstoreVO foodstorevo, MultipartHttpServletRequest mrequest) {
+		
+		//  ============ 첨부파일 처리 시작 ============ // 
+		MultipartFile attach = foodstorevo.getAttach();
+		
+		if(!attach.isEmpty()) {
+			
+			HttpSession session = mrequest.getSession();
+			String root = session.getServletContext().getRealPath("/");
+			
+			String path = root + "resources" + File.separator + "images" + File.separator + "foodimg";
+			String newFileName = "";
+			
+			byte[] bytes = null; // 첨부파일 내용물 담을 배열
+			long fileSize = 0; // 첨부파일의 크기
+			
+			try {
+				String originalFilename = attach.getOriginalFilename();
+				newFileName = fileManager.doFileUpload(bytes, originalFilename, path);
+				
+				if(originalFilename == null) {
+					fileManager.doFileDelete(newFileName, path);
+				}
+				
+				foodstorevo.setFileName(newFileName);
+				foodstorevo.setOrgFilename(originalFilename);
+				
+				bytes = attach.getBytes();
+				fileSize = attach.getSize();
+				foodstorevo.setFileSize(String.valueOf(fileSize));
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+		}// end of if(!attach.isEmpty())---------------
+		//  ============ 첨부파일 처리 끝 ============ // 
 	
+		int n = service.editFoodEnd(foodstorevo); // 맛집  수정하기
+		
+		if(n==1) {
+			String message = "맛집 정보가 수정되었습니다.";
+			String loc = mrequest.getContextPath() + "/foodstoreList.trip";
+			
+			mav.addObject("message", message);
+			mav.addObject("loc", loc);
+			
+			mav.setViewName("msg");
+		}
+		else {
+			String message = "맛집 정보 수정에 실패했습니다.";
+			String loc = "javascript:history.back()";
+			
+			mav.addObject("message", message);
+			mav.addObject("loc", loc);
+			
+			mav.setViewName("msg");
+		}
+		
+		return mav;
+	}
+	
+	
+	// == 맛집 삭제하기 (관리자) == //
+	@ResponseBody
+	@PostMapping(value="/deleteFoodstore.trip", produces="text/plain;charset=UTF-8")
+	public String deleteFoodstore(HttpServletRequest request, @RequestParam(defaultValue="") String parent_code) {
+		
+		String food_store_code = request.getParameter("food_store_code");
+		// System.out.println("~~~ food_store_code 확인 => " + food_store_code);
+		
+		int totalCount = service.getReviewTotalCount(parent_code);
+		
+		int n = 0;
+		
+		try {
+			 n = service.deleteFoodstore(food_store_code);
+		
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("n", n);
+		jsonObj.put("totalCount", totalCount);
+		
+		//System.out.println("### controller 에서 insert 확인 : "+ jsonObj.toString());
+		
+		return jsonObj.toString();
+		
+	}
 	
 	
 	
