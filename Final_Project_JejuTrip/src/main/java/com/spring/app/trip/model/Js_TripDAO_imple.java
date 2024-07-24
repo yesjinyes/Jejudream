@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
+import com.spring.app.trip.domain.BoardVO;
 import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.PlayVO;
@@ -408,6 +409,29 @@ public class Js_TripDAO_imple implements Js_TripDAO {
 		sqlsession.update("js_trip.updateMailSendCheck", paraMap);
 		
 	} // end of public void updateMailSendCheck(Map<String, String[]> paraMap) {
+
+
+	// db에서 sysdate에 해당하는 축제가져오기
+	@Override
+	public List<Map<String, String>> getCurrentFestival() {
+		
+		List<Map<String, String>> festivalList = sqlsession.selectList("js_trip.getCurrentFestival");
+		
+		return festivalList;
+		
+	} // end of public List<Map<String, String>> getCurrentFestival() { 
+
+
+	
+	// 글 작성일이 3일이내인 조회수 높은 커뮤니티 글목록 가져오기
+	@Override
+	public List<BoardVO> getPopularBoard() {
+		
+		List<BoardVO> popularBoardList = sqlsession.selectList("js_trip.getPopularBoard");
+		
+		return popularBoardList;
+		
+	} // end of public List<BoardVO> getPopularBoard() {
 
 	
 	

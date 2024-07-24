@@ -419,7 +419,7 @@ public class Dy_TripDAO_imple implements Dy_TripDAO {
 	@Override
 	public int deleteComment(String seq) {
 		
-		int n = sqlsession.delete("dy_trip.deleteComment", seq);
+		int n = sqlsession.update("dy_trip.deleteComment", seq);
 		
 		return n;
 	}
@@ -442,6 +442,16 @@ public class Dy_TripDAO_imple implements Dy_TripDAO {
 		int commentCount = sqlsession.selectOne("dy_trip.getCommentCount", seq);
 		
 		return commentCount;
+	}
+
+
+	// 댓글  groupno 컬럼의 최대값 구하기
+	@Override
+	public int getGroupnoMax() {
+		
+		int maxGroupno = sqlsession.selectOne("dy_trip.getGroupnoMax");
+		
+		return maxGroupno;
 	}
 	
 

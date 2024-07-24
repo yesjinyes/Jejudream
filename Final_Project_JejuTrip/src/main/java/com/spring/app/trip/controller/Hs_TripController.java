@@ -769,22 +769,30 @@ public class Hs_TripController {
 		
 
 		
-		//마이페이지 - 리뷰쓴 수량 알아오기 
+		// 마이페이지 - 리뷰쓴 수량 알아오기
 		@GetMapping(value = "review.trip", produces = "text/plain;charset=UTF-8")
-		public ModelAndView review(HttpServletRequest request,ModelAndView mav) {
-			
+		public ModelAndView review(HttpServletRequest request, ModelAndView mav) {
+
 			HttpSession session = request.getSession();
-			MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
-			
-			if(loginuser != null && !loginuser.getUserid().equals("admin") ) {
-				
-				
+			MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
+
+			if (loginuser != null && !loginuser.getUserid().equals("admin")) {
+
+				mav.setViewName("mypage/member/review.tiles1");
+			} else {
+
+				String message = "비정상적인 경로입니다.";
+				String loc = "javascript:history.back()";
+
+				mav.addObject("message", message);
+				mav.addObject("loc", loc);
+
+				mav.setViewName("msg");
+
 			}
-			mav.setViewName("mypage/member/review.tiles1");
-			
+
 			return mav;
 		}
-		
 		
 		//전체 리뷰 작성한거 가져오기
 		@ResponseBody
@@ -824,7 +832,7 @@ public class Hs_TripController {
 					jsonObj.put("review_content",reviewvo.getReview_content()); //리뷰내용 
 					jsonObj.put("registerday",reviewvo.getRegisterday());  //작성일자
 					jsonObj.put("parent_code",reviewvo.getParent_code());  //부모코드
-					jsonObj.put("rno",reviewvo.getRno());  //작성일자
+					jsonObj.put("rno",reviewvo.getRno()); 
 					
 					jsonObj.put("allTotalCount", allTotalCount); //총 페이지 
 	            	jsonObj.put("sizePerPage", sizePerPage); //한페이지당 보여줄 개수
@@ -866,7 +874,7 @@ public class Hs_TripController {
 		    
 		    //전체개수
 		    int totalCount = service.getFoodReviewCount(paraMap);
-
+		    
 		    //조건에 맞는 리트스 가져오기
 		    List<Map<String,String>> foodReviewList = service.foodReviewList(paraMap);
 			
@@ -1006,11 +1014,127 @@ public class Hs_TripController {
 		
 		
 		
+		// 마이페이지 - 좋아요 알아오기
+		@GetMapping(value = "like.trip", produces = "text/plain;charset=UTF-8")
+		public ModelAndView likeMypage(HttpServletRequest request, ModelAndView mav) {
+
+			HttpSession session = request.getSession();
+			MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
+
+			if (loginuser != null && !loginuser.getUserid().equals("admin")) {
+
+				mav.setViewName("mypage/member/like.tiles1");
+			} else {
+
+				String message = "비정상적인 경로입니다.";
+				String loc = "javascript:history.back()";
+
+				mav.addObject("message", message);
+				mav.addObject("loc", loc);
+
+				mav.setViewName("msg");
+
+			}
+
+			return mav;
+		}
 		
 		
+		@ResponseBody
+		@PostMapping("lodgingLikeListJSON.trip")
+		public String lodgingLikeListJSON (HttpServletRequest request, ModelAndView mav) {
+			String fk_userid = request.getParameter("fk_userid");
+			String like_division_R = "A";
+			Map<String,String> paraMap = new HashMap<>();
+		    paraMap.put("fk_userid", fk_userid);
+		    paraMap.put("like_division_R",like_division_R);
+		    
+		    //전체개수
+		    int totalCount = service.lodgingLikeCount(paraMap);
+		    
+		    //조건에 맞는 리트스 가져오기
+		    List<Map<String,String>> likeList = service.lodginglikeList(paraMap);
+			
+			JSONArray jsonArr = new JSONArray();
+			if(likeList != null) {
+				for(Map<String,String> map : likeList) {
+					JSONObject jsonObj = new JSONObject(); //{}
+					jsonObj.put("rno",map.get("rno"));  //rno
+					jsonObj.put("lodging_name",map.get("lodging_name")); //숙소명 lodginVO
+					jsonObj.put("parent_code",map.get("parent_code")); 
+					
+					jsonObj.put("totalCount", totalCount); //총 페이지 
+					jsonArr.put(jsonObj);
+				}
+			}
+			return jsonArr.toString();
+
+		}
+		
+		@ResponseBody
+		@PostMapping("foodLikeListJSON.trip")
+		public String foodLikeListJSON (HttpServletRequest request, ModelAndView mav) {
+			String fk_userid = request.getParameter("fk_userid");
+			String like_division_R = "B";
+			
+			Map<String,String> paraMap = new HashMap<>();
+			paraMap.put("fk_userid", fk_userid);
+			paraMap.put("like_division_R",like_division_R);
+			
+			//전체개수
+			int totalCount = service.foodLikeCount(paraMap);
+			
+			//조건에 맞는 리트스 가져오기
+			List<Map<String,String>> foodList = service.foodlikeList(paraMap);
+			
+			JSONArray jsonArr = new JSONArray();
+			if(foodList != null) {
+				for(Map<String,String> map : foodList) {
+					JSONObject jsonObj = new JSONObject(); //{}
+					jsonObj.put("rno",map.get("rno"));  //rno
+					jsonObj.put("food_name",map.get("food_name")); //숙소명 lodginVO
+					jsonObj.put("parent_code",map.get("parent_code")); 
+					
+					jsonObj.put("totalCount", totalCount); //총 페이지 
+					jsonArr.put(jsonObj);
+				}
+			}
+			return jsonArr.toString();
+			
+		}
 		
 		
-		
+		@ResponseBody
+		@PostMapping("playLikeListJSON.trip")
+		public String playLikeListJSON (HttpServletRequest request, ModelAndView mav) {
+			String fk_userid = request.getParameter("fk_userid");
+			String like_division_R = "C";
+			
+			Map<String,String> paraMap = new HashMap<>();
+			paraMap.put("fk_userid", fk_userid);
+			paraMap.put("like_division_R",like_division_R);
+			
+			//전체개수
+			int totalCount = service.playLikeCount(paraMap);
+			
+			//조건에 맞는 리트스 가져오기
+			List<Map<String,String>> playList = service.playlikeList(paraMap);
+			
+			JSONArray jsonArr = new JSONArray();
+			if(playList != null) {
+				for(Map<String,String> map : playList) {
+					JSONObject jsonObj = new JSONObject(); //{}
+					jsonObj.put("rno",map.get("rno"));  //rno
+					jsonObj.put("play_name",map.get("play_name")); //숙소명 lodginVO
+					jsonObj.put("parent_code",map.get("parent_code")); 
+					
+					jsonObj.put("totalCount", totalCount); //총 페이지 
+					jsonArr.put(jsonObj);
+				}
+			}
+			return jsonArr.toString();
+			
+		}
 		
 		
 		

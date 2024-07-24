@@ -2,6 +2,7 @@ package com.spring.app.trip.cro;
 
 
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,8 +10,14 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import javax.net.ssl.*;
+import java.security.cert.X509Certificate;
 
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
@@ -27,14 +34,17 @@ public class InserMain {
 		
 		InserMain cro = new InserMain();
 		
-		cro.visitJeju();
+		// cro.visitJeju();
 		
+		cro.visitfestival();
 
 	}
 	
 	
 	
 	public void visitJeju() {
+		
+		disableSSLVerification();  // SSL 검증 무시 코드 추가
 		
 		DataDAO dao = new DataDAO();
     	
@@ -216,38 +226,205 @@ public class InserMain {
 	
 	
 	
+	public void visitfestival() {
+		
+		DataDAO dao = new DataDAO();
+    	
+		Path path = Paths.get(System.getProperty("user.dir"), "/src/main/resources/chromedriver.exe");
+
+        // WebDriver 경로 설정
+        System.setProperty("webdriver.chrome.driver", path.toString());
+
+        // WebDriver 옵션 설정
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--start-maximized"); // 전체화면으로 실행
+        options.addArguments("--disable-popup-blocking"); // 팝업 무시
+        options.addArguments("--disable-default-apps"); // 기본앱 사용안함
+        
+        // WebDriver 객체 생성
+        ChromeDriver driver = new ChromeDriver(options);
+
+        try {
+            String url = "https://korean.visitkorea.or.kr/kfes/list/wntyFstvlList.do";
+            driver.get(url);
+
+            // 페이지가 로딩 대기시간 주기
+            Thread.sleep(10000); // 5초 대기, 로딩 상황에 따라 조정 가능
+          
+            // 페이지 내 요소 선택
+            List<WebElement> Elements = driver.findElements((By.xpath("//*[@id=\"fstvlList\"]/li")));
+
+            for (WebElement Element : Elements) {
+                // 각 a 태그 클릭
+            	
+            	int cnt =1;
+            	
+            	Map<String,String> paraMap = new HashMap<>();
+            	
+                // 필요한 데이터 추출
+            	WebElement alink = Element.findElement(By.cssSelector("a"));
+            	
+            	// System.out.println("링크경로 : "+alink.getAttribute("href"));
+            	
+            	String link = alink.getAttribute("href");
+            	
+                
+                WebElement title = Element.findElement(By.cssSelector("div.other_festival_content strong"));
+                
+                String title_name = title.getText();
+                
+                // System.out.println("축제명 : " +title.getText());
+                
+                WebElement festival_date = Element.findElement(By.cssSelector("div.other_festival_content div.date"));
+                
+                // System.out.println("축제기간 : "+ festival_date.getText());
+                String fulldate = festival_date.getText();
+                
+                fulldate = fulldate.replace(".", "-");
+                
+                String[] arr_fulldate = fulldate.split("~");
+                
+                String startDate = arr_fulldate[0];
+                String endDate = arr_fulldate[1];
+                
+                // System.out.println("시작 : " + startDate);
+                // System.out.println("종료 : " + endDate);
+                
+                WebElement festival_loc = Element.findElement(By.cssSelector("div.other_festival_content div.loc"));
+                
+                String loc = festival_loc.getText();
+                //System.out.println("축제 장소: " + festival_loc.getText());
+                
+                WebElement img = Element.findElement(By.cssSelector("div.other_festival_img img"));
+                
+                String imgSrc = img.getAttribute("src");
+                System.out.println("이미지 src : " + imgSrc); // 메인 img src 확인
+                
+                String mainImageDir = System.getProperty("user.dir") + "/src/main/webapp/resources/images/festival/"+ title_name+".jpg";
+                
+                jsoup_downloadImage(imgSrc, mainImageDir);
+                
+                paraMap.put("link", link);
+                paraMap.put("img", title_name+".jpg");
+                paraMap.put("title_name", title_name);
+                paraMap.put("start_date", startDate);
+                paraMap.put("end_date", endDate);
+                paraMap.put("local_status", loc);
+                
+                
+                int n = dao.festival_insert(paraMap);
+                
+                
+                if(n ==1 ) {
+                	
+                	System.out.println(cnt + "번째 축제 insert 성공");
+                	
+                }else {
+                	
+                	System.out.println(cnt + "번째 축제 insert 실패");
+                	return;
+                }
+                
+                
+                cnt++;
+                
+                Thread.sleep(2000);
+                
+            }
+        } catch (Exception e2) {
+            e2.printStackTrace();
+        } finally {
+            driver.quit();
+        }
+        
+    } // end of
+	
 	
 	
 	// 이미지 다운로드 메서드
-    public static void downloadImage(String imageUrl, String destinationFile){
-    	
-    	InputStream is = null;
-    	OutputStream os = null;
-    	
-    	try {
-    		
-    		URL url = new URL(imageUrl);
-            is = url.openStream();
-            os = new FileOutputStream(destinationFile);
+	public static void downloadImage(String imageUrl, String destinationFile) {
+	    InputStream is = null;
+	    OutputStream os = null;
 
-            byte[] byteArr = new byte[1024];
-            int length;
+	    try {
+	        URL url = new URL(imageUrl);
+	        is = url.openStream();
+	        os = new FileOutputStream(destinationFile);
 
-            while ((length = is.read(byteArr)) != -1) {
-                os.write(byteArr, 0, length);
-            }
-    		
-            is.close();
-            os.close();
-    		
-    	} catch(IOException e) {
-    		
-    		System.out.println("이미지 다운로드 실패");
-    		
-    	} 
-    	
-        
-    } // end of public static void downloadImage(String imageUrl, String destinationFile) throws IOException {
+	        byte[] byteArr = new byte[1024];
+	        int length;
+
+	        while ((length = is.read(byteArr)) != -1) {
+	            os.write(byteArr, 0, length);
+	        }
+
+	        System.out.println("이미지 다운로드 성공: " + destinationFile);
+	    } catch (IOException e) {
+	        System.err.println("이미지 다운로드 실패: " + e.getMessage());
+	        e.printStackTrace();
+	    } finally {
+	        try {
+	            if (is != null) {
+	                is.close();
+	            }
+	            if (os != null) {
+	                os.close();
+	            }
+	        } catch (IOException e) {
+	            System.err.println("스트림 닫기 실패: " + e.getMessage());
+	            e.printStackTrace();
+	        }
+	    }
+	} // end of public static void downloadImage(String imageUrl, String destinationFile) throws IOException {
 	
+	
+	// JSoup을 이용한 이미지 다운로드 메서드
+    public static void jsoup_downloadImage(String imageUrl, String destinationFile) {
+        try {
+            disableSSLVerification();
+            Connection.Response resultImageResponse = Jsoup.connect(imageUrl)
+                    .ignoreContentType(true)
+                    .execute();
 
+            FileOutputStream out = new FileOutputStream(new File(destinationFile));
+            out.write(resultImageResponse.bodyAsBytes());
+            out.close();
+
+            System.out.println("이미지 다운로드 성공: " + destinationFile);
+        } catch (IOException e) {
+            System.err.println("이미지 다운로드 실패: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+	
+	
+	public static void disableSSLVerification() {
+	    try {
+	        TrustManager[] trustAllCerts = new TrustManager[]{
+	            new X509TrustManager() {
+	                public X509Certificate[] getAcceptedIssuers() {
+	                    return null;
+	                }
+	                public void checkClientTrusted(X509Certificate[] certs, String authType) {
+	                }
+	                public void checkServerTrusted(X509Certificate[] certs, String authType) {
+	                }
+	            }
+	        };
+
+	        SSLContext sc = SSLContext.getInstance("SSL");
+	        sc.init(null, trustAllCerts, new java.security.SecureRandom());
+	        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+
+	        HostnameVerifier allHostsValid = new HostnameVerifier() {
+	            public boolean verify(String hostname, SSLSession session) {
+	                return true;
+	            }
+	        };
+
+	        HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	}
 }

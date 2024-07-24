@@ -99,7 +99,8 @@
 		outline: none;
 	}
 	
-	button#addCommentBtn {
+	button#addCommentBtn,
+	button#replyCommentBtn {
 		border: solid 1px #737373;
 	}
 	
@@ -258,6 +259,7 @@
 	        			if(json.n == 1) {
 	        				// 현재 수정한 댓글이 있는 페이지를 보여준다.
 	        				const currentShowPageNo = commentDiv.parent().find("input.currentShowPageNo").val();
+//	        				alert("currentShowPageNo : " + currentShowPageNo);
 	        				goViewComment(currentShowPageNo);
 	        			}
 	        		},
@@ -301,6 +303,106 @@
 	        }
 	    	
 	    }); // end of $(document).on("click", "span#deleteComment", function(e) {}) ---------------------------
+	    
+	    
+	 	// 댓글의 '답글' 버튼 클릭 시 댓글 작성창 추가
+	    $(document).on("click", ".reply-btn", function() {
+	    	
+	        // 클릭된 '답글' 버튼의 부모 요소를 찾음
+	        const replyAreaDiv = $(this).closest('.comment').find('.reply-area');
+	        
+	        if(replyAreaDiv.find("form[name='replyCommentFrm']").length > 0) {
+	        	replyAreaDiv.empty();
+	        	
+	        } else {
+	        	
+		        // 기존에 열려있는 댓글 작성창이 있으면 제거
+		        $("form[name='replyCommentFrm']").remove();
+		        
+		        // 답글 작성창 HTML
+		        const replyForm = `
+		        	<form name="replyCommentFrm">
+		        	<div class="d-flex justify-content-between mb-3">
+		        		<i class="fa-solid fa-reply"></i>
+						<div style="border: solid 1px #a6a6a6; width: 95%; padding: 1.5% 1%; background-color: #f2f2f2;">
+							<span class="d-block mb-2">
+								<c:if test="${not empty sessionScope.loginuser}">
+									<input type="hidden" name="fk_userid" value="${sessionScope.loginuser.userid}">
+									<input type="text" class="font-weight-bold" name="name" value="${sessionScope.loginuser.user_name}" style="border: none; background-color: #f2f2f2;" readonly>
+								</c:if>
+							</span>
+							<textarea class="mb-2" id="reply_content" name="content" style="width: 100%; height: 80px; border: none; background-color: #f2f2f2;" placeholder="답글을 작성해주세요."></textarea>
+							<input type="hidden" name="parentSeq" value="${requestScope.boardvo.seq}" readonly />
+							<input type="hidden" name="groupno">
+							<input type="hidden" name="fk_seq">
+							<input type="hidden" name="depthno">
+							<div style="text-align: right;"><button type="button" class="btn" id="replyCommentBtn">등록</button></div>
+						</div>
+					</div>
+					</form>
+		        `;
+				
+		        replyAreaDiv.html(replyForm);
+	        }
+
+
+	    });
+	    
+	    
+	    // 답댓글 등록
+	    $(document).on("click", "button#replyCommentBtn", function(e) {
+	    	
+			const reply_content = $("textarea#reply_content").val().trim();
+			
+			if(reply_content == "") {
+				alert("답글 내용을 입력하세요!");
+				return;
+			}
+			
+	    	const groupno = $(this).closest(".comment").find("input[name='groupno']").val();
+	    	const fk_seq = $(this).closest(".comment").find("input#cmt_seq").val();
+	    	const depthno = $(this).closest(".comment").find("input[name='depthno']").val();
+	    	const currentShowPageNo = $(this).closest(".comment").find("input.currentShowPageNo").val();
+//	    	alert("currentShowPageNo : " + currentShowPageNo);
+
+			const frm = document.replyCommentFrm;
+			frm.groupno.value = groupno;
+			frm.fk_seq.value = fk_seq;
+			frm.depthno.value = depthno;
+
+	    	const queryString = $("form[name='replyCommentFrm']").serialize();
+	    	
+	    	
+			$.ajax({
+				url: "<%=ctxPath%>/community/addComment.trip",
+				data: queryString,
+				type: "post",
+				dataType: "json",
+				success: function(json) {
+					
+					if(json.n == 1) {
+						updateCommentCount();
+						goViewComment(currentShowPageNo); // 페이징 처리한 댓글 읽어오기
+						
+					} else {
+						alert("댓글 등록 실패");
+					}
+					
+				},
+				error: function(request, status, error){
+					alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+				}
+			});
+	    	
+	    }); // $(document).on("click", "button#replyCommentBtn", function(e) {}) ----------------
+	    
+	    
+	    $(document).on("keydown", "textarea#reply_content", function(e) {
+	    	if(e.keyCode == 13) {
+	    		e.preventDefault();
+	    		$("button#replyCommentBtn").click();
+	    	}
+	    });
 	    
 	}); // end of $(document).ready(function() {}) ---------------------
 	
@@ -355,7 +457,7 @@
 				}
 			});
 		}
-	}
+	} // end of function goDeleteBoard(seq) ---------------------------------
 	
 	
 	// === 이전글, 다음글 보기 ===
@@ -377,7 +479,7 @@
 		frm.action = "<%=ctxPath%>/community/viewBoard_2.trip";
 		frm.submit();
 		
-	} // end of function goView(seq) -------------------
+	} // end of function goView(seq) ------------------------------------
 	
 	
 	// === 첨부파일 다운로드 받기 ===
@@ -391,7 +493,7 @@
 			location.href = "<%=ctxPath%>/fileDownload.trip?seq=" + seq + "&category=" + category;
 		}
 		
-	}
+	} // end of function goFileDownload(seq, category) --------------------
 	
 	
 	// === 댓글 쓰기 ===
@@ -417,6 +519,9 @@
 //					alert("댓글 등록 성공!");
 					updateCommentCount();
 					goViewComment(1); // 페이징 처리한 댓글 읽어오기
+					
+				} else {
+					alert("댓글 등록 실패");
 				}
 
 				$("textarea[name='content']").val(""); // 댓글 칸 내용 비우기
@@ -444,35 +549,71 @@
 				let v_html = ``;
 				
 				if(json.length > 0) {
+					
+//						console.log(JSON.stringify(json));
+					
 					$.each(json, function(index, item) {
 						
-						v_html += `<div id="comment\${index}" class="comment d-flex" style="padding: 1.5% 0">
-				  					 <div style="width: 90%; padding: 1.5% 0">
-										<div class="mb-2 d-flex align-items-center">
-											<img src="<%=ctxPath%>/resources/images/logo_circle.png" width="30">
-											<span class="font-weight-bold" style="margin-left: 1%; font-size: 1rem;">\${item.name}</span>
-										</div>
-										<input type="hidden" id="cmt_seq" value="\${item.seq}">
-										<input type="hidden" id="cmt_userid" value="\${item.fk_userid}">
-										<span class="d-block mb-2" id="cmt_content">\${item.content}</span>
-										<span class="d-block mb-2" id="cmt_regDate" style="font-size: 0.8rem; color: #8c8c8c;">\${item.regdate}</span>
-										<button type="button" class="btn" style="border: solid 1px #8c8c8c; font-size: 0.8rem; padding: 3px 6px;">답글</button>
-									 </div>`;
+						if(item.status == 0) { // status가 0인 경우, 자식 댓글이 있는지 확인
+							
+							let hasChild = json.some(innerItem => innerItem.fk_seq == item.seq);
 						
-						if(${sessionScope.loginuser != null} && 
-							("${sessionScope.loginuser.userid}" == item.fk_userid)) {
-										 
-							v_html += `  <div class="more-options" style="width: 10%; padding-top: 1.5%; text-align: right;">
-											<span><i class="fa-solid fa-ellipsis-vertical"></i></span>
-											<div class="options-menu" style="display: none;">
-												<span id="updateComment" class="d-block mb-1">수정</span>
-												<span id="deleteComment" class="d-block">삭제</span>
+							if (hasChild) { // 자식 댓글이 있을 경우 '삭제된 댓글입니다.'로 표시
+								
+	                            v_html += `<div id="comment${index}" class="comment">
+	                                        <div class="d-flex" style="padding: 1.5% 0">
+	                                            <div style="width: 90%; padding: 1.5% 0">
+	                                                <span class="d-block mb-2">삭제된 댓글입니다.</span>
+	                                                <span class="d-block mb-2" style="font-size: 0.8rem; color: #8c8c8c;">\${item.regdate}</span>
+	                                            </div>
+	                                        </div>
+	                                        <input type="hidden" value="\${currentShowPageNo}" class="currentShowPageNo">
+											<input type="hidden" value="\${item.groupno}" name="groupno">
+											<input type="hidden" value="\${item.depthno}" name="depthno">
+	                                    </div>`;
+							}
+							
+						} else {
+							
+							v_html += `<div id="comment\${index}" class="comment">
+										<div class="d-flex" style="padding: 1.5% 0">`;
+							
+							if(item.depthno > 0) {
+								v_html += `<i class="fa-solid fa-reply d-flex mt-3" style="width: 5%;"></i>`;
+							}
+							
+							v_html += `	   <div style="width: 90%; padding: 1.5% 0">
+											<div class="mb-2 d-flex align-items-center">
+												<img src="<%=ctxPath%>/resources/images/logo_circle.png" width="30">
+												<span class="font-weight-bold" style="margin-left: 1%; font-size: 1rem;">\${item.name}</span>
 											</div>
+											<input type="hidden" id="cmt_seq" value="\${item.seq}">
+											<input type="hidden" id="cmt_userid" value="\${item.fk_userid}">
+											<span class="d-block mb-2" id="cmt_content">\${item.content}</span>
+											<span class="d-block mb-2" id="cmt_regDate" style="font-size: 0.8rem; color: #8c8c8c;">\${item.regdate}</span>
+											<button type="button" class="btn reply-btn" style="border: solid 1px #8c8c8c; font-size: 0.8rem; padding: 3px 6px;">답글</button>
 										 </div>`;
+							
+							if(${sessionScope.loginuser != null} && 
+								("${sessionScope.loginuser.userid}" == item.fk_userid)) {
+											 
+								v_html += `  <div class="more-options" style="width: 10%; padding-top: 1.5%; text-align: right;">
+												<span><i class="fa-solid fa-ellipsis-vertical"></i></span>
+												<div class="options-menu" style="display: none;">
+													<span id="updateComment" class="d-block mb-1">수정</span>
+													<span id="deleteComment" class="d-block">삭제</span>
+												</div>
+											 </div>`;
+							}
+							
+							v_html += `	  </div>
+										  <input type="hidden" value="\${currentShowPageNo}" class="currentShowPageNo">
+										  <input type="hidden" value="\${item.groupno}" name="groupno">
+										  <input type="hidden" value="\${item.depthno}" name="depthno">
+									   	  <div class="reply-area"></div>
+									   </div>`;
+							
 						}
-						
-						v_html += `</div>
-								   <input type="hidden" value="\${currentShowPageNo}" class="currentShowPageNo">`;
 						
 					}); // end of $.each() -------------------------------------------------
 					
@@ -555,7 +696,10 @@
 	            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
 	        }
 	    });
-	}
+	} // end of function updateCommentCount() -----------------------
+	
+	
+
 	
 </script>
 

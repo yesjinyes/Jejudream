@@ -577,5 +577,47 @@
 		update tbl_reservation set mailSendCheck = 1 
 		where reservation_code in <foreach collection="arr_reservationCode" index="i" open="(" separator="," close=")">${arr_reservationCode[i]}</foreach> 
 	</update>
+	
+	
+	<!-- sysdate에 해당하는 축제와 행사 보여주기 (4개가 넘는다면 랜덤으로 보여주기) -->
+	<resultMap type="HashMap" id="getCurrentFestival_Map">
+       <result property="festival_no"     column="festival_no"     javaType="String" />
+       <result property="title_name"      column="title_name"        javaType="String" />
+       <result property="img"        	  column="img"        javaType="String" />
+       <result property="startdate"       column="startdate"        javaType="String" />
+       <result property="enddate"         column="enddate"        javaType="String" />
+       <result property="local_status"    column="local_status"        javaType="String" />
+       <result property="link"            column="link"        javaType="String" />
+   </resultMap>
+	<select id="getCurrentFestival" resultMap="getCurrentFestival_Map">
+		<![CDATA[select festival_no, title_name, img, startdate, enddate, local_status, link 
+		   from 
+		   (
+		   select festival_no, title_name, img, to_char(startdate, 'yyyy-mm-dd') as startdate ,
+		   to_char(enddate, 'yyyy-mm-dd') as enddate, local_status, link 
+		   from tbl_festival
+		   where startdate <= sysdate and 
+		   		enddate >= sysdate
+		   order by DBMS_RANDOM.RANDOM		
+		   )
+		   where rownum <= 4]]>
+	</select>
+	
+	
+	<!-- 커뮤니티 메인에서 게시글로 연결해주기 -->
+	<select id="getPopularBoard" resultType="BoardVO">
+		<![CDATA[select *
+	    from
+	    (
+	    select * 
+	    from tbl_board
+	    
+	    order by readcount desc
+	    )
+	    where rownum <=7]]>
+	</select>
+	
+	<!-- where regdate between to_date(to_char(sysdate, 'yyyy-mm-dd') , 'yyyy-mm-dd') and  
+	    to_date(to_char(sysdate, 'yyyy-mm-dd') || ' ' || '23:59:59' , 'yyyy-mm-dd hh24:mi:ss') -->
  
 </mapper>

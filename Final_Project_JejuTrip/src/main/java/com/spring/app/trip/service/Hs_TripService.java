@@ -73,6 +73,19 @@ public interface Hs_TripService {
 	int getLoginReviewCount(Map<String, String> paraMap);
 	List<Map<String, String>> loginReviewList(Map<String, String> paraMap);
 
+	
+	int lodgingLikeCount(Map<String, String> paraMap);
+	List<Map<String, String>> lodginglikeList(Map<String, String> paraMap);
+
+	
+	int foodLikeCount(Map<String, String> paraMap);
+	List<Map<String, String>> foodlikeList(Map<String, String> paraMap);
+
+	
+	int playLikeCount(Map<String, String> paraMap);
+	List<Map<String, String>> playlikeList(Map<String, String> paraMap);
+
+
 
 	
 

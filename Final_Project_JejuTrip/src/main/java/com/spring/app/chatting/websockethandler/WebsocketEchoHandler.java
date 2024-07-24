@@ -307,7 +307,24 @@ public class WebsocketEchoHandler extends TextWebSocketHandler{
       		chatMap.put("fk_reservation_code", fk_reservation_code);
       		service.insert_send_chatting(chatMap);// 채팅을 보냈다는 기록을 남겨준다. 추후에 이 기록을 토대로 페이지에 신규 채팅이 있는지 없는지 표시를 해주기위함이다.
       	}
-      	
+      	if(status.equals("3")) {
+      		Map<String,String> chatMap = new HashMap<>();
+      		String to_id = chatting_key_arr[1];
+      		String from_id = chatting_key_arr[0];
+      		chatMap.put("to_id", to_id);
+      		chatMap.put("from_id", from_id);
+      		chatMap.put("fk_reservation_code", "0");
+      		service.insert_send_chatting(chatMap);// 채팅을 보냈다는 기록을 남겨준다. 추후에 이 기록을 토대로 페이지에 신규 채팅이 있는지 없는지 표시를 해주기위함이다.
+      	}
+      	if(status.equals("4")) {
+      		Map<String,String> chatMap = new HashMap<>();
+      		String to_id = chatting_key_arr[0];
+      		String from_id = chatting_key_arr[1];
+      		chatMap.put("to_id", to_id);
+      		chatMap.put("from_id", from_id);
+      		chatMap.put("fk_reservation_code", "0");
+      		service.insert_send_chatting(chatMap);// 채팅을 보냈다는 기록을 남겨준다. 추후에 이 기록을 토대로 페이지에 신규 채팅이 있는지 없는지 표시를 해주기위함이다.
+      	}
 	}
 	
 	// === 클라이언트가 웹소켓서버와의 연결을 끊을때 작업 처리하기 ===
@@ -355,15 +372,22 @@ public class WebsocketEchoHandler extends TextWebSocketHandler{
             webSocketSession.sendMessage(new TextMessage(connectingUserName));
         }// end of for------------------------------------------
         ///// ===== 접속을 끊을시 접속자명단을 알려주기 위한 것 끝 ===== /////
-        
-        String to_id = loginuser.getUserid();
-        String[] chatting_key_arr = String.valueOf(map.get("chatting_key")).split("_");
-        String fk_reservation_code = chatting_key_arr[0];
-        Map<String,String> paraMap = new HashMap<>();
-        paraMap.put("to_id",to_id);
-        paraMap.put("fk_reservation_code", fk_reservation_code);
-        service.update_chattinglog_after_chatting(paraMap);// 채팅방에서 나가게되면 채팅 기록방에서 나가기 직전까지의 읽음 컬럼을 읽음처리로 바꿔준다.
+        if(Integer.parseInt(String.valueOf(map.get("status"))) < 3) {
+        	String to_id = loginuser.getUserid();
+            String[] chatting_key_arr = String.valueOf(map.get("chatting_key")).split("_");
+            String fk_reservation_code = chatting_key_arr[0];
+            Map<String,String> paraMap = new HashMap<>();
+            paraMap.put("to_id",to_id);
+            paraMap.put("fk_reservation_code", fk_reservation_code);
+            service.update_chattinglog_after_chatting(paraMap);// 채팅방에서 나가게되면 채팅 기록방에서 나가기 직전까지의 읽음 컬럼을 읽음처리로 바꿔준다.
+        }
+        else {
+        	String to_id = loginuser.getUserid();
+            Map<String,String> paraMap = new HashMap<>();
+            paraMap.put("to_id",to_id);
+            paraMap.put("fk_reservation_code", "0");
+            service.update_chattinglog_after_chatting(paraMap);// 채팅방에서 나가게되면 채팅 기록방에서 나가기 직전까지의 읽음 컬럼을 읽음처리로 바꿔준다.
+        }
         
     }
-	
 }

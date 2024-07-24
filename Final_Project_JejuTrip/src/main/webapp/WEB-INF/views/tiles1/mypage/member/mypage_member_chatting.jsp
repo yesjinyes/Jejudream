@@ -94,6 +94,25 @@
        		
        	})
        	
+       	$(document).on('click','.click_go_admin_chat',function(){
+       		const reservation_code = $(this).find("input").val();
+       		
+       		const name = "${sessionScope.loginuser.user_name}";
+       		const userid = "${sessionScope.loginuser.userid}";
+       		
+   			// >>> 팝업창 띄우기 <<<
+   		    // 너비 1000, 높이 600 인 팝업창을 화면 가운데 위치시키기
+   			const width = 500;
+   			const height = 700;
+
+   		    const left = Math.ceil( (window.screen.width - width)/2 ); // 정수로 만듬
+   		    const top = Math.ceil( (window.screen.height - height)/2 ); // 정수로 만듬
+   		    
+			const url = "<%= serverName%><%=ctxPath%>/ChatToAdmin.trip?name="+name+"&userid="+userid+"&admin=admin&status=3";
+			window.open(url, "mypage_chatting_toCompany",
+               `left=\${left}, top=\${top}, width=\${width}, height=\${height}`);
+       		
+       	})
 	});// end of ready   
 	
 	
@@ -531,5 +550,11 @@
 			</div>
 		</div>
 	</form>
-
+</div>
+<div class="click_go_admin_chat" style="position: fixed; top:65%; left:90%; text-align:center; cursor: pointer;">
+	<c:if test="${requestScope.get_from_admin_chatting_exist > 0}">
+		<div style="float:right; width:10px; height:10px; border-radius:50%; background-color:red;"></div>
+	</c:if>
+	<img style='width:70px;' src='/JejuDream/resources/images/chatting_icon.jpg'/>
+	<div style="font-weight:bold;">1:1문의</div>
 </div>

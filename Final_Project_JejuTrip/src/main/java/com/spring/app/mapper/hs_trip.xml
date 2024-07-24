@@ -338,6 +338,90 @@ order by rno desc
 </select> 
  
  
+<select id="lodgingLikeCount" parameterType="HashMap" resultType="int">
+	select count(*)
+	from tbl_like
+	where fk_userid = #{fk_userid} and like_division_R = 'A'
+</select> 
+
+<resultMap type="HashMap" id="lodginglikeList_map">
+	<result property="rno" 					column="rno" 				javaType="String"/>
+	<result property="lodging_name" 		column="lodging_name" 		javaType="String"/>
+	<result property="parent_code" 			column="parent_code" 		javaType="String"/>
+</resultMap>
+	
+<select id="lodginglikeList" resultMap="lodginglikeList_map">
+	select rownum as rno, D.lodging_name , L.parent_code
+	from tbl_like L join tbl_lodging D
+	on L.parent_code = D.lodging_code
+	where fk_userid = #{fk_userid} and like_division_R = 'A'
+	order by rno
+</select>  
+ 
+ 
+ 
+<select id="foodLikeCount" parameterType="HashMap" resultType="int">
+	select count(*)
+	from tbl_like
+	where fk_userid = #{fk_userid} and like_division_R = 'B'
+</select> 
+
+
+<resultMap type="HashMap" id="foodlikeList_map">
+	<result property="rno" 					column="rno" 				javaType="String"/>
+	<result property="food_name" 			column="food_name" 			javaType="String"/>
+	<result property="parent_code" 			column="parent_code" 		javaType="String"/>
+</resultMap>
+<select id="foodlikeList" resultMap="foodlikeList_map">
+	select rownum as rno, F.food_name , L.parent_code
+	from tbl_like L join tbl_food_store F
+	on L.parent_code = F.food_store_code
+	where fk_userid = #{fk_userid} and like_division_R = 'B'
+	order by rno
+</select>  
+ 
+ 
+ 
+ 
+ <select id="playLikeCount" parameterType="HashMap" resultType="int">
+	select count(*)
+	from tbl_like
+	where fk_userid = #{fk_userid} and like_division_R = 'C'
+</select> 
+
+
+<resultMap type="HashMap" id="playlikeList_map">
+	<result property="rno" 					column="rno" 				javaType="String"/>
+	<result property="play_name" 			column="play_name" 			javaType="String"/>
+	<result property="parent_code" 			column="parent_code" 		javaType="String"/>
+</resultMap>
+<select id="playlikeList" resultMap="playlikeList_map">
+	select rownum as rno, P.play_name , L.parent_code
+	from tbl_like L join tbl_play P
+	on L.parent_code = P.play_code
+	where fk_userid = #{fk_userid} and like_division_R = 'C'
+	order by rno
+</select>  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
  
  
  

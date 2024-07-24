@@ -235,6 +235,45 @@ public class Hs_TripDAO_imple implements Hs_TripDAO {
 		List<Map<String, String>> loginReviewList = sqlsession.selectList("hs_trip.loginReviewList",paraMap);
 		return loginReviewList;
 	}
+
+	
+	@Override
+	public int lodgingLikeCount(Map<String, String> paraMap) {
+		int n = sqlsession.selectOne("hs_trip.lodgingLikeCount",paraMap);
+		return n;
+	}
+
+	@Override
+	public List<Map<String, String>> lodginglikeList(Map<String, String> paraMap) {
+		List<Map<String, String>> lodginglikeList = sqlsession.selectList("hs_trip.lodginglikeList",paraMap);
+		return lodginglikeList;
+	}
+	
+
+	@Override
+	public int foodLikeCount(Map<String, String> paraMap) {
+		int n = sqlsession.selectOne("hs_trip.foodLikeCount",paraMap);
+		return n;
+	}
+
+	@Override
+	public List<Map<String, String>> foodlikeList(Map<String, String> paraMap) {
+		List<Map<String, String>> foodlikeList = sqlsession.selectList("hs_trip.foodlikeList",paraMap);
+		return foodlikeList;
+	}
+
+	
+	@Override
+	public int playLikeCount(Map<String, String> paraMap) {
+		int n = sqlsession.selectOne("hs_trip.playLikeCount",paraMap);
+		return n;
+	}
+
+	@Override
+	public List<Map<String, String>> playlikeList(Map<String, String> paraMap) {
+		List<Map<String, String>> playlikeList = sqlsession.selectList("hs_trip.playlikeList",paraMap);
+		return playlikeList;
+	}
 	
 	
 	

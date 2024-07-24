@@ -91,5 +91,11 @@ public interface Ws_TripDAO {
 	int get_chatting_log(Map<String, String> chatMap);// 동일한 사람과 진행한 채팅기록이 남아있는지 확인하기위함이다.
 	void update_chattinglog_no_read(Map<String, String> chatMap);// 이미 해당 채팅방에 있는 로그가 insert되어있는 경우에는 해당 커럼의 값들을 바꿔준다.
 	int get_all_chatting(String companyid);// 로그인을 했을 때 모든 채팅의 개수를 읽어온다.
+	List<Map<String, String>> select_admin_all_chatting_paging(Map<String, String> paraMap);// 관리자로 온 모든 채팅 목록을 읽어온다.
+	int getTotalAdminChattingCount(Map<String, String> paraMap);// 페이징 처리시 보여주는 순번을 나타내기 위한 것임.
+	String getUserName(String userid);// 유저 아이디로 이름 가져오기
+	int get_from_admin_chatting_exist(String userid);// 새로 온 관리자 메세지가 있는지 확인한다.
+	int get_new_chatting_admin(String userid);// 로그인을 하고 메인에 들어갔을 때 새로 온 채팅이 있는지 확인해준다.
+	int get_all_chatting_admin(String userid);// 로그인을 했을 때 모든 채팅의 개수를 읽어온다.
 
 }
