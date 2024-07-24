@@ -245,9 +245,6 @@ public class Hs_TripService_imple implements Hs_TripService {
 	}
 	
 	
-	
-	
-	
 	@Override
 	public int getFoodReviewCount(Map<String, String> paraMap) {
 		int n = dao.getFoodReviewCount(paraMap);
@@ -318,6 +315,59 @@ public class Hs_TripService_imple implements Hs_TripService {
 	public List<Map<String, String>> playlikeList(Map<String, String> paraMap) {
 		List<Map<String, String>> playlikeList = dao.playlikeList(paraMap);
 		return playlikeList;
+	}
+	
+	
+	//관리자 리뷰 관련
+	
+	
+	//1. 전체 리뷰
+	@Override
+	public int admin_ReviewCount(Map<String, String> paraMap) {
+		int n = dao.admin_ReviewCount(paraMap);
+		return n;
+	}
+	@Override
+	public List<ReviewVO> admin_ReviewList(Map<String, String> paraMap) {
+		List<ReviewVO> admin_ReviewList = dao.admin_ReviewList(paraMap);
+		return admin_ReviewList;
+	}
+	
+	
+	//2. 맛집리뷰
+	@Override
+	public int adminFoodReviewCount(Map<String, String> paraMap) {
+		int n = dao.adminFoodReviewCount(paraMap);
+		return n;
+	}
+	@Override
+	public List<Map<String, String>> adminfoodReviewList(Map<String, String> paraMap) {
+		List<Map<String, String>> adminfoodReviewList = dao.adminfoodReviewList(paraMap);
+		return adminfoodReviewList;
+	}
+	
+	//3. 즐길거리
+	@Override
+	public int adminPlaytotalReviewCount(Map<String, String> paraMap) {
+		int n = dao.adminPlaytotalReviewCount(paraMap);
+		return n;
+	}
+	@Override
+	public List<Map<String, String>> adminPlayReviewList(Map<String, String> paraMap) {
+		List<Map<String, String>> adminPlayReviewList = dao.adminPlayReviewList(paraMap);
+		return adminPlayReviewList;
+	}
+	
+	//4.숙소
+	@Override
+	public int adminLogingReviewCount(Map<String, String> paraMap) {
+		int n = dao.adminLogingReviewCount(paraMap);
+		return n;
+	}
+	@Override
+	public List<Map<String, String>> adminLogingReviewList(Map<String, String> paraMap) {
+		List<Map<String, String>> adminLogingReviewList = dao.adminLogingReviewList(paraMap);
+		return adminLogingReviewList;
 	}
 	
 	

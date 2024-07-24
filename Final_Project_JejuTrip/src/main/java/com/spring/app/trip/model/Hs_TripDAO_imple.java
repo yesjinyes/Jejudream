@@ -276,8 +276,62 @@ public class Hs_TripDAO_imple implements Hs_TripDAO {
 	}
 	
 	
+	//관리자 리뷰 관련
 	
 	
+	//1. 전체 리뷰
+	@Override
+	public int admin_ReviewCount(Map<String, String> paraMap) {
+		int n = sqlsession.selectOne("hs_trip.admin_ReviewCount",paraMap);
+		return n;
+	}
+
+	@Override
+	public List<ReviewVO> admin_ReviewList(Map<String, String> paraMap) {
+		List<ReviewVO> admin_ReviewList = sqlsession.selectList("hs_trip.admin_ReviewList",paraMap);
+		return admin_ReviewList;
+	}
+
+	
+	//2. 맛집리뷰
+	@Override
+	public int adminFoodReviewCount(Map<String, String> paraMap) {
+		int n = sqlsession.selectOne("hs_trip.adminFoodReviewCount",paraMap);
+		return n;
+	}
+
+	@Override
+	public List<Map<String, String>> adminfoodReviewList(Map<String, String> paraMap) {
+		List<Map<String, String>> adminfoodReviewList = sqlsession.selectList("hs_trip.adminfoodReviewList",paraMap);
+		return adminfoodReviewList;
+	}
+	
+	//3. 즐길거리
+	@Override
+	public int adminPlaytotalReviewCount(Map<String, String> paraMap) {
+		int n = sqlsession.selectOne("hs_trip.adminPlaytotalReviewCount",paraMap);
+		return n;
+	}
+
+	@Override
+	public List<Map<String, String>> adminPlayReviewList(Map<String, String> paraMap) {
+		List<Map<String, String>> adminPlayReviewList = sqlsession.selectList("hs_trip.adminPlayReviewList",paraMap);
+		return adminPlayReviewList;
+	}
+	
+	
+	//4. 숙소
+	@Override
+	public int adminLogingReviewCount(Map<String, String> paraMap) {
+		int n = sqlsession.selectOne("hs_trip.adminLogingReviewCount",paraMap);
+		return n;
+	}
+
+	@Override
+	public List<Map<String, String>> adminLogingReviewList(Map<String, String> paraMap) {
+		List<Map<String, String>> adminLogingReviewList = sqlsession.selectList("hs_trip.adminLogingReviewList",paraMap);
+		return adminLogingReviewList;
+	}
 	
 	
 	

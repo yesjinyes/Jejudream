@@ -992,12 +992,10 @@ public class Hs_TripController {
 				for(Map<String,String> map : loginReviewList) {
 					JSONObject jsonObj = new JSONObject(); //{}
 					jsonObj.put("rno",map.get("rno"));  //rno
-					jsonObj.put("reservation_code",map.get("reservation_code")); //예약번호 reservationVO 
 					jsonObj.put("lodging_name",map.get("lodging_name")); //숙소명 lodginVO
-					jsonObj.put("check_in",map.get("check_in")); //체크인일자 reservationVO 
 					jsonObj.put("review_content",map.get("review_content")); // 후기내용 리뷰VO
 					jsonObj.put("registerday",map.get("registerday")); //작성일자 리뷰VO
-					jsonObj.put("parent_code",map.get("parent_code"));  //부모코드
+					jsonObj.put("lodging_code",map.get("lodging_code"));  //부모코드
 					
 					jsonObj.put("totalCount", totalCount); //총 페이지 
 	            	jsonObj.put("sizePerPage", sizePerPage); //한페이지당 보여줄 개수
@@ -1135,6 +1133,261 @@ public class Hs_TripController {
 			return jsonArr.toString();
 			
 		}
+		
+		
+		// 마이페이지 관리자- 모든 사용자가 쓴 리뷰 수량 알아오기
+		@GetMapping(value = "admin_review.trip", produces = "text/plain;charset=UTF-8")
+		public ModelAndView admin_review(HttpServletRequest request, ModelAndView mav) {
+
+			HttpSession session = request.getSession();
+			MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
+
+			if (loginuser != null && loginuser.getUserid().equals("admin")) {
+
+				mav.setViewName("mypage/admin/admin_review.tiles1");
+			} else {
+
+				String message = "비정상적인 경로입니다.";
+				String loc = "javascript:history.back()";
+
+				mav.addObject("message", message);
+				mav.addObject("loc", loc);
+
+				mav.setViewName("msg");
+
+			}
+
+			return mav;
+		}
+		
+		
+		
+		//관리자 전체 리뷰 작성한거 가져오기
+		@ResponseBody
+		@PostMapping(value =("/adminReviewListJSON.trip"),produces="text/plain;charset=UTF-8")
+		 public String adminReviewListJSON(HttpServletRequest request, HttpServletResponse response) throws Exception {
+			
+			String currentShowPageNo = request.getParameter("currentShowPageNo");
+			
+			if("".equals(currentShowPageNo) || currentShowPageNo == null) {
+		    	currentShowPageNo="1";
+			}
+			
+			int sizePerPage = 6; //한페이지당 6개의 글 보여주기
+			int startRno = ((Integer.parseInt(currentShowPageNo)- 1) * sizePerPage) + 1; // 시작 행번호 
+			int endRno = startRno + sizePerPage - 1; // 끝 행번호
+			Map<String,String> paraMap = new HashMap<>();
+
+		
+		    paraMap.put("startRno",String.valueOf(startRno) );
+		    paraMap.put("endRno",String.valueOf(endRno));
+
+		    paraMap.put("currentShowPageNo", currentShowPageNo);
+		    
+		    //전체개수
+		    int totalCount = service.admin_ReviewCount(paraMap);
+
+		    //조건에 맞는 리스트 가져오기
+			List<ReviewVO> allReviewList = service.admin_ReviewList(paraMap);
+			
+			JSONArray jsonArr = new JSONArray();
+			if(allReviewList != null) {
+				for(ReviewVO reviewvo : allReviewList) {
+					JSONObject jsonObj = new JSONObject(); //{}
+					jsonObj.put("review_division_R",reviewvo.getReview_division_R());  // 리뷰구분
+					jsonObj.put("review_content",reviewvo.getReview_content()); //리뷰내용 
+					jsonObj.put("registerday",reviewvo.getRegisterday());  //작성일자
+					jsonObj.put("parent_code",reviewvo.getParent_code());  //부모코드
+					jsonObj.put("fk_userid",reviewvo.getFk_userid());  //작성자
+					jsonObj.put("rno",reviewvo.getRno()); 
+					
+					jsonObj.put("totalCount", totalCount); //총 페이지 
+	            	jsonObj.put("sizePerPage", sizePerPage); //한페이지당 보여줄 개수
+	            	jsonObj.put("currentShowPageNo", currentShowPageNo); //현재페이지
+				
+	            	//System.out.println("jsonArr.toString() :"+ jsonArr.toString());
+	            	
+					jsonArr.put(jsonObj);
+				}
+			}
+			return jsonArr.toString();
+
+		}
+		
+		
+		
+		//관리자 맛집 리뷰 가져오기
+		@ResponseBody
+		@PostMapping(value =("/adminfoodReviewListJSON.trip"),produces="text/plain;charset=UTF-8")
+		 public String adminfoodReviewListJSON(HttpServletRequest request, HttpServletResponse response) throws Exception {
+			
+			String currentShowPageNo = request.getParameter("currentShowPageNo");
+			
+			if("".equals(currentShowPageNo) || currentShowPageNo == null) {
+		    	currentShowPageNo="1";
+			}
+			
+			int sizePerPage = 6; //한페이지당 6개의 글 보여주기
+			int startRno = ((Integer.parseInt(currentShowPageNo)- 1) * sizePerPage) + 1; // 시작 행번호 
+			int endRno = startRno + sizePerPage - 1; // 끝 행번호
+			
+			
+			Map<String,String> paraMap = new HashMap<>();
+		    paraMap.put("startRno",String.valueOf(startRno) );
+		    paraMap.put("endRno",String.valueOf(endRno));
+		    paraMap.put("currentShowPageNo", currentShowPageNo);
+		    
+		    //전체개수
+		    int totalCount = service.adminFoodReviewCount(paraMap);
+		    
+		    //조건에 맞는 리트스 가져오기
+		    List<Map<String,String>> adminfoodReviewList = service.adminfoodReviewList(paraMap);
+			
+			JSONArray jsonArr = new JSONArray();
+			if(adminfoodReviewList != null) {
+				for(Map<String,String> map : adminfoodReviewList) {
+					JSONObject jsonObj = new JSONObject(); //{}
+					jsonObj.put("rno",map.get("rno"));  //rno
+					jsonObj.put("review_content",map.get("review_content"));  //후기내용
+					jsonObj.put("registerday",map.get("registerday"));  //작성일자
+					jsonObj.put("food_name",map.get("food_name"));  //가게이름
+					jsonObj.put("parent_code",map.get("parent_code"));  //부모코드
+					jsonObj.put("fk_userid",map.get("fk_userid"));  //부모코드
+					
+					jsonObj.put("totalCount", totalCount); //총 페이지 
+	            	jsonObj.put("sizePerPage", sizePerPage); //한페이지당 보여줄 개수
+	            	jsonObj.put("currentShowPageNo", currentShowPageNo); //현재페이지
+				
+	            	//System.out.println("jsonArr.toString() :"+ jsonArr.toString());
+	            	
+					jsonArr.put(jsonObj);
+				}
+			}
+			return jsonArr.toString();
+
+		}
+		
+		
+		//즐길거리 리뷰 가져오기
+		@ResponseBody
+		@PostMapping(value =("/adminplayReviewListJSON.trip"),produces="text/plain;charset=UTF-8")
+		 public String adminplayReviewListJSON(HttpServletRequest request, HttpServletResponse response) throws Exception {
+			
+			String currentShowPageNo = request.getParameter("currentShowPageNo");
+			
+			if("".equals(currentShowPageNo) || currentShowPageNo == null) {
+		    	currentShowPageNo="1";
+			}
+			
+			int sizePerPage = 6; //한페이지당 6개의 글 보여주기
+			int startRno = ((Integer.parseInt(currentShowPageNo)- 1) * sizePerPage) + 1; // 시작 행번호 
+			int endRno = startRno + sizePerPage - 1; // 끝 행번호
+			
+			Map<String,String> paraMap = new HashMap<>();
+		    paraMap.put("startRno",String.valueOf(startRno) );
+		    paraMap.put("endRno",String.valueOf(endRno));
+		    paraMap.put("currentShowPageNo", currentShowPageNo);
+		    
+		    
+		    
+		    //전체개수
+		    int totalCount = service.adminPlaytotalReviewCount(paraMap);
+
+		    //조건에 맞는 리트스 가져오기
+		    List<Map<String,String>> adminPlayReviewList = service.adminPlayReviewList(paraMap);
+			
+			JSONArray jsonArr = new JSONArray();
+			if(adminPlayReviewList != null) {
+				for(Map<String,String> map : adminPlayReviewList) {
+					JSONObject jsonObj = new JSONObject(); //{}
+					jsonObj.put("rno",map.get("rno"));  //rno
+					jsonObj.put("play_name",map.get("play_name"));  
+					jsonObj.put("review_content",map.get("review_content"));  //후기내용
+					jsonObj.put("registerday",map.get("registerday"));  //작성일자
+					jsonObj.put("parent_code",map.get("parent_code"));  //부모코드
+					jsonObj.put("fk_userid",map.get("fk_userid"));  //부모코드
+					
+					jsonObj.put("totalCount", totalCount); //총 페이지 
+	            	jsonObj.put("sizePerPage", sizePerPage); //한페이지당 보여줄 개수
+	            	jsonObj.put("currentShowPageNo", currentShowPageNo); //현재페이지
+				
+	            	//System.out.println("jsonArr.toString() :"+ jsonArr.toString());
+	            	
+					jsonArr.put(jsonObj);
+				}
+			}
+			return jsonArr.toString();
+
+		}
+		
+		
+		
+		//관리자 숙소 리뷰 가져오기
+		@ResponseBody
+		@PostMapping(value =("/adminLogingReviewListJSON.trip"),produces="text/plain;charset=UTF-8")
+		 public String adminLogingReviewListJSON(HttpServletRequest request, HttpServletResponse response) throws Exception {
+			
+			String currentShowPageNo = request.getParameter("currentShowPageNo");
+			
+			if("".equals(currentShowPageNo) || currentShowPageNo == null) {
+		    	currentShowPageNo="1";
+			}
+			
+			int sizePerPage = 6; //한페이지당 6개의 글 보여주기
+			int startRno = ((Integer.parseInt(currentShowPageNo)- 1) * sizePerPage) + 1; // 시작 행번호 
+			int endRno = startRno + sizePerPage - 1; // 끝 행번호
+			
+			Map<String,String> paraMap = new HashMap<>();
+		    paraMap.put("startRno",String.valueOf(startRno) );
+		    paraMap.put("endRno",String.valueOf(endRno));
+		    paraMap.put("currentShowPageNo", currentShowPageNo);
+		    
+		    
+		    
+		    //전체개수
+		    int totalCount = service.adminLogingReviewCount(paraMap);
+
+		    //조건에 맞는 리트스 가져오기
+		    List<Map<String,String>> adminLogingReviewList = service.adminLogingReviewList(paraMap);
+			
+			JSONArray jsonArr = new JSONArray();
+			if(adminLogingReviewList != null) {
+				for(Map<String,String> map : adminLogingReviewList) {
+					JSONObject jsonObj = new JSONObject(); //{}
+					jsonObj.put("rno",map.get("rno"));  //rno
+					jsonObj.put("lodging_name",map.get("lodging_name")); //숙소명 lodginVO
+					jsonObj.put("review_content",map.get("review_content")); // 후기내용 리뷰VO
+					jsonObj.put("registerday",map.get("registerday")); //작성일자 리뷰VO
+					jsonObj.put("lodging_code",map.get("lodging_code"));  //부모코드
+					jsonObj.put("fk_userid",map.get("fk_userid"));  //부모코드
+					
+					jsonObj.put("totalCount", totalCount); //총 페이지 
+	            	jsonObj.put("sizePerPage", sizePerPage); //한페이지당 보여줄 개수
+	            	jsonObj.put("currentShowPageNo", currentShowPageNo); //현재페이지
+				
+	            	//System.out.println("jsonArr.toString() :"+ jsonArr.toString());
+	            	
+					jsonArr.put(jsonObj);
+				}
+			}
+			return jsonArr.toString();
+
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		
 		

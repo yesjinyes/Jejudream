@@ -267,6 +267,7 @@ on F.food_store_code = R.parent_code
 where R.fk_userid = #{fk_userid} and review_division_R = 'B'
 order by r.registerday desc
 )
+WHERE RNO between #{startRno} and #{endRno}
 order by rno desc
 	
 </select>
@@ -297,6 +298,7 @@ on p.play_code = R.parent_code
 where R.fk_userid = #{fk_userid} and review_division_R = 'C'
 order by r.registerday desc 
 )
+WHERE RNO between #{startRno} and #{endRno}
 order by rno desc
 
 	
@@ -311,30 +313,37 @@ order by rno desc
  
  <resultMap type="HashMap" id="loginReviewList_map">
 	<result property="rno" 					column="rno" 				javaType="String"/>
-	<result property="reservation_code" 	column="reservation_code" 	javaType="String"/>
 	<result property="lodging_name" 		column="lodging_name" 		javaType="String"/>
 	<result property="check_in" 			column="check_in" 			javaType="String"/>
 	<result property="review_content" 		column="review_content" 	javaType="String"/>
 	<result property="registerday" 			column="registerday" 		javaType="String"/>
-	<result property="parent_code" 			column="parent_code" 		javaType="String"/>
+	<result property="lodging_code" 			column="lodging_code" 		javaType="String"/>
 </resultMap>
 	
 <select id="loginReviewList" resultMap="loginReviewList_map">
-	SELECT rno, reservation_code , lodging_name,review_content,registerday,check_in,parent_code
-	FROM
-		(
-			select row_number() over(order by registerday desc) as rno, RV.reservation_code ,  LO.lodging_name , R.fk_userid , R.review_content , 
-				   to_char(R.registerday,'yyyy-mm-dd')as registerday ,to_char(RV.check_in,'yyyy-mm-dd')as check_in ,parent_code
-			from tbl_lodging LO join tbl_room_detail RD    
-			on   LO.lodging_code = RD.fk_lodging_code
-			join tbl_reservation RV
-			on   RD.room_detail_code = RV.fk_room_detail_code
-			join tbl_review R
-			on   RV.fk_userid = R.fk_userid
-			where R.fk_userid = #{fk_userid} and review_division_R = 'A'
-			order by R.registerday desc 
-		)
-	order by rno desc
+	select rno,lodging_name, review_content,fk_userid,registerday,lodging_code
+from 
+    (
+    select rownum as rno, A.lodging_name, A.review_content, A.fk_userid, to_char(A.registerday,'yyyy-mm-dd')as registerday , A.lodging_code
+    from
+        (
+        select lodging_name, review_content, fk_userid, registerday,lodging_code
+        from tbl_lodging L join
+        tbl_review R
+        on L.lodging_code = R.parent_code
+        )A
+        join 
+        (
+        select distinct W.review_content, W.fk_userid
+        from tbl_review W join
+        tbl_reservation E 
+        on W.fk_userid = E.fk_userid
+        )B
+        on A.fk_userid||A.review_content = B.fk_userid || B.review_content
+        where A.fk_userid = #{fk_userid}
+    )V
+	WHERE RNO between #{startRno} and #{endRno}
+    order by rno desc
 </select> 
  
  
@@ -406,19 +415,137 @@ order by rno desc
  
  
  
+ <!--관리자 리뷰 관련 시작 -->
+ 
+ 
+ <!--1. 전체리뷰 -->
+ <select id="admin_ReviewCount" parameterType="HashMap" resultType="int">
+	select count(*)
+	from tbl_review
+ </select>
+ 
+ 
+ <select id="admin_ReviewList" parameterType="HashMap" resultType="com.spring.app.trip.domain.ReviewVO">
+SELECT review_content,registerday,RNO ,review_division_R ,parent_code ,fk_userid
+FROM
+	(
+		select review_content,to_char(registerday,'yyyy-mm-dd')as registerday ,row_number() over(order by registerday desc) as rno , review_division_R ,parent_code,fk_userid
+		from tbl_review
+		Order By registerday Desc
+		
+	)
+WHERE RNO between #{startRno} and #{endRno}
+ </select>
+ 
+ 
+<!--2. 맛집리뷰  --> 
+ 
+<select id="adminFoodReviewCount" parameterType="HashMap" resultType="int">
+	select count(*)
+	from tbl_review
+	where review_division_R = 'B'
+</select>
+
+ 
+ 
+ <resultMap type="HashMap" id="adminfoodReviewList_map">
+	<result property="rno" 					column="rno" 				javaType="String"/>
+	<result property="food_store_code" 		column="food_store_code" 	javaType="String"/>
+	<result property="review_content" 		column="review_content" 	javaType="String"/>
+	<result property="registerday" 			column="registerday" 		javaType="String"/>
+	<result property="food_name" 			column="food_name" 			javaType="String"/>
+	<result property="parent_code" 			column="parent_code" 		javaType="String"/>
+	<result property="fk_userid" 			column="fk_userid" 			javaType="String"/>
+</resultMap>
+	
+<select id="adminfoodReviewList" resultMap="adminfoodReviewList_map">
+select rno ,food_name ,review_content,registerday,parent_code ,fk_userid
+from
+(
+select row_number() over(order by registerday desc) as rno,R.review_content,to_char(R.registerday,'yyyy-mm-dd')as registerday , F.food_name,parent_code ,R.fk_userid
+from tbl_food_store F join tbl_review R
+on F.food_store_code = R.parent_code
+where review_division_R = 'B'
+order by r.registerday desc
+)
+WHERE RNO between #{startRno} and #{endRno}
+order by rno desc
+	
+</select>
  
  
  
+ <select id="adminPlaytotalReviewCount" parameterType="HashMap" resultType="int">
+	select count(*)
+	from tbl_review
+	where review_division_R = 'C'
+</select>
  
+  <resultMap type="HashMap" id="adminPlayReviewList_map">
+	<result property="rno" 					column="rno" 				javaType="String"/>
+	<result property="play_name" 		column="play_name" 	javaType="String"/>
+	<result property="review_content" 		column="review_content" 	javaType="String"/>
+	<result property="registerday" 			column="registerday" 		javaType="String"/>
+	<result property="food_name" 			column="food_name" 		javaType="String"/>
+	<result property="parent_code" 			column="parent_code" 		javaType="String"/>
+	<result property="fk_userid" 			column="fk_userid" 		javaType="String"/>
+</resultMap>
+	
+<select id="adminPlayReviewList" resultMap="adminPlayReviewList_map">
+select rno ,play_name ,review_content,registerday,parent_code ,fk_userid
+from
+(
+select row_number() over(order by registerday desc) as rno, p.play_name,R.review_content, to_char(R.registerday,'yyyy-mm-dd')as registerday,r.parent_code ,r.fk_userid
+from tbl_play P join tbl_review R
+on p.play_code = R.parent_code
+where review_division_R = 'C'
+order by r.registerday desc 
+)
+WHERE RNO between #{startRno} and #{endRno}
+order by rno desc
+
+	
+</select>
  
+<select id="adminLogingReviewCount" parameterType="HashMap" resultType="int">
+	select count(*)
+	from tbl_review
+	where review_division_R = 'A'
+</select>
  
- 
- 
- 
- 
- 
- 
- 
+ <resultMap type="HashMap" id="adminLogingReviewList_map">
+	<result property="rno" 					column="rno" 				javaType="String"/>
+	<result property="lodging_name" 		column="lodging_name" 		javaType="String"/>
+	<result property="review_content" 		column="review_content" 	javaType="String"/>
+	<result property="registerday" 			column="registerday" 		javaType="String"/>
+	<result property="lodging_code" 			column="lodging_code" 		javaType="String"/>
+	<result property="fk_userid" 			column="fk_userid" 		javaType="String"/>
+</resultMap>
+	
+<select id="adminLogingReviewList" resultMap="adminLogingReviewList_map">
+	select rno,lodging_name, review_content,fk_userid,registerday,lodging_code
+	from 
+    (
+	    select rownum as rno, A.lodging_name, A.review_content, A.fk_userid, to_char(A.registerday,'yyyy-mm-dd')as registerday, A.lodging_code
+	    from
+	        (
+		        select lodging_name, review_content, fk_userid, registerday,lodging_code
+		        from tbl_lodging L join
+		        tbl_review R
+		        on L.lodging_code = R.parent_code
+	        )A
+	        join 
+	        (
+		        select distinct W.review_content, W.fk_userid
+		        from tbl_review W join
+		        tbl_reservation E 
+		        on W.fk_userid = E.fk_userid
+	        )B
+	        on A.fk_userid||A.review_content = B.fk_userid || B.review_content
+    )V
+    WHERE RNO between #{startRno} and #{endRno}
+    order by rno desc
+</select>  
  
  
  
