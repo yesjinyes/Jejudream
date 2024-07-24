@@ -482,7 +482,7 @@ public class Ws_TripController {
 		
 		HttpSession session = request.getSession();
 		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
-		
+		CompanyVO loginCompanyuser = (CompanyVO)session.getAttribute("loginCompanyuser");
 		if(loginuser != null && loginuser.getUserid().equals("admin")) {
 			// 로그인한 유저가 개인 유저이면서 그 아이디가 관리자 아이디라면
 			mav.setViewName("mypage/admin/mypageMain.tiles1");
@@ -522,9 +522,8 @@ public class Ws_TripController {
 			mav.addObject("success_reservation",success_reservation);
 			mav.addObject("fail_reservation",fail_reservation);
 		}
-		else {
+		else if(loginCompanyuser != null) {
 			// 로그인한 유저가 기업 유저라면
-			CompanyVO loginCompanyuser = (CompanyVO)session.getAttribute("loginCompanyuser");
 			
 			// 기업이 소유하고있는 호텔의 총 예약건을 읽어온다.
 			List<Map<String,String>> reservationList = service.select_company_all_Reservation(loginCompanyuser.getCompanyid());

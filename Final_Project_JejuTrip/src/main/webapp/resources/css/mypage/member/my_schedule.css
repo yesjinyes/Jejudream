@@ -73,11 +73,11 @@
 
 
 div#wrapper1{
-	float: left; display: inline-block; width: 15%; margin-left: 100px; margin-top:200px; font-size: 13pt;
+	float: left; display: inline-block; width: 10%; margin-left: 100px; margin-top:200px; font-size: 13pt;
 }
 
 div#wrapper2{
-	display: inline-block; width: 90%; margin-right:150px; margin-top: 30px; border:solid 0px red;
+	display: inline-block; width: 55%; margin-right:150px; margin-top: 30px; border:solid 0px red;
 }
 
 /* ========== full calendar css 시작 ========== */
@@ -114,4 +114,50 @@ button.btn_normal{
 button.btn_edit{
 	border: none;
 	background-color: #fff;
+}
+#calendar > div.fc-header-toolbar.fc-toolbar.fc-toolbar-ltr > div:nth-child(1) > div > button.fc-prev-button.fc-button.fc-button-primary,
+#calendar > div.fc-header-toolbar.fc-toolbar.fc-toolbar-ltr > div:nth-child(1) > div > button.fc-next-button.fc-button.fc-button-primary {
+	background-color:orange;
+	border:orange;
+}
+
+#calendar > div.fc-header-toolbar.fc-toolbar.fc-toolbar-ltr > div:nth-child(1) > div > button.fc-prev-button.fc-button.fc-button-primary:hover,
+#calendar > div.fc-header-toolbar.fc-toolbar.fc-toolbar-ltr > div:nth-child(1) > div > button.fc-next-button.fc-button.fc-button-primary:hover {
+	background-color:#ffc557;
+	border:orange;
+}
+
+#calendar > div.fc-header-toolbar.fc-toolbar.fc-toolbar-ltr > div:nth-child(1) > button {
+	background-color:#ffc557;
+	border:#ffc557;
+}
+
+#calendar > div.fc-header-toolbar.fc-toolbar.fc-toolbar-ltr > div:nth-child(3) > button.fc-dayGridWeek-button.fc-button.fc-button-primary.fc-button-active,
+#calendar > div.fc-header-toolbar.fc-toolbar.fc-toolbar-ltr > div:nth-child(3) > button.fc-dayGridDay-button.fc-button.fc-button-primary.fc-button-active,
+#calendar > div.fc-header-toolbar.fc-toolbar.fc-toolbar-ltr > div:nth-child(3) > button.fc-dayGridMonth-button.fc-button.fc-button-primary.fc-button-active{
+	background-color:orange;
+	border:orange;
+}
+
+#calendar > div.fc-header-toolbar.fc-toolbar.fc-toolbar-ltr > div:nth-child(3) > button.fc-dayGridWeek-button.fc-button.fc-button-primary,
+#calendar > div.fc-header-toolbar.fc-toolbar.fc-toolbar-ltr > div:nth-child(3) > button.fc-dayGridDay-button.fc-button.fc-button-primary,
+#calendar > div.fc-header-toolbar.fc-toolbar.fc-toolbar-ltr > div:nth-child(3) > button.fc-dayGridMonth-button.fc-button.fc-button-primary {
+	background-color:#ffc557;
+	border:#ffc557;
+}
+
+input#fromDate, 
+input#toDate, 
+select#searchType,
+input#searchWord,
+select#sizePerPage {
+   border:solid 1px rgb(172, 172, 172);
+   height:35px;
+   border-radius: 5px;
+   color:#838383;
+}
+
+#searchPart > form > div > button {
+   background-color: orange;
+   border:solid 1px orange;
 }
