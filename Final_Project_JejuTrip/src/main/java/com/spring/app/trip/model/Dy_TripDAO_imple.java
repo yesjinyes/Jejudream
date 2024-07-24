@@ -453,6 +453,22 @@ public class Dy_TripDAO_imple implements Dy_TripDAO {
 		
 		return maxGroupno;
 	}
+
+
+	// 맛집 등록 시 중복 검사
+	@Override
+	public boolean isExistFoodstore(Map<String, String> paraMap) {
+		
+		boolean isExist = false;
+		
+		String food_store_code = sqlsession.selectOne("dy_trip.isExistFoodstore", paraMap);
+		
+		if(food_store_code != null) {
+			isExist = true;
+		}
+		
+		return isExist;
+	}
 	
 
 }
