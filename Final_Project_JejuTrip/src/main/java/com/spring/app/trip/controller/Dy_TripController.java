@@ -24,6 +24,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,6 +47,7 @@ import com.spring.app.trip.domain.CompanyVO;
 import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.service.Dy_TripService;
+import com.spring.app.trip.service.Ws_TripService;
 
 @Controller
 public class Dy_TripController {
@@ -58,6 +60,8 @@ public class Dy_TripController {
 	
     @Autowired
     private AES256 aES256;
+    
+    
 	
 	// 회원가입 페이지 요청
 	@GetMapping("/memberRegister.trip")
@@ -2066,6 +2070,25 @@ public class Dy_TripController {
 		jsonObj.put("isExist", isExist);
 		
 		return jsonObj.toString();
+	}
+	
+	
+	// 업체 마이페이지에서 예약내역 Excel 파일로 다운받기
+	@PostMapping("downloadExcelFile.trip")
+	public String downloadExcelFile(@RequestParam(defaultValue = "") String status,
+									HttpServletRequest request, Model model) {
+		
+		HttpSession session = request.getSession();
+		CompanyVO loginCompanyuser = (CompanyVO)session.getAttribute("loginCompanyuser");
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("companyid", loginCompanyuser.getCompanyid());
+		paraMap.put("company_name", loginCompanyuser.getCompany_name());
+		paraMap.put("status", status);
+		
+		service.reservationList_to_Excel(paraMap, model);
+		
+		return "excelDownloadView";
 	}
 	
 }

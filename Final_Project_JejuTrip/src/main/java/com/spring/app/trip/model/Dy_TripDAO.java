@@ -134,5 +134,8 @@ public interface Dy_TripDAO {
 	// 맛집 등록 시 중복 검사
 	boolean isExistFoodstore(Map<String, String> paraMap);
 
+	// 업체 숙소 예약내역 불러오기
+	List<Map<String, String>> getReservationList(Map<String, String> paraMap);
+
 	
 }

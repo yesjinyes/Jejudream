@@ -10,11 +10,24 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.collections4.map.HashedMap;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.app.trip.common.AES256;
@@ -682,6 +695,150 @@ public class Dy_TripService_imple implements Dy_TripService {
 		boolean isExist = dao.isExistFoodstore(paraMap);
 		
 		return isExist;
+	}
+
+
+	// 업체 마이페이지에서 예약내역 Excel 파일로 다운받기
+	@Override
+	public void reservationList_to_Excel(Map<String, String> paraMap, Model model) {
+		
+		SXSSFWorkbook workbook = new SXSSFWorkbook();
+		
+		// 시트 생성
+	    SXSSFSheet sheet = workbook.createSheet(paraMap.get("company_name") + " 숙소 예약내역");
+		
+	    // 시트 열 너비 설정
+	    sheet.setColumnWidth(0, 2000); // 예약번호
+	    sheet.setColumnWidth(1, 4500); // 숙소명
+	    sheet.setColumnWidth(2, 9000); // 룸타입
+	    sheet.setColumnWidth(3, 2000); // 고객명
+	    sheet.setColumnWidth(4, 3000); // 체크인
+	    sheet.setColumnWidth(5, 3000); // 체크아웃
+	    sheet.setColumnWidth(6, 2500); // 총객실수
+	    sheet.setColumnWidth(7, 2500); // 예약된객실수
+	    sheet.setColumnWidth(8, 2500); // 잔여객실수
+	    sheet.setColumnWidth(9, 2000); // 예약상태
+	    
+	    // 행의 위치를 나타내는 변수 
+	    int rowLocation = 0;
+	    
+	    CellStyle mergeRowStyle =  workbook.createCellStyle();
+	    mergeRowStyle.setAlignment(HorizontalAlignment.CENTER);
+	    mergeRowStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+	    
+	    CellStyle headerStyle = workbook.createCellStyle();
+	    headerStyle.setAlignment(HorizontalAlignment.CENTER);
+	    headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+	    
+	 // CellStyle 배경색(ForegroundColor)만들기
+	    mergeRowStyle.setFillForegroundColor(IndexedColors.ORANGE.getIndex());
+	    mergeRowStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND); // SOLID_FOREGROUND은 실선
+	    
+	    headerStyle.setFillForegroundColor(IndexedColors.BRIGHT_GREEN.getIndex());
+	    headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+	    
+        // Cell 폰트(Font) 설정하기
+        // 폰트 적용을 위해 POI 라이브러리의 Font 객체를 생성해준다.
+        // 해당 객체의 세터를 사용해 폰트를 설정해준다. 대표적으로 글씨체, 크기, 색상, 굵기만 설정한다.
+        // 이후 CellStyle의 setFont 메소드를 사용해 인자로 폰트를 넣어준다.
+        Font mergeRowFont = workbook.createFont(); // import org.apache.poi.ss.usermodel.Font; 으로 한다.
+        mergeRowFont.setFontName("나눔바른고딕");
+        mergeRowFont.setFontHeight((short)500);
+        mergeRowFont.setColor(IndexedColors.WHITE.getIndex());
+        mergeRowFont.setBold(true);
+        
+        mergeRowStyle.setFont(mergeRowFont);	// row스타일에 폰트 스타일 넣음
+	    
+        // CellStyle 테두리 Border
+        // 테두리는 각 셀마다 상하좌우 모두 설정해준다.
+        // setBorderTop, Bottom, Left, Right 메소드와 인자로 POI라이브러리의 BorderStyle 인자를 넣어서 적용한다.
+        headerStyle.setBorderTop(BorderStyle.THICK);
+	    headerStyle.setBorderBottom(BorderStyle.THICK);
+	    headerStyle.setBorderLeft(BorderStyle.THIN);
+	    headerStyle.setBorderRight(BorderStyle.THIN);
+        
+	    // === Cell Merge 셀 병합시키기 ===
+	    // 병합할 행 만들기
+	    Row mergeRow = sheet.createRow(rowLocation);  // 엑셀에서 행의 시작은 0 부터 시작한다. 
+        
+	    // 병합할 행에 제목으로 셀을 만들어 셀에 스타일을 주기
+    	for(int i=0; i<10; i++) {
+	    		
+			Cell cell = mergeRow.createCell(i);
+			
+			cell.setCellStyle(mergeRowStyle);
+			cell.setCellValue(paraMap.get("company_name") + " 숙소 예약내역");
+			
+    	} // end of for-------------------------
+        
+    	// 셀 병합하기
+	    sheet.addMergedRegion(new CellRangeAddress(rowLocation, rowLocation, 0, 9)); // 시작 행, 끝 행, 시작 열, 끝 열 
+
+	    ///////////////////////////////////////////////////////////////////////////////////////////////
+	    
+
+	    // 헤더 행 생성
+        Row headerRow = sheet.createRow(++rowLocation); // 엑셀에서 행의 시작은 0 부터 시작한다.
+
+        // 해당 행의 첫번째 열 셀 생성
+        Cell headerCell = headerRow.createCell(0); // 엑셀에서 열의 시작은 0 부터 시작한다.
+        headerCell.setCellValue("예약번호");
+        headerCell.setCellStyle(headerStyle);
+        
+        // 해당 행의 두번째 열 셀 생성
+        headerCell = headerRow.createCell(1);
+        headerCell.setCellValue("숙소명");
+        headerCell.setCellStyle(headerStyle);
+        
+        // 해당 행의 세번째 열 셀 생성
+        headerCell = headerRow.createCell(2);
+        headerCell.setCellValue("룸타입");
+        headerCell.setCellStyle(headerStyle);
+        
+        // 해당 행의 네번째 열 셀 생성
+        headerCell = headerRow.createCell(3);
+        headerCell.setCellValue("고객명");
+        headerCell.setCellStyle(headerStyle);
+        
+        // 해당 행의 다섯번째 열 셀 생성
+        headerCell = headerRow.createCell(4);
+        headerCell.setCellValue("체크인");
+        headerCell.setCellStyle(headerStyle);
+        
+        // 해당 행의 여섯번째 열 셀 생성
+        headerCell = headerRow.createCell(5);
+        headerCell.setCellValue("체크아웃");
+        headerCell.setCellStyle(headerStyle);
+        
+        // 해당 행의 일곱번째 열 셀 생성
+        headerCell = headerRow.createCell(6);
+        headerCell.setCellValue("총객실수");
+        headerCell.setCellStyle(headerStyle);
+        
+        // 해당 행의 여덟번째 열 셀 생성
+        headerCell = headerRow.createCell(7);
+        headerCell.setCellValue("예약된객실수");
+        headerCell.setCellStyle(headerStyle);
+        
+        // 해당 행의 여덟번째 열 셀 생성
+        headerCell = headerRow.createCell(8);
+        headerCell.setCellValue("잔여객실수");
+        headerCell.setCellStyle(headerStyle);
+        
+        // 해당 행의 여덟번째 열 셀 생성
+        headerCell = headerRow.createCell(9);
+        headerCell.setCellValue("예약상태");
+        headerCell.setCellStyle(headerStyle);
+
+        
+        // ==== HR사원정보 내용에 해당하는 행 및 셀 생성하기 ==== //
+        Row bodyRow = null;
+        Cell bodyCell = null;
+        
+        // 업체 숙소 예약내역 불러오기
+        List<Map<String, String>> reservationList = dao.getReservationList(paraMap);
+	    
+        // reservationList랑 count(예약된객실수), remain(잔여객실수) 필요함
 	}
 	
 }

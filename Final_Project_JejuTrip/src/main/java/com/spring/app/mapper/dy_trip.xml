@@ -492,4 +492,23 @@
 	</select>
 	
 	
+	<!-- 업체 숙소 예약내역 불러오기 -->
+	<select id="getReservationList" parameterType="HashMap" resultMap="reservation_map">
+		SELECT L.lodging_name, M.user_name, R.room_detail_code,
+			   to_char(V.check_in,'yyyy-mm-dd') as check_in, 
+			   to_char(V.check_out,'yyyy-mm-dd') as check_out, 
+			   R.room_stock, V.status, V.reservation_code, R.room_name
+		FROM tbl_lodging L JOIN tbl_room_detail R
+		ON L.lodging_code = R.fk_lodging_code
+		JOIN tbl_reservation V
+		ON R.room_detail_code = V.fk_room_detail_code
+		JOIN tbl_member M
+		ON V.fk_userid = M.userid
+		WHERE fk_companyid = ${companyid}
+		<if test='!status.equals("")'>
+			  and V.status = #{status}
+		</if>
+		ORDER BY to_number(V.reservation_code) desc
+	</select>
+	
 </mapper>

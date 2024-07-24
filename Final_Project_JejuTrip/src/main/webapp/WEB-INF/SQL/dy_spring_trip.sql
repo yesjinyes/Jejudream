@@ -331,3 +331,33 @@ where (food_name like '%' || '동백' || '%') and local_status = '제주시 시�
 
 
 
+-- 업체 숙소 예약내역 불러오기
+select V.reservation_code, L.lodging_name, R.room_name, M.user_name, 
+       to_char(V.check_in,'yyyy-mm-dd') as check_in, 
+       to_char(V.check_out,'yyyy-mm-dd') as check_out, 
+       R.room_stock, V.status,
+       (select to_char(count(*)) as count
+        from tbl_reservation
+        where status = 1 
+        and fk_room_detail_code = R.room_detail_code
+        and check_in >= to_char(V.check_in,'yyyy-mm-dd')
+        and check_out <= to_char(V.check_out,'yyyy-mm-dd')) AS COUNT,
+       R.room_detail_code
+from tbl_lodging L JOIN tbl_room_detail R
+on L.lodging_code = R.fk_lodging_code
+JOIN tbl_reservation V
+ON R.room_detail_code = V.fk_room_detail_code
+JOIN tbl_member M
+ON V.fk_userid = M.userid
+where fk_companyid = 'kakao'
+--    and V.status = 2
+order by to_number(V.reservation_code) desc;
+
+
+
+-- 예약된객실수 조회
+select to_char(count(*)) as count
+from tbl_reservation
+where status = 1 and fk_room_detail_code = '653' and check_in >= '2024-07-16' and check_out <= '2024-07-17';
+
+

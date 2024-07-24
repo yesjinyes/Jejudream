@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.ui.Model;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.app.trip.domain.BoardVO;
@@ -115,5 +116,8 @@ public interface Dy_TripService {
 
 	// 맛집 등록 시 중복 검사
 	boolean isExistFoodstore(Map<String, String> paraMap);
+
+	// 업체 마이페이지에서 예약내역 Excel 파일로 다운받기
+	void reservationList_to_Excel(Map<String, String> paraMap, Model model);
 	
 }

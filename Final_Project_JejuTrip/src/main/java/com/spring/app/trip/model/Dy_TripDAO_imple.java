@@ -469,6 +469,16 @@ public class Dy_TripDAO_imple implements Dy_TripDAO {
 		
 		return isExist;
 	}
+
+
+	// 업체 숙소 예약내역 불러오기
+	@Override
+	public List<Map<String, String>> getReservationList(Map<String, String> paraMap) {
+		
+		List<Map<String, String>> reservationList = sqlsession.selectList("dy_trip.getReservationList", paraMap);
+		
+		return reservationList;
+	}
 	
 
 }

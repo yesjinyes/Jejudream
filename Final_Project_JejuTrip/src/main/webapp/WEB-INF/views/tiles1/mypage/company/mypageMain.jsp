@@ -36,6 +36,36 @@
         });
         
         
+		// === 예약내역 Excel 파일로 다운받기 ===
+		$("button#btnExcel").click(function() {
+			
+            const activeTab = $(".nav-tabs .nav-link.active").attr("href");
+            const frm = document.excelTableTypeFrm;
+            
+            switch (activeTab) {
+                   
+                case "#ready_reservation_success": // 예약승인대기목록
+                	frm.status.value = "0";
+                    break;
+                    
+                case "#reservation_success": // 예약확정목록
+                	frm.status.value = "1";
+                    break;
+                    
+                case "#reservation_quit": // 예약취소목록
+                	frm.status.value = "2";
+                    break;
+                    
+                default: // 전체예약내역(all_reservation)일 경우
+                	frm.status.value = "";
+                	break;
+            }
+			
+            frm.method = "post";
+            frm.action = "<%=ctxPath%>/downloadExcelFile.trip";
+//          frm.submit();
+		});
+        
         
     }); // end of $(document).ready(function(){
     	
@@ -803,6 +833,7 @@
 </script>
 
 <div class="body">
+	
     <div class="navigation">
         <ul>
             <li class="list active">
@@ -880,7 +911,14 @@
 				</ul>
 			</div>
 		</div>
+		
 		<div class="reservation_bar" style="margin-top: 10%;">
+		
+			<div class="text-right">
+				<button type="button" id="btnExcel" class="btn btn-success"><i class="fa-solid fa-file-arrow-down"></i>&nbsp;&nbsp;
+					Excel 파일로 저장</button>
+			</div>
+		
 		 <!-- Nav tabs -->
 			<ul class="nav nav-tabs">
 			  <li class="nav-item">
@@ -998,3 +1036,10 @@
       <div class="loader" style="margin: auto"><img class="img" src="<%=ctxPath%>/resources/images/logo_circle.png"/></div>
    </div>
 </div>
+
+
+<form name="excelTableTypeFrm">
+	<input type="text" name="status">
+</form>
+
+
