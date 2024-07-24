@@ -379,7 +379,6 @@ insert into tbl_food_store(food_store_code, food_category, local_status, food_na
 
 insert into tbl_food_store(food_store_code, food_category, local_status, food_name, food_content, food_businesshours, food_mobile, food_address, review_division, food_main_img) values(SEQ_COMMON.nextval, '기타', '서귀포시 동부', '위미애머물다락쿤', '똠양꿍 맛집을 찾는다면 여기', '10:00~15:00', '064-764-0106', '제주특별자치도 서귀포시 남원읍 위미중앙로 274-43', 'B', '위미애머물다락쿤.jpg');
 
-
 commit;
 
 select *
@@ -387,8 +386,6 @@ from tbl_food_store;
 
 select *
 from tbl_food_add_img;
-
-delete from tbl_food_add_img where food_add_img = '추가이미지.jpg'
 
 commit;
 
@@ -398,27 +395,11 @@ desc tbl_food_add_img;
  
  
  
-INSERT INTO tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img)
-SELECT SEQ_FOODADDIMG.nextval, food_store_code, '추가이미지.jpg'
-FROM tbl_food_store
-where food_store_code = 5525;
-
-
-
-
-INSERT ALL
-INTO tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values()
-SELECT SEQ_FOODADDIMG.nextval, food_store_code, '추가이미지.jpg'
-FROM tbl_food_store
-where food_store_code = 5525;
-
-
-
-
-
+ 
 commit;
 
-INSERT INTO tbl_food_add_img(food_add_code, fk_food_store_code, FOOD_ADD_IMG) VALUES(SEQ_FOODADDIMG.nextval, 5525, '위미애머물다락쿤_add2.jpg');
+INSERT INTO tbl_food_add_img(food_add_code, fk_food_store_code, FOOD_ADD_IMG)
+VALUES(SEQ_FOODADDIMG.nextval, 5525, '위미애머물다락쿤_add2.jpg');
 
 rollback;
 
@@ -432,6 +413,9 @@ from tbl_food_store A
 join tbl_food_add_img B
 on A.food_store_code = B.fk_food_store_code
 where food_store_code = 5491;
+
+
+
 
 
 
