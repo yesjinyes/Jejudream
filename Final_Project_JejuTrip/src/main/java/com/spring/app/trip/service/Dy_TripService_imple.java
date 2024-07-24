@@ -673,5 +673,15 @@ public class Dy_TripService_imple implements Dy_TripService {
 		
 		return commentCount;
 	}
+
+
+	// 맛집 등록 시 중복 검사
+	@Override
+	public boolean isExistFoodstore(Map<String, String> paraMap) {
+		
+		boolean isExist = dao.isExistFoodstore(paraMap);
+		
+		return isExist;
+	}
 	
 }

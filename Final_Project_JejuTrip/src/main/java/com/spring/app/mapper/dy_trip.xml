@@ -484,4 +484,12 @@
 	</select>
 	
 	
+	<!-- 맛집 등록 시 중복 검사 -->
+	<select id="isExistFoodstore" parameterType="HashMap" resultType="String">
+		select food_store_code
+		from tbl_food_store
+		where (food_name like '%' || #{food_name} || '%') and local_status = #{local_status}
+	</select>
+	
+	
 </mapper>
