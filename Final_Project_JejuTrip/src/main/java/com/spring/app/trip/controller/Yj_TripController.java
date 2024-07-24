@@ -581,17 +581,33 @@ public class Yj_TripController {
 			long fileSize = 0; // 첨부파일의 크기
 			
 			try {
-				String originalFilename = attach.getOriginalFilename();
-				newFileName = fileManager.doFileUpload(bytes, originalFilename, path);
+				String food_store_code =  foodstorevo.getFood_store_code();
 				
-				if(originalFilename == null) {
-					fileManager.doFileDelete(newFileName, path);
+				// 이미지 수정을 위해 업로드 된 이미지 불러오기
+				Map<String, String> img_map = service.getImg(food_store_code);
+				String food_main_img = img_map.get("food_main_img");
+				String filename = img_map.get("filename");
+				
+				//System.out.println("!! food_main_img 확인 => " + food_main_img);
+				//System.out.println("!! filename 확인 => " + filename);
+				
+				if(filename != null ) {
+					// 운영경로에 올라가있는 filename 이 null 이 아니면 
+					fileManager.doFileDelete(filename, path);
 				}
+				else { 
+					fileManager.doFileDelete(food_main_img, path);
+					
+				}
+				bytes = attach.getBytes();
+				
+				String originalFilename = attach.getOriginalFilename();
+				
+				newFileName = fileManager.doFileUpload(bytes, originalFilename, path); // 첨부된 파일 업로드
 				
 				foodstorevo.setFileName(newFileName);
 				foodstorevo.setOrgFilename(originalFilename);
 				
-				bytes = attach.getBytes();
 				fileSize = attach.getSize();
 				foodstorevo.setFileSize(String.valueOf(fileSize));
 				
@@ -632,16 +648,37 @@ public class Yj_TripController {
 	@PostMapping(value="/deleteFoodstore.trip", produces="text/plain;charset=UTF-8")
 	public String deleteFoodstore(HttpServletRequest request, @RequestParam(defaultValue="") String parent_code) {
 		
+		HttpSession session = request.getSession();
+		String root = session.getServletContext().getRealPath("/");
+		String path = root + "resources" + File.separator + "images" + File.separator + "foodimg";
+
 		String food_store_code = request.getParameter("food_store_code");
 		// System.out.println("~~~ food_store_code 확인 => " + food_store_code);
 		
-		int totalCount = service.getReviewTotalCount(parent_code);
+		int totalCount = service.getReviewTotalCount(parent_code); // 리뷰 테이블 삭제를 위한 것
 		
 		int n = 0;
 		
 		try {
-			 n = service.deleteFoodstore(food_store_code);
-		
+			// 이미지 수정을 위해 업로드 된 이미지 불러오기
+			Map<String, String> img_map = service.getImg(food_store_code);
+			
+			String food_main_img = img_map.get("food_main_img");
+			String filename = img_map.get("filename");
+			
+			// System.out.println("!! delete food_main_img 확인 => " + food_main_img);
+			// System.out.println("!! delete filename 확인 => " + filename);
+			
+			if(filename != null) {
+				// 운영경로에 올라가있는 filename 이 null 이 아니면 
+				fileManager.doFileDelete(filename, path);
+			}
+			else { 
+				fileManager.doFileDelete(food_main_img, path);
+			}
+			
+			n = service.deleteFoodstore(food_store_code);
+			
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}

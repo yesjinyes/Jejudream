@@ -283,6 +283,20 @@
 		where food_store_code = #{food_store_code} 
 	</update>
 	
+	<!-- 이미지 수정 및 삭제를 위해 업로드 된 이미지 불러오기 -->
+	<resultMap type="HashMap" id="img_map">
+		<result property="food_main_img" column="food_main_img" javaType="String" />	
+		<result property="filename" 	 column="filename" 		javaType="String" />	
+		<result property="orgfilename"   column="orgfilename" 	javaType="String" />	
+		<result property="filesize" 	 column="filesize" 		javaType="String" />	
+	</resultMap>
+	<select id="getImg" parameterType="String" resultMap="img_map">
+		select food_main_img, filename, orgfilename, filesize
+		from tbl_food_store
+		where food_store_code = #{food_store_code}
+	</select>
+	
+	
 	
 	<!-- 맛집 삭제하기 (관리자) -->
 	<delete id="deleteFoodstore" parameterType="String">

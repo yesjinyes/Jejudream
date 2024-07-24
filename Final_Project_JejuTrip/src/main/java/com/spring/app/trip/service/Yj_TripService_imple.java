@@ -204,6 +204,14 @@ public class Yj_TripService_imple implements Yj_TripService {
 	}
 
 
+	// == 이미지 수정 및 삭제를 위해 업로드 된 이미지 불러오기 == //
+	@Override
+	public Map<String, String> getImg(String food_store_code) {
+		Map<String, String> img_map = dao.getImg(food_store_code);
+		return img_map;
+	}
+
+
 
 	
 

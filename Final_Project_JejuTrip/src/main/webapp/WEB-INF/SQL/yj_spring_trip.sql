@@ -372,10 +372,12 @@ insert into tbl_food_store(food_store_code, food_category, local_status, food_na
 commit;
 
 
-insert into tbl_food_store(food_store_code, food_category, local_status, food_name, food_content, food_businesshours, food_mobile, food_address, review_division, orgfilename) values(SEQ_COMMON.nextval, '양식', '제주시 시내', '소렉', '활랍스터구이, 송아지 채끝 스테이크 분위기 좋은 양식집', '10:30~19:00', '0507-1407-9015', '제주 제주시 은남2길 41 1층', 'B', '소렉.jpg');
-insert into tbl_food_store(food_store_code, food_category, local_status, food_name, food_content, food_businesshours, food_mobile, food_address, review_division, orgfilename) values(SEQ_COMMON.nextval, '기타', '서귀포시 서부 ', '팟타이시암', '제주에서 즐기는 태국식 쌀국수와 볶음국수', '10:00~19:30', '064-747-3676', '제주 제주시 용화로 41-2', 'B', '팟타이시암.jpg');
+insert into tbl_food_store(food_store_code, food_category, local_status, food_name, food_content, food_businesshours, food_mobile, food_address, review_division, food_main_img) values(SEQ_COMMON.nextval, '양식', '제주시 시내', '소렉', '활랍스터구이, 송아지 채끝 스테이크 분위기 좋은 양식집', '10:30~19:00', '0507-1407-9015', '제주 제주시 은남2길 41 1층', 'B', '소렉.jpg');
+insert into tbl_food_store(food_store_code, food_category, local_status, food_name, food_content, food_businesshours, food_mobile, food_address, review_division, food_main_img) values(SEQ_COMMON.nextval, '기타', '서귀포시 서부 ', '팟타이시암', '제주에서 즐기는 태국식 쌀국수와 볶음국수', '10:00~19:30', '064-747-3676', '제주 제주시 용화로 41-2', 'B', '팟타이시암.jpg');
 insert into tbl_food_store(food_store_code, food_category, local_status, food_name, food_content, food_businesshours, food_mobile, food_address, review_division, food_main_img) values(SEQ_COMMON.nextval, '기타', '제주시 시내', '반탈레, 바다의집', '어머 이건 먹어야해! 해물향 가득한 푸팟퐁커리', '11:30~14:30', '0507-1355-4814', '제주 제주시 도두항서길 41 102호', 'B', '반탈레, 바다의집.jpg');
-insert into tbl_food_store(food_store_code, food_category, local_status, food_name, food_content, food_businesshours, food_mobile, food_address, review_division, orgfilename) values(SEQ_COMMON.nextval, '카페', '서귀포시 시내', '망고레이 섭지코지점', '생망고를 갈아주는 섭지코지 카페', '15:00~20:00', '064-782-6006', '제주 서귀포시 성산읍 신양로 102', 'B', '망고레이 섭지코지점.jpg');
+insert into tbl_food_store(food_store_code, food_category, local_status, food_name, food_content, food_businesshours, food_mobile, food_address, review_division, food_main_img) values(SEQ_COMMON.nextval, '카페', '서귀포시 시내', '망고레이 섭지코지점', '생망고를 갈아주는 섭지코지 카페', '15:00~20:00', '064-782-6006', '제주 서귀포시 성산읍 신양로 102', 'B', '망고레이 섭지코지점.jpg');
+
+insert into tbl_food_store(food_store_code, food_category, local_status, food_name, food_content, food_businesshours, food_mobile, food_address, review_division, food_main_img) values(SEQ_COMMON.nextval, '기타', '서귀포시 동부', '위미애머물다락쿤', '똠양꿍 맛집을 찾는다면 여기', '10:00~15:00', '064-764-0106', '제주특별자치도 서귀포시 남원읍 위미중앙로 274-43', 'B', '위미애머물다락쿤.jpg');
 
 commit;
 
@@ -383,10 +385,40 @@ select *
 from tbl_food_store;
 
 select *
-from tbl_member;
-
+from tbl_food_add_img;
 
 commit;
 
 desc tbl_food_store;
+
+desc tbl_food_add_img;
+ 
+ 
+ 
+ 
+commit;
+
+INSERT INTO tbl_food_add_img(food_add_code, fk_food_store_code, FOOD_ADD_IMG)
+VALUES(SEQ_FOODADDIMG.nextval, 5525, '위미애머물다락쿤_add2.jpg');
+
+rollback;
+
+INTO tbl_food_add_img(food_add_code) VALUES(SEQ_FOODADDIMG.nextval, food_store_code, '위미애머물다락쿤_add3.jpg')
+
+
+insert into tbl_food_add_img
+
+select food_store_code, food_name, food_add_img
+from tbl_food_store A
+join tbl_food_add_img B
+on A.food_store_code = B.fk_food_store_code
+where food_store_code = 5491;
+
+
+
+
+
+
+
+
 
