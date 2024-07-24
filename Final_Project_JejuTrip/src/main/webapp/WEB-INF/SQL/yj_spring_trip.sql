@@ -72,7 +72,6 @@ commit;
 desc tbl_food_store;
 
 
-
 -- 맛집 추가 이미지 테이블 insert
 insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5451', '물꼬해녀의집_add1.jpg' );
 insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5451', '물꼬해녀의집_add2.jpg' );
@@ -131,6 +130,24 @@ insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) va
 insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5469', '레이지펌프_add1.jpg' );
 insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5469', '레이지펌프_add2.jpg' );
 insert into tbl_food_add_img(food_add_code, fk_food_store_code, food_add_img) values(SEQ_FOODADDIMG.nextval, '5469', '레이지펌프_add3.jpg' );
+
+
+-- 자주묻는질문(FAQ) insert
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '예약', '예약 확인은 어디서 할 수 있나요?', '당사 웹사이트에서 로그인 후 우측 상단의 마이페이지 > 예약내역에서 예약 세부 정보와 상태를 확인하실 수 있습니다. 해당 메뉴에서 승인대기목록, 확정목록, 취소목록 또한 확인하실 수 있습니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '예약', '당일 예약이 가능한가요?', '일부 상품의 경우 당일 예약이 불가능할 수 있으므로 예약을 미리 하시는 것이 좋습니다. 부득이 당일 예약 혹은 제주도에 오셔서 구매를 원할 경우(관광지 이용권 등) 일부 상품에 한해서 이용이 가능합니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '예약', '예약 확정서는 언제 확인할 수 있나요?', '업체가  예약 승인 시 회원정보에 입력된 이메일로 예약 확정서가 발송됩니다. 예약이 반려될 경우 예약취소 이메일이 발송됩니다. 예약 확정서를 받지 못하신 경우, 스팸 편지함/정크 메일 편지함도 확인해 주시기 바랍니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '카드/결제', '취소 및 환불 절차는 어떻게 진행되나요?', '마이페이지 > 예약확인 > 예약취소 기능을 통해 예약하신 일정을 취소하실 수 있습니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '카드/결제', '계좌이체도 가능한가요?', '상품에 따라 카드결제만 가능되는 곳이 있으니 미리 숙소 상세 페이지에서 확인하시어 원하는 서비스를 이용하시길 바랍니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '숙소', '객실에 간이침대/유아용 침대를 추가할 수 있나요?', '간이침대/유아용 침대 이용 가능 여부는 숙소에서 결정합니다. 간이침대를 포함해 아동에 대한 추가 요금은 별도로 명시되지 않는 한 예약 금액에 포함되지 않습니다. 더 자세한 사항은 숙소로 문의하시기 바랍니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '숙소', '조식은 객실 요금에 포함되어 있나요?', '객실 요금에 조식이 포함된 경우는 객실 종류별 설명 부분에 "조식 포함"으로 표시됩니다. 객실 요금에 조식이 포함되지 않은 경우는 숙소에서 객실 상품에 조식을 포함하지 않은 경우입니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '숙소', '숙박 예약 시 기준인원이란 무엇인가요?', '숙박하시는 곳에 따라 객실타입 및 평수에 따라 입실 가능한 인원수를 제한하도록 되어있습니다. 기준 인원을 초과할 경우 인당 추가요금을 내고 입실은 가능하나, 이용하실 때 불편함이 있을 수 있어, 사용함에 있어 불편하시지 않도록 기준인원을 책정하고 있습니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '맛집', '지역 별 맛집은 어떻게 보나요?', '맛집 리스트 상단에 있는 지역 체크박스를 통해 지역 별 맛집을 조회하실 수 있습니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '맛집', '맛집을 내 일정에 추가하고 싶습니다.', '맛집 상세 페이지에서 "일정 추가" 아이콘을 클릭 후 제목, 내용, 날짜, 시간을 설정하여 내 일정에 추가하실 수 있습니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '즐길거리', '비회원은 리뷰 작성이 안되나요?', '리뷰 작성은 회원 전용 서비스이므로 로그인 후 사용 가능합니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '즐길거리', '주소 정보가 잘못 나와있는 것 같아요.', '"상세 페이지의 주소 결과가 잘못 나오는 경우에는 여기에 제보해주세요" 를 클릭하여 지도 정보 수정을 제안하실 수 있습니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '기타', '비회원 예약이 가능한가요?', '당사 웹사이트는 회원 전용으로 운영되고 있습니다. 회원가입을 통해 서비스를 자유롭게 이용해보세요.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '기타', '불편사항 문의는 어디에 하면 되나요?', '고객센터 내 채팅 기능을 이용하여 불편사항을 접수해 주시면 확인 후 답변 드리겠습니다.');
+
 
 commit;
 
@@ -413,6 +430,46 @@ from tbl_food_store A
 join tbl_food_add_img B
 on A.food_store_code = B.fk_food_store_code
 where food_store_code = 5491;
+
+
+select * from user_tables;
+select * from user_sequences;
+
+commit;
+
+select * from TBL_FAQ;
+
+
+rollback;
+
+
+
+		SELECT lodging_name, user_name, room_detail_code, check_in, check_out, room_stock, status, reservation_code, room_name
+		FROM 
+		(
+		    SELECT rownum AS RNO
+		         ,lodging_name, user_name, room_detail_code, check_in, check_out, room_stock, status, reservation_code, room_name
+		    FROM
+		    (
+		        select L.lodging_name, M.user_name, R.room_detail_code, to_char(V.check_in,'yyyy-mm-dd') as check_in, to_char(V.check_out,'yyyy-mm-dd') as check_out, R.room_stock, V.status, V.reservation_code, R.room_name
+				from tbl_lodging L JOIN tbl_room_detail R
+				on L.lodging_code = R.fk_lodging_code
+				JOIN tbl_reservation V
+				ON R.room_detail_code = V.fk_room_detail_code
+				JOIN tbl_member M
+				ON V.fk_userid = M.userid
+				<if test="userid != null">
+					where V.fk_userid = #{userid}
+					<if test="status != null">
+						and V.status = #{status}
+					</if>
+				</if>
+				order by V.reservation_date desc
+		    )V
+		) T
+		where RNO between #{startRno} and #{endRno}
+
+
 
 
 

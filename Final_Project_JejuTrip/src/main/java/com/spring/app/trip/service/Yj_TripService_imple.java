@@ -211,6 +211,24 @@ public class Yj_TripService_imple implements Yj_TripService {
 		return img_map;
 	}
 
+	/////////////////////////////////////////////////////////////////////////////////////
+	
+	// == 자주묻는질문 전체 띄우기 (페이징O) == //
+	@Override
+	public List<Map<String, String>> viewAllFaqList_paging(Map<String, String> paraMap) {
+		List<Map<String, String>> faqList = dao.viewAllFaqList_paging(paraMap);
+		return faqList;
+	}
+
+
+	// == FAQ 전체 리스트 페이징 처리 시 순번 나타내기 위함 == //
+	@Override
+	public int getTotalFaqList() {
+		int n = dao.getTotalFaqList();
+		// System.out.println("service 에서 FAQ 성공? => "  + n);
+		return n;
+	}
+
 
 
 	
