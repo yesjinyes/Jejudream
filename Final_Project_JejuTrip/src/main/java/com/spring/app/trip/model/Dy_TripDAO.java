@@ -131,5 +131,8 @@ public interface Dy_TripDAO {
 	// 댓글  groupno 컬럼의 최대값 구하기
 	int getGroupnoMax();
 
+	// 맛집 등록 시 중복 검사
+	boolean isExistFoodstore(Map<String, String> paraMap);
+
 	
 }

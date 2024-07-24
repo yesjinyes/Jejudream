@@ -1883,7 +1883,6 @@ public class Dy_TripController {
 			
 			String path = root + "resources" + File.separator + "images" + File.separator + "community";
 			
-			
 			String newFileName = "";
 			// WAS(톰캣)의 디스크에 저장될 파일명
 			
@@ -2046,6 +2045,25 @@ public class Dy_TripController {
 		
 		JSONObject jsonObj = new JSONObject();
 		jsonObj.put("commentCount", commentCount);
+		
+		return jsonObj.toString();
+	}
+	
+	
+	// 맛집 등록 시 중복 검사
+	@ResponseBody
+	@PostMapping(value="admin/isExistFoodstoreJSON.trip", produces="text/plain;charset=UTF-8")
+	public String isExistFoodstore(@RequestParam(defaultValue = "") String food_name,
+								   @RequestParam(defaultValue = "") String local_status) {
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("food_name", food_name);
+		paraMap.put("local_status", local_status);
+		
+		boolean isExist = service.isExistFoodstore(paraMap);
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("isExist", isExist);
 		
 		return jsonObj.toString();
 	}

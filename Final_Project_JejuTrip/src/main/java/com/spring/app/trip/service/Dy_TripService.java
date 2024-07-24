@@ -112,5 +112,8 @@ public interface Dy_TripService {
 
 	// 게시판 댓글 개수 알아오기
 	int getCommentCount(String seq);
+
+	// 맛집 등록 시 중복 검사
+	boolean isExistFoodstore(Map<String, String> paraMap);
 	
 }

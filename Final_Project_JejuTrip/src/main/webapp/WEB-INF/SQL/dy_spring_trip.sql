@@ -322,6 +322,11 @@ WHERE RNO between 1 and 5;
 
 
 
+-- 맛집 중복 검사
+select food_store_code
+from tbl_food_store
+where (food_name like '%' || '동백' || '%') and local_status = '제주시 시내';
+
 
 
 

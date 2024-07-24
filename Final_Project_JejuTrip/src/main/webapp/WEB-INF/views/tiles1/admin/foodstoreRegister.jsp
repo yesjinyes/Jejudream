@@ -407,6 +407,7 @@ function goRegister() {
         	return;
         }
         
+        
         ///////////////////// 등록 시 이미지 파일 처리 시작 ///////////////////////
 		var formData = new FormData($("form[name='registerFrm']").get(0));
         
@@ -461,38 +462,58 @@ function goRegister() {
 		}
         ///////////////////// 등록 시 이미지 파일 처리 끝 ///////////////////////
         
-        // 맛집 등록 처리하기
+        
+        // 맛집 중복 검사
         $.ajax({
-            url: "<%=ctxPath%>/admin/foodstoreRegisterEnd.trip",
-            type: "post",
-            data: formData,
-			processData: false,  // 파일 전송 시 설정 ★★★
-            contentType: false,  // 파일 전송 시 설정 ★★★
-            dataType: "json",
-            success: function(json) {
-                if(json.result == 1) {
-                    alert("등록이 성공되었습니다.");
-                    location.href = "<%=ctxPath%>/foodstoreList.trip";
+        	url: "<%=ctxPath%>/admin/isExistFoodstoreJSON.trip",
+        	data: {
+        		"food_name": $("input#food_name").val(),
+        		"local_status": $("select[name='local_status']").val()
+        	},
+        	type: "post",
+        	dataType: "json",
+        	success: function(json) {
+        		if(json.isExist) {
+        			alert("이미 등록된 맛집입니다. 다시 입력해 주세요.");
+        			history.go(0);
+        			return;
+        			
+        		} else {
+        	        // 중복이 아닐 경우 맛집 등록 처리하기
+        	        $.ajax({
+        	            url: "<%=ctxPath%>/admin/foodstoreRegisterEnd.trip",
+        	            type: "post",
+        	            data: formData,
+        				processData: false,  // 파일 전송 시 설정 ★★★
+        	            contentType: false,  // 파일 전송 시 설정 ★★★
+        	            dataType: "json",
+        	            success: function(json) {
+        	                if(json.result == 1) {
+        	                    alert("등록이 성공되었습니다.");
+        	                    location.href = "<%=ctxPath%>/foodstoreList.trip";
 
-                } else {
-                    alert("등록에 실패했습니다.");
-                    location.href = "<%=ctxPath%>/index.trip";
-                }
-            },
-            error: function(request, status, error) {
+        	                } else {
+        	                    alert("등록에 실패했습니다.");
+        	                    location.href = "<%=ctxPath%>/index.trip";
+        	                }
+        	            },
+        	            error: function(request, status, error) {
+        	                alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+        	            }
+        	        }); // end of $.ajax() ---------------------------------------------
+        		}
+        	},
+        	error: function(request, status, error) {
                 alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
             }
-        });
-		
+        }); // end of $.ajax() ---------------------------------------------
+       
 	} else {
 		alert("가입 정보를 모두 입력하세요.");
         return;
 	}
 	
-}
-
-
-
+} // end of function goRegister() -------------------------------
 </script>
 
 <div class="container">
@@ -524,10 +545,10 @@ function goRegister() {
             <div class="info_block mt-3">
 				<select name="local_status">
 					<option value="">지역 구분</option>
-					<option>제주 시내</option>
+					<option>제주시 시내</option>
 					<option>제주시 서부</option>
 					<option>제주시 동부</option>
-					<option>서귀포 시내</option>
+					<option>서귀포시 시내</option>
 					<option>서귀포시 동부</option>
 					<option>서귀포시 서부</option>
 				</select>
