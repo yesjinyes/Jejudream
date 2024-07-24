@@ -10,23 +10,27 @@
 
 <style type="text/css">
 
-/* 아코디언 컨테이너 스타일 */
-.accordion {
+ul.nav-tabs {
   width: 90%;
-  /* max-width: 600px;  *//* 최대 너비 설정 */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
 }
 
-/* 아코디언 아이템 스타일 */
+.accordion {
+  width: 90%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+div.accordionEach {
+  margin-bottom: 1%;
+}
+
 .accordion-item {
   background-color: #ffffff;
   border: 1px solid #e0e0e0;
   border-radius: 4px;
-  margin-bottom: 10px;
-  overflow: hidden; /* 내용이 넘칠 경우를 대비하여 오버플로우 숨김 */
+  margin-bottom: 2%;
+  overflow: hidden;
 }
 
-/* 아코디언 헤더 스타일 */
 .accordion-header {
   width: 100%;
   background-color: #fff2e6;
@@ -42,7 +46,6 @@
   background-color: #ffe5cc;
 }
 
-/* 화살표 아이콘 스타일 */
 .arrow {
   position: absolute;
   top: 50%;
@@ -55,12 +58,11 @@
   transition: transform 0.3s ease;
 }
 
-/* 활성화된 아코디언 헤더의 화살표 회전 */
+/* 화살표 회전 */
 .accordion-item.active .arrow {
-  transform: translateY(-50%) rotate(180deg); /* 화살표가 열린 상태를 나타냄 */
+  transform: translateY(-50%) rotate(180deg);
 }
 
-/* 아코디언 컨텐츠 스타일 */
 .accordion-content {
   padding: 15px;
   font-size: 14px;
@@ -68,9 +70,16 @@
   display: none;
 }
 
-/* 활성화된 아코디언 아이템의 컨텐츠 스타일 */
 .accordion-item.active .accordion-content {
   display: block;
+}
+
+span.faq_answer {
+  font-size: 12pt;
+}
+
+div.accordion-content {
+  padding: 2%;
 }
 
 </style>
@@ -81,6 +90,8 @@
 	
 	$(document).ready(function(){
 
+		goViewAllFaqList(1); // 자주묻는질문 전체 띄우기
+		
         function activeLink() {
             // 모든 네비게이션 항목에서 active 클래스를 제거합니다.
             list.forEach((item) => item.classList.remove('active'));
@@ -88,42 +99,109 @@
             this.classList.add('active');
         }
 
-        list.forEach((item) => {
-            item.addEventListener('click', function () {
-                // active 클래스를 변경하는 함수 호출
-                activeLink.call(this);
-                // iframe의 src 속성을 변경하여 콘텐츠를 로드
-                const link = this.getAttribute('data-link');
-                document.getElementById('contentFrame').src = link;
-            });
-        });
-        
 	});// end of $(document).ready(function(){})-----------------------------------------
 	
 	
-	// == 아코디언 적용 == //
-	document.addEventListener('DOMContentLoaded', function() {
-        const accordionItems = document.querySelectorAll('.accordion-item');
-
-        accordionItems.forEach(item => {
-            const header = item.querySelector('.accordion-header');
-
-            header.addEventListener('click', function() {
-                const isActive = item.classList.contains('active');
-
-                // 모든 아코디언 아이템에서 active 클래스 제거
-                accordionItems.forEach(item => {
-                    item.classList.remove('active');
-                });
-
-                // 클릭한 아이템에 active 클래스 추가
-                if (!isActive) {
-                    item.classList.add('active');
-                }
-            });
-        });
-    });
+	// == 자주묻는질문 리스트 띄우기 == //
+	function goViewAllFaqList(currentShowPageNo){
+		
+		$.ajax({
+			url:"<%= ctxPath%>/faqListJSON.trip",
+			data:{"currentShowPageNo":currentShowPageNo},
+			type:"get",
+			dataType:"json",
+			success:function(json){
+				// console.log(JSON.stringify(json));
+				
+				let v_html_all = "";
+				
+				if(json.length > 0){
+					$.each(json, function(index, item){
+						v_html_all += `<div class="accordionEach">
+										   <div class="accordion-header" id="accordion-header" onclick="toggleAccordion(this)">
+											   <span>Q.</span>&nbsp;&nbsp;
+						    			       <input type="hidden" name="faq_seq" value="\${item.faq_seq}" />
+								               <span class="faq_question">\${item.faq_question}</span>
+								               <span class="arrow"></span>
+								           </div>
+									       <div class="accordion-content" id="accordion-content">
+									       	   <span class="faq_answer">\${item.faq_answer}</span>
+									       </div>
+									   </div>`;
+						
+					}); // end of $.each(json, function(index, item){})-------- 
+				}
+				else {
+					v_html_all += "<span>등록된 질문이 없습니다.</span>";
+				}
+				
+				$("div#accordion-item").html(v_html_all);
+				
+			    // 페이지바 함수 호출 
+			    const totalPage = Math.ceil(json[0].totalCount/json[0].sizePerPage); 
+			 // console.log("totalPage : ", totalPage);
+			 // totalPage : 3
+			    
+			    makeAllFaqListPageBar(currentShowPageNo, totalPage);
+			},
+			error: function(request, status, error){
+			   alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+			}
+		});
+		
+		function makeAllFaqListPageBar(currentShowPageNo, totalPage){
+			const blockSize = 10;
+			
+			let loop = 1;
+			
+			let pageNo = Math.floor((currentShowPageNo - 1)/blockSize) * blockSize + 1;
+		
+			let pageBar_HTML = "<ul style='list-style:none;'>";
+			
+			// === [맨처음][이전] 만들기 === //
+			if(pageNo != 1) {
+				pageBar_HTML += "<li class='fist_page'><a href='javascript:goViewAllFaqList(1)'>[맨처음]</a></li>";
+				pageBar_HTML += "<li class='before_page'><a href='javascript:goViewAllFaqList("+(pageNo-1)+")'>[이전]</a></li>"; 
+			}
+			
+			while( !(loop > blockSize || pageNo > totalPage) ) {
+				
+				if(pageNo == currentShowPageNo) {
+					pageBar_HTML += "<li class='this_page_no'>"+pageNo+"</li>";
+				}
+				else {
+					pageBar_HTML += "<li class='choice_page_no'><a href='javascript:goViewAllFaqList("+pageNo+")'>"+pageNo+"</a></li>"; 
+				}
+				
+				loop++;
+				pageNo++;
+			}// end of while------------------------
+			
+			// === [다음][마지막] 만들기 === //
+			if(pageNo <= totalPage) {
+				pageBar_HTML += "<li class='next_page_no'><a href='javascript:goViewAllFaqList("+pageNo+")'>[다음]</a></li>";
+				pageBar_HTML += "<li class='last_page_no'><a href='javascript:goViewAllFaqList("+totalPage+")'>[마지막]</a></li>"; 
+			}
+			
+			pageBar_HTML += "</ul>";		
+			
+			// 댓글 페이지바 출력하기
+			$("div#faqList_pageBar").html(pageBar_HTML);
+		}
+		
+	}// end of function goViewAllFaqList(currentShowPageNo)-------------------------
 	
+	function toggleAccordion(header) {
+	    // 해당 헤더의 다음 sibling 요소인 content를 가져옵니다.
+	    var content = header.nextElementSibling;
+
+	    // content가 숨겨져 있으면 보이게 하고, 보이는 중이면 숨깁니다.
+	    if (content.style.display === 'block') {
+	        content.style.display = 'none';
+	    } else {
+	        content.style.display = 'block';
+	    }
+	}
 
 </script>
 
@@ -167,7 +245,8 @@
 		</div>
 		
 		<div class="faq_bar" style="margin-top: 5%;">
-			<!-- Nav tabs -->
+			
+			<!-- FAQ 카테고리 navigation bar -->
 			<ul class="nav nav-tabs">
 				<li class="nav-item">
 					<a class="nav-link active" data-toggle="tab" href="#faq_all">전체</a>
@@ -192,147 +271,14 @@
 				</li>
 			</ul>
 			
-			<!-- Tab panes -->
-			<div class="tab-content">
-				<br>
+			<!-- FAQ 질문, 답변 -->
+			<div class="tab-content" style="border: none;"><br>
 				<div class="accordion">
-				    <div class="accordion-item">
-				        <div class="accordion-header">
-				        	<span>Q.</span>&nbsp;&nbsp;예약은 어디서 확인하나요?
-				        	<span class="arrow"></span>
-				        </div>
-				        <div class="accordion-content">
-				            <p>마이페이지의 예약 내역에서 확인 가능합니다.</p>
-				        </div>
+				    <div class="accordion-item" id="accordion-item">
 				    </div>
-				    <div class="accordion-item">
-				        <div class="accordion-header">
-				        	<span>Q.</span>&nbsp;&nbsp;맛집 리뷰를 달고 싶어요.
-				        	<span class="arrow"></span>
-				        	</div>
-				        <div class="accordion-content">
-				            <p>리뷰는 로그인 후에 작성 가능합니다.</p>
-				        </div>
-				    </div>
-				    <!-- Add more sections as needed -->
 				</div>
-				
-				
-				
-				
-<%-- 				<!-- 질문(전체) -->
-				<div class="tab-pane active" id="faq_all">
-					<table class="table table-hover">
-						<thead>
-							<tr>
-								<th>번호</th>
-								<th>분류</th>
-								<th>제목</th>
-							</tr>
-						</thead>
-						<tbody id="faq_all_tbody">
-						</tbody>
-					</table>
-					<div id="faq_all_pageBar" class="pageBar"></div>
-				</div>
-				
-				<!-- 질문(예약) -->
-				<div class="tab-pane fade" id="faq_reservation">
-					<table class="table table-hover">
-						<thead>
-							<tr>
-								<th>번호</th>
-								<th>분류</th>
-								<th>제목</th>
-							</tr>
-						</thead>
-				   		<tbody id="faq_reservation_tbody">
-						</tbody>
-					</table>
-					<div id="faq_reservation_pageBar" class="pageBar"></div>
-				</div>
-				
-				<!-- 질문(카드/결제) -->
-				<div class="tab-pane fade" id="faq_payment">
-					<table class="table table-hover">
-				 		 <thead>
-						    <tr>
-						      <th>번호</th>
-						      <th>분류</th>
-						      <th>제목</th>
-						    </tr>
-						  </thead>
-				   		 <tbody id="faq_payment_tbody">
-						 </tbody>
-					</table>
-					<div id="faq_payment_pageBar" class="pageBar"></div>
-				</div>
-				
-				<!-- 질문(숙소) -->
-				<div class="tab-pane fade" id="faq_lodging">
-					<table class="table table-hover">
-				 		 <thead>
-						    <tr>
-						      <th>번호</th>
-						      <th>분류</th>
-						      <th>제목</th>
-						    </tr>
-						  </thead>
-				   		 <tbody id="faq_lodging_tbody">
-						 </tbody>
-					</table>
-					<div id="faq_lodging_pageBar" class="pageBar"></div>
-				</div>
-				
-				<!-- 질문(맛집) -->
-				<div class="tab-pane fade" id="faq_foodstore">
-					<table class="table table-hover">
-				 		 <thead>
-						    <tr>
-						      <th>번호</th>
-						      <th>분류</th>
-						      <th>제목</th>
-						    </tr>
-						  </thead>
-				   		 <tbody id="faq_foodstore_tbody">
-						 </tbody>
-					</table>
-					<div id="faq_foodstore_pageBar" class="pageBar"></div>
-				</div>
-				
-				<!-- 질문(즐길거리) -->
-				<div class="tab-pane fade" id="faq_play">
-					<table class="table table-hover">
-				 		 <thead>
-						    <tr>
-						      <th>번호</th>
-						      <th>분류</th>
-						      <th>제목</th>
-						    </tr>
-						  </thead>
-				   		 <tbody id="faq_play_tbody">
-						 </tbody>
-					</table>
-					<div id="faq_play_pageBar" class="pageBar"></div>
-				</div>
-				
-				<!-- 질문(기타) -->
-				<div class="tab-pane fade" id="faq_etc">
-					<table class="table table-hover">
-				 		 <thead>
-						    <tr>
-						      <th>번호</th>
-						      <th>분류</th>
-						      <th>제목</th>
-						    </tr>
-						  </thead>
-				   		 <tbody id="faq_etc_tbody">
-						 </tbody>
-					</table>
-					<div id="faq_etc_pageBar" class="pageBar"></div>
-				</div>
---%>				
 			</div>
+			<div id="faqList_pageBar" class="pageBar"></div>
 			
 			
 		</div>

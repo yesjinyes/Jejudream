@@ -84,6 +84,14 @@ public interface Yj_TripDAO {
 	// == 맛집 삭제 시 리뷰도 삭제 == //
 	int deleteFoodstoreReview(String food_store_code);
 
+	//////////////////////////////////////////////////////////////////////////
+
+	// == 자주묻는질문 전체 띄우기 (페이징O) == //
+	List<Map<String, String>> viewAllFaqList_paging(Map<String, String> paraMap);
+
+	// == FAQ 전체 리스트 페이징 처리 시 순번 나타내기 위함 == //
+	int getTotalFaqList();
+
 
 
 	

@@ -297,7 +297,6 @@
 	</select>
 	
 	
-	
 	<!-- 맛집 삭제하기 (관리자) -->
 	<delete id="deleteFoodstore" parameterType="String">
 		delete from tbl_food_store
@@ -310,6 +309,34 @@
 		delete from tbl_review
 		where parent_code = #{food_store_code}
 	</delete>
+
+
+	<!-- 자주묻는질문 전체 띄우기 (페이징O) -->
+	<resultMap type="HashMap" id="faqList_map">
+		<result property="faq_seq" 		column="faq_seq" 		javaType="String" />
+		<result property="faq_category" column="faq_category" 	javaType="String" />
+		<result property="faq_question" column="faq_question" 	javaType="String" />
+		<result property="faq_answer" 	column="faq_answer" 	javaType="String" />
+	</resultMap>
+	<select id="viewAllFaqList_paging" parameterType="String" resultMap="faqList_map">
+		select faq_seq, faq_category, faq_question, faq_answer
+		from
+		(
+		select rownum as rno, faq_seq, faq_category, faq_question, faq_answer
+		from tbl_faq
+		)V
+		where RNO between #{startRno} and #{endRno}
+	</select>
+
+	<!-- FAQ 전체 리스트 페이징 처리 시 순번 나타내기 위함  -->
+	<select id="getTotalFaqList" resultType="int">
+		select count(*)
+		from tbl_faq
+	</select>
+
+
+
+
 
 
 </mapper>
