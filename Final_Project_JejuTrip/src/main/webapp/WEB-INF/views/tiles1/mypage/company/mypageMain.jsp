@@ -63,7 +63,7 @@
 			
             frm.method = "post";
             frm.action = "<%=ctxPath%>/downloadExcelFile.trip";
-//          frm.submit();
+			frm.submit();
 		});
         
         

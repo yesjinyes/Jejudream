@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -734,7 +735,7 @@ public class Dy_TripService_imple implements Dy_TripService {
 	    mergeRowStyle.setFillForegroundColor(IndexedColors.ORANGE.getIndex());
 	    mergeRowStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND); // SOLID_FOREGROUND은 실선
 	    
-	    headerStyle.setFillForegroundColor(IndexedColors.BRIGHT_GREEN.getIndex());
+	    headerStyle.setFillForegroundColor(IndexedColors.LIGHT_GREEN.getIndex());
 	    headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 	    
         // Cell 폰트(Font) 설정하기
@@ -837,8 +838,74 @@ public class Dy_TripService_imple implements Dy_TripService {
         
         // 업체 숙소 예약내역 불러오기
         List<Map<String, String>> reservationList = dao.getReservationList(paraMap);
-	    
-        // reservationList랑 count(예약된객실수), remain(잔여객실수) 필요함
+        
+        for(int i=0; i<reservationList.size(); i++) {
+
+        	Map<String, String> rsvMap = reservationList.get(i);
+        	
+	    	// 행 생성
+	        bodyRow = sheet.createRow(i + (rowLocation+1));
+	    	
+	        // 데이터 예약번호 표시
+            bodyCell = bodyRow.createCell(0);
+            bodyCell.setCellValue(rsvMap.get("reservation_code")); 
+            
+            // 데이터 숙소명 표시
+            bodyCell = bodyRow.createCell(1);
+            bodyCell.setCellValue(rsvMap.get("lodging_name")); 
+            
+            // 데이터 룸타입 표시
+            bodyCell = bodyRow.createCell(2);
+            bodyCell.setCellValue(rsvMap.get("room_name")); 
+            
+            // 데이터 고객명 표시
+            bodyCell = bodyRow.createCell(3);
+            bodyCell.setCellValue(rsvMap.get("user_name")); 
+            
+            // 데이터 체크인 표시
+            bodyCell = bodyRow.createCell(4);
+            bodyCell.setCellValue(rsvMap.get("check_in")); 
+            
+            // 데이터 체크아웃 표시
+            bodyCell = bodyRow.createCell(5);
+            bodyCell.setCellValue(rsvMap.get("check_out")); 
+            
+            // 데이터 총객실수 표시
+            bodyCell = bodyRow.createCell(6);
+            bodyCell.setCellValue(rsvMap.get("room_stock")); 
+            
+            // 데이터 예약된객실수 표시
+            bodyCell = bodyRow.createCell(7);
+            bodyCell.setCellValue(rsvMap.get("count")); 
+            
+            // 데이터 잔여객실수 표시
+            bodyCell = bodyRow.createCell(8);
+            bodyCell.setCellValue(Integer.parseInt(rsvMap.get("room_stock")) - Integer.parseInt(rsvMap.get("count"))); 
+            
+            // 데이터 예약상태 표시
+            bodyCell = bodyRow.createCell(9);
+            
+            switch (rsvMap.get("status")) {
+				case "0":
+					bodyCell.setCellValue("승인대기");
+					break;
+				
+				case "1":
+					bodyCell.setCellValue("확정");
+					break;
+					
+				case "2":
+					bodyCell.setCellValue("취소");
+					break;
+					
+			} // end of switch --------------------
+            
+        } // end of for ---------------------------------------
+
+        model.addAttribute("locale", Locale.KOREA);
+        model.addAttribute("workbook", workbook);
+        model.addAttribute("workbookName", paraMap.get("company_name") + " 숙소 예약내역");
+    	
 	}
 	
 }
