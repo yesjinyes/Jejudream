@@ -183,8 +183,6 @@ div#pageBar a {
 		<input type="radio" id="radio-5" name="category" value="4" />
 		<label class="tab" for="radio-5">맛집</label>
 		
-		<input type="radio" id="radio-6" name="category" value="5" />
-		<label class="tab" for="radio-6">구인</label>
 		<span class="glider"></span>
 	</div>
 	<%--

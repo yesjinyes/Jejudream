@@ -541,6 +541,7 @@
 			url: "<%=ctxPath%>/community/viewComment.trip",
 			data: {
 				"parentSeq":"${requestScope.boardvo.seq}",
+				"category":"${requestScope.boardvo.category}",
 				"currentShowPageNo":currentShowPageNo
 			},
 			dataType: "json",
@@ -585,8 +586,13 @@
 							v_html += `	   <div style="width: 90%; padding: 1.5% 0">
 											<div class="mb-2 d-flex align-items-center">
 												<img src="<%=ctxPath%>/resources/images/logo_circle.png" width="30">
-												<span class="font-weight-bold" style="margin-left: 1%; font-size: 1rem;">\${item.name}</span>
-											</div>
+												<span class="font-weight-bold" style="margin-left: 1%; font-size: 1rem;">\${item.name}</span>`;
+											
+							if(item.fk_userid == item.board_id) { // 원글 작성자가 댓글을 작성할 경우
+								v_html += `<div class="ml-2 d-inline-block" style="border: solid 1px #ff854d; border-radius: 15px; font-size: 0.8rem; padding: 0.2% 0.7%; color: #ff5000;">작성자</div>`;
+							}
+												
+							v_html += `		</div>
 											<input type="hidden" id="cmt_seq" value="\${item.seq}">
 											<input type="hidden" id="cmt_userid" value="\${item.fk_userid}">
 											<span class="d-block mb-2" id="cmt_content">\${item.content}</span>
