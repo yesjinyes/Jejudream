@@ -323,15 +323,26 @@
 		from
 		(
 		select rownum as rno, faq_seq, faq_category, faq_question, faq_answer
-		from tbl_faq
-		)V
+		from
+			(
+			select faq_seq, faq_category, faq_question, faq_answer
+			from tbl_faq
+			<if test='!faq_category.equals("")'>
+				where faq_category = #{faq_category}
+			</if>
+			order by faq_seq desc
+			)V
+		)V2
 		where RNO between #{startRno} and #{endRno}
 	</select>
 
 	<!-- FAQ 전체 리스트 페이징 처리 시 순번 나타내기 위함  -->
-	<select id="getTotalFaqList" resultType="int">
+	<select id="getTotalFaqList" parameterType="String" resultType="int">
 		select count(*)
 		from tbl_faq
+		<if test='!faq_category.equals("")'>
+			where faq_category = #{faq_category}
+		</if>
 	</select>
 
 

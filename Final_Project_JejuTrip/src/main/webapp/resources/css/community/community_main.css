@@ -85,7 +85,7 @@ input[id=radio-6]:checked ~ .glider {
   position: absolute;
   display: flex;
   height: 54px;
-  width: 16.2%;
+  width: 19.3%;
   /* width: 151px; */
   background-color: #ffdccc;
   z-index: 1;
