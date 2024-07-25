@@ -85,7 +85,7 @@ public interface Yj_TripService {
 	List<Map<String, String>> viewAllFaqList_paging(Map<String, String> paraMap);
 
 	// == FAQ 전체 리스트 페이징 처리 시 순번 나타내기 위함 == //
-	int getTotalFaqList();
+	int getTotalFaqList(String faq_category);
 
 	
 

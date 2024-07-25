@@ -82,6 +82,10 @@ div.accordion-content {
   padding: 2%;
 }
 
+.backgroundColor {
+    background-color: #ffe5cc;
+}
+
 </style>
 
 
@@ -90,8 +94,25 @@ div.accordion-content {
 	
 	$(document).ready(function(){
 
-		goViewAllFaqList(1); // 자주묻는질문 전체 띄우기
+		goViewFaqList(1); // 자주묻는질문 전체 띄우기
+
+		// 카테고리 값 띄우기
+		$("a.faq_category").click(function(e) {
+			// alert($(e.target).text());
+			
+			const faq_category = $(e.target).text(); // 선택한 카테고리 값 가져오기
+
+			if(faq_category == '전체') {
+				$("input[name='faq_category']").val(""); // input 태그에 클릭된 카테고리 꽂아주기 (전체일 경우 "" 이 되고, mapper 에서 조건 주었음)
+			}
+			else {
+				$("input[name='faq_category']").val(faq_category); // input 태그에 클릭된 카테고리 꽂아주기
+			}
+			
+			goViewFaqList(1);
+		});// end of $("a.faq_category").click(function(e) {})-------------------------
 		
+		 
         function activeLink() {
             // 모든 네비게이션 항목에서 active 클래스를 제거합니다.
             list.forEach((item) => item.classList.remove('active'));
@@ -102,22 +123,38 @@ div.accordion-content {
 	});// end of $(document).ready(function(){})-----------------------------------------
 	
 	
+	// == 질문 아코디언 == //
+	function toggleAccordion(header) {
+
+		var content = header.nextElementSibling;
+
+	    // content가 숨겨져 있으면 보이게 하고, 보이는 중이면 숨기기
+	    if (content.style.display === 'block') {
+	        content.style.display = 'none';
+	    } else {
+	        content.style.display = 'block';
+	    }
+	}// end of function toggleAccordion(header)-----------------------
+	
+	
+	///////////////////////////////////////////////////////////////////////////////////////////////
+	
 	// == 자주묻는질문 리스트 띄우기 == //
-	function goViewAllFaqList(currentShowPageNo){
+	function goViewFaqList(currentShowPageNo){
 		
 		$.ajax({
 			url:"<%= ctxPath%>/faqListJSON.trip",
-			data:{"currentShowPageNo":currentShowPageNo},
+			data:{"currentShowPageNo":currentShowPageNo, "faq_category":$("input[name='faq_category']").val()},
 			type:"get",
 			dataType:"json",
 			success:function(json){
 				// console.log(JSON.stringify(json));
 				
-				let v_html_all = "";
+				let v_html_faq = "";
 				
 				if(json.length > 0){
 					$.each(json, function(index, item){
-						v_html_all += `<div class="accordionEach">
+						v_html_faq += `<div class="accordionEach">
 										   <div class="accordion-header" id="accordion-header" onclick="toggleAccordion(this)">
 											   <span>Q.</span>&nbsp;&nbsp;
 						    			       <input type="hidden" name="faq_seq" value="\${item.faq_seq}" />
@@ -132,15 +169,14 @@ div.accordion-content {
 					}); // end of $.each(json, function(index, item){})-------- 
 				}
 				else {
-					v_html_all += "<span>등록된 질문이 없습니다.</span>";
+					v_html_faq += "<span>등록된 질문이 없습니다.</span>";
 				}
 				
-				$("div#accordion-item").html(v_html_all);
+				$("div#faqList").html(v_html_faq);
 				
 			    // 페이지바 함수 호출 
 			    const totalPage = Math.ceil(json[0].totalCount/json[0].sizePerPage); 
-			 // console.log("totalPage : ", totalPage);
-			 // totalPage : 3
+			 	// console.log("totalPage : ", totalPage);
 			    
 			    makeAllFaqListPageBar(currentShowPageNo, totalPage);
 			},
@@ -149,6 +185,7 @@ div.accordion-content {
 			}
 		});
 		
+		// == 자주묻는질문 페이지바 == //
 		function makeAllFaqListPageBar(currentShowPageNo, totalPage){
 			const blockSize = 10;
 			
@@ -158,10 +195,10 @@ div.accordion-content {
 		
 			let pageBar_HTML = "<ul style='list-style:none;'>";
 			
-			// === [맨처음][이전] 만들기 === //
+			// [맨처음][이전] 만들기
 			if(pageNo != 1) {
-				pageBar_HTML += "<li class='fist_page'><a href='javascript:goViewAllFaqList(1)'>[맨처음]</a></li>";
-				pageBar_HTML += "<li class='before_page'><a href='javascript:goViewAllFaqList("+(pageNo-1)+")'>[이전]</a></li>"; 
+				pageBar_HTML += "<li class='fist_page'><a href='javascript:goViewFaqList(1)'>[맨처음]</a></li>";
+				pageBar_HTML += "<li class='before_page'><a href='javascript:goViewFaqList("+(pageNo-1)+")'>[이전]</a></li>"; 
 			}
 			
 			while( !(loop > blockSize || pageNo > totalPage) ) {
@@ -170,38 +207,30 @@ div.accordion-content {
 					pageBar_HTML += "<li class='this_page_no'>"+pageNo+"</li>";
 				}
 				else {
-					pageBar_HTML += "<li class='choice_page_no'><a href='javascript:goViewAllFaqList("+pageNo+")'>"+pageNo+"</a></li>"; 
+					pageBar_HTML += "<li class='choice_page_no'><a href='javascript:goViewFaqList("+pageNo+")'>"+pageNo+"</a></li>"; 
 				}
 				
 				loop++;
 				pageNo++;
 			}// end of while------------------------
 			
-			// === [다음][마지막] 만들기 === //
+			// [다음][마지막] 만들기
 			if(pageNo <= totalPage) {
-				pageBar_HTML += "<li class='next_page_no'><a href='javascript:goViewAllFaqList("+pageNo+")'>[다음]</a></li>";
-				pageBar_HTML += "<li class='last_page_no'><a href='javascript:goViewAllFaqList("+totalPage+")'>[마지막]</a></li>"; 
+				pageBar_HTML += "<li class='next_page_no'><a href='javascript:goViewFaqList("+pageNo+")'>[다음]</a></li>";
+				pageBar_HTML += "<li class='last_page_no'><a href='javascript:goViewFaqList("+totalPage+")'>[마지막]</a></li>"; 
 			}
 			
 			pageBar_HTML += "</ul>";		
 			
-			// 댓글 페이지바 출력하기
+			// 페이지바 출력하기
 			$("div#faqList_pageBar").html(pageBar_HTML);
 		}
 		
-	}// end of function goViewAllFaqList(currentShowPageNo)-------------------------
+	}// end of function goViewFaqList(currentShowPageNo)-------------------------
 	
-	function toggleAccordion(header) {
-	    // 해당 헤더의 다음 sibling 요소인 content를 가져옵니다.
-	    var content = header.nextElementSibling;
+	///////////////////////////////////////////////////////////////////////////////////////////////
 
-	    // content가 숨겨져 있으면 보이게 하고, 보이는 중이면 숨깁니다.
-	    if (content.style.display === 'block') {
-	        content.style.display = 'none';
-	    } else {
-	        content.style.display = 'block';
-	    }
-	}
+
 
 </script>
 
@@ -240,6 +269,7 @@ div.accordion-content {
 				</span>
 				<span>
 					<input type="text" name="searchWord" placeholder="검색어를 입력하세요."/>
+					<button type="button" id="btnSearch">검색</button>
 				</span>
 			</div>
 		</div>
@@ -249,25 +279,25 @@ div.accordion-content {
 			<!-- FAQ 카테고리 navigation bar -->
 			<ul class="nav nav-tabs">
 				<li class="nav-item">
-					<a class="nav-link active" data-toggle="tab" href="#faq_all">전체</a>
+					<a class="nav-link active faq_category" data-toggle="tab" href="#faqList">전체</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" data-toggle="tab" href="#faq_reservation">예약</a>
+					<a class="nav-link faq_category" data-toggle="tab" href=#faqList>예약</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" data-toggle="tab" href="#faq_payment">카드/결제</a>
+					<a class="nav-link faq_category" data-toggle="tab" href="#faqList">카드/결제</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" data-toggle="tab" href="#faq_lodging">숙소</a>
+					<a class="nav-link faq_category" data-toggle="tab" href="#faqList">숙소</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" data-toggle="tab" href="#faq_foodstore">맛집</a>
+					<a class="nav-link faq_category" data-toggle="tab" href="#faqList">맛집</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" data-toggle="tab" href="#faq_play">즐길거리</a>
+					<a class="nav-link faq_category" data-toggle="tab" href="#faqList">즐길거리</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" data-toggle="tab" href="#faq_etc">기타</a>
+					<a class="nav-link faq_category" data-toggle="tab" href="#faqList">기타</a>
 				</li>
 			</ul>
 			
@@ -275,11 +305,16 @@ div.accordion-content {
 			<div class="tab-content" style="border: none;"><br>
 				<div class="accordion">
 				    <div class="accordion-item" id="accordion-item">
+				    	<!-- 전체 -->
+				    	<div id="faqList">
+				    	
+				    	</div>
+				    	
 				    </div>
 				</div>
 			</div>
 			<div id="faqList_pageBar" class="pageBar"></div>
-			
+			<input type="hidden" name="faq_category"/>
 			
 		</div>
 	</form>
