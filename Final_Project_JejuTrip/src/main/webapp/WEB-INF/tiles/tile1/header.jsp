@@ -94,7 +94,15 @@ $(document).ready(function() {
         $line.css("width", "0");
     });
     
-});
+    
+    // 검색창 엔터 시 전체 검색
+    $("input#searchWord").keyup(function(e) {
+    	if(e.keyCode == 13) {
+    		goSearch(e);
+    	}
+    });
+    
+}); // end of $(document).ready(function() {}) -------------------------
 
 
 
@@ -213,6 +221,27 @@ function whatWeather(){
 	
 }// end of function showWeather()--------------------
 
+
+// === 전체 검색 ===
+function goSearch(event) {
+	
+	if(event) {
+		event.preventDefault();
+	}
+	
+	const searchWord = $("input#searchWord").val().trim();
+	
+	if(searchWord == "") {
+		alert("검색어를 입력하세요!");
+	 	return false; // false를 반환하여 폼 제출을 막음
+	}
+	
+	const frm = document.allSearchFrm;
+	frm.action = "<%=ctxPath%>/allSearch.trip";
+	frm.submit();
+	return true; // true를 반환하여 폼 제출을 허용
+}
+
 </script>
 
 <div style="background-color: #F5F5F5;">
@@ -257,7 +286,7 @@ function whatWeather(){
 					</c:if>
 					
 					<li class="nav-item">
-						<a class="nav-link" href="#">고객센터</a>
+						<a class="nav-link" href="<%=ctxPath%>/support.trip">고객센터</a>
 					</li>
 				</ul>
 			</div>
@@ -299,9 +328,9 @@ function whatWeather(){
 			    </ul>
 			    
 			    
-			      <form class="form-inline mt-2 mt-lg-0 mr-auto">
-					    <input type="text" class="mr-sm-2" style="background-color: #F5F5F5; border-width: 0 0 2px;" placeholder="검색어를 입력하세요">
-					    <button class="btn my-2 my-sm-0" type="button"><i class="fa-solid fa-magnifying-glass"></i></button>
+			      <form name="allSearchFrm" class="form-inline mt-2 mt-lg-0 mr-auto" onsubmit="return goSearch(event)">
+					    <input type="text" id="searchWord" name="searchWord" class="mr-sm-2" style="background-color: #F5F5F5; border-width: 0 0 2px;" placeholder="검색어를 입력하세요">
+					    <button id="searchBtn" class="btn my-2 my-sm-0" type="button" onclick="goSearch(event)"><i class="fa-solid fa-magnifying-glass"></i></button>
 				  </form>
 				
 				<ul class="navbar-nav my-2 my-lg-0">
@@ -326,15 +355,6 @@ function whatWeather(){
 							<a class="nav-link text-center" href="<%=ctxPath%>/screeningRegister.trip">
 								<i class="fa-solid fa-check"></i>
 								<div>신청검토</div>
-							</a>
-						</li>
-					</c:if>
-					
-					<c:if test="${empty sessionScope.loginCompanyuser && sessionScope.loginuser.userid != 'admin'}">
-						<li class="user_menu nav-item mr-3">
-							<a class="nav-link text-center" href="#">
-								<i class="fa-solid fa-cart-shopping"></i>
-								<div>장바구니</div>
 							</a>
 						</li>
 					</c:if>
