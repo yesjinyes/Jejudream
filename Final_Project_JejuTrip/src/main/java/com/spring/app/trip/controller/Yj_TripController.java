@@ -706,6 +706,16 @@ public class Yj_TripController {
 		
 		String faq_category = request.getParameter("faq_category"); // 카테고리 탭 선택 ajax 적용을 위한 것
 		// System.out.println("faq_category => " + faq_category );
+
+		String searchWord = request.getParameter("searchWord"); 
+		// System.out.println("검색어 확인 => " + searchWord);
+		
+		
+		Map<String, String> paraMap = new HashMap<>();
+		
+		if(searchWord != null && !"".equals(searchWord)) { // null 이 아니거나, 공백이 아닐 경우에만 Map 에 담아준다.
+			paraMap.put("searchWord", searchWord);
+		}
 		
 		if(faq_category == null) { // 카테고리가 전체일 경우 "" 을 주어서 mapper 에서 조건 주기 위함
 			faq_category = "";
@@ -720,7 +730,7 @@ public class Yj_TripController {
 		int startRno = ((Integer.parseInt(currentShowPageNo) - 1) * sizePerPage) + 1; // 시작 행번호 
 		int endRno = startRno + sizePerPage - 1; // 끝 행번호
 		
-		Map<String, String> paraMap = new HashMap<>();
+		
 		paraMap.put("startRno", String.valueOf(startRno));
 		paraMap.put("endRno", String.valueOf(endRno));
 
@@ -730,10 +740,11 @@ public class Yj_TripController {
 		// 모든 질문 읽어오기
 		List<Map<String,String>> faqList = service.viewAllFaqList_paging(paraMap);
 		
-		int totalCount = service.getTotalFaqList(faq_category); // FAQ 전체 리스트 페이징 처리 시 순번 나타내기 위함
+		int totalCount = service.getTotalFaqList(paraMap); // FAQ 리스트 페이징 처리 위함
 		// System.out.println("~~~FAQ 전체 개수 => " + totalCount);
 		
 		JSONArray jsonArr = new JSONArray(); // [] 
+		
 		if(faqList != null) {
 			for(Map<String,String> faqMap : faqList) {
 				JSONObject jsonObj = new JSONObject(); 
@@ -743,17 +754,21 @@ public class Yj_TripController {
 				jsonObj.put("faq_question", faqMap.get("faq_question"));
 				jsonObj.put("faq_answer", faqMap.get("faq_answer"));
 				
+				
 				jsonObj.put("totalCount", totalCount);   
 				jsonObj.put("sizePerPage", sizePerPage);  
-				
 				
 				jsonArr.put(jsonObj);
 			}// end of for-----------------------
 		}
 		
+		
 		//System.out.println(jsonArr.toString());
 		return jsonArr.toString(); 	
 	}
+	
+	
+	
 	
 	
 	
