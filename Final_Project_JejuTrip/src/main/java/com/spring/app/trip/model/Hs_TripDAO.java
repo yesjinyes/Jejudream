@@ -19,7 +19,7 @@ public interface Hs_TripDAO {
 
 	int getPlayTotalCount(Map<String, Object> paraMap);// 페이징 처리를 위한 즐길거리 수량
 
-	PlayVO goAddSchedule(String play_code);// 즐길거리 디테일 페이지 
+	PlayVO goAddSchedule(String play_code );// 즐길거리 디테일 페이지 
 	
 	int addReview(ReviewVO reviewvo);//즐길거리 리뷰작성
 	
@@ -59,7 +59,7 @@ public interface Hs_TripDAO {
 
 	int registerPlaySchedule_end(Map<String, String> paraMap); //일정추가
 
-	List<Calendar_schedule_VO> checkSchedule(Map<String, String> paraMap); //일정추가했는지알아오기
+	//List<Calendar_schedule_VO> checkSchedule(Map<String, String> paraMap); //일정추가했는지알아오기
 
 	
 	

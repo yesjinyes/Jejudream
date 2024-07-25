@@ -59,10 +59,12 @@ public class Hs_TripService_imple implements Hs_TripService {
 	public PlayVO goAddSchedule(String play_code) {
 		
 		PlayVO goAddSchedule = dao.goAddSchedule(play_code);
-		
-		int n = dao.increase_readCount(goAddSchedule.getPlay_code());
-		if(n==1) {
-			goAddSchedule.setReadCount(String.valueOf(Integer.parseInt(goAddSchedule.getReadCount())+1));
+		if(goAddSchedule != null){
+			
+			int n = dao.increase_readCount(goAddSchedule.getPlay_code());
+			if(n==1) {
+				goAddSchedule.setReadCount(String.valueOf(Integer.parseInt(goAddSchedule.getReadCount())+1));
+			}
 		}
 		
 		return goAddSchedule;
@@ -210,8 +212,8 @@ public class Hs_TripService_imple implements Hs_TripService {
 	//일행 추가를 위한 유저 ID select
 	@Override
 	public List<MemberVO> searchPlayJoinUserList(String joinUserName) {
-		List<MemberVO> JoinUserList = dao.searchPlayJoinUserList(joinUserName);
-		return JoinUserList;
+		List<MemberVO> joinUserList = dao.searchPlayJoinUserList(joinUserName);
+		return joinUserList;
 	}
 	
 	//일정추가
@@ -221,13 +223,13 @@ public class Hs_TripService_imple implements Hs_TripService {
 		return n;
 	}
 	
-	//일정추가 했는지 알아오기
-	@Override
-	public List<Calendar_schedule_VO> checkSchedule(Map<String, String> paraMap) {
-		List<Calendar_schedule_VO> checkSchedule = dao.checkSchedule(paraMap);
-		//System.out.println("checkSchedule" + checkSchedule);
-		return checkSchedule;
-	}
+//	//일정추가 했는지 알아오기
+//	@Override
+//	public List<Calendar_schedule_VO> checkSchedule(Map<String, String> paraMap) {
+//		List<Calendar_schedule_VO> checkSchedule = dao.checkSchedule(paraMap);
+//		//System.out.println("checkSchedule" + checkSchedule);
+//		return checkSchedule;
+//	}
 	
 	
 	//모든 리뷰를 count 하기

@@ -40,7 +40,7 @@ function goFoodLikeList(){
 						v_html += "<td style='text-align: left;'>"+item.food_name+"</td>";
 						v_html += "<input type='hidden' value='<%= ctxPath%>/foodstoreDetail.trip?food_store_code="+item.parent_code+"'>";
 						v_html += "</tr>";
-				    	
+						v_html += "<div class='customDisplay spacediv commentDel' onclick='delMyReview("+item.review_code+")'>후기삭제</div><br><br>"; 
 				    	
 		               r_html = item.totalCount
 		           }); 

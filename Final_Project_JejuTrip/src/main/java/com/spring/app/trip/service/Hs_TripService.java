@@ -54,7 +54,7 @@ public interface Hs_TripService {
 
 	int registerPlaySchedule_end(Map<String, String> paraMap);  //일정추가
 
-	List<Calendar_schedule_VO> checkSchedule(Map<String, String> paraMap);
+	//List<Calendar_schedule_VO> checkSchedule(Map<String, String> paraMap);
 
 	
 	

@@ -211,11 +211,11 @@ insert into tbl_calendar_schedule(scheduleno, startdate, enddate, subject, color
 </insert> 
  
  
- <select id="checkSchedule" parameterType="HashMap" resultType="com.spring.app.trip.domain.Calendar_schedule_VO">
+ <!-- <select id="checkSchedule" parameterType="HashMap" resultType="com.spring.app.trip.domain.Calendar_schedule_VO">
   select scheduleno, startdate, enddate, subject, color, place, joinuser, content, fk_smcatgono, fk_lgcatgono, fk_userid ,schedule_divison
   from tbl_calendar_schedule
   where fk_userid = #{fk_userid} and parent_code = #{parent_code}
- </select>
+ </select> -->
  
  
  <select id="getAllReviewCount" parameterType="HashMap" resultType="int">
@@ -426,10 +426,10 @@ from
  
  
  <select id="admin_ReviewList" parameterType="HashMap" resultType="com.spring.app.trip.domain.ReviewVO">
-SELECT review_content,registerday,RNO ,review_division_R ,parent_code ,fk_userid
+SELECT review_content,registerday,RNO ,review_division_R ,parent_code ,fk_userid,review_code
 FROM
 	(
-		select review_content,to_char(registerday,'yyyy-mm-dd')as registerday ,row_number() over(order by registerday desc) as rno , review_division_R ,parent_code,fk_userid
+		select review_content,to_char(registerday,'yyyy-mm-dd')as registerday ,row_number() over(order by registerday desc) as rno , review_division_R ,parent_code,fk_userid,review_code
 		from tbl_review
 		Order By registerday Desc
 		
@@ -456,13 +456,14 @@ WHERE RNO between #{startRno} and #{endRno}
 	<result property="food_name" 			column="food_name" 			javaType="String"/>
 	<result property="parent_code" 			column="parent_code" 		javaType="String"/>
 	<result property="fk_userid" 			column="fk_userid" 			javaType="String"/>
+	<result property="review_code" 			column="review_code" 		javaType="String"/>
 </resultMap>
 	
 <select id="adminfoodReviewList" resultMap="adminfoodReviewList_map">
-select rno ,food_name ,review_content,registerday,parent_code ,fk_userid
+select rno ,food_name ,review_content,registerday,parent_code ,fk_userid,review_code
 from
 (
-select row_number() over(order by registerday desc) as rno,R.review_content,to_char(R.registerday,'yyyy-mm-dd')as registerday , F.food_name,parent_code ,R.fk_userid
+select row_number() over(order by registerday desc) as rno,R.review_content,to_char(R.registerday,'yyyy-mm-dd')as registerday , F.food_name,parent_code ,R.fk_userid ,R.review_code
 from tbl_food_store F join tbl_review R
 on F.food_store_code = R.parent_code
 where review_division_R = 'B'
@@ -489,13 +490,14 @@ order by rno desc
 	<result property="food_name" 			column="food_name" 		javaType="String"/>
 	<result property="parent_code" 			column="parent_code" 		javaType="String"/>
 	<result property="fk_userid" 			column="fk_userid" 		javaType="String"/>
+	<result property="review_code" 			column="review_code" 		javaType="String"/>
 </resultMap>
 	
 <select id="adminPlayReviewList" resultMap="adminPlayReviewList_map">
-select rno ,play_name ,review_content,registerday,parent_code ,fk_userid
+select rno ,play_name ,review_content,registerday,parent_code ,fk_userid ,review_code
 from
 (
-select row_number() over(order by registerday desc) as rno, p.play_name,R.review_content, to_char(R.registerday,'yyyy-mm-dd')as registerday,r.parent_code ,r.fk_userid
+select row_number() over(order by registerday desc) as rno, p.play_name,R.review_content, to_char(R.registerday,'yyyy-mm-dd')as registerday,r.parent_code ,r.fk_userid ,R.review_code
 from tbl_play P join tbl_review R
 on p.play_code = R.parent_code
 where review_division_R = 'C'
@@ -520,16 +522,17 @@ order by rno desc
 	<result property="registerday" 			column="registerday" 		javaType="String"/>
 	<result property="lodging_code" 			column="lodging_code" 		javaType="String"/>
 	<result property="fk_userid" 			column="fk_userid" 		javaType="String"/>
+	<result property="review_code" 			column="review_code" 		javaType="String"/>
 </resultMap>
 	
 <select id="adminLogingReviewList" resultMap="adminLogingReviewList_map">
-	select rno,lodging_name, review_content,fk_userid,registerday,lodging_code
+	select rno,lodging_name, review_content,fk_userid,registerday,lodging_code,review_code
 	from 
     (
-	    select rownum as rno, A.lodging_name, A.review_content, A.fk_userid, to_char(A.registerday,'yyyy-mm-dd')as registerday, A.lodging_code
+	    select rownum as rno, A.lodging_name, A.review_content, A.fk_userid, to_char(A.registerday,'yyyy-mm-dd')as registerday, A.lodging_code ,A.review_code
 	    from
 	        (
-		        select lodging_name, review_content, fk_userid, registerday,lodging_code
+		        select lodging_name, review_content, fk_userid, registerday,lodging_code ,review_code
 		        from tbl_lodging L join
 		        tbl_review R
 		        on L.lodging_code = R.parent_code

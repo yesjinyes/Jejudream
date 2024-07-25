@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -228,16 +229,26 @@ public class Hs_TripController {
 		
 		//디테일겸, 일정추가 있는 페이지
 		@GetMapping("goAddSchedule.trip")
-		public ModelAndView goAddSchedule (ModelAndView mav , HttpServletRequest request) {
-			
+		public ModelAndView goAddSchedule (ModelAndView mav , HttpServletRequest request,HttpServletResponse response) {
 			String play_code = request.getParameter("play_code");
 			//System.out.println("play_code"+play_code);
-			PlayVO playvo = service.goAddSchedule(play_code);
+			try {
+				Integer.parseInt(play_code);
 			
-
-
-			mav.addObject("playvo", playvo);
-			mav.setViewName("play/goAddSchedule.tiles1");
+				PlayVO playvo = service.goAddSchedule(play_code);
+				
+				if(playvo == null) {
+					mav.setViewName("redirect:/playMain.trip");
+					return mav;
+				}
+					
+				mav.addObject("playvo", playvo);
+				mav.setViewName("play/goAddSchedule.tiles1");
+					
+				
+			}catch (NumberFormatException e) {
+				mav.setViewName("redirect:/playMain.trip");
+			}
 			
 			return mav;
 		}
@@ -626,7 +637,7 @@ public class Hs_TripController {
 		
 		
 		//--------------------------------일정추가 관련 시작-------------------------------------------//
-	/*	
+	
 		// === 공유자를 찾기 위한 특정글자가 들어간 회원명단 불러오기 ===
 		@ResponseBody
 		@RequestMapping(value="/schedule/insertSchedule/searchPlayJoinUserList.trip", produces="text/plain;charset=UTF-8")
@@ -642,7 +653,7 @@ public class Hs_TripController {
 				for(MemberVO mvo : joinUserList) {
 					JSONObject jsObj = new JSONObject();
 					jsObj.put("userid", mvo.getUserid());
-					jsObj.put("name", mvo.getUser_name());
+					jsObj.put("user_name", mvo.getUser_name());
 					
 					jsonArr.put(jsObj);
 				}
@@ -651,7 +662,7 @@ public class Hs_TripController {
 			return jsonArr.toString();
 			
 		}
-		*/
+	
 		
 		// === 일정 등록하기 ===
 		@PostMapping("/schedule/registerPlaySchedule_end.trip")
@@ -697,8 +708,7 @@ public class Hs_TripController {
 				mav.addObject("message", "일정 등록에 성공하였습니다.");
 			}
 			
-			mav.addObject("loc", request.getContextPath()+"/index.trip");
-			
+			mav.addObject("loc", request.getContextPath()+"/goAddSchedule.trip?play_code="+ parent_code );
 			mav.setViewName("msg");
 			
 			return mav;
@@ -706,29 +716,29 @@ public class Hs_TripController {
 		
 		
 		
-		@ResponseBody
-		@GetMapping(value =("checkSchedule.trip"),produces="text/plain;charset=UTF-8")
-		 public String checkSchedule(HttpServletRequest request, HttpServletResponse response) throws Exception {
-			
-			String parent_code = request.getParameter("parent_code");
-		    String fk_userid = request.getParameter("fk_userid");
-
-		    Map<String, String> paraMap = new HashMap<>();
-		    
-		    JSONObject jsonObj = new JSONObject();
-		    paraMap.put("parent_code", parent_code);
-
-		    if (fk_userid != null && !fk_userid.isEmpty()) {
-		        paraMap.put("fk_userid", fk_userid);
-		        
-		        List<Calendar_schedule_VO> calcheck = service.checkSchedule(paraMap); // 좋아요를 했는지 알아오는 것 (0 또는 1)
-		        jsonObj.put("calcheck", calcheck != null ? calcheck.size() > 0 : false);
-		    } else {
-		        jsonObj.put("calcheck", false);
-		    }
-
-		    return jsonObj.toString();
-		}
+//		@ResponseBody
+//		@GetMapping(value =("checkSchedule.trip"),produces="text/plain;charset=UTF-8")
+//		 public String checkSchedule(HttpServletRequest request, HttpServletResponse response) throws Exception {
+//			
+//			String parent_code = request.getParameter("parent_code");
+//		    String fk_userid = request.getParameter("fk_userid");
+//
+//		    Map<String, String> paraMap = new HashMap<>();
+//		    
+//		    JSONObject jsonObj = new JSONObject();
+//		    paraMap.put("parent_code", parent_code);
+//
+//		    if (fk_userid != null && !fk_userid.isEmpty()) {
+//		        paraMap.put("fk_userid", fk_userid);
+//		        
+//		        List<Calendar_schedule_VO> calcheck = service.checkSchedule(paraMap); // 좋아요를 했는지 알아오는 것 (0 또는 1)
+//		        jsonObj.put("calcheck", calcheck != null ? calcheck.size() > 0 : false);
+//		    } else {
+//		        jsonObj.put("calcheck", false);
+//		    }
+//
+//		    return jsonObj.toString();
+//		}
 		
 		
 		///////////////////////////////오픈api 시작////////////////////////////////////
@@ -1200,6 +1210,7 @@ public class Hs_TripController {
 					jsonObj.put("parent_code",reviewvo.getParent_code());  //부모코드
 					jsonObj.put("fk_userid",reviewvo.getFk_userid());  //작성자
 					jsonObj.put("rno",reviewvo.getRno()); 
+					jsonObj.put("review_code",reviewvo.getReview_code()); 
 					
 					jsonObj.put("totalCount", totalCount); //총 페이지 
 	            	jsonObj.put("sizePerPage", sizePerPage); //한페이지당 보여줄 개수
@@ -1253,6 +1264,7 @@ public class Hs_TripController {
 					jsonObj.put("food_name",map.get("food_name"));  //가게이름
 					jsonObj.put("parent_code",map.get("parent_code"));  //부모코드
 					jsonObj.put("fk_userid",map.get("fk_userid"));  //부모코드
+					jsonObj.put("review_code",map.get("review_code"));  
 					
 					jsonObj.put("totalCount", totalCount); //총 페이지 
 	            	jsonObj.put("sizePerPage", sizePerPage); //한페이지당 보여줄 개수
@@ -1306,6 +1318,7 @@ public class Hs_TripController {
 					jsonObj.put("registerday",map.get("registerday"));  //작성일자
 					jsonObj.put("parent_code",map.get("parent_code"));  //부모코드
 					jsonObj.put("fk_userid",map.get("fk_userid"));  //부모코드
+					jsonObj.put("review_code",map.get("review_code")); 
 					
 					jsonObj.put("totalCount", totalCount); //총 페이지 
 	            	jsonObj.put("sizePerPage", sizePerPage); //한페이지당 보여줄 개수
@@ -1360,6 +1373,7 @@ public class Hs_TripController {
 					jsonObj.put("registerday",map.get("registerday")); //작성일자 리뷰VO
 					jsonObj.put("lodging_code",map.get("lodging_code"));  //부모코드
 					jsonObj.put("fk_userid",map.get("fk_userid"));  //부모코드
+					jsonObj.put("review_code",map.get("review_code")); 
 					
 					jsonObj.put("totalCount", totalCount); //총 페이지 
 	            	jsonObj.put("sizePerPage", sizePerPage); //한페이지당 보여줄 개수
@@ -1375,7 +1389,19 @@ public class Hs_TripController {
 		}
 		
 		
-		
+		@ResponseBody
+		@PostMapping(value="adminDeleteReview.trip",produces="text/plain;charset=UTF-8")
+		public String adminDeleteReview (HttpServletRequest request) {
+			
+			String review_code = request.getParameter("review_code");
+			
+			int n = service.reviewDel(review_code);
+
+		    JSONObject jsonObj = new JSONObject(); 
+		    jsonObj.put("n", n);
+	        return jsonObj.toString();
+			
+		}
 		
 		
 		

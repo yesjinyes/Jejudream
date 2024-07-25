@@ -232,7 +232,7 @@ ul.list li {
   font-size: 15pt;
 }
 
-.joinUserName{
+.joinUserName2{
 	width: 35%;
 	height: calc(1.5em + .75rem + 2px);
     padding: .375rem .75rem;
@@ -246,7 +246,49 @@ ul.list li {
     border-radius: .25rem;
     transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
 }
+
+
+
+
+
 /*-----------------------------------------------------------------*/
+
+/*스케쥴관련 css  */
+	input#joinUserName2:focus{
+		outline: none;
+	}
+	
+	span.plusUser{
+		float:left; 
+		background-color:#737373; 
+		color:white;
+		border-radius: 10%;
+		padding: 8px;
+		margin: 3px;
+		transition: .8s;
+		margin-top: 6px;
+	}
+	
+	span.plusUser > i {
+		cursor: pointer;
+	}
+	
+ .ui-autocomplete {
+		max-height: 100px;
+		overflow-y: auto;
+	}
+	  
+	button.btn_normal{
+		border: none;
+		color: white;
+		width: 70px;
+		height: 30px;
+		font-size: 12pt;
+		padding: 3px 0px;
+		border-radius: 10%;
+	}
+
+
 
 </style>
 
@@ -256,7 +298,7 @@ ul.list li {
 $(document).ready(function() {
 	
 	goLikeDislikeCount();
-	goCheckSchedule();
+	//goCheckSchedule();
 	
 	const today = new Date();
     const year = today.getFullYear();
@@ -450,49 +492,43 @@ $(document).ready(function() {
     //--------------------------------------map관련 끝 ---------------------------------------//
 
 		// 공유자 추가하기
-		$("input#joinUserName").bind("keyup",function(){
-				var joinUserName = $(this).val();
-			//	console.log("확인용 joinUserName : " + joinUserName);
-				$.ajax({
-					url:"<%= ctxPath%>/schedule/insertSchedule/searchPlayJoinUserList.trip",
-					data:{"joinUserName":joinUserName},
-					dataType:"json",
-					success : function(json){
-						var joinUserArr = [];
-				    
-					//  input태그 공유자입력란에 "이" 를 입력해본 결과를 json.length 값이 얼마 나오는지 알아본다. 
-					//	console.log(json.length);
-					
-						if(json.length > 0){
-							
-							$.each(json, function(index,item){
-								var name = item.name;
-								if(name.includes(joinUserName)){ // name 이라는 문자열에 joinUserName 라는 문자열이 포함된 경우라면 true , 
-									                             // name 이라는 문자열에 joinUserName 라는 문자열이 포함되지 않은 경우라면 false 
-								   joinUserArr.push(name+"("+item.userid+")");
-								}
-							});
-							
-							$("input#joinUserName").autocomplete({  // 참조 https://jqueryui.com/autocomplete/#default
-								source:joinUserArr,
-								select: function(event, ui) {       // 자동완성 되어 나온 공유자이름을 마우스로 클릭할 경우 
-									add_joinUser(ui.item.value);    // 아래에서 만들어 두었던 add_joinUser(value) 함수 호출하기 
-									                                // ui.item.value 이  선택한이름 이다.
-									return false;
-						        },
-						        focus: function(event, ui) {
-						            return false;
-						        }
-							}); 
-							
-						}// end of if------------------------------------
-					}// end of success-----------------------------------
-				});
-		});
+		$(document).on('keyup',"input#joinUserName2",function(){
+		
+        var joinUserName = $(this).val();
+        $.ajax({
+            url: "<%= ctxPath%>/schedule/insertSchedule/searchPlayJoinUserList.trip",
+            data: { "joinUserName": joinUserName },
+            dataType: "json",
+            success: function(json) {
+                var joinUserArr = [];
+
+                if (json.length > 0) {
+                    $.each(json, function(index, item) {
+                        var name = item.user_name;
+                        if (name.includes(joinUserName)) {
+                            joinUserArr.push(name + "(" + item.userid + ")");
+                        }
+                    });
+
+                    $("input#joinUserName2").autocomplete({
+                        source: joinUserArr,
+                        select: function(event, ui) {
+                            add_joinUser(ui.item.value);
+                            return false;
+                        },
+                        focus: function(event, ui) {
+                            return false;
+                        },
+                        appendTo: ".modal-body" // 자동완성 결과를 모달 내부로 설정
+                    });
+                }
+            }
+        });
+    });
 		
 
 		// x아이콘 클릭시 공유자 제거하기
-		$(document).on('click','div.displayUserList > span.plusUser > i',function(){
+		$(document).on('click','div.displayUserList2 > span.plusUser > i',function(){
 				var text = $(this).parent().text(); // 이순신(leess/leesunsin@naver.com)
 				
 				var bool = confirm("공유자 목록에서 "+ text +" 님을 삭제하시겠습니까?");
@@ -588,7 +624,7 @@ $(document).ready(function() {
 		//  console.log("색상 => " + $("input#color").val());
 			
 			// 공유자 넣어주기
-			var plusUser_elm = document.querySelectorAll("div.displayUserList > span.plusUser");
+			var plusUser_elm = document.querySelectorAll("div.displayUserList2 > span.plusUser");
 			var joinUserArr = new Array();
 			
 			plusUser_elm.forEach(function(item,index,array){
@@ -615,7 +651,41 @@ $(document).ready(function() {
 		});// end of $("button#register").click(function(){})--------------------
         
         
+		$('#exampleModal_scrolling_2 .btn.btn-danger').on('click', function () {
+	        $("input#joinUserName2").autocomplete("destroy"); // 기존 autocomplete 제거
+	        $("input#joinUserName2").empty(); // 기존 autocomplete 제거
+	        $("input#joinUserName2").val(""); // 입력값 비우기
+	        $("div.displayUserList2").empty();
+	    });
+		
 });//end of $(document).ready(function() {
+
+	
+function add_joinUser(value){  // value 가 공유자로 선택한이름 이다.
+	
+	var plusUser_es = $("div.displayUserList2 > span.plusUser").text();
+
+ // console.log("확인용 plusUser_es => " + plusUser_es);
+    /*
+    	확인용 plusUser_es => 
+			확인용 plusUser_es => 이순신(leess/hanmailrg@naver.com)
+			확인용 plusUser_es => 이순신(leess/hanmailrg@naver.com)아이유1(iyou1/younghak0959@naver.com)
+			확인용 plusUser_es => 이순신(leess/hanmailrg@naver.com)아이유1(iyou1/younghak0959@naver.com)아이유2(iyou2/younghak0959@naver.com)
+    */
+
+	if(plusUser_es.includes(value)) {  // plusUser_es 문자열 속에 value 문자열이 들어있다라면 
+		alert("이미 추가한 회원입니다.");
+	}
+	
+	else {
+		$("div.displayUserList2").append("<span class='plusUser'>"+value+"&nbsp;<i class='fas fa-times-circle'></i></span>");
+	}
+	
+	$("input#joinUserName2").val("");
+	
+}// end of function add_joinUser(value){}----------------------------				
+	
+	
 
 // 리뷰 보여주기
  function goReviewListView(currentShowPageNo){
@@ -873,7 +943,7 @@ function goLikeDislikeCount(){ // 좋아요, 싫어요 갯수를 보여주도록
 
 
 //-----------------------------------------------------------------------
-
+<%-- 
 function goCheckSchedule(){ // 일정추가를 했는지 알아오는것
 	$.ajax({
         url: "<%= ctxPath %>/checkSchedule.trip",
@@ -900,7 +970,7 @@ function goCheckSchedule(){ // 일정추가를 했는지 알아오는것
         }
     });
 	
-}//end of function goCheckSchedule()
+}//end of function goCheckSchedule() --%>
 
 function goScheduleAdd(){
 	
@@ -969,10 +1039,10 @@ function goDelete() {
 					<button type="button" class="iconbtn addSchedule" id ="addSchedule_btn" onclick="goScheduleAdd()">
 							<img class="icon" id="calender" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_calender.png">
 					</button>
-					<button type="button" class="iconbtn addSchedule" id ="checkSchedule_btn" onclick="#">
+					<%-- <button type="button" class="iconbtn addSchedule" id ="checkSchedule_btn" onclick="#">
 							<img class="icon" id="calenderUp" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_calenderUp.png">
-					</button>
-					<p class="icon-title" id="addScheduletitle"></p>
+					</button> --%>
+					<p class="icon-title" id="addScheduletitle">일정추가</p>
 				</div>
 			</li>
 		</ul>
@@ -1099,12 +1169,12 @@ function goDelete() {
 		        	<textarea name="content" id="content" placeholder="추가로 작성하실 내용을 입력해 주세요."></textarea>
 		        </div>
 		        <div class="add_party" >
-		        	<label style="font-size: 20px;"> 일행 추가하기</label><br>
-		        	<input type="text" id="joinUserName" class="joinUserName" placeholder="일정을 공유할 회원명을 입력하세요"/>
-					<div class="displayUserList"></div>
-					<input type="hidden" name="joinuser"/>
 					 <label style="font-size: 20px;"> 색상</label><br>
-		        	<input type="color" id="color" name="color" value="#009900"/>
+		        	<input type="color" id="color" name="color" value="#009900"/><br>
+		        	<label style="font-size: 20px;"> 일행 추가하기</label><br>
+		        	<input type="text" id="joinUserName2" class="joinUserName2" placeholder="일정을 공유할 회원명을 입력하세요"/>
+					<div class="displayUserList2"></div>
+					<input type="hidden" name="joinuser"/><br>
 		        </div>
 		        
 		      </div>
