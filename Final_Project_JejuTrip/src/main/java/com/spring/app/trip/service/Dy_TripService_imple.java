@@ -709,16 +709,16 @@ public class Dy_TripService_imple implements Dy_TripService {
 	    SXSSFSheet sheet = workbook.createSheet(paraMap.get("company_name") + " 숙소 예약내역");
 		
 	    // 시트 열 너비 설정
-	    sheet.setColumnWidth(0, 2000); // 예약번호
-	    sheet.setColumnWidth(1, 4500); // 숙소명
-	    sheet.setColumnWidth(2, 9000); // 룸타입
+	    sheet.setColumnWidth(0, 2500); // 예약번호
+	    sheet.setColumnWidth(1, 5000); // 숙소명
+	    sheet.setColumnWidth(2, 9500); // 룸타입
 	    sheet.setColumnWidth(3, 2000); // 고객명
 	    sheet.setColumnWidth(4, 3000); // 체크인
 	    sheet.setColumnWidth(5, 3000); // 체크아웃
 	    sheet.setColumnWidth(6, 2500); // 총객실수
-	    sheet.setColumnWidth(7, 2500); // 예약된객실수
-	    sheet.setColumnWidth(8, 2500); // 잔여객실수
-	    sheet.setColumnWidth(9, 2000); // 예약상태
+	    sheet.setColumnWidth(7, 3000); // 예약된객실수
+	    sheet.setColumnWidth(8, 3000); // 잔여객실수
+	    sheet.setColumnWidth(9, 2500); // 예약상태
 	    
 	    // 행의 위치를 나타내는 변수 
 	    int rowLocation = 0;
@@ -872,11 +872,11 @@ public class Dy_TripService_imple implements Dy_TripService {
             
             // 데이터 총객실수 표시
             bodyCell = bodyRow.createCell(6);
-            bodyCell.setCellValue(rsvMap.get("room_stock")); 
+            bodyCell.setCellValue(Integer.parseInt(rsvMap.get("room_stock"))); 
             
             // 데이터 예약된객실수 표시
             bodyCell = bodyRow.createCell(7);
-            bodyCell.setCellValue(rsvMap.get("count")); 
+            bodyCell.setCellValue(Integer.parseInt(rsvMap.get("count"))); 
             
             // 데이터 잔여객실수 표시
             bodyCell = bodyRow.createCell(8);

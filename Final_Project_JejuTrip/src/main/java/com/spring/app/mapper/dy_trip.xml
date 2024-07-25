@@ -525,12 +525,13 @@
 		ON R.room_detail_code = V.fk_room_detail_code
 		JOIN tbl_member M
 		ON V.fk_userid = M.userid
-		WHERE fk_companyid = ${companyid}
+		]]>
+		WHERE fk_companyid = '${companyid}'
 		<if test='!status.equals("")'>
 			  and V.status = #{status}
 		</if>
 		ORDER BY to_number(V.reservation_code) desc
-		]]>
+		
 	</select>
 
 	
