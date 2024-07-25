@@ -12,10 +12,10 @@
     	
     	
     	let currentShowPageNo = 1; // currentShowPageNo 초기값
-    	goViewAllReviewList(currentShowPageNo); // 페이징처리된 리뷰보여주는 함수
-    	goViewfoodReviewList(currentShowPageNo);
-    	goViewPlayReviewList(currentShowPageNo);
-    	goViewLoginReviewList(currentShowPageNo)
+    	goViewAdminReviewList(currentShowPageNo); // 페이징처리된 리뷰보여주는 함수
+    	goViewAdminfoodReviewList(currentShowPageNo);
+    	goViewAdminPlayReviewList(currentShowPageNo);
+    	goViewAdminLogingReviewList(currentShowPageNo)
 
         
     	
@@ -24,12 +24,11 @@
     }); // end of $(document).ready(function(){}------------------------------------------------------------------------
     	
     	
-function goViewAllReviewList(currentShowPageNo){
+function goViewAdminReviewList(currentShowPageNo){
 	$.ajax({
-	    url:"<%= ctxPath%>/userReviewListJSON.trip",
+	    url:"<%= ctxPath%>/adminReviewListJSON.trip",
 	    type:"post",
-	    data: {"fk_userid":"${sessionScope.loginuser.userid}"
-	    	  ,"currentShowPageNo":currentShowPageNo},
+	    data: {"currentShowPageNo":currentShowPageNo},
 	    
 	    dataType:"json",
 	    success:function(json){
@@ -43,7 +42,7 @@ function goViewAllReviewList(currentShowPageNo){
 	              	v_html += "<td style='text-align: center;'>"+item.rno+"</td>";
 	              	if(item.review_division_R == 'A'){
 	              	    v_html += "<td style='text-align: center;'><span style='font-weight:bold;'>숙소</span></td>";
-	              	  v_html += "<input type='hidden' value='<%= ctxPath%>/lodgingDetail.trip?lodging_code="+item.parent_code+"'>";
+	              	  v_html += "<input type='hidden' value='<%= ctxPath%>/lodgingDetail.trip?lodging_code="+item.lodging_code+"'>";
 	              	}
 					if(item.review_division_R == 'B'){
 						v_html += "<td style='text-align: center;'><span style='font-weight:bold;'>맛집</span></td>";
@@ -54,14 +53,15 @@ function goViewAllReviewList(currentShowPageNo){
 						v_html += "<input type='hidden' value='<%= ctxPath%>/goAddSchedule.trip?play_code="+item.parent_code+"'>"
 					}
 					v_html += "<td >"+item.review_content+"</td>";
+					v_html += "<td >"+item.fk_userid+"</td>";
 					v_html += "<td style='text-align: center;'>"+item.registerday+"</td>";
 					v_html += "</tr>";
 			    	
 			    	
-	               r_html = item.allTotalCount
+	               r_html = item.totalCount
 	           }); 
 	           
-	           const totalPage = Math.ceil(json[0].allTotalCount / json[0].sizePerPage);
+	           const totalPage = Math.ceil(json[0].totalCount / json[0].sizePerPage);
 	           PageBar(currentShowPageNo, totalPage);
 	        }// end of if -----------------------
 	        
@@ -100,8 +100,8 @@ function goViewAllReviewList(currentShowPageNo){
 	 	
 	 	// [맨처음] [이전] 만들기
 	 	if(pageNo != 1) {
-	 		pageBar_HTML += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='javascript:goViewAllReviewList(1)'>[맨처음]</a></li>";
-	 		pageBar_HTML += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='javascript:goViewAllReviewList("+(pageNo-1)+")'>[이전]</a></li>";
+	 		pageBar_HTML += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='javascript:goViewAdminReviewList(1)'>[맨처음]</a></li>";
+	 		pageBar_HTML += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='javascript:goViewAdminReviewList("+(pageNo-1)+")'>[이전]</a></li>";
 	 	}
 	 	
 	 	while(!(loop>blockSize || pageNo > totalPage)) {
@@ -109,7 +109,7 @@ function goViewAllReviewList(currentShowPageNo){
 	 			pageBar_HTML += "<li style='display:inline-block; width:30px; font-size:12pt; border:solid 1px gray; color:red; padding:2px 4px;'>"+pageNo+"</a></li>";
 	 		}
 	 		else {
-	 			pageBar_HTML += "<li style='display:inline-block; width:30px; font-size:12pt;'><a href='javascript:goViewAllReviewList("+pageNo+")'>"+pageNo+"</a></li>";
+	 			pageBar_HTML += "<li style='display:inline-block; width:30px; font-size:12pt;'><a href='javascript:goViewAdminReviewList("+pageNo+")'>"+pageNo+"</a></li>";
 	 		}
 	 		loop++;
 	 		pageNo++;
@@ -117,8 +117,8 @@ function goViewAllReviewList(currentShowPageNo){
 	 	
 	 	// [다음] [마지막] 만들기
 	 	if(pageNo <= totalPage) {
-	 		pageBar_HTML += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='javascript:goViewAllReviewList("+(pageNo+1)+")'>[다음]</a></li>";
-	 		pageBar_HTML += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='javascript:goViewAllReviewList("+totalPage+")'>[마지막]</a></li>";
+	 		pageBar_HTML += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='javascript:goViewAdminReviewList("+(pageNo+1)+")'>[다음]</a></li>";
+	 		pageBar_HTML += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='javascript:goViewAdminReviewList("+totalPage+")'>[마지막]</a></li>";
 	 	}
 	 	
 	 	
@@ -132,12 +132,11 @@ function goViewAllReviewList(currentShowPageNo){
 	////////////////////////////////////////////////////////////////////////
 	
 	//맛집 리뷰 불러오는거
-	function goViewfoodReviewList(currentShowPageNo){
+	function goViewAdminfoodReviewList(currentShowPageNo){
 			$.ajax({
-			    url:"<%= ctxPath%>/userfoodReviewListJSON.trip",
+			    url:"<%= ctxPath%>/adminfoodReviewListJSON.trip",
 			    type:"post",
-			    data: {"fk_userid":"${sessionScope.loginuser.userid}"
-			    	  ,"currentShowPageNo":currentShowPageNo},
+			    data: {"currentShowPageNo":currentShowPageNo},
 			    
 			    dataType:"json",
 			    success:function(json){
@@ -151,6 +150,7 @@ function goViewAllReviewList(currentShowPageNo){
 			              	v_html += "<td style='text-align: center;'>"+item.rno+"</td>";
 							v_html += "<td style='text-align: center;'>"+item.food_name+"</td>";
 		              	    v_html += "<td>"+item.review_content+"</td>";
+		              	    v_html += "<td>"+item.fk_userid+"</td>";
 							v_html += "<td style='text-align: center;'>"+item.registerday+"</td>";
 							v_html += "<input type='hidden' value='<%= ctxPath%>/foodstoreDetail.trip?food_store_code="+item.parent_code+"'>";
 							v_html += "</tr>";
@@ -198,8 +198,8 @@ function goViewAllReviewList(currentShowPageNo){
 	 	
 	 	// [맨처음] [이전] 만들기
 	 	if(pageNo != 1) {
-	 		pageBar_HTML += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='javascript:goViewfoodReviewList(1)'>[맨처음]</a></li>";
-	 		pageBar_HTML += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='javascript:goViewfoodReviewList("+(pageNo-1)+")'>[이전]</a></li>";
+	 		pageBar_HTML += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='javascript:goViewAdminfoodReviewList(1)'>[맨처음]</a></li>";
+	 		pageBar_HTML += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='javascript:goViewAdminfoodReviewList("+(pageNo-1)+")'>[이전]</a></li>";
 	 	}
 	 	
 	 	while(!(loop>blockSize || pageNo > totalPage)) {
@@ -207,7 +207,7 @@ function goViewAllReviewList(currentShowPageNo){
 	 			pageBar_HTML += "<li style='display:inline-block; width:30px; font-size:12pt; border:solid 1px gray; color:red; padding:2px 4px;'>"+pageNo+"</a></li>";
 	 		}
 	 		else {
-	 			pageBar_HTML += "<li style='display:inline-block; width:30px; font-size:12pt;'><a href='javascript:goViewfoodReviewList("+pageNo+")'>"+pageNo+"</a></li>";
+	 			pageBar_HTML += "<li style='display:inline-block; width:30px; font-size:12pt;'><a href='javascript:goViewAdminfoodReviewList("+pageNo+")'>"+pageNo+"</a></li>";
 	 		}
 	 		loop++;
 	 		pageNo++;
@@ -215,8 +215,8 @@ function goViewAllReviewList(currentShowPageNo){
 	 	
 	 	// [다음] [마지막] 만들기
 	 	if(pageNo <= totalPage) {
-	 		pageBar_HTML += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='javascript:goViewfoodReviewList("+(pageNo+1)+")'>[다음]</a></li>";
-	 		pageBar_HTML += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='javascript:goViewfoodReviewList("+totalPage+")'>[마지막]</a></li>";
+	 		pageBar_HTML += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='javascript:goViewAdminfoodReviewList("+(pageNo+1)+")'>[다음]</a></li>";
+	 		pageBar_HTML += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='javascript:goViewAdminfoodReviewList("+totalPage+")'>[마지막]</a></li>";
 	 	}
 	 	
 	 	
@@ -230,13 +230,11 @@ function goViewAllReviewList(currentShowPageNo){
 	////////////////////////////////////////////////////////////////////////
 		
 		//즐길거리 리뷰 불러오는거
-		function goViewPlayReviewList(currentShowPageNo){
+		function goViewAdminPlayReviewList(currentShowPageNo){
 				$.ajax({
-				    url:"<%= ctxPath%>/userFoodReviewListJSON.trip",
+				    url:"<%= ctxPath%>/adminplayReviewListJSON.trip",
 				    type:"post",
-				    data: {"fk_userid":"${sessionScope.loginuser.userid}"
-				    	  ,"currentShowPageNo":currentShowPageNo},
-				    
+				    data: {"currentShowPageNo":currentShowPageNo},
 				    dataType:"json",
 				    success:function(json){
 				 	
@@ -249,6 +247,7 @@ function goViewAllReviewList(currentShowPageNo){
 				              	v_html += "<td style='text-align: center;'>"+item.rno+"</td>";
 								v_html += "<td style='text-align: center;'>"+item.play_name+"</td>";
 								v_html += "<td>"+item.review_content+"</td>";
+								v_html += "<td>"+item.fk_userid+"</td>";
 								v_html += "<td style='text-align: center;'>"+item.registerday+"</td>";
 								v_html += "<input type='hidden' value='<%= ctxPath%>/goAddSchedule.trip?play_code="+item.parent_code+"'>";
 								v_html += "</tr>";
@@ -330,18 +329,17 @@ function goViewAllReviewList(currentShowPageNo){
 ////////////////////////////////////////////////////////////////////////
 			
 			//숙소 리뷰 불러오는거
-			function goViewLoginReviewList(currentShowPageNo){
+			function goViewAdminLogingReviewList(currentShowPageNo){
 					$.ajax({
-					    url:"<%= ctxPath%>/userLoginReviewListJSON.trip",
+					    url:"<%= ctxPath%>/adminLogingReviewListJSON.trip",
 					    type:"post",
-					    data: {"fk_userid":"${sessionScope.loginuser.userid}"
-					    	  ,"currentShowPageNo":currentShowPageNo},
+					    data: {"currentShowPageNo":currentShowPageNo},
 					    
 					    dataType:"json",
 					    success:function(json){
 					 	
 					 	   let v_html = "";
-					       let r_html = ""; 
+					       let r_html = "0"; 
 					        if (json.length > 0) {    
 					           $.each(json, function(index, item){ 
 					                             
@@ -349,8 +347,9 @@ function goViewAllReviewList(currentShowPageNo){
 					              	v_html += "<td style='text-align: center;'>"+item.rno+"</td>";
 									v_html += "<td style='text-align: center;'>"+item.lodging_name+"</td>";
 				              	    v_html += "<td>"+item.review_content+"</td>";
+				              	    v_html += "<td>"+item.fk_userid+"</td>";
 									v_html += "<td style='text-align: center;'>"+item.registerday+"</td>";
-									v_html += "<input type='hidden' value='<%= ctxPath%>/lodgingDetail.trip?lodging_code="+item.parent_code+"'>";
+									v_html += "<input type='hidden' value='<%= ctxPath%>/lodgingDetail.trip?lodging_code="+item.lodging_code+"'>";
 									v_html += "</tr>";
 							    	
 							    	
@@ -437,32 +436,26 @@ function goViewAllReviewList(currentShowPageNo){
         <ul>
             <li class="list">
                 <a href="<%= ctxPath%>/requiredLogin_goMypage.trip">
-                    <span class="icon"><ion-icon name="bed-outline"></ion-icon></span>
-                    <span class="title">예약내역</span>
+                    <span class="icon"><ion-icon name="list-outline"></ion-icon></span>
+                    <span class="title">등록 컨텐츠</span>
                 </a>
             </li>
             <li class="list">
-                <a href="<%= ctxPath%>/editProfile.trip">
+                <a href="<%= ctxPath%>/show_userList.trip">
                     <span class="icon"><ion-icon name="person-outline"></ion-icon></span>
-                    <span class="title">회원정보수정</span>
+                    <span class="title">회원관리</span>
                 </a>
             </li>
             <li class="list">
-                <a href="<%= ctxPath%>/my_schedule.trip">
-                    <span class="icon"><ion-icon name="calendar-number-outline"></ion-icon></span>
-                    <span class="title">내 일정</span>
+                <a href="<%= ctxPath%>/admin_chart.trip">
+                    <span class="icon"><ion-icon name="bar-chart-outline"></ion-icon></ion-icon></span>
+                    <span class="title">통계</span>
                 </a>
             </li>
             <li class="list active">
-                <a href="<%= ctxPath%>/review.trip">
+                <a href="<%= ctxPath%>/admin_review.trip">
                     <span class="icon"><ion-icon name="clipboard-outline"></ion-icon></span>
                     <span class="title">이용후기</span>
-                </a>
-            </li>
-            <li class="list">
-                <a href="<%= ctxPath%>/like.trip">
-                    <span class="icon"><ion-icon name="heart-outline"></ion-icon></span>
-                    <span class="title">좋아요</span>
                 </a>
             </li>
             <br><br><br>
@@ -542,6 +535,7 @@ function goViewAllReviewList(currentShowPageNo){
 				      <th style='text-align: center;'>#</th>
 				      <th style='text-align: center;'>카테고리</th>
 				      <th style='text-align: center;'>내용</th>
+				      <th style='text-align: center;'>작성자</th>
 				      <th style='text-align: center;'>작성일자</th>
 				    </tr>
 				  </thead>
@@ -557,6 +551,7 @@ function goViewAllReviewList(currentShowPageNo){
 						      <th style='text-align: center;'>#</th>
 						      <th style='text-align: center;'>숙소명</th>
 						      <th style='text-align: center;'>후기내용</th>
+						      <th style='text-align: center;'>작성자</th>
 						      <th style='text-align: center;'>작성일자</th>
 						    </tr>
 						  </thead>
@@ -572,6 +567,7 @@ function goViewAllReviewList(currentShowPageNo){
 						      <th style='text-align: center;'>#</th>
 						      <th style='text-align: center;'>가게이름</th>
 						      <th style='text-align: center;'>후기내용</th>
+						      <th style='text-align: center;'>작성자</th>
 						      <th style='text-align: center;'>작성일자</th>
 						    </tr>
 						  </thead>
@@ -587,6 +583,7 @@ function goViewAllReviewList(currentShowPageNo){
 						      <th style='text-align: center;'>#</th>
 						      <th style='text-align: center;'>즐길거리이름</th>
 						      <th style='text-align: center;'>후기내용</th>
+						      <th style='text-align: center;'>작성자</th>
 						      <th style='text-align: center;'>작성일자</th>
 						    </tr>
 						  </thead>

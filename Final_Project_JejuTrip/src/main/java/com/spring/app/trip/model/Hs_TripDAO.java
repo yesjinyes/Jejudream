@@ -87,6 +87,27 @@ public interface Hs_TripDAO {
 	int playLikeCount(Map<String, String> paraMap);
 	List<Map<String, String>> playlikeList(Map<String, String> paraMap);
 
+	
+	//관리자 리뷰 관련
+	
+	
+	//1. 전체 리뷰
+	int admin_ReviewCount(Map<String, String> paraMap);
+	List<ReviewVO> admin_ReviewList(Map<String, String> paraMap);
+
+	//2. 맛집리뷰
+	int adminFoodReviewCount(Map<String, String> paraMap);
+	List<Map<String, String>> adminfoodReviewList(Map<String, String> paraMap);
+
+	
+	//3. 즐길거리
+	int adminPlaytotalReviewCount(Map<String, String> paraMap);
+	List<Map<String, String>> adminPlayReviewList(Map<String, String> paraMap);
+
+	//4. 숙소
+	int adminLogingReviewCount(Map<String, String> paraMap);
+	List<Map<String, String>> adminLogingReviewList(Map<String, String> paraMap);
+
 
 	
 

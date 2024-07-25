@@ -131,7 +131,7 @@ public class Yj_TripController {
 		
 		// 맛집 전체개수
 	    int totalCount = service.getTotalCount(map);
-	    // System.out.println("totalCount => "+totalCount);
+	    System.out.println("totalCount => "+totalCount);
 	    
 		foodstoreList = service.viewFoodstoreList(map); // 맛집 리스트(조회수 증가X)
 		//System.out.println("foodstoreList 길이 : " + foodstoreList.size());
@@ -695,6 +695,53 @@ public class Yj_TripController {
 	
 	
 	
+	//////////////////////////////////////////////////////////////////////////////////////////////////////
+	// == 자주묻는질문 리스트 가져오기 == //
+	@ResponseBody
+	@GetMapping(value="/faqListJSON.trip", produces="text/plain;charset=UTF-8") 
+	public String faqListJSON(HttpServletRequest request) {
+		
+		String currentShowPageNo = request.getParameter("currentShowPageNo"); 
+		
+		if(currentShowPageNo == null) {
+			currentShowPageNo = "1";
+		}
+		
+		int sizePerPage = 10; // 한 페이지당 10개의  질문을 보여줄 것임
+		
+		int startRno = ((Integer.parseInt(currentShowPageNo) - 1) * sizePerPage) + 1; // 시작 행번호 
+		int endRno = startRno + sizePerPage - 1; // 끝 행번호
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("startRno", String.valueOf(startRno));
+		paraMap.put("endRno", String.valueOf(endRno));
+
+		// 모든 질문 읽어오기
+		List<Map<String,String>> faqList = service.viewAllFaqList_paging(paraMap);
+		
+		int totalCount = service.getTotalFaqList(); // FAQ 전체 리스트 페이징 처리 시 순번 나타내기 위함
+		// System.out.println("~~~FAQ 전체 개수 => " + totalCount);
+		
+		JSONArray jsonArr = new JSONArray(); // [] 
+		if(faqList != null) {
+			for(Map<String,String> faqMap : faqList) {
+				JSONObject jsonObj = new JSONObject(); 
+				
+				jsonObj.put("faq_seq", faqMap.get("faq_seq"));
+				jsonObj.put("faq_category", faqMap.get("faq_category"));
+				jsonObj.put("faq_question", faqMap.get("faq_question"));
+				jsonObj.put("faq_answer", faqMap.get("faq_answer"));
+				
+				jsonObj.put("totalCount", totalCount);   
+				jsonObj.put("sizePerPage", sizePerPage);  
+				
+				jsonArr.put(jsonObj);
+			}// end of for-----------------------
+		}
+		
+		//System.out.println(jsonArr.toString());
+		return jsonArr.toString(); 	
+	}
 	
 	
 	

@@ -154,6 +154,12 @@ function editSchedule(scheduleno){
                     <span class="title">이용후기</span>
                 </a>
             </li>
+            <li class="list">
+                <a href="<%= ctxPath%>/like.trip">
+                    <span class="icon"><ion-icon name="heart-outline"></ion-icon></span>
+                    <span class="title">좋아요</span>
+                </a>
+            </li>
             <br><br><br>
             <li class="list">
                 <a href="<%= ctxPath%>/support.trip">

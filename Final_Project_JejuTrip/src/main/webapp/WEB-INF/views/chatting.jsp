@@ -90,7 +90,7 @@
 	 	// === 메시지 수신시 콜백함수 정의하기 === //
 	 	websocket.onmessage = function(event){
 	 		if(event.data.substr(0,1)=="「" && event.data.substr(event.data.length-1)=="」") {
-            	$("div#connectingUserList").html(event.data);
+            	
        	  	}
           	else {
             	// event.data 는 수신받은 채팅 문자이다.
@@ -243,24 +243,45 @@
 <div class="col-md-10 offset-md-1">
    <div id="chatStatus"></div>
    <div class="my-3">
-   - 상대방의 대화내용이 검정색으로 보이면 채팅에 참여한 모두에게 보여지는 것입니다.<br>
-   - 상대방의 대화내용이 <span style="color: red;">붉은색</span>으로 보이면 나에게만 보여지는 1:1 귓속말 입니다.<br>
-   - 1:1 채팅(귓속말)을 하시려면 예를 들어, 채팅시 보이는 [이순신]대화내용 에서 이순신을 클릭하시면 됩니다.
    </div>
    <input type="hidden" id="to" placeholder="귓속말대상웹소켓.getId()"/>
-   <br/>
-   ♡ 귓속말대상 : <span id="privateWho" style="font-weight: bold; color: red;"></span>
-   <br>
+ <span id="privateWho" style="font-weight: bold; color: red;"></span>
    <button type="button" id="btnAllDialog" class="btn btn-secondary btn-sm">귀속말대화끊기</button>
-   <br><br>
-   현재접속자명단:<br/>
    <div id="connectingUserList" style=" max-height: 100px; overFlow: auto;"></div>
    
-   <div id="chatMessage" style="max-height: 500px; overFlow: auto; margin: 20px 0;"></div>
+   <div id="chatMessage" style="background-color:rgb(255, 195, 84); border-radius:8px 8px 0 0; max-height: 530px; padding:10px 10px; overFlow: auto;"></div>
 
-   <input type="text"   id="message" class="form-control" placeholder="메시지 내용"/>
-   <input type="button" id="btnSendMessage" class="btn btn-success btn-sm my-3" value="메시지보내기" />
-   <input type="button" class="btn btn-danger btn-sm my-3 mx-3" onclick="javascript:location.href='<%=request.getContextPath() %>/index.action'" value="채팅방나가기" />
+   <input type="text"   id="message" class="form-control" style="position:fixed; top:80%; border:solid 1px gray; border-radius:8px; width:95%; height:100px;" placeholder="메시지 내용"/>
+   <input type="button" id="btnSendMessage" class="btn btn-success btn-sm my-3" style="" value="전송" />
 </div>
 </div>
 </div>  
+
+<style type="text/css">
+html{
+	background-color:rgb(255, 195, 84);
+}
+
+input#btnSendMessage {
+	background-color: orange; 
+	border:solid 1px orange;
+	width:50px;
+	height:30px;
+	float:right;
+	color:white;
+	font-weight:bold;
+	margin: 10px 10px 10px 0;
+	border-radius:8px;
+	cursor: pointer;
+	position: fixed;
+	top:87%;
+	left:85%;
+}
+
+input#btnSendMessage:hover {
+	background-color: rgb(255, 123, 0); 
+	border:solid 1px rgb(255, 123, 0);
+}
+
+::-webkit-scrollbar {display:none;}
+</style>
