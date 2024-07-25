@@ -371,13 +371,31 @@ public class Js_TripController {
 	
 	// 결제 페이지 넘어가기
 	@RequestMapping("/lodgingReservation.trip")
-	public ModelAndView requiredLogin_lodgingReservation(HttpServletRequest request, 
+	public ModelAndView lodgingReservation(HttpServletRequest request, 
 										   HttpServletResponse response, 
 										   ModelAndView mav,
 										   @RequestParam(defaultValue = "") String lodging_code,
 										   @RequestParam(defaultValue = "") String room_detail_code,
 										   @RequestParam(defaultValue = "") String check_in,
 										   @RequestParam(defaultValue = "") String check_out) {
+		
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
+		
+		if(loginuser == null) {
+			
+			String message = "예약하려면 반드시 로그인을 하셔야합니다!!";
+			
+			String loc = request.getContextPath()+"/login.trip";
+	    	
+	    	mav.addObject("message", message);
+	    	mav.addObject("loc", loc);
+	    	
+	    	mav.setViewName("msg");
+	    	
+	    	return mav;
+			
+		} // end of if
 		
 		
 		Map<String,String> paraMap = new HashMap<>();
@@ -1545,5 +1563,29 @@ public class Js_TripController {
 		return json_arr.toString();
 		
 	} // end of String current_festival() {
+	
+	
+	@ResponseBody
+	@GetMapping(value="JSONMemberReservationInfo.trip", produces="text/plain;charset=UTF-8")
+	public String memberReservationInfo(@RequestParam ("reservation_code") String reservation_code) {
+		
+		if("".equals(reservation_code) || reservation_code == null) {
+			
+			String message = "숙소 정보수정 실패";
+			String loc = "index.trip";
+			
+		}
+		
+		// 유저가 예약신청한 상세정보 가져오기
+		List<Map<String, String>> memberReserveInfoList = service.getMemberReservationInfo(reservation_code);
+		
+		
+		
+		
+		
+		
+		return "";
+	}
+	
 	
 }

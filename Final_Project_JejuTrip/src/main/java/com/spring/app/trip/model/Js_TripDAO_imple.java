@@ -433,6 +433,17 @@ public class Js_TripDAO_imple implements Js_TripDAO {
 		
 	} // end of public List<BoardVO> getPopularBoard() {
 
+
+	// 유저가 예약신청한 상세정보 가져오기
+	@Override
+	public List<Map<String, String>> getMemberReservationInfo(String reservation_code) {
+		
+		List<Map<String, String>> memberReserveInfoList = sqlsession.selectList("js_trip.getMemberReservationInfo", reservation_code);
+		
+		return memberReserveInfoList;
+		
+	} // end of public List<Map<String, String>> getMemberReservationInfo(String reservation_code) {
+
 	
 	
 

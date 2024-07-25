@@ -8,7 +8,7 @@
 %>
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f42c6cbd2d2060c5c719ee80540fbfbc&libraries=services"></script>
 
-<%-- 
+ 
 <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js"
   integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4" crossorigin="anonymous"></script>
 <script>
@@ -53,7 +53,7 @@
     if (parts.length === 2) { return parts[1].split(';')[0]; }
   }
 </script>
---%>
+
 
 
 
