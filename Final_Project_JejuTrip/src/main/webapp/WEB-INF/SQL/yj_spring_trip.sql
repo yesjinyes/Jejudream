@@ -149,6 +149,29 @@ insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_
 insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '기타', '불편사항 문의는 어디에 하면 되나요?', '고객센터 내 채팅 기능을 이용하여 불편사항을 접수해 주시면 확인 후 답변 드리겠습니다.');
 
 
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '기타', '3불편사항 문의는 어디에 하면 되나요?', '고객센터 내 채팅 기능을 이용하여 불편사항을 접수해 주시면 확인 후 답변 드리겠습니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '기타', '4불편사항 문의는 어디에 하면 되나요?', '고객센터 내 채팅 기능을 이용하여 불편사항을 접수해 주시면 확인 후 답변 드리겠습니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '기타', '5불편사항 문의는 어디에 하면 되나요?', '고객센터 내 채팅 기능을 이용하여 불편사항을 접수해 주시면 확인 후 답변 드리겠습니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '기타', '6불편사항 문의는 어디에 하면 되나요?', '고객센터 내 채팅 기능을 이용하여 불편사항을 접수해 주시면 확인 후 답변 드리겠습니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '기타', '7불편사항 문의는 어디에 하면 되나요?', '고객센터 내 채팅 기능을 이용하여 불편사항을 접수해 주시면 확인 후 답변 드리겠습니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '기타', '8불편사항 문의는 어디에 하면 되나요?', '고객센터 내 채팅 기능을 이용하여 불편사항을 접수해 주시면 확인 후 답변 드리겠습니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '기타', '9불편사항 문의는 어디에 하면 되나요?', '고객센터 내 채팅 기능을 이용하여 불편사항을 접수해 주시면 확인 후 답변 드리겠습니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '기타', '10불편사항 문의는 어디에 하면 되나요?', '고객센터 내 채팅 기능을 이용하여 불편사항을 접수해 주시면 확인 후 답변 드리겠습니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '기타', '11불편사항 문의는 어디에 하면 되나요?', '고객센터 내 채팅 기능을 이용하여 불편사항을 접수해 주시면 확인 후 답변 드리겠습니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '기타', '12불편사항 문의는 어디에 하면 되나요?', '고객센터 내 채팅 기능을 이용하여 불편사항을 접수해 주시면 확인 후 답변 드리겠습니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '기타', '13불편사항 문의는 어디에 하면 되나요?', '고객센터 내 채팅 기능을 이용하여 불편사항을 접수해 주시면 확인 후 답변 드리겠습니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '기타', '14불편사항 문의는 어디에 하면 되나요?', '고객센터 내 채팅 기능을 이용하여 불편사항을 접수해 주시면 확인 후 답변 드리겠습니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '기타', '15불편사항 문의는 어디에 하면 되나요?', '고객센터 내 채팅 기능을 이용하여 불편사항을 접수해 주시면 확인 후 답변 드리겠습니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '기타', '16불편사항 문의는 어디에 하면 되나요?', '고객센터 내 채팅 기능을 이용하여 불편사항을 접수해 주시면 확인 후 답변 드리겠습니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '기타', '17불편사항 문의는 어디에 하면 되나요?', '고객센터 내 채팅 기능을 이용하여 불편사항을 접수해 주시면 확인 후 답변 드리겠습니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '기타', '18불편사항 문의는 어디에 하면 되나요?', '고객센터 내 채팅 기능을 이용하여 불편사항을 접수해 주시면 확인 후 답변 드리겠습니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '기타', '19불편사항 문의는 어디에 하면 되나요?', '고객센터 내 채팅 기능을 이용하여 불편사항을 접수해 주시면 확인 후 답변 드리겠습니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '기타', '20불편사항 문의는 어디에 하면 되나요?', '고객센터 내 채팅 기능을 이용하여 불편사항을 접수해 주시면 확인 후 답변 드리겠습니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '기타', '21불편사항 문의는 어디에 하면 되나요?', '고객센터 내 채팅 기능을 이용하여 불편사항을 접수해 주시면 확인 후 답변 드리겠습니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '기타', '22불편사항 문의는 어디에 하면 되나요?', '고객센터 내 채팅 기능을 이용하여 불편사항을 접수해 주시면 확인 후 답변 드리겠습니다.');
+
+
+
 commit;
 
 select *
@@ -344,6 +367,7 @@ select * from tbl_like;
 select * from user_tables;
 
 select * from tbl_board;
+
 
 select SCHEDULENO
      , to_char(STARTDATE, 'yyyy-mm-dd hh24:mi:ss') as startdate 

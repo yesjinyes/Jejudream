@@ -338,43 +338,7 @@
 		<result property="faq_question" column="faq_question" 	javaType="String" />
 		<result property="faq_answer" 	column="faq_answer" 	javaType="String" />
 	</resultMap>
-	<select id="viewAllFaqList_paging" parameterType="String" resultMap="faqList_map">
-		select faq_seq, faq_category, faq_question, faq_answer
-		from
-		(
-		select rownum as rno, faq_seq, faq_category, faq_question, faq_answer
-		from
-			(
-			select faq_seq, faq_category, faq_question, faq_answer
-			from tbl_faq
-			<if test='!faq_category.equals("")'>
-				where faq_category = #{faq_category}
-			</if>
-			order by faq_seq desc
-			)V
-		)V2
-		where RNO between #{startRno} and #{endRno}
-	</select>
-
-
-	<!-- FAQ 리스트 페이징 처리 위함  -->
-	<select id="getTotalFaqList" parameterType="String" resultType="int">
-		select count(*)
-		from tbl_faq
-		<if test='!faq_category.equals("")'>
-			where faq_category = #{faq_category}
-		</if>
-	</select>
-
-	
-	<!-- FAQ 검색 기능  -->
-	<resultMap type="HashMap" id="searchList_map">
-		<result property="faq_seq" 		column="faq_seq" 		javaType="String" />
-		<result property="faq_category" column="faq_category" 	javaType="String" />
-		<result property="faq_question" column="faq_question" 	javaType="String" />
-		<result property="faq_answer" 	column="faq_answer" 	javaType="String" />
-	</resultMap>
-	<select id="viewSearchList_paging" parameterType="String" resultMap="searchList_map">
+	<select id="viewAllFaqList_paging" parameterType="HashMap" resultMap="faqList_map">
 		select faq_seq, faq_category, faq_question, faq_answer
 		from
 		(
@@ -384,13 +348,30 @@
 			select faq_seq, faq_category, faq_question, faq_answer
 			from tbl_faq
 			where 1=1
-			<if test='!faq_category.equals("")'>
+			<if test='!"".equals(faq_category)'>
 				and faq_category = #{faq_category}
+			</if>
+			<if test='searchWord != null'>
+				and faq_question like '%'||lower(#{searchWord})||'%'
 			</if>
 			order by faq_seq desc
 			)V
 		)V2
 		where RNO between #{startRno} and #{endRno}
+	</select>
+
+
+	<!-- FAQ 리스트 페이징 처리 위함  -->
+	<select id="getTotalFaqList" parameterType="HashMap" resultType="int">
+		select count(*)
+		from tbl_faq
+		where 1=1
+		 <if test='!"".equals(faq_category)'>
+			and faq_category = #{faq_category}
+		</if>
+		<if test='searchWord != null'>
+			and faq_question like '%'||lower(#{searchWord})||'%'
+		</if>
 	</select>
 
 
