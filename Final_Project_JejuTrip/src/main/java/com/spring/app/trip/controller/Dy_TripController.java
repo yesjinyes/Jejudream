@@ -2100,4 +2100,12 @@ public class Dy_TripController {
 		return "excelDownloadView";
 	}
 	
+	
+	// header 전체검색
+	@GetMapping("allSearch.trip")
+	public String allSearch() {
+		
+		return "allSearch.tiles1";
+	}
+	
 }
