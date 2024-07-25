@@ -91,8 +91,21 @@
 
    		   
        		
-       	})
+       	});
         
+       	
+       	
+       	$(document).on("click", "tr", function(e){
+       		
+       		// const reservation_code = $(e.target).firstChild;
+       		const reservation_code = $(this).find("input").val();
+        	
+       		// alert('히히');
+       		alert(reservation_code);
+       		
+       		open_modal(reservation_code);
+       		
+        }); // end of $(document).on("click", "tbody", function(e){
         
         
     }); // end of $(document).ready(function(){
@@ -760,6 +773,53 @@ function goViewAllReservationList(currentShowPageNo){
 		}
 		
 	}// end of function goViewComment(currentShowPageNo)------
+	
+	
+	
+	
+	
+function open_modal(reservation_code){
+    	
+    	$.ajax({
+			url:"<%= ctxPath%>/JSONMemberReservationInfo.trip",
+			data:{"reservation_code":reservation_code}, 
+			type:"post",
+			dataType:"json",
+			success:function(json){
+				let v_html = `<div style="margin-bottom:5px;">숙소명 : \${json.lodging_name}</div>`;
+				v_html += `<div style="margin-bottom:5px;">숙소구분 : \${json.lodging_category}</div>`;
+				v_html += `<div style="margin-bottom:5px;">위치 구분 : \${json.local_status}</div>`;
+				v_html += `<div style="margin-bottom:5px;">주소 : \${json.lodging_address}</div>`;
+				v_html += `<div style="margin-bottom:5px;">전화번호 : \${json.lodging_tell}</div>`;
+				v_html += `<div style="margin-bottom:5px;">상세설명 : \${json.lodging_content}</div>`;
+				v_html += `<img src="<%=ctxPath%>/resources/images/lodginglist/\${json.main_img}" style="width:100%; margin-bottom:20px;"/>`;
+				if(json.status == '0'){
+					v_html += `<div style="margin-bottom:5px;">처리상태 : <span style="color:blue; font-weight:bold;">처리중</span></div>`;
+				}
+				else if(json.status == '1'){
+					v_html += `<div style="margin-bottom:5px;">처리상태 : <span style="color:green; font-weight:bold;">승인</span></div>`;
+				}
+				else if(json.status == '2'){
+					v_html += `<div style="margin-bottom:5px;">처리상태 : <span style="color:red; font-weight:bold;">반려</span></div>`;
+					v_html += `<div style="margin-bottom:5px;">반려사유 : \${json.feedback_msg}</div>`;
+				}
+				
+				v_html += `<input type="hidden" name="modal_lodging_code" value="\${lodgingCode}" />`
+				
+			    $("div.modal-body").html(v_html);
+			},
+			error: function(request, status, error){
+			   alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+			}
+		}); 
+    	
+    	
+    	
+    	$('#modal_showDetail').modal('show'); // 모달창 보여주기
+    	 
+    } // end of 
+	
+	
 </script>
 
 <div class="body">

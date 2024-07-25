@@ -619,5 +619,21 @@
 	
 	<!-- where regdate between to_date(to_char(sysdate, 'yyyy-mm-dd') , 'yyyy-mm-dd') and  
 	    to_date(to_char(sysdate, 'yyyy-mm-dd') || ' ' || '23:59:59' , 'yyyy-mm-dd hh24:mi:ss') -->
+	    
+	    
+	
+	<!-- 
+	<resultMap type="HashMap" id="getMemberReservationInfo_Map">
+       <result property="festival_no"     column="festival_no"     javaType="String" />
+       <result property="title_name"      column="title_name"        javaType="String" />
+       <result property="img"        	  column="img"        javaType="String" />
+       <result property="startdate"       column="startdate"        javaType="String" />
+       <result property="enddate"         column="enddate"        javaType="String" />
+       <result property="local_status"    column="local_status"        javaType="String" />
+       <result property="link"            column="link"        javaType="String" />
+   </resultMap>
+	<select id="getMemberReservationInfo" parameterType="String" resultMap="getMemberReservationInfo_Map">
+	</select>    
+	     -->
  
 </mapper>
