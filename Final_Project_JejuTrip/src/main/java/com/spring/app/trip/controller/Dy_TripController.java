@@ -2105,7 +2105,7 @@ public class Dy_TripController {
 	@GetMapping("allSearch.trip")
 	public String allSearch() {
 		
-		return "allSearch.tiles1";
+		return "main/allSearch.tiles1";
 	}
 	
 }
