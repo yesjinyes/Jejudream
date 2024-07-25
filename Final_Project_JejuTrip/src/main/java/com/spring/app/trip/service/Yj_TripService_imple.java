@@ -223,8 +223,8 @@ public class Yj_TripService_imple implements Yj_TripService {
 
 	// == FAQ 전체 리스트 페이징 처리 시 순번 나타내기 위함 == //
 	@Override
-	public int getTotalFaqList() {
-		int n = dao.getTotalFaqList();
+	public int getTotalFaqList(String faq_category) {
+		int n = dao.getTotalFaqList(faq_category);
 		// System.out.println("service 에서 FAQ 성공? => "  + n);
 		return n;
 	}
