@@ -121,3 +121,6 @@ on C.from_id = M.userid
 where C.to_id = 'admin'
 
 commit;
+
+select *
+from tbl_member;
