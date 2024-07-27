@@ -1420,36 +1420,27 @@ COMMENT ON COLUMN tbl_chattinglog.CHATTING_DATE IS '채팅발신일자';
 select *
 from tbl_review;
 
+    select *
+    from tbl_lodging;
+    
+    select *
+    from tbl_reservation;
+    
+    select to_char(check_in, 'yyyy-mm-dd hh24:mi:ss') as c
+    from tbl_reservation;
+    
+    select *
+    from tbl_room_detail
+    
 
+    select R.check_in, L.lodging_name, D.room_name,  L.lodging_address,
+           L.lodging_category, L.lodging_tell, D.room_img , R.status,
+           R.check_in , R.check_out, R.reservation_price, R.reservation_date,
+           D.check_in as check_intime , D.check_out as check_outtime
+    from tbl_reservation R
+    join tbl_room_detail D
+    on R.fk_room_detail_code = D.room_detail_code
+    join tbl_lodging L
+    on D.fk_lodging_code = L.lodging_code
+    where R.reservation_code = '27';
 
-
-
-select rno,lodging_name, review_content,fk_userid,registerday,lodging_code
-from 
-    (
-    select rownum as rno, A.lodging_name, A.review_content, A.fk_userid, A.registerday, A.lodging_code
-    from
-        (
-        select lodging_name, review_content, fk_userid, registerday,lodging_code
-        from tbl_lodging L join
-        tbl_review R
-        on L.lodging_code = R.parent_code
-        )A
-        join 
-        (
-        select distinct W.review_content, W.fk_userid
-        from tbl_review W join
-        tbl_reservation E 
-        on W.fk_userid = E.fk_userid
-        )B
-        on A.fk_userid||A.review_content = B.fk_userid || B.review_content
-        where A.fk_userid = 'kudi02'
-    )V
-    where rno 
-
-
-
-
-
-select *
-from tbl_reservation
