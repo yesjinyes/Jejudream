@@ -78,10 +78,11 @@
        	<input type="hidden" name="str_attach" />
        	<input type="hidden" name="fk_lodging_code" value="${requestScope.fk_lodging_code}" />
         </form>
-        <div style="text-align: center; margin-bottom: 13%;">
+        <div style="text-align: center; margin-bottom: 13%; margin-top: 5%;">
             <button type="button" class="btn btn-dark" id="addRoomBtn">객실 추가하기</button>
             <button type="button" class="btn btn-danger" id="deleteRoomBtn">추가된 객실 삭제하기</button>
-            <button type="button" class="btn" id="registerBtn" onclick="goRoomUpdate()">객실 등록하기</button>
+            <button type="button" class="btn btn-info" id="registerBtn" onclick="goRoomUpdate()">객실 수정하기</button>
+            <button type="button" class="btn btn-warning"  onclick="javascript:history.back()">취소하기</button>
         </div>
     </div>
 
@@ -115,41 +116,41 @@
                              <div id="\${tabId}" class="tab-pane \${isActive}" data-existing="true">
                                  <div class="info">
                                      <div class="info_block">
-                                     	<input type="hidden" name="room_detail_code[]" value="\${item.room_detail_code}" />
+                                     	<input type="hidden" name="room_detail_code" value="\${item.room_detail_code}" />
                                          <h4>객실명</h4>
-                                         <input type="text" name="room_name[]" value="\${item.room_name}" placeholder="객실 명 입력">
+                                         <input type="text" name="room_name" value="\${item.room_name}" placeholder="객실 명 입력">
                                          <span class="error"></span>
                                      </div>
                                      <div class="info_block mt-3">
                                          <h4>객실 가격</h4>
-                                         <input type="text" name="price[]" value="\${item.price}" placeholder="객실 가격 입력">
+                                         <input type="text" name="price" value="\${item.price}" placeholder="객실 가격 입력">
                                          <span class="error"></span>
                                      </div>
                                      <div class="info_block mt-3">
                                          <h4>최소 기준 인원</h4>
-                                         <input type="number" name="min_person[]" value="\${item.min_person}" min="2" max="20" placeholder="최소 2명 이상">
+                                         <input type="text" name="min_person" value="\${item.min_person}" min="2" max="20" placeholder="최소 2명 이상">
                                          <span class="error"></span>
                                      </div>
                                      <div class="info_block mt-3">
                                          <h4>최대 입실 가능 인원</h4>
-                                         <input type="number" name="max_person[]" value="\${item.max_person}" min="2" max="20" placeholder="최소 2명 이상">
+                                         <input type="text" name="max_person" value="\${item.max_person}" min="2" max="20" placeholder="최소 2명 이상">
                                          <span class="error"></span>
                                      </div>
                                      <div class="info_block mt-3">
                                          <h4>체크인 시간</h4>
-                                         <input type="text" name="check_in[]" value="\${item.check_in}" min="0" max="24" placeholder="00시는 0시로 입력">
+                                         <input type="text" name="check_in" value="\${item.check_in}" min="0" max="24" placeholder="00시는 0시로 입력">
                                          <span class="error"></span>
                                      </div>
                                      <div class="info_block mt-3">
                                          <h4>체크아웃 시간</h4>
-                                         <input type="text" name="check_out[]" value="\${item.check_out}" min="0" max="24" placeholder="00시는 0시로 입력">
+                                         <input type="text" name="check_out" value="\${item.check_out}" min="0" max="24" placeholder="00시는 0시로 입력">
                                          <span class="error"></span>
                                      </div>
                                      <div class="mt-3">
                                          <h4>객실 대표 사진</h4>
-                                         <span>원래 파일명 : \${item.room_img}</span><br>
-                                         <input type="hidden" name="room_img[]" value="\${item.room_img}" />
-                                         <input type="file" name="attach[]">
+                                         <span>원래 파일명 : \${item.orgFilename}</span><br>
+                                         <input type="hidden" name="room_img" value="\${item.room_img}" />
+                                         <input type="file" name="attach">
                                          <span class="error"></span>
                                      </div>
                                  </div>
@@ -184,37 +185,37 @@
                      <div class="info">
                          <div class="info_block">
                              <h4>객실명</h4>
-                             <input type="text" name="room_name[]" placeholder="객실 명 입력">
+                             <input type="text" name="room_name" placeholder="객실 명 입력">
                              <span class="error"></span>
                          </div>
                          <div class="info_block mt-3">
                              <h4>객실 가격</h4>
-                             <input type="text" name="price[]" placeholder="객실 가격 입력">
+                             <input type="text" name="price" placeholder="객실 가격 입력">
                              <span class="error"></span>
                          </div>
                          <div class="info_block mt-3">
                              <h4>최소 기준 인원</h4>
-                             <input type="number" name="min_person[]" min="2" max="20" placeholder="최소 2명 이상">
+                             <input type="text" name="min_person" min="2" max="20" placeholder="최소 2명 이상">
                              <span class="error"></span>
                          </div>
                          <div class="info_block mt-3">
                              <h4>최대 입실 가능 인원</h4>
-                             <input type="number" name="max_person[]" min="2" max="20" placeholder="최소 2명 이상">
+                             <input type="text" name="max_person" min="2" max="20" placeholder="최소 2명 이상">
                              <span class="error"></span>
                          </div>
                          <div class="info_block mt-3">
                              <h4>체크인 시간</h4>
-                             <input type="text" min="0" max="24" name="check_in[]" placeholder="00시는 0시로 입력">
+                             <input type="text" min="0" max="24" name="check_in" placeholder="00시는 0시로 입력">
                              <span class="error"></span>
                          </div>
                          <div class="info_block mt-3">
                              <h4>체크아웃 시간</h4>
-                             <input type="text" min="0" max="24" name="check_out[]" placeholder="00시는 0시로 입력">
+                             <input type="text" min="0" max="24" name="check_out" placeholder="00시는 0시로 입력">
                              <span class="error"></span>
                          </div>
                          <div class="mt-3">
                              <h4>객실 대표 사진</h4>
-                             <input type="file" name="attach[]">
+                             <input type="file" name="attach">
                              <span class="error"></span>
                          </div>
                      </div>
@@ -249,7 +250,7 @@
 
       	// 객실 삭제 버튼 클릭
          $('#deleteRoomBtn').click(function() {
-        	 
+        	
              const activeTab = $('#roomTabs .nav-link.active');
 
              if (activeTab.length > 0) {
@@ -257,35 +258,45 @@
                  const targetId = activeTab.attr('href');
                  const isExisting = $(targetId).data('existing');
                  
-                 const room_detail_code = $(targetId).find('input[name="room_detail_code[]"]').val();
+                 const room_detail_code = $(targetId).find('input[name="room_detail_code"]').val();
 
                  if (isExisting) {
                      // data-existing="true" 인 것만 삭제
-                     $.ajax({
+                     
+                     if(confirm('정말 해당객실을 삭제하시겠습니까?')){
                     	 
-                         url: "<%= ctxPath %>/deleteRoomDetails.trip",
-                         type: "post",
-                         data: {"room_detail_code":room_detail_code},
-                         dataType:"json",
-                         success: function(json) {
+                    	 $.ajax({
                         	 
-                        	 if(json.result == "1"){
-                        		 
-                        		 alert('객실 삭제 성공!');
-                        		 
-                        	 }else{
-                        		 
-                        		 alert('객실 삭제 실패!');
-                        	 }
-                        	 
-                         },
-                         error: function(request, status, error) {
-                        	 
-                             alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+                             url: "<%= ctxPath %>/deleteRoomDetails.trip",
+                             type: "post",
+                             data: {"room_detail_code":room_detail_code},
+                             dataType:"json",
+                             success: function(json) {
+                            	 
+                            	 if(json.result == "1"){
+                            		 
+                            		 alert('객실 삭제 성공!');
+                            		 
+                            	 }else{
+                            		 
+                            		 alert('객실 삭제 실패!');
+                            	 }
+                            	 
+                             },
+                             error: function(request, status, error) {
+                            	 
+                                 alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+                                 
+                             }
                              
-                         }
-                         
-                     }); // end of $.ajax
+                         }); // end of $.ajax
+                    	 
+                     } else {
+                    	 
+                    	 return false;
+                     }
+                     
+                     
                      
                  } // end of if data-existing="true" 인 것만 삭제
 
@@ -321,7 +332,7 @@
          let arr_room_detail_code = [];
          let str_room_detail_code = "";
          
-         $('input[name="room_detail_code[]"]').each(function() {
+         $('input[name="room_detail_code"]').each(function() {
          	
          	arr_room_detail_code.push($(this).val().trim());
          });
@@ -330,7 +341,7 @@
          let arr_room_img = [];
          let str_room_img = "";
          
-		$('input[name="room_img[]"]').each(function() {
+		$('input[name="room_img"]').each(function() {
 	         	
 			arr_room_img.push($(this).val().trim());
 	    });
@@ -344,10 +355,11 @@
 
          let isCheck = true; // 초기화 필요
 
-         $('.error').text(''); // Clear previous errors
+         $('.error').text(''); // 기존 유효성 text 제거하기
          $('input').removeClass('input_error');
 
-         $('input[name="room_name[]"]').each(function() {
+         // 객실명 검사하기
+         $('input[name="room_name"]').each(function() {
              if ($(this).val().trim() === '') {
                  $(this).next('.error').text('객실명을 입력하세요.');
                  $(this).addClass('input_error');
@@ -357,67 +369,117 @@
              arr_room_name.push($(this).val().trim());
          });
 
-         $('input[name="price[]"]').each(function() {
+         // 객실 가격 검사하기
+         $('input[name="price"]').each(function() {
              if ($(this).val().trim() === '') {
                  $(this).next('.error').text('객실 가격을 입력하세요.');
                  $(this).addClass('input_error');
                  isCheck = false;
+             }else if ( isNaN($(this).val().trim() ) ){
+            	 
+            	 $(this).next('.error').text('객실 가격은 숫자로만 입력해야합니다!');
+                 $(this).addClass('input_error');
+                 $(this).val("");
+                 isCheck = false;
+            	 
+             }else if ( Number($(this).val().trim()) > 200000000 ){
+            	 
+            	 $(this).next('.error').text('입력된 객실 가격이 너무 말도 안됩니다!');
+                 $(this).addClass('input_error');
+                 $(this).val("");
+                 isCheck = false;
+            	 
              }
 
              arr_price.push($(this).val().trim());
          });
 
-         $('input[name="min_person[]"]').each(function() {
-             if (Number.isNaN(Number($(this).val())) || Number($(this).val()) > 24) {
-                 $(this).next('.error').text('올바른 숫자만 입력하셔야합니다!');
-                 $(this).addClass('input_error');
-                 $(this).val("");
-                 isCheck = false;
-             } else if ($(this).val().trim() === '') {
-                 $(this).next('.error').text('반드시 입력하세요!');
-                 $(this).addClass('input_error');
-                 isCheck = false;
-             }
+         // 최소 기준인원 검사하기
+         $('input[name="min_person"]').each(function() {
+        	 
+        	 const min_person = $(this).val().trim();
 
-             arr_min_person.push($(this).val().trim());
+	       	 if (min_person == '') {
+	       		 
+	       	     $(this).next('.error').text('올바른 숫자로 반드시 입력하세요!');
+	       	     $(this).addClass('input_error');
+	       	     isCheck = false;
+	       	     
+	       	 } else if (isNaN(min_person) || Number(min_person) <= 1 || Number(min_person) > 20) {
+	       	 
+	       		 $(this).next('.error').text('올바른 숫자로 2에서 최대 20까지만 입력하셔야합니다!');
+	       	     $(this).addClass('input_error');
+	       	     $(this).val("");
+	       	     isCheck = false;
+	       	     
+	       	 }
+	       	 
+	       	 arr_min_person.push(min_person);
+	       	 
          });
 
-         $('input[name="max_person[]"]').each(function() {
-             if (Number.isNaN(Number($(this).val())) || Number($(this).val()) > 24) {
-                 $(this).next('.error').text('올바른 숫자만 입력하셔야합니다!');
-                 $(this).addClass('input_error');
-                 $(this).val("");
-                 isCheck = false;
-             } else if ($(this).val().trim() === '') {
-                 $(this).next('.error').text('반드시 입력하세요!');
-                 $(this).addClass('input_error');
-                 isCheck = false;
-             }
+         // 최대 입실인원 검사하기
+         $('input[name="max_person"]').each(function() {
+        	 
+        	 const max_person = $(this).val().trim();
 
-             arr_max_person.push($(this).val().trim());
+	       	 if (max_person == '') {
+	       		 
+	       	     $(this).next('.error').text('올바른 숫자로 반드시 입력하세요!');
+	       	     $(this).addClass('input_error');
+	       	     isCheck = false;
+	       	     
+	       	 } else if (isNaN(max_person) || Number(max_person) <= 1 || Number(max_person) > 20) {
+	       	 
+	       		 $(this).next('.error').text('올바른 숫자로 2에서 최대 20까지만 입력하셔야합니다!');
+	       	     $(this).addClass('input_error');
+	       	     $(this).val("");
+	       	     isCheck = false;
+	       	     
+	       	 } 
+	       	 
+	       	 arr_max_person.push(max_person);
+	       	 
          });
-
-         $('input[name="check_in[]"]').each(function() {
+			
+         
+         // 체크인, 체크아웃시간 0시부터 24시까지 검사하는 정규표현식
+         const regtime = new RegExp(/^(0?[0-9]|1[0-9]|2[0-4])시$/);
+         
+         // 입력된 체크인 시간 검사하기
+         $('input[name="check_in"]').each(function() {
              if ($(this).val().trim() === '') {
                  $(this).next('.error').text('반드시 입력하세요!');
                  $(this).addClass('input_error');
                  isCheck = false;
+             }else if( !regtime.test($(this).val()) ) {
+            	 
+            	 $(this).next('.error').text('00시~24시 사이인 올바른 시간을 입력하세요!');
+            	 $(this).addClass('input_error');
+            	 isCheck = false;
              }
 
              arr_check_in.push($(this).val().trim());
          });
 
-         $('input[name="check_out[]"]').each(function() {
+         // 입력된 체크아웃 시간 검사하기
+         $('input[name="check_out"]').each(function() {
              if ($(this).val().trim() === '') {
                  $(this).next('.error').text('반드시 입력하세요!');
                  $(this).addClass('input_error');
                  isCheck = false;
+             }else if( !regtime.test($(this).val()) ) {
+            	 
+            	 $(this).next('.error').text('00시~24시 사이인 올바른 시간을 입력하세요!');
+            	 $(this).addClass('input_error');
+            	 isCheck = false;
              }
 
              arr_check_out.push($(this).val().trim());
          });
 
-         $('input[name="attach[]"]').each(function() {
+         // 첨부파일 검사하기
+         $('input[name="attach"]').each(function() {
              if ($(this).get(0).files.length === 0) {
                  $(this).next('.error').text('사진을 추가하세요.');
                  $(this).addClass('input_error');
@@ -426,7 +488,7 @@
          });
 
          if (!isCheck) {
-             alert('모두 입력하셔야 객실등록이 가능합니다!!');
+             alert('올바른 데이터를 모두 입력하셔야 객실수정이 가능합니다!!');
              return;
          }
 

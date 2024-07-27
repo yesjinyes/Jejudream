@@ -8,7 +8,7 @@
 %>
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f42c6cbd2d2060c5c719ee80540fbfbc&libraries=services"></script>
 
- 
+ <%-- 
 <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js"
   integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4" crossorigin="anonymous"></script>
 <script>
@@ -54,7 +54,7 @@
   }
 </script>
 
-
+--%>
 
 
 <script type="text/javascript">
@@ -200,11 +200,32 @@ $(document).ready(function(){
     }); // end of $("input:text[name='datepicker']").change( (e)=>{})
     
     
+    $("input:text[name='datepicker']").keyup( (e)=>{
+        // input태그가 text 타입인데 키보드로 문자를 입력하려고할때 막아야한다 마우스클릭으로만 가능하게끔
+            e.preventDefault(); // 입력막기
+        	alert("마우스 클릭으로만 날짜를 입력하세요!"); // 에러메시지 표현
+            
+            $("input#fromDate").val(i1);
+            $("input#toDate").val(o1);
+
+    }); // end of $('input#datepicker').keyup( (e)=>{})
+    
     // 인원선택이 변경되었다면
     $("input#people").change(function(){
     	
+    	// alert($(this).val());
+    	let people = $(this).val();
+    	if(Number(people) <= 0 || Number(people) > 20){
+    		
+    		alert('올바른 인원을 입력하세요!');
+    		$(this).val("2");
+    		
+    		return false;
+    	}
+    	
     	chk = false;
-    }); 
+    	
+    });  // end of $("input#people").change(function(){})
     
     
     
@@ -265,7 +286,7 @@ $(document).ready(function(){
                     						<button type="button" name="reservation" class="btn btn-success">예약하기</button>
                 						</div>
                 						<input type="hidden" name="room_detail_code1" value="\${item.room_detail_code}" />
-                                        <input type="hidden" name="lodging_code1" value="\${item.lodging_code}" />
+                                        <input type="hidden" name="lodging_code1" value="\${lodging_code}" />
                                         <input type="hidden" name="check_in1" value="\${check_in}" />
                                         <input type="hidden" name="check_out1" value="\${check_out}" />`;	
         					
@@ -279,7 +300,8 @@ $(document).ready(function(){
             	} // end of if 
             	else {
             		
-            		v_html = "<span>해당하는 숙소가 없습니다</span>";
+            		v_html = "<span class='py-3' style='font-size: 20pt; margin-bottom:2%;'>해당하는 객실이 없습니다</span>";
+            		v_html += `<input type="hidden" name="lodging_code1" value="\${lodging_code}" />`;
             		
             	} // end of else
                 
@@ -855,7 +877,7 @@ function goAddReview(){
                     <label>인원</label>
                     <div class="people-container">
                         <span class="people-pick">
-                            <input type="number" id="people" style="cursor: pointer; width: 100%;" name="people" value="${requestScope.dateSendMap.people}" placeholder="인원 선택">
+                            <input type="number"  min="2" max="20" id="people" style="cursor: pointer; width: 100%;" name="people" value="${requestScope.dateSendMap.people}" placeholder="인원 선택">
                         </span>
                     </div>
                 </div>
@@ -876,6 +898,10 @@ function goAddReview(){
             </ul>
 
             <div class="roominfo">
+            	<c:if test="${empty requestScope.roomDetailList}">
+            		<span>해당하는 숙소가 없습니다</span>
+            	</c:if>
+            
                 <c:forEach var="roomDetail" items="${requestScope.roomDetailList}">
                     <div class="single-post d-flex justify-content-between">
                         <div style="width: 35%;">

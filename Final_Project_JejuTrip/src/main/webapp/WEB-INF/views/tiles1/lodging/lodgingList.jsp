@@ -309,16 +309,14 @@ $(document).ready(function(){
     // 인원수 잘못된 키보드 입력시 
     $("input#people").bind("keydown", function(e){
     
-    	const num = $(e.target).val();
-    	
-    	if(num < 1){
+    	// alert($(this).val());
+    	let people = $(this).val();
+    	if(Number(people) <= 0 || Number(people) > 20){
     		
-    		alert('인원을 올바르게 입력하세요!');
-    		
-    		$("input#people").val("2");
+    		alert('올바른 인원을 입력하세요!');
+    		$(this).val("2");
     		
     		return false;
-    		
     	} // end of if 
     	
     }); // end of $("input#people").bind("keydown", function(e){}) 
@@ -349,12 +347,27 @@ $(document).ready(function(){
 			
 		if(e.keyCode == 13){
 			
+			// 초기화
+		    $("input:text[id='fromDate']").datepicker('setDate', 'today');
+		    $("input:text[id='toDate']").datepicker('setDate', '+1D');
+		    $("input#people").val(2);
+		    $('input:checkbox[name="lodging_category"]').prop('checked', false);
+		    $('input:checkbox[name="convenient"]').prop('checked', false);
+		    $('input:checkbox[name="local_status"]').prop('checked', false);
+			
 			goSearch();
+			
 		}
 		
 	}); 
     $("button[id='search']").on('click', function() {
-    	
+    	// 초기화
+        $("input:text[id='fromDate']").datepicker('setDate', 'today');
+        $("input:text[id='toDate']").datepicker('setDate', '+1D');
+        $("input#people").val(2);
+        $('input:checkbox[name="lodging_category"]').prop('checked', false);
+        $('input:checkbox[name="convenient"]').prop('checked', false);
+        $('input:checkbox[name="local_status"]').prop('checked', false);
     	goSearch();
         
     });
@@ -432,7 +445,7 @@ $(document).ready(function(){
 		        	
 	        	}else{
 	        		
-	        		v_html += "<span>해당하는 숙소가 없습니다</span>";
+	        		v_html += "<span class='py-3' style='font-size: 20pt;'>해당하는 숙소가 없습니다</span>";
 	        		
 	        	}
 		        	
@@ -598,7 +611,7 @@ list-style: none;
                             <div>
                                 <div class="people-container">
                                     <span class="people-pick">
-                                        <input type="number" min="2" max="10" id="people" style="cursor: pointer; width:100px;" name="people" value="${requestScope.dateSendMap.detail_people}" placeholder="인원 선택">
+                                        <input type="number" min="2" max="20" id="people" style="cursor: pointer; width:100px;" name="people" value="${requestScope.dateSendMap.detail_people}" placeholder="인원 선택">
                                     </span>
                                 </div>
                             </div>

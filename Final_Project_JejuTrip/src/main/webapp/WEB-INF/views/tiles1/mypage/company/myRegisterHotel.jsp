@@ -79,7 +79,7 @@
                			$this.removeClass("btn-light");
                			$this.addClass("btn-danger");
                			$this.attr("name","updateRoom");
-               			$this.text("수정/삭제");
+               			$this.text("수정");
                		}			
                	
        			},
