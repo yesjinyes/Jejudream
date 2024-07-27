@@ -622,18 +622,42 @@
 	    
 	    
 	
-	<!-- 
+	<!-- 회원이 예약신청한 상세정보 가져오기 -->
 	<resultMap type="HashMap" id="getMemberReservationInfo_Map">
-       <result property="festival_no"     column="festival_no"     javaType="String" />
-       <result property="title_name"      column="title_name"        javaType="String" />
-       <result property="img"        	  column="img"        javaType="String" />
-       <result property="startdate"       column="startdate"        javaType="String" />
-       <result property="enddate"         column="enddate"        javaType="String" />
-       <result property="local_status"    column="local_status"        javaType="String" />
-       <result property="link"            column="link"        javaType="String" />
+       <result property="lodging_name"      column="lodging_name"        javaType="String" />
+       <result property="room_name"        	  column="room_name"        javaType="String" />
+       <result property="lodging_address"       column="lodging_address"        javaType="String" />
+       <result property="lodging_category"         column="lodging_category"        javaType="String" />
+       <result property="lodging_tell"    column="lodging_tell"        javaType="String" />
+       <result property="room_img"            column="room_img"        javaType="String" />
+       <result property="status"            column="status"        javaType="String" />
+       <result property="check_in"    column="check_in"        javaType="String" />
+       <result property="str_check_in"    column="str_check_in"        javaType="String" />
+       <result property="str_check_out"            column="str_check_out"        javaType="String" />
+       <result property="reservation_price"    column="reservation_price"        javaType="String" />
+       <result property="reservation_date"    column="reservation_date"        javaType="String" />
+       <result property="check_intime"            column="check_intime"        javaType="String" />
+       <result property="check_outtime"            column="check_outtime"        javaType="String" />
    </resultMap>
 	<select id="getMemberReservationInfo" parameterType="String" resultMap="getMemberReservationInfo_Map">
+		select L.lodging_name, D.room_name,  L.lodging_address,
+	           L.lodging_category, L.lodging_tell, D.room_img , R.status, R.check_in,
+	           to_char(R.check_in , 'yyyy-mm-dd') as str_check_in, to_char(R.check_out, 'yyyy-mm-dd') as str_check_out ,
+	           R.reservation_price, R.reservation_date,
+	           D.check_in as check_intime , D.check_out as check_outtime , to_char(sysdate, 'yyyy-mm-dd') as today
+	    from tbl_reservation R
+	    join tbl_room_detail D
+	    on R.fk_room_detail_code = D.room_detail_code
+	    join tbl_lodging L
+	    on D.fk_lodging_code = L.lodging_code
+	    where R.reservation_code = #{reservation_code}
 	</select>    
-	     -->
+	
+	
+	<!-- 회원이 직접 예약취소상태 만들기 -->
+	<update id="memberCancelReserve" parameterType="String">
+		update tbl_reservation set status = 2
+		where reservation_code = #{reservation_code}
+	</update>     
  
 </mapper>

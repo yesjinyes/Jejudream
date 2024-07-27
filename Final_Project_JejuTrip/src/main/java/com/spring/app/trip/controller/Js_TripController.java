@@ -1565,8 +1565,9 @@ public class Js_TripController {
 	} // end of String current_festival() {
 	
 	
+	// 유저 마이페이지에서 예약신청한 상세정보 모달페이지 가져오기
 	@ResponseBody
-	@GetMapping(value="JSONMemberReservationInfo.trip", produces="text/plain;charset=UTF-8")
+	@PostMapping(value="JSONMemberReservationInfo.trip", produces="text/plain;charset=UTF-8")
 	public String memberReservationInfo(@RequestParam ("reservation_code") String reservation_code) {
 		
 		if("".equals(reservation_code) || reservation_code == null) {
@@ -1577,15 +1578,80 @@ public class Js_TripController {
 		}
 		
 		// 유저가 예약신청한 상세정보 가져오기
-		List<Map<String, String>> memberReserveInfoList = service.getMemberReservationInfo(reservation_code);
+		Map<String, String> memberReserveInfo = service.getMemberReservationInfo(reservation_code);
 		
+		JSONObject jsonObj = new JSONObject();
 		
+		Date now = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
+
 		
+		if( memberReserveInfo != null) {
+			
+			jsonObj.put("lodging_name", memberReserveInfo.get("lodging_name"));
+			jsonObj.put("room_name", memberReserveInfo.get("room_name"));
+			jsonObj.put("lodging_address", memberReserveInfo.get("lodging_address"));
+			jsonObj.put("lodging_category", memberReserveInfo.get("lodging_category"));
+			jsonObj.put("lodging_tell", memberReserveInfo.get("lodging_tell"));
+			jsonObj.put("room_img", memberReserveInfo.get("room_img"));
+			
+			
+			String check_indate = memberReserveInfo.get("check_in");
+			
+			// 현재시간이 체크인시간보다 지났다면 예약만료로 예약취소버튼이 나타나지않게 한다.	
+			try {
+                Date check_in = sdf.parse(check_indate);
+                // System.out.println("compareto : " + check_in.compareTo(now));
+                if (check_in.compareTo(now) < 0  ) {
+                	// ||	(check_in.compareTo(now) < 0 && !"2".equals(memberReserveInfo.get("status") ) )
+                    jsonObj.put("status", "3");
+                    
+                } else {
+                    jsonObj.put("status", memberReserveInfo.get("status"));
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+                
+            } // end of catch
+			
+			
+			jsonObj.put("check_in", memberReserveInfo.get("str_check_in"));
+			jsonObj.put("check_out", memberReserveInfo.get("str_check_out"));
+			jsonObj.put("reservation_price", memberReserveInfo.get("reservation_price"));
+			jsonObj.put("reservation_date", memberReserveInfo.get("reservation_date"));
+			jsonObj.put("check_intime", memberReserveInfo.get("check_intime"));
+			jsonObj.put("check_outtime", memberReserveInfo.get("check_outtime"));
+			
+		} // end of if
 		
+		return jsonObj.toString();
 		
-		return "";
-	}
+	} // end of public String memberReservationInfo(@RequestParam ("reservation_code") String reservation_code) {
+	
+	
+	
+	@ResponseBody
+	@PostMapping(value="JSONMemberCancelReserve.trip", produces="text/plain;charset=UTF-8")
+	public String memberCancelReserve(@RequestParam ("reservation_code") String reservation_code) {
+		
+		int n = 0;
+		
+		if(reservation_code !=null) {
+			
+			// 회원이 직접 예약취소상태 만들기
+			n = service.memberCancelReserve(reservation_code);
+			
+			
+		}
+		
+		JSONObject jsonObj = new JSONObject();
+		
+		jsonObj.put("result", n);
+		
+		return jsonObj.toString();
+		
+	} // end of public String memberCancelReserve(@RequestParam ("reservation_code") String reservation_code) {
 	
 	
 }
