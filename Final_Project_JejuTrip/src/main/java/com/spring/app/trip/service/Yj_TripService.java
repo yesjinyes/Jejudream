@@ -84,23 +84,10 @@ public interface Yj_TripService {
 	// == 자주묻는질문 전체 띄우기 (페이징O) == //
 	List<Map<String, String>> viewAllFaqList_paging(Map<String, String> paraMap);
 
-	// == FAQ 전체 리스트 페이징 처리 시 순번 나타내기 위함 == //
-	int getTotalFaqList();
+	// == FAQ 리스트 페이징 처리 위함 == //
+	int getTotalFaqList(Map<String, String> paraMap);
 
 	
-
-	
-
-
-
-
-
-	
-
-
-
-
-
 	
 	
 

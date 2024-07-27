@@ -24,71 +24,86 @@
     }); // end of $(document).ready(function(){}------------------------------------------------------------------------
     	
     	
-function goViewAdminReviewList(currentShowPageNo){
-	$.ajax({
-	    url:"<%= ctxPath%>/adminReviewListJSON.trip",
-	    type:"post",
-	    data: {"currentShowPageNo":currentShowPageNo},
-	    
-	    dataType:"json",
-	    success:function(json){
-	 	
-	 	   let v_html = "";
-	       let r_html = "0"; 
-	        if (json.length > 0) {    
-	           $.each(json, function(index, item){ 
-	                             
-	                v_html += "<tr>";
-	              	v_html += "<td style='text-align: center;'>"+item.rno+"</td>";
-	              	if(item.review_division_R == 'A'){
-	              	    v_html += "<td style='text-align: center;'><span style='font-weight:bold;'>숙소</span></td>";
-	              	  v_html += "<input type='hidden' value='<%= ctxPath%>/lodgingDetail.trip?lodging_code="+item.lodging_code+"'>";
-	              	}
-					if(item.review_division_R == 'B'){
-						v_html += "<td style='text-align: center;'><span style='font-weight:bold;'>맛집</span></td>";
-						v_html += "<input type='hidden' value='<%= ctxPath%>/foodstoreDetail.trip?food_store_code="+item.parent_code+"'>";
-					}
-					if(item.review_division_R == 'C'){
-						v_html += "<td style='text-align: center;'><span style='font-weight:bold;'>즐길거리</span></td>";
-						v_html += "<input type='hidden' value='<%= ctxPath%>/goAddSchedule.trip?play_code="+item.parent_code+"'>"
-					}
-					v_html += "<td >"+item.review_content+"</td>";
-					v_html += "<td >"+item.fk_userid+"</td>";
-					v_html += "<td style='text-align: center;'>"+item.registerday+"</td>";
-					v_html += "</tr>";
-			    	
-			    	
-	               r_html = item.totalCount
-	           }); 
-	           
-	           const totalPage = Math.ceil(json[0].totalCount / json[0].sizePerPage);
-	           PageBar(currentShowPageNo, totalPage);
-	        }// end of if -----------------------
-	        
-	        else {
-	        	v_html += "<tr>";
-				v_html +=   "<td colspan='11' class='comment'>조회할 정보가 없습니다.</td>";
-				v_html += "</tr>";
-	        }// end of else ---------------------
-	        $("tbody#all_review_tbody").html(v_html);
-	        $("span#reservation_reception").html(r_html);
-	        
-	        $("tbody#all_review_tbody tr").each(function() {
-                var link = $(this).find('input[type=hidden]').val();
-                $(this).find('td').click(function() {
-                    window.location.href = link;
+    function goViewAdminReviewList(currentShowPageNo) {
+        $.ajax({
+            url: "<%= ctxPath%>/adminReviewListJSON.trip",
+            type: "post",
+            data: {"currentShowPageNo": currentShowPageNo},
+            dataType: "json",
+            success: function (json) {
+                let v_html = "";
+                let r_html = "0";
+                if (json.length > 0) {
+                    $.each(json, function (index, item) {
+                        v_html += "<tr>";
+                        v_html += "<td style='text-align: center;'>" + item.rno + "</td>";
+                        if (item.review_division_R == 'A') {
+                            v_html += "<td style='text-align: center;'><span style='font-weight:bold;'>숙소</span></td>";
+                            v_html += "<input type='hidden' value='<%= ctxPath%>/lodgingDetail.trip?lodging_code=" + item.parent_code + "'>";
+                        }
+                        if (item.review_division_R == 'B') {
+                            v_html += "<td style='text-align: center;'><span style='font-weight:bold;'>맛집</span></td>";
+                            v_html += "<input type='hidden' value='<%= ctxPath%>/foodstoreDetail.trip?food_store_code=" + item.parent_code + "'>";
+                        }
+                        if (item.review_division_R == 'C') {
+                            v_html += "<td style='text-align: center;'><span style='font-weight:bold;'>즐길거리</span></td>";
+                            v_html += "<input type='hidden' value='<%= ctxPath%>/goAddSchedule.trip?play_code=" + item.parent_code + "'>";
+                        }
+                        v_html += "<td>" + item.review_content + "</td>";
+                        v_html += "<td>" + item.fk_userid + "</td>";
+                        v_html += "<td style='text-align: center;'>" + item.registerday + "</td>";
+                        v_html += "<td style='text-align: center;'><button type='button' onclick='deleteReview("+item.review_code+")' class='btn btn-outline-warning btn-sm'>삭제</button></td>";
+                        v_html += "</tr>";
+                        r_html = item.totalCount;
+                    });
+
+                    const totalPage = Math.ceil(json[0].totalCount / json[0].sizePerPage);
+                    PageBar(currentShowPageNo, totalPage);
+                } else {
+                    v_html += "<tr>";
+                    v_html += "<td colspan='11' class='comment'>조회할 정보가 없습니다.</td>";
+                    v_html += "</tr>";
+                }
+                $("tbody#all_review_tbody").html(v_html);
+                $("span#reservation_reception").html(r_html);
+
+                $("tbody#all_review_tbody tr").each(function () {
+                    var link = $(this).find('input[type=hidden]').val();
+                    $(this).find('td').not(':last').click(function () {
+                        window.location.href = link;
+                    });
                 });
-            });
-	    },
-	    error: function(request, status, error){
-	        alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
-	     }
-	 	   
-	 	   
-		   });
-	
-}
-	
+
+                // 삭제 버튼 클릭 시 이벤트 전파 막기
+                $("tbody#all_review_tbody tr td button").click(function (event) {
+                    event.stopPropagation();
+                });
+            },
+            error: function (request, status, error) {
+                alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+            }
+        });
+    }
+
+     function deleteReview(review_code) {
+        // 리뷰 삭제를 위한 AJAX 요청을 보냅니다.
+        console.log (review_code);
+	        if(confirm("해당 리뷰를 삭제하시겠습니까?")){
+	        $.ajax({
+	            url: "<%= ctxPath%>/adminDeleteReview.trip",
+	            type: "post",
+	            data: {"review_code": review_code},
+	            dataType:"json",
+				success:function(json){
+	                alert("리뷰가 삭제되었습니다.");
+	                goViewAdminReviewList(1); // 삭제 후 첫 페이지로 갱신
+	            },
+	            error: function (request, status, error) {
+	                alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+	            }
+	        });
+	    } 
+     }
 	//goViewAllReviewList 페이지바 함수
 	 function PageBar(currentShowPageNo,totalPage){
 	 	   
@@ -153,6 +168,7 @@ function goViewAdminReviewList(currentShowPageNo){
 		              	    v_html += "<td>"+item.fk_userid+"</td>";
 							v_html += "<td style='text-align: center;'>"+item.registerday+"</td>";
 							v_html += "<input type='hidden' value='<%= ctxPath%>/foodstoreDetail.trip?food_store_code="+item.parent_code+"'>";
+							v_html += "<td style='text-align: center;'><button type='button' onclick='deleteReview("+item.review_code+")' class='btn btn-outline-warning btn-sm'>삭제</button></td>";
 							v_html += "</tr>";
 					    	
 					    	
@@ -173,11 +189,15 @@ function goViewAdminReviewList(currentShowPageNo){
 			        
 			        $("tbody#food_review_tbody tr").each(function() {
 		                var link = $(this).find('input[type=hidden]').val();
-		                $(this).find('td').click(function() {
+		                $(this).find('td').not(':last').click(function () {
 		                    window.location.href = link;
 		                });
 		            });
 			        
+			     	// 삭제 버튼 클릭 시 이벤트 전파 막기
+	                $("tbody#all_review_tbody tr td button").click(function (event) {
+	                    event.stopPropagation();
+	                });
 			    },
 			    error: function(request, status, error){
 			        alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
@@ -250,6 +270,7 @@ function goViewAdminReviewList(currentShowPageNo){
 								v_html += "<td>"+item.fk_userid+"</td>";
 								v_html += "<td style='text-align: center;'>"+item.registerday+"</td>";
 								v_html += "<input type='hidden' value='<%= ctxPath%>/goAddSchedule.trip?play_code="+item.parent_code+"'>";
+								v_html += "<td style='text-align: center;'><button type='button' onclick='deleteReview("+item.review_code+")' class='btn btn-outline-warning btn-sm'>삭제</button></td>";
 								v_html += "</tr>";
 						    	
 						    	
@@ -270,10 +291,15 @@ function goViewAdminReviewList(currentShowPageNo){
 				        
 				        $("tbody#play_review_tbody tr").each(function() {
 			                var link = $(this).find('input[type=hidden]').val();
-			                $(this).find('td').click(function() {
+			                $(this).find('td').not(':last').click(function () {
 			                    window.location.href = link;
 			                });
 			            });
+				        
+				     	// 삭제 버튼 클릭 시 이벤트 전파 막기
+		                $("tbody#all_review_tbody tr td button").click(function (event) {
+		                    event.stopPropagation();
+		                });
 				        
 				    },
 				    error: function(request, status, error){
@@ -350,6 +376,7 @@ function goViewAdminReviewList(currentShowPageNo){
 				              	    v_html += "<td>"+item.fk_userid+"</td>";
 									v_html += "<td style='text-align: center;'>"+item.registerday+"</td>";
 									v_html += "<input type='hidden' value='<%= ctxPath%>/lodgingDetail.trip?lodging_code="+item.lodging_code+"'>";
+									v_html += "<td style='text-align: center;'><button type='button' onclick='deleteReview("+item.review_code+")' class='btn btn-outline-warning btn-sm'>삭제</button></td>";
 									v_html += "</tr>";
 							    	
 							    	
@@ -371,11 +398,15 @@ function goViewAdminReviewList(currentShowPageNo){
 					        
 					        $("tbody#login_review_tbody tr").each(function() {
 				                var link = $(this).find('input[type=hidden]').val();
-				                $(this).find('td').click(function() {
+				                $(this).find('td').not(':last').click(function () {
 				                    window.location.href = link;
 				                });
 				            });
 					        
+					     	// 삭제 버튼 클릭 시 이벤트 전파 막기
+			                $("tbody#all_review_tbody tr td button").click(function (event) {
+			                    event.stopPropagation();
+			                });
 					    },
 					    error: function(request, status, error){
 					        alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);

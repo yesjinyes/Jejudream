@@ -1317,6 +1317,7 @@ public class Dy_TripController {
 	@ResponseBody
 	@GetMapping(value="community/viewComment.trip", produces="text/plain;charset=UTF-8")
 	public String viewComment(@RequestParam(defaultValue = "") String parentSeq,
+							  @RequestParam(defaultValue = "") String category,
 							  @RequestParam(defaultValue = "") String currentShowPageNo) {
 		
 		if("".equals(currentShowPageNo)) {
@@ -1336,6 +1337,12 @@ public class Dy_TripController {
 		List<CommentVO> commentList = service.getViewComment(paraMap);
 		int totalCount = service.getCommentTotalCount(parentSeq); // 페이징 처리 시 보여주는 순번을 나타내기 위함
 
+		paraMap.put("searchType", "");
+		paraMap.put("searchWord", "");
+		paraMap.put("seq", parentSeq);
+		paraMap.put("category", category);
+		BoardVO boardvo = service.getViewBoard_no_increase_readCount(paraMap); // 글번호에 대한 작성자 아이디를 알아오기 위함
+		
 		JSONArray jsonArr = new JSONArray();
 		
 		if(commentList != null) {
@@ -1355,6 +1362,8 @@ public class Dy_TripController {
 				
 				jsonObj.put("totalCount", totalCount); // 페이징 처리 시 보여주는 순번을 나타내기 위함
 				jsonObj.put("sizePerPage", sizePerPage); // 페이징 처리 시 보여주는 순번을 나타내기 위함
+				
+				jsonObj.put("board_id", boardvo.getFk_userid()); // 댓글 작성자와 글 작성자가 일치한지 나타내기 위함
 				
 				jsonArr.put(jsonObj);
 			}
@@ -2089,6 +2098,14 @@ public class Dy_TripController {
 		service.reservationList_to_Excel(paraMap, model);
 		
 		return "excelDownloadView";
+	}
+	
+	
+	// header 전체검색
+	@GetMapping("allSearch.trip")
+	public String allSearch() {
+		
+		return "main/allSearch.tiles1";
 	}
 	
 }

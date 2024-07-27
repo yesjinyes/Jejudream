@@ -163,8 +163,8 @@ public class Hs_TripDAO_imple implements Hs_TripDAO {
 	//일행 추가를 위한 유저 ID select
 	@Override
 	public List<MemberVO> searchPlayJoinUserList(String joinUserName) {
-		List<MemberVO> PlayJoinUserList = sqlsession.selectList("hs_trip.searchPlayJoinUserList",joinUserName);
-		return PlayJoinUserList;
+		List<MemberVO> playJoinUserList = sqlsession.selectList("hs_trip.searchPlayJoinUserList",joinUserName);
+		return playJoinUserList;
 	}
 	
 	//일정추가
@@ -174,12 +174,12 @@ public class Hs_TripDAO_imple implements Hs_TripDAO {
 		return n;
 	}
 
-	//일정추가했는지 알아오기
-	@Override
-	public List<Calendar_schedule_VO> checkSchedule(Map<String, String> paraMap) {
-		List<Calendar_schedule_VO> checkSchedule = sqlsession.selectList("hs_trip.checkSchedule",paraMap);
-		return checkSchedule;
-	}
+//	//일정추가했는지 알아오기
+//	@Override
+//	public List<Calendar_schedule_VO> checkSchedule(Map<String, String> paraMap) {
+//		List<Calendar_schedule_VO> checkSchedule = sqlsession.selectList("hs_trip.checkSchedule",paraMap);
+//		return checkSchedule;
+//	}
 
 	
 	//모든 리뷰를 count 하기

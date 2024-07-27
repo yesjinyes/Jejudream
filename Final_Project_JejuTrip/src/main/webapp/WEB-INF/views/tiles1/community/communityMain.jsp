@@ -261,16 +261,18 @@
 	<div class="tabs">
 		<input type="radio" id="radio-1" name="category" value="" />
 		<label class="tab" for="radio-1">커뮤니티 전체</label>
+		
 		<input type="radio" id="radio-2" name="category" value="1" />
 		<label class="tab" for="radio-2">자유게시판</label>
+		
 		<input type="radio" id="radio-3" name="category" value="2" />
 		<label class="tab" for="radio-3">숙박</label>
+		
 		<input type="radio" id="radio-4" name="category" value="3" />
 		<label class="tab" for="radio-4">관광지,체험</label>
+		
 		<input type="radio" id="radio-5" name="category" value="4" />
 		<label class="tab" for="radio-5">맛집</label>
-		<input type="radio" id="radio-6" name="category" value="5" />
-		<label class="tab" for="radio-6">구인</label>
 		<span class="glider"></span>
 	</div>
 	
@@ -344,5 +346,5 @@
 </div>
 
 <form name="goStaffFrm">
-	<input type="text" name="staffNo" />
+	<input type="hidden" name="staffNo" />
 </form>

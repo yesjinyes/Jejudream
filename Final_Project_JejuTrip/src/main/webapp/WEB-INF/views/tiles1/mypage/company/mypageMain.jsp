@@ -1039,7 +1039,7 @@
 
 
 <form name="excelTableTypeFrm">
-	<input type="text" name="status">
+	<input type="hidden" name="status">
 </form>
 
 
