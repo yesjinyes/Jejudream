@@ -707,14 +707,14 @@ public class Yj_TripController {
 		String faq_category = request.getParameter("faq_category"); // 카테고리 탭 선택 ajax 적용을 위한 것
 		// System.out.println("faq_category => " + faq_category );
 
-		String searchWord = request.getParameter("searchWord"); 
-		// System.out.println("검색어 확인 => " + searchWord);
+		String searchWordFaq = request.getParameter("searchWordFaq"); 
+		// System.out.println("검색어 확인 => " + searchWordFaq);
 		
 		
 		Map<String, String> paraMap = new HashMap<>();
 		
-		if(searchWord != null && !"".equals(searchWord)) { // null 이 아니거나, 공백이 아닐 경우에만 Map 에 담아준다.
-			paraMap.put("searchWord", searchWord);
+		if(searchWordFaq != null && !"".equals(searchWordFaq)) { // null 이 아니거나, 공백이 아닐 경우에만 Map 에 담아준다.
+			paraMap.put("searchWordFaq", searchWordFaq);
 		}
 		
 		if(faq_category == null) { // 카테고리가 전체일 경우 "" 을 주어서 mapper 에서 조건 주기 위함
@@ -741,7 +741,7 @@ public class Yj_TripController {
 		List<Map<String,String>> faqList = service.viewAllFaqList_paging(paraMap);
 		
 		int totalCount = service.getTotalFaqList(paraMap); // FAQ 리스트 페이징 처리 위함
-		// System.out.println("~~~FAQ 전체 개수 => " + totalCount);
+		System.out.println("~~~FAQ 개수 => " + totalCount);
 		
 		JSONArray jsonArr = new JSONArray(); // [] 
 		

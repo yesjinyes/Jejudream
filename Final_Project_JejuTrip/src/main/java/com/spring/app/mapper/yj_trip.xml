@@ -351,8 +351,8 @@
 			<if test='!"".equals(faq_category)'>
 				and faq_category = #{faq_category}
 			</if>
-			<if test='searchWord != null'>
-				and faq_question like '%'||lower(#{searchWord})||'%'
+			<if test='searchWordFaq != null'>
+				and faq_question like '%'||lower(#{searchWordFaq})||'%'
 			</if>
 			order by faq_seq desc
 			)V
@@ -369,8 +369,8 @@
 		 <if test='!"".equals(faq_category)'>
 			and faq_category = #{faq_category}
 		</if>
-		<if test='searchWord != null'>
-			and faq_question like '%'||lower(#{searchWord})||'%'
+		<if test='searchWordFaq != null'>
+			and faq_question like '%'||lower(#{searchWordFaq})||'%'
 		</if>
 	</select>
 
