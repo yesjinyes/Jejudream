@@ -6,14 +6,184 @@
     //    /JejuDream
 %>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/js/ion.rangeSlider.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/css/ion.rangeSlider.min.css"/>
 
 
 <script type="text/javascript">
+
+const max_price = Number("${requestScope.max_price}");
 
 let currentShowPageNo = 1;
 let currentSort = "";
 
 $(document).ready(function(){
+	
+	// === 가격 슬라이더 시작 ===
+	function getParameterByName(name) { // 주소창에서 변수 가져오기
+	
+	    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+	
+	    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+	
+	        results = regex.exec(location.search);
+	
+	    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+	
+	}
+
+	if (getParameterByName('product_price1')!='') {
+	
+	    var product_price1_vlu = getParameterByName('product_price1');
+	
+	    var product_price2_vlu = getParameterByName('product_price2');
+	
+	} else {
+	
+	    var product_price1_vlu = min;
+	
+	    var product_price2_vlu = max;
+	
+	}
+
+	var $range = $(".js-range-slider"),
+	
+	$inputFrom = $("#product_price1"),
+	
+	$inputTo = $("#product_price2"),
+	
+	instance,
+	
+	min = 10000, // 최소 금액
+	
+	max = max_price, // 최대 금액
+	
+	from = 0,
+	
+	to = 0;
+
+	$range.ionRangeSlider({
+	
+		skin: "flat",
+		
+		//skin: "modern",
+		
+		// 스킨 참고 : http://ionden.com/a/plugins/ion.rangeSlider/skins.html
+		
+		type: "double",
+		
+		min: min,
+		
+		max: max,
+		
+		from: product_price1_vlu,
+		
+		to: product_price2_vlu,
+		
+		grid: true,
+		
+		grid_num: 5,
+		
+		grid_snap: false,
+		
+		step: 1000,
+		
+		force_edges: true,
+		
+		hide_min_max: false,    // show/hide MIN and MAX labels
+		
+		hide_from_to: false,    // show/hide FROM and TO labels
+		
+		// onStart: updateInputs,
+		
+		onChange: updateInputs,
+		
+		onFinish: updateValuesOnFinish // 드래그가 끝났을 때 호출되는 콜백 함수
+	
+	});
+
+	instance = $range.data("ionRangeSlider");
+
+	function updateInputs (data) {
+	
+		from = data.from;
+		
+		to = data.to;
+		
+		$inputFrom.prop("value", from);
+		
+		$inputTo.prop("value", to);
+	
+	}
+
+	$inputFrom.on("input", function () {
+	
+		var val = $(this).prop("value");
+		
+		// validate
+		if (val < min) {
+		
+			val = min;
+		
+		} else if (val > to) {
+		
+		    val = to;
+		
+		}
+	
+		instance.update({
+		
+		    from: val
+		
+		});
+		
+	});
+
+
+	$inputTo.on("input", function () {
+	
+		var val = $(this).prop("value");
+		
+		// validate
+		if (val < from) {
+		
+		    val = from;
+		
+		} else if (val > max) {
+		
+		    val = max;
+		
+		}
+		
+		instance.update({
+		
+		    to: val
+		
+		});
+	
+	});
+
+	function updateValuesOnFinish(data) {
+		
+	    // 드래그가 끝났을 때의 값을 얻고 처리하는 함수
+	    let start_price = data.from;
+	    let end_price = data.to;
+	    
+	    // alert("Final From:" + finalFrom);
+	    // alert("Final To:" + finalTo);
+	    
+	    const frm = document.filterForm;
+	    
+	    frm.start_price.value = start_price;
+	    frm.end_price.value = end_price;
+	    
+	    fetchFilteredData(currentShowPageNo, currentSort);
+	    
+	}
+	
+	
+	
+	// ==== 가격 슬라이더 끝 ====
 	
 	const today = new Date();
     const year = today.getFullYear();
@@ -309,16 +479,14 @@ $(document).ready(function(){
     // 인원수 잘못된 키보드 입력시 
     $("input#people").bind("keydown", function(e){
     
-    	const num = $(e.target).val();
-    	
-    	if(num < 1){
+    	// alert($(this).val());
+    	let people = $(this).val();
+    	if(Number(people) <= 0 || Number(people) > 20){
     		
-    		alert('인원을 올바르게 입력하세요!');
-    		
-    		$("input#people").val("2");
+    		alert('올바른 인원을 입력하세요!');
+    		$(this).val("2");
     		
     		return false;
-    		
     	} // end of if 
     	
     }); // end of $("input#people").bind("keydown", function(e){}) 
@@ -349,12 +517,48 @@ $(document).ready(function(){
 			
 		if(e.keyCode == 13){
 			
+			// 초기화
+		    $("input:text[id='fromDate']").datepicker('setDate', 'today');
+		    $("input:text[id='toDate']").datepicker('setDate', '+1D');
+		    $("input#people").val(2);
+		    $('input:checkbox[name="lodging_category"]').prop('checked', false);
+		    $('input:checkbox[name="convenient"]').prop('checked', false);
+		    $('input:checkbox[name="local_status"]').prop('checked', false);
+		    
+		 	// 슬라이더 값 초기화
+		    instance.update({
+		        from: min,
+		        to: max
+		    });
+
+		    // 입력 필드 값 초기화
+		    $inputFrom.prop("value", min);
+		    $inputTo.prop("value", max);
+			
 			goSearch();
+			
 		}
 		
 	}); 
     $("button[id='search']").on('click', function() {
-    	
+    	// 초기화
+        $("input:text[id='fromDate']").datepicker('setDate', 'today');
+        $("input:text[id='toDate']").datepicker('setDate', '+1D');
+        $("input#people").val(2);
+        $('input:checkbox[name="lodging_category"]').prop('checked', false);
+        $('input:checkbox[name="convenient"]').prop('checked', false);
+        $('input:checkbox[name="local_status"]').prop('checked', false);
+        
+     	// 슬라이더 값 초기화
+        instance.update({
+            from: min,
+            to: max
+        });
+
+        // 입력 필드 값 초기화
+        $inputFrom.prop("value", min);
+        $inputTo.prop("value", max);
+        
     	goSearch();
         
     });
@@ -432,7 +636,7 @@ $(document).ready(function(){
 		        	
 	        	}else{
 	        		
-	        		v_html += "<span>해당하는 숙소가 없습니다</span>";
+	        		v_html += "<span class='py-3' style='font-size: 20pt;'>해당하는 숙소가 없습니다</span>";
 	        		
 	        	}
 		        	
@@ -565,6 +769,49 @@ list-style: none;
     text-decoration: none;
 }
 
+
+
+<%-- 가격 슬라이더 css 시작 --%>
+.range-slider {
+
+    position: relative;
+    height: 80px;
+
+}
+
+.irs-with-grid{
+	width: 70%;
+}
+
+.irs-grid-text, .irs-to, .irs-from, .irs-single {
+
+    font-size:10pt !important;
+    
+}
+
+.irs-min, .irs-max {
+
+    display: none !important;
+
+}
+
+.irs-handle{
+
+    cursor: move;
+    cursor: grab;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
+
+}
+
+.irs-handle:active{
+
+    cursor: grabbing !important;
+    cursor: -moz-grabbing !important;
+    cursor: -webkit-grabbing !important;
+
+}
+<%-- 가격 슬라이더 css 끝 --%>
 </style>
 
     <div class="container">
@@ -598,7 +845,7 @@ list-style: none;
                             <div>
                                 <div class="people-container">
                                     <span class="people-pick">
-                                        <input type="number" min="2" max="10" id="people" style="cursor: pointer; width:100px;" name="people" value="${requestScope.dateSendMap.detail_people}" placeholder="인원 선택">
+                                        <input type="number" min="2" max="20" id="people" style="cursor: pointer; width:100px;" name="people" value="${requestScope.dateSendMap.detail_people}" placeholder="인원 선택">
                                     </span>
                                 </div>
                             </div>
@@ -646,6 +893,17 @@ list-style: none;
                         </c:forEach>
                     </li>
                 </ul>
+                
+               <h4 class="py-3">숙소 가격</h4>
+                <div class="nav flex-column range-slider">
+
+				    <input type="text" class="js-range-slider" value="" />
+				
+				</div>
+                
+                
+                
+                
             </div>
 
             <div class="col-lg-9 col-md-8 col-sm-12 py-3">
@@ -740,6 +998,8 @@ list-style: none;
           	<input type="hidden" name="check_in" />
           	<input type="hidden" name="check_out" />
           	<input type="hidden" name="sort" />
+          	<input type="hidden" name="start_price" />
+          	<input type="hidden" name="end_price" />
           </form>
           
           

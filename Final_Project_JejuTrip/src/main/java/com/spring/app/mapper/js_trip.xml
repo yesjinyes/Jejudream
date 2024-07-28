@@ -68,7 +68,8 @@
 				 (
 				  SELECT L.lodging_code, D.room_name, D.room_stock, max_person
 				  FROM tbl_lodging L JOIN tbl_room_detail D
-				  ON L.lodging_code = D.fk_lodging_code 
+				  ON L.lodging_code = D.fk_lodging_code
+				  where price between #{start_price} and #{end_price} 
 				 ) A
 				 LEFT JOIN
 				 (
@@ -154,13 +155,14 @@
 			  SELECT L.lodging_code, D.room_name, D.room_stock, max_person
 			  FROM tbl_lodging L JOIN tbl_room_detail D
 			  ON L.lodging_code = D.fk_lodging_code 
+			  where price between #{start_price} and #{end_price} 
 			 ) A
 			 LEFT JOIN
 			 (
 			  SELECT D.fk_lodging_code, D.room_name, COUNT(*) AS RESERVATION_CNT 
 			  FROM tbl_room_detail D JOIN tbl_reservation RSV
 			  ON D.room_detail_code = RSV.fk_room_detail_code
-			  WHERE RSV.check_in <![CDATA[<=]]> #{check_in} AND RSV.check_out <![CDATA[>=]]> #{check_out}
+			  WHERE (RSV.check_in <![CDATA[<]]> #{check_out} AND RSV.check_out <![CDATA[>]]> #{check_in})
 			  and RSV.status = 1
 			  GROUP BY D.fk_lodging_code, D.room_name
 			 ) B
@@ -233,7 +235,7 @@
 		<result property="room_img" column="room_img" javaType="String" />
 	</resultMap>
 	<select id="getRoomDetail" resultMap="RoomDetail" parameterType="HashMap">
-	
+	<![CDATA[
 		SELECT A.lodging_code, A.room_detail_code, A.room_name, A.price,
                A.room_stock - NVL(B.RESERVATION_CNT, 0) AS remaining_qty,
                A.min_person, A.max_person, A.room_img ,check_intime , check_outtime
@@ -250,13 +252,16 @@
 			  SELECT D.fk_lodging_code, D.room_name, COUNT(*) AS RESERVATION_CNT 
 			  FROM tbl_room_detail D JOIN tbl_reservation RSV
 			  ON D.room_detail_code = RSV.fk_room_detail_code
-			  WHERE RSV.check_in <![CDATA[<=]]> #{check_in} AND RSV.check_out <![CDATA[>=]]> #{check_out}
+			  WHERE RSV.status = 1 and 
+			  (
+		        (RSV.check_in < #{check_out} AND RSV.check_out > #{check_in}) 
+		      )
 			  GROUP BY D.fk_lodging_code, D.room_name
 			 ) B
 			 ON A.lodging_code || A.room_name = B.fk_lodging_code || B.room_name
-			 where max_person <![CDATA[>=]]> #{people}
+			 where max_person >= #{people}]]>
 	</select>
-	
+	<!--  (RSV.check_in <![CDATA[<=]]> #{check_in} AND RSV.check_out <![CDATA[>=]]> #{check_out}) -->
 	
 	<!-- 결제페이지에서 예약하려는 숙소와 객실정보 가져오기 -->
 	<resultMap type="HashMap" id="ReserveRoomDetail">
@@ -619,5 +624,53 @@
 	
 	<!-- where regdate between to_date(to_char(sysdate, 'yyyy-mm-dd') , 'yyyy-mm-dd') and  
 	    to_date(to_char(sysdate, 'yyyy-mm-dd') || ' ' || '23:59:59' , 'yyyy-mm-dd hh24:mi:ss') -->
+	    
+	    
+	
+	<!-- 회원이 예약신청한 상세정보 가져오기 -->
+	<resultMap type="HashMap" id="getMemberReservationInfo_Map">
+       <result property="lodging_name"      column="lodging_name"        javaType="String" />
+       <result property="room_name"        	  column="room_name"        javaType="String" />
+       <result property="lodging_address"       column="lodging_address"        javaType="String" />
+       <result property="lodging_category"         column="lodging_category"        javaType="String" />
+       <result property="lodging_tell"    column="lodging_tell"        javaType="String" />
+       <result property="room_img"            column="room_img"        javaType="String" />
+       <result property="status"            column="status"        javaType="String" />
+       <result property="check_in"    column="check_in"        javaType="String" />
+       <result property="str_check_in"    column="str_check_in"        javaType="String" />
+       <result property="str_check_out"            column="str_check_out"        javaType="String" />
+       <result property="reservation_price"    column="reservation_price"        javaType="String" />
+       <result property="reservation_date"    column="reservation_date"        javaType="String" />
+       <result property="check_intime"            column="check_intime"        javaType="String" />
+       <result property="check_outtime"            column="check_outtime"        javaType="String" />
+   </resultMap>
+	<select id="getMemberReservationInfo" parameterType="String" resultMap="getMemberReservationInfo_Map">
+		select L.lodging_name, D.room_name,  L.lodging_address,
+	           L.lodging_category, L.lodging_tell, D.room_img , R.status, R.check_in,
+	           to_char(R.check_in , 'yyyy-mm-dd') as str_check_in, to_char(R.check_out, 'yyyy-mm-dd') as str_check_out ,
+	           R.reservation_price, R.reservation_date,
+	           D.check_in as check_intime , D.check_out as check_outtime , to_char(sysdate, 'yyyy-mm-dd') as today
+	    from tbl_reservation R
+	    join tbl_room_detail D
+	    on R.fk_room_detail_code = D.room_detail_code
+	    join tbl_lodging L
+	    on D.fk_lodging_code = L.lodging_code
+	    where R.reservation_code = #{reservation_code}
+	</select>    
+	
+	
+	<!-- 회원이 직접 예약취소상태 만들기 -->
+	<update id="memberCancelReserve" parameterType="String">
+		update tbl_reservation set status = 2
+		where reservation_code = #{reservation_code}
+	</update>     
+	
+	
+	
+	<!-- 가격슬라이더 최대가격을 위한 숙소 최대가격 구해오기  -->
+	<select id="getLodgingMaxPirce" resultType="int">
+		select max(price)
+		from tbl_room_detail
+	</select>
  
 </mapper>

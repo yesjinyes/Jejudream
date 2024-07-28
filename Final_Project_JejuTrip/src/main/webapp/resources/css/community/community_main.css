@@ -241,9 +241,6 @@ img.next_icon {
 div#content2 {
   border: solid 1px #bfbfbf;
   border-radius: 8px;
-  width: 45%;
-  margin-bottom: 10%;
-/*   height: 680px; */
 }
 
 div#content2 > h4 {
@@ -446,8 +443,8 @@ div#content4 {
   border-radius: 8px;
   margin: 0% 0 1% 1%;
   width: 100%;
-/* margin-bottom: 10%; */
-  height: 385px;  
+/* margin-bottom: 10%; 
+  height: 385px;  */
   overflow: scroll;
   overflow-x: hidden;
 }
@@ -455,7 +452,7 @@ div#content4 {
 
 
 div#content4 > h4 {
-  margin: 0.4% 0 2% 2%;
+  margin: 4% 0 4% 5%;
   color: #ff854d;
   font-weight: 550;
     

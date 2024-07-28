@@ -8,7 +8,7 @@
 %>
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f42c6cbd2d2060c5c719ee80540fbfbc&libraries=services"></script>
 
-<%-- 
+ <%-- 
 <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js"
   integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4" crossorigin="anonymous"></script>
 <script>
@@ -53,8 +53,8 @@
     if (parts.length === 2) { return parts[1].split(';')[0]; }
   }
 </script>
---%>
 
+--%>
 
 
 <script type="text/javascript">
@@ -200,11 +200,32 @@ $(document).ready(function(){
     }); // end of $("input:text[name='datepicker']").change( (e)=>{})
     
     
+    $("input:text[name='datepicker']").keyup( (e)=>{
+        // input태그가 text 타입인데 키보드로 문자를 입력하려고할때 막아야한다 마우스클릭으로만 가능하게끔
+            e.preventDefault(); // 입력막기
+        	alert("마우스 클릭으로만 날짜를 입력하세요!"); // 에러메시지 표현
+            
+            $("input#fromDate").val(i1);
+            $("input#toDate").val(o1);
+
+    }); // end of $('input#datepicker').keyup( (e)=>{})
+    
     // 인원선택이 변경되었다면
     $("input#people").change(function(){
     	
+    	// alert($(this).val());
+    	let people = $(this).val();
+    	if(Number(people) <= 0 || Number(people) > 20){
+    		
+    		alert('올바른 인원을 입력하세요!');
+    		$(this).val("2");
+    		
+    		return false;
+    	}
+    	
     	chk = false;
-    }); 
+    	
+    });  // end of $("input#people").change(function(){})
     
     
     
@@ -253,10 +274,14 @@ $(document).ready(function(){
         								<span>잔여객실 \${item.remaining_qty}개</span>
         								<br>
         								<span>기준인원 \${item.min_person} 명 / 최대인원 \${item.max_person} 명</span>`;
+        				const qty = `\${item.remaining_qty}`;
         				
-        				if("${item.remaining_qty}" == "0"){
+        				// alert(qty);
+        				
+        				if(`\${item.remaining_qty}` == "0"){
         					
-        					v_html += `<h4 class="pb-2" style="color: red;">예약 마감</h4>`;
+        					v_html += `<h4 class="pb-2" style="color: red;">예약 마감</h4>
+        						<input type="hidden" name="lodging_code1" value="\${lodging_code}" />`;
         				}
         				else {
         					
@@ -265,7 +290,7 @@ $(document).ready(function(){
                     						<button type="button" name="reservation" class="btn btn-success">예약하기</button>
                 						</div>
                 						<input type="hidden" name="room_detail_code1" value="\${item.room_detail_code}" />
-                                        <input type="hidden" name="lodging_code1" value="\${item.lodging_code}" />
+                                        <input type="hidden" name="lodging_code1" value="\${lodging_code}" />
                                         <input type="hidden" name="check_in1" value="\${check_in}" />
                                         <input type="hidden" name="check_out1" value="\${check_out}" />`;	
         					
@@ -279,7 +304,8 @@ $(document).ready(function(){
             	} // end of if 
             	else {
             		
-            		v_html = "<span>해당하는 숙소가 없습니다</span>";
+            		v_html = "<span class='py-3' style='font-size: 20pt; margin-bottom:2%;'>해당하는 객실이 없습니다</span>";
+            		v_html += `<input type="hidden" name="lodging_code1" value="\${lodging_code}" />`;
             		
             	} // end of else
                 
@@ -855,7 +881,7 @@ function goAddReview(){
                     <label>인원</label>
                     <div class="people-container">
                         <span class="people-pick">
-                            <input type="number" id="people" style="cursor: pointer; width: 100%;" name="people" value="${requestScope.dateSendMap.people}" placeholder="인원 선택">
+                            <input type="number"  min="2" max="20" id="people" style="cursor: pointer; width: 100%;" name="people" value="${requestScope.dateSendMap.people}" placeholder="인원 선택">
                         </span>
                     </div>
                 </div>
@@ -876,6 +902,10 @@ function goAddReview(){
             </ul>
 
             <div class="roominfo">
+            	<c:if test="${empty requestScope.roomDetailList}">
+            		<span>해당하는 숙소가 없습니다</span>
+            	</c:if>
+            
                 <c:forEach var="roomDetail" items="${requestScope.roomDetailList}">
                     <div class="single-post d-flex justify-content-between">
                         <div style="width: 35%;">
@@ -893,9 +923,15 @@ function goAddReview(){
                             <br>
                             <span>기준인원 ${roomDetail.min_person} 명 / 최대인원 ${roomDetail.max_person} 명</span>
                             <h4 class="pb-2" style="color: navy;"><fmt:formatNumber value="${roomDetail.price}" pattern="#,###" /> 원</h4>
+                            
+                            <c:if test="${roomDetail.remaining_qty != 0}">
                             <div class="mb-2">
                                 <button type="button" name="reservation" class="btn btn-success">예약하기</button>
                             </div>
+                            </c:if>
+                            <c:if test="${roomDetail.remaining_qty == 0}">
+                            <h4 class="pb-2" style="color: red;">예약 마감</h4>
+                            </c:if>
                             <input type="hidden" name="room_detail_code1" value="${roomDetail.room_detail_code}" />
                             <input type="hidden" name="lodging_code1" value="${roomDetail.lodging_code}" />
                             <input type="hidden" name="check_in1" value="" />
@@ -915,8 +951,10 @@ function goAddReview(){
                     </div>
                 </div>
                 <div class="col-lg-5 col-md-6 col-sm-12 p-0">
+                    <c:if test="${not empty requestScope.randMap.fvo}">
                     <div class="recommendation">
                         <h5>같은 지역 맛집 추천</h5>
+                        
                         <div class="rand">
                             <div>
                                 <a href="<%= ctxPath%>/foodstoreDetail.trip?food_store_code=${requestScope.randMap.fvo.food_store_code}"><img class="mini_img" alt="" src="<%= ctxPath%>/resources/images/foodstore/imgMain/${requestScope.randMap.fvo.food_main_img}"></a>
@@ -927,6 +965,9 @@ function goAddReview(){
                             </div>
                         </div>
                     </div>
+                    </c:if>
+                    
+                    <c:if test="${not empty requestScope.randMap.pvo}">
                     <div class="recommendation">
                         <h5>같은 지역 즐길거리 추천</h5>
                         <div class="rand">
@@ -939,6 +980,7 @@ function goAddReview(){
                             </div>
                         </div>
                     </div>
+                    </c:if>
                 </div>
             </div>
 

@@ -532,7 +532,7 @@ span#data {
 	                <div class="areamap" style="width:20%;">
                     	<img class="img_area mb-2" src="<%= ctxPath %>/resources/images/areamap_city.png" /><br>
                         <input type="checkbox" id="area02" name="area" class="area_map mr-1" value="제주 시내" onclick="selectArea()">
-                        <label for="area02" class="label_chk mt-2">제주 시내</label>
+                        <label for="area02" class="label_chk mt-2">제주시 시내</label>
 	                </div>
 	                <div class="areamap" style="width: 20%;">
                     	<img class="img_area mb-2" src="<%= ctxPath %>/resources/images/areamap_jeju_east.png" /><br>
@@ -547,7 +547,7 @@ span#data {
 	                <div class="areamap" style="width: 20%;">
 	                    <img class="img_area mb-2" src="<%= ctxPath %>/resources/images/areamap_bt_city.png" /><br>
                         <input type="checkbox" id="area05" name="area" class="area_map mr-1" value="서귀포 시내" onclick="selectArea()">
-                        <label for="area05" class="label_chk mt-2">서귀포 시내</label>
+                        <label for="area05" class="label_chk mt-2">서귀포시 시내</label>
 	                </div>
 	                <div class="areamap" style="width: 20%;">
 	                    <img class="img_area mb-2" src="<%= ctxPath %>/resources/images/areamap_bt_east.png" /><br>
@@ -574,7 +574,7 @@ span#data {
 					<button type="button" id="btnDesc" class="sort">내림차순</button>
 	            </div>
 	            <div style="">
-	                <input type="text" name="searchbox" id="searchWord" class="" placeholder="맛집 이름으로 검색">
+	                <input type="text" name="searchbox" id="searchWord" placeholder="맛집 이름으로 검색">
 	                <button type="button" id="btnSearch" title="검색" onclick="goSearch()">검색</button>
 	            </div>
             </div>

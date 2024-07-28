@@ -1169,3 +1169,387 @@ REFERENCES tbl_reservation (reservation_code) ON DELETE CASCADE;
    order by readcount desc
    )
    where rownum <=7;
+   
+   
+   CREATE TABLE tbl_faq (
+	faq_seq VARCHAR2(20), /* FAQ글번호 */
+	faq_category VARCHAR2(50), /* 카테고리 */
+	faq_question VARCHAR2(200), /* 질문 */
+	faq_answer VARCHAR2(500), /* 내용 */
+    constraint  CK_tbl_faq_category check( faq_category in('예약','카드/결제','숙소','맛집','즐길거리', '기타') )
+    );
+
+COMMENT ON TABLE tbl_faq IS '고객센터FAQ 테이블';
+
+COMMENT ON COLUMN tbl_faq.faq_seq IS 'FAQ글번호';
+
+COMMENT ON COLUMN tbl_faq.faq_category IS '카테고리';
+
+COMMENT ON COLUMN tbl_faq.faq_question IS '질문';
+
+COMMENT ON COLUMN tbl_faq.faq_answer IS '내용';
+
+
+/* 숙소 테이블 코멘트 */
+
+COMMENT ON TABLE tbl_lodging IS '숙소 테이블';
+COMMENT ON COLUMN tbl_lodging.lodging_code IS 'PK숙소일련번호';
+COMMENT ON COLUMN tbl_lodging.fk_companyid IS 'FK업체아이디';
+COMMENT ON COLUMN tbl_lodging.local_status IS '공용지역구분';
+COMMENT ON COLUMN tbl_lodging.lodging_category IS '숙소카테고리명칭';
+COMMENT ON COLUMN tbl_lodging.lodging_name IS '숙소이름';
+COMMENT ON COLUMN tbl_lodging.lodging_tell IS '숙소연락처';
+COMMENT ON COLUMN tbl_lodging.lodging_content IS '숙소설명';
+COMMENT ON COLUMN tbl_lodging.lodging_address IS '상세주소';
+COMMENT ON COLUMN tbl_lodging.main_img IS '초기대표이미지(크롤링)';
+COMMENT ON COLUMN tbl_lodging.REVIEW_DIVISION IS '리뷰용구분컬럼(default) A';
+COMMENT ON COLUMN tbl_lodging.filename IS '업로드된파일명';
+COMMENT ON COLUMN tbl_lodging.orgfilename IS '원래파일명';
+COMMENT ON COLUMN tbl_lodging.filesize IS '파일크기';
+COMMENT ON COLUMN tbl_lodging.STATUS IS '숙소등록상태';
+COMMENT ON COLUMN tbl_lodging.FEEDBACK_MSG IS '숙소등록시 반려메시지';
+
+
+/* 맛집 테이블 코멘트 */
+
+COMMENT ON TABLE tbl_food_store IS '맛집 테이블';
+COMMENT ON COLUMN tbl_food_store.food_store_code IS 'PK맛집일련번호';
+COMMENT ON COLUMN tbl_food_store.local_status IS '공용지역구분';
+COMMENT ON COLUMN tbl_food_store.food_category IS '맛집카테고리명침';
+COMMENT ON COLUMN tbl_food_store.food_name IS '맛집식당이름';
+COMMENT ON COLUMN tbl_food_store.food_content IS '맛집간단정보';
+COMMENT ON COLUMN tbl_food_store.food_businesshours IS '맛집영업시간';
+COMMENT ON COLUMN tbl_food_store.food_address IS '상세주소';
+COMMENT ON COLUMN tbl_food_store.food_mobile IS '맛집연락처';
+COMMENT ON COLUMN tbl_food_store.food_main_img IS '대표이미지';
+COMMENT ON COLUMN tbl_food_store.REVIEW_DIVISION IS '공용테이블구분컬럼(default) B';
+COMMENT ON COLUMN tbl_food_store.filename IS '업로드된파일명';
+COMMENT ON COLUMN tbl_food_store.orgfilename IS '원래파일명';
+COMMENT ON COLUMN tbl_food_store.filesize IS '파일크기';
+COMMENT ON COLUMN tbl_food_store.READCOUNT IS '조회수';
+
+/* 즐길거리 테이블 코멘트 */
+
+COMMENT ON TABLE tbl_play IS '즐길거리 테이블';
+COMMENT ON COLUMN tbl_play.play_code IS 'PK즐길거리일련번호';
+COMMENT ON COLUMN tbl_play.local_status IS '공용지역구분';
+COMMENT ON COLUMN tbl_play.play_category IS '즐길거리카테고리';
+COMMENT ON COLUMN tbl_play.play_name IS '즐길거리명칭';
+COMMENT ON COLUMN tbl_play.play_content IS '즐길거리상세정보';
+COMMENT ON COLUMN tbl_play.play_mobile IS '즐길거리연락처';
+COMMENT ON COLUMN tbl_play.play_businesshours IS '즐길거리운영시간';
+COMMENT ON COLUMN tbl_play.play_address IS '상세주소';
+COMMENT ON COLUMN tbl_play.play_main_img IS '대표이미지';
+COMMENT ON COLUMN tbl_play.review_division IS '공용테이블구분컬럼(default) C';
+COMMENT ON COLUMN tbl_play.readCount IS '조회수';
+COMMENT ON COLUMN tbl_play.filename IS '업로드된파일명';
+COMMENT ON COLUMN tbl_play.orgfilename IS '원래파일명';
+COMMENT ON COLUMN tbl_play.filesize IS '파일크기';
+
+/* 숙소객실 테이블 코멘트 */
+
+COMMENT ON TABLE tbl_room_detail IS '객실 테이블';
+COMMENT ON COLUMN tbl_room_detail.room_detail_code IS 'PK객실일련번호';
+COMMENT ON COLUMN tbl_room_detail.fk_lodging_code IS 'FK숙소일련번호';
+COMMENT ON COLUMN tbl_room_detail.room_name IS '객실이름';
+COMMENT ON COLUMN tbl_room_detail.price IS '객실가격';
+COMMENT ON COLUMN tbl_room_detail.check_in IS '체크인시간';
+COMMENT ON COLUMN tbl_room_detail.check_out IS '체크아웃시간';
+COMMENT ON COLUMN tbl_room_detail.room_stock IS '객실수량';
+COMMENT ON COLUMN tbl_room_detail.min_person IS '기존인원';
+COMMENT ON COLUMN tbl_room_detail.max_person IS '최대인원';
+COMMENT ON COLUMN tbl_room_detail.room_img IS '초기객실이미지(크롤링)';
+COMMENT ON COLUMN tbl_room_detail.filename IS '업로드된파일명';
+COMMENT ON COLUMN tbl_room_detail.orgfilename IS '원래파일명';
+COMMENT ON COLUMN tbl_room_detail.filesize IS '파일크기';
+
+/* 예약 테이블 코멘트 */
+
+COMMENT ON TABLE tbl_reservation IS '숙소예약 테이블';
+COMMENT ON COLUMN tbl_reservation.reservation_code IS 'PK예약일련번호';
+COMMENT ON COLUMN tbl_reservation.fk_userid IS 'FK유저아이디';
+COMMENT ON COLUMN tbl_reservation.fk_room_detail_code IS 'FK숙소객실일련번호';
+COMMENT ON COLUMN tbl_reservation.reservation_date IS '예약일자';
+COMMENT ON COLUMN tbl_reservation.check_in IS '체크인일자';
+COMMENT ON COLUMN tbl_reservation.check_out IS '체크아웃일자';
+COMMENT ON COLUMN tbl_reservation.RESERVATION_PRICE IS '예약가격';
+COMMENT ON COLUMN tbl_reservation.status IS '예약상태';
+COMMENT ON COLUMN tbl_reservation.mailSendCheck IS '체크인전 자동 이메일발송체크';
+
+/* 업체 테이블 */
+
+COMMENT ON TABLE tbl_company IS '업체 테이블';
+COMMENT ON COLUMN tbl_company.companyid IS 'PK업체아이디';
+COMMENT ON COLUMN tbl_company.company_name IS '업체명';
+COMMENT ON COLUMN tbl_company.pw IS '비밀번호';
+COMMENT ON COLUMN tbl_company.email IS '이메일';
+COMMENT ON COLUMN tbl_company.mobile IS '연락처';
+COMMENT ON COLUMN tbl_company.registerday IS '가입일자';
+COMMENT ON COLUMN tbl_company.lastpwdchangedate IS '마지막암호변경일자';
+COMMENT ON COLUMN tbl_company.status IS '회원탈퇴유무';
+COMMENT ON COLUMN tbl_company.idle IS '휴면유무';
+
+/* 편의시설 테이블 코멘트 */
+
+COMMENT ON TABLE tbl_convenient IS '편의시설 테이블';
+COMMENT ON COLUMN tbl_convenient.convenient_code IS 'PK편의시설일련번호';
+COMMENT ON COLUMN tbl_convenient.convenient_name IS '편의시설명칭';
+
+/* 숙소별 편의시설 테이블 */
+
+COMMENT ON TABLE tbl_lodging_convenient  IS '숙소별 편의시설 테이블';
+COMMENT ON COLUMN tbl_lodging_convenient.fk_convenient_code IS 'PK,FK편의시설일련번호';
+COMMENT ON COLUMN tbl_lodging_convenient.fk_lodging_code IS 'PK,FK숙소일련번호';
+
+/* 회원 테이블 코멘트 */
+
+COMMENT ON TABLE tbl_member IS '회원 테이블';
+COMMENT ON COLUMN tbl_member.userid IS 'PK유저아이디';
+COMMENT ON COLUMN tbl_member.email IS 'UK이메일';
+COMMENT ON COLUMN tbl_member.pw IS '비밀번호';
+COMMENT ON COLUMN tbl_member.user_name IS '성명';
+COMMENT ON COLUMN tbl_member.mobile IS 'UK휴대폰번호';
+COMMENT ON COLUMN tbl_member.address IS '주소';
+COMMENT ON COLUMN tbl_member.detail_address IS '상세주소';
+COMMENT ON COLUMN tbl_member.birthday IS '생년월일';
+COMMENT ON COLUMN tbl_member.gender IS '성별';
+COMMENT ON COLUMN tbl_member.registerday IS '가입일자';
+COMMENT ON COLUMN tbl_member.lastpwdchangedate IS '마지막암호변경일자';
+COMMENT ON COLUMN tbl_member.status IS '회원탈퇴유무';
+COMMENT ON COLUMN tbl_member.idle IS '휴면유무';
+COMMENT ON COLUMN tbl_member.userimg IS '유저이미지';
+
+
+/* 리뷰테이블 코멘트 */
+
+COMMENT ON TABLE tbl_review IS '리뷰테이블';
+COMMENT ON COLUMN tbl_review.review_code IS 'PK리뷰일련번호';
+COMMENT ON COLUMN tbl_review.fk_userid IS 'FK유저아이디';
+COMMENT ON COLUMN tbl_review.parent_code IS '공용부모일련번호';
+COMMENT ON COLUMN tbl_review.review_content IS '리뷰내용';
+COMMENT ON COLUMN tbl_review.registerday IS '리뷰작성일자';
+COMMENT ON COLUMN tbl_review.review_division_R IS '리뷰구분A,B,C';
+
+/* 맛집추가이미지 테이블 코멘트 */
+
+COMMENT ON TABLE tbl_food_add_img IS '맛집추가이미지 테이블';
+COMMENT ON COLUMN tbl_food_add_img.food_add_code IS 'PK맛집추가이미지일련번호';
+COMMENT ON COLUMN tbl_food_add_img.fk_food_store_code IS 'FK맛집일련번호';
+COMMENT ON COLUMN tbl_food_add_img.food_add_img IS '맛집추가이미지파일';
+
+
+/* 업체로그인기록 테이블 코멘트 */
+
+COMMENT ON TABLE tbl_company_loginhistory IS '업체로그인기록 테이블' ;
+COMMENT ON COLUMN tbl_company_loginhistory.fk_companyid IS 'FK업체아이디';
+COMMENT ON COLUMN tbl_company_loginhistory.logindate IS '로그인시각';
+COMMENT ON COLUMN tbl_company_loginhistory.clientip IS '접속ip주소';
+
+/* 회원로그인기록 테이블 코멘트 */
+
+COMMENT ON TABLE tbl_member_loginhistory IS '회원로그인기록 테이블';
+COMMENT ON COLUMN tbl_member_loginhistory.fk_userid IS 'FK유저아이디';
+COMMENT ON COLUMN tbl_member_loginhistory.logindate IS '로그인시각';
+COMMENT ON COLUMN tbl_member_loginhistory.clientip IS '접속ip주소';
+
+/* 게시판 테이블 코멘트 */
+
+COMMENT ON TABLE tbl_board IS '게시판 테이블';
+COMMENT ON COLUMN tbl_board.seq IS 'PK,SQ글번호';
+COMMENT ON COLUMN tbl_board.fk_userid IS 'FK유저아이디';
+COMMENT ON COLUMN tbl_board.name IS '글쓴이';
+COMMENT ON COLUMN tbl_board.subject IS '글제목';
+COMMENT ON COLUMN tbl_board.content IS '글내용';
+COMMENT ON COLUMN tbl_board.pw IS '글암호';
+COMMENT ON COLUMN tbl_board.readCount IS '조회수';
+COMMENT ON COLUMN tbl_board.regDate IS '글작성일자';
+COMMENT ON COLUMN tbl_board.status IS '글삭제여부';
+COMMENT ON COLUMN tbl_board.commentCount IS '댓글개수';
+COMMENT ON COLUMN tbl_board.filename IS '업로드된파일명';
+COMMENT ON COLUMN tbl_board.orgfilename IS '원래파일명';
+COMMENT ON COLUMN tbl_board.filesize IS '파일크기';
+COMMENT ON COLUMN tbl_board.category IS '글분야';
+
+/* 좋아요 테이블 코멘트 */
+
+COMMENT ON TABLE tbl_like IS '좋아요 테이블';
+COMMENT ON COLUMN tbl_like.fk_userid IS 'PK,FK유저아이디';
+COMMENT ON COLUMN tbl_like.parent_code IS 'PK공용부모일련번호';
+COMMENT ON COLUMN tbl_like.like_division_R IS '좋아요구분 A(숙소),B(맛집),C(즐길거리)';
+
+/* 일정대분류카테고리 테이블 코멘트 */
+
+COMMENT ON TABLE tbl_calendar_large_category IS '일정대분류카테고리 테이블';
+COMMENT ON COLUMN tbl_calendar_large_category.lgcatgono IS 'PK대분류일련번호';
+COMMENT ON COLUMN tbl_calendar_large_category.lgcatgoname IS '대분류명';
+
+/* 일정소분류카테고리 테이블 코멘트 */
+
+COMMENT ON TABLE tbl_calendar_small_category IS '일정소분류카테고리 테이블';
+COMMENT ON COLUMN tbl_calendar_small_category.smcatgono IS 'PK소분류일련번호';
+COMMENT ON COLUMN tbl_calendar_small_category.fk_lgcatgono IS 'FK대분류일련번호';
+COMMENT ON COLUMN tbl_calendar_small_category.smcatgoname IS '소분류명';
+
+/* 여행일정 테이블 코멘트 */
+
+COMMENT ON TABLE tbl_calendar_schedule IS '여행일정 테이블';
+COMMENT ON COLUMN tbl_calendar_schedule.scheduleno IS 'PK,SQ일정관리일련번호';
+COMMENT ON COLUMN tbl_calendar_schedule.startdate IS '일정시작일자';
+COMMENT ON COLUMN tbl_calendar_schedule.enddate IS '일정종료일자';
+COMMENT ON COLUMN tbl_calendar_schedule.subject IS '일정제목';
+COMMENT ON COLUMN tbl_calendar_schedule.color IS '일정색상';
+COMMENT ON COLUMN tbl_calendar_schedule.place IS '일정장소';
+COMMENT ON COLUMN tbl_calendar_schedule.joinuser IS '일정공유자';
+COMMENT ON COLUMN tbl_calendar_schedule.content IS '일정내용';
+COMMENT ON COLUMN tbl_calendar_schedule.parent_code IS '공용부모일련번호';
+COMMENT ON COLUMN tbl_calendar_schedule.schedule_divison IS '일정구분';
+COMMENT ON COLUMN tbl_calendar_schedule.fk_userid IS 'FK유저아이디';
+COMMENT ON COLUMN tbl_calendar_schedule.fk_lgcatgono IS 'FK대분류일련번호';
+COMMENT ON COLUMN tbl_calendar_schedule.fk_smcatgono IS 'FK소분류일련번호';
+
+/* 채팅로그테이블 코멘트*/
+
+COMMENT ON TABLE tbl_chattinglog IS '채팅로그 테이블';
+COMMENT ON COLUMN tbl_chattinglog.to_id IS '발신인';
+COMMENT ON COLUMN tbl_chattinglog.from_id IS '수신인';
+COMMENT ON COLUMN tbl_chattinglog.status IS '읽은상태';
+COMMENT ON COLUMN tbl_chattinglog.fk_reservation_code IS 'FK예약일련번호';
+COMMENT ON COLUMN tbl_chattinglog.CHATTING_DATE IS '채팅발신일자';
+
+-- 숙소명 리뷰내용 예약체크인일자 리뷰작성일자 작성아이디 숙소번호
+select *
+from tbl_review;
+
+    select *
+    from tbl_lodging;
+    
+    select * 
+    from tbl_room_detail;
+    update tbl_reservation set status = 1 where reservation_code = 32;
+    commit;
+    
+    
+    SELECT A.lodging_code, A.room_detail_code, A.room_name, A.price,
+               A.room_stock - NVL(B.RESERVATION_CNT, 0) AS remaining_qty,
+               A.min_person, A.max_person, A.room_img ,check_intime , check_outtime
+			 FROM 
+			 (
+			  SELECT L.lodging_code, D.room_name, D.room_stock, min_person, max_person, 
+                     price, room_detail_code, room_img, check_in as check_intime, check_out as check_outtime   
+			  FROM tbl_lodging L JOIN tbl_room_detail D
+			  ON L.lodging_code = D.fk_lodging_code 
+              where lodging_code = 5217
+              ) A
+			 LEFT JOIN
+			 (
+			  SELECT D.fk_lodging_code, D.room_name, COUNT(*) AS RESERVATION_CNT 
+			  FROM tbl_room_detail D JOIN tbl_reservation RSV
+			  ON D.room_detail_code = RSV.fk_room_detail_code
+			  WHERE RSV.status = 1 and 
+			  (RSV.check_in <= '2024-07-28' AND RSV.check_out >= '2024-07-30')
+			  GROUP BY D.fk_lodging_code, D.room_name
+			 ) B
+			 ON A.lodging_code || A.room_name = B.fk_lodging_code || B.room_name
+			 where max_person >= 2
+    
+    
+    SELECT A.lodging_code, A.room_detail_code, A.room_name, A.price,
+       A.room_stock - NVL(B.RESERVATION_CNT, 0) AS remaining_qty,
+       A.min_person, A.max_person, A.room_img, A.check_intime, A.check_outtime
+FROM (
+    SELECT L.lodging_code, D.room_name, D.room_stock, min_person, max_person,
+           price, room_detail_code, room_img, check_in AS check_intime, check_out AS check_outtime
+    FROM tbl_lodging L
+    JOIN tbl_room_detail D ON L.lodging_code = D.fk_lodging_code
+    WHERE L.lodging_code = 5217
+) A
+LEFT JOIN (
+    SELECT D.fk_lodging_code, D.room_name, COUNT(*) AS RESERVATION_CNT
+    FROM tbl_room_detail D
+    JOIN tbl_reservation RSV ON D.room_detail_code = RSV.fk_room_detail_code
+    WHERE RSV.status = 1
+    AND (
+        (RSV.check_in <= '2024-07-30' AND RSV.check_out >= '2024-07-28') -- 전체 기간이 겹치는 경우
+        OR (RSV.check_in <= '2024-07-28' AND RSV.check_out >= '2024-07-28') -- 시작일이 겹치는 경우
+        OR (RSV.check_in <= '2024-07-30' AND RSV.check_out >= '2024-07-30') -- 종료일이 겹치는 경우
+    )
+    GROUP BY D.fk_lodging_code, D.room_name
+) B ON A.lodging_code = B.fk_lodging_code AND A.room_name = B.room_name
+WHERE A.max_person >= 2
+    
+    select *
+    from tbl_reservation;
+    select *
+    from user_sequences
+    insert into tbl_reservation (reservation_code, fk_userid, fk_room_detail_code, check_in, check_out, reservation_price, status) 
+    values (SEQ_RESERVE.nextval, 'kudi02', 660, '2024-07-29', '2024-07-30' , 5, 1);
+    
+    select to_char(check_in, 'yyyy-mm-dd hh24:mi:ss') as c
+    from tbl_reservation;
+    
+    select *
+    from tbl_room_detail
+    
+
+    select R.check_in, L.lodging_name, D.room_name,  L.lodging_address,
+           L.lodging_category, L.lodging_tell, D.room_img , R.status,
+           R.check_in , R.check_out, R.reservation_price, R.reservation_date,
+           D.check_in as check_intime , D.check_out as check_outtime
+    from tbl_reservation R
+    join tbl_room_detail D
+    on R.fk_room_detail_code = D.room_detail_code
+    join tbl_lodging L
+    on D.fk_lodging_code = L.lodging_code
+    where R.reservation_code = '27';
+
+
+    select count(*)
+	    from tbl_lodging L
+	    join
+          (
+          select fk_lodging_code
+          from 
+          tbl_lodging_convenient V
+          join tbl_convenient N
+          on V.fk_convenient_code = N.convenient_code
+          group by fk_lodging_code
+          )T
+          on L.lodging_code = T.fk_lodging_code
+          join
+          (
+          	SELECT distinct lodging_code, RESERVATION_STATE
+			FROM 
+			(
+			SELECT A.lodging_code, A.room_name, A.room_stock, max_person,
+			       NVL(B.RESERVATION_CNT, 0) AS RESERVATION_CNT,
+			       CASE WHEN A.room_stock - NVL(B.RESERVATION_CNT, 0) >= 1 THEN '예약가능'
+			       ELSE '예약종료' END AS RESERVATION_STATE
+			 FROM 
+			 (
+			  SELECT L.lodging_code, D.room_name, D.room_stock, max_person, price
+			  FROM tbl_lodging L JOIN tbl_room_detail D
+			  ON L.lodging_code = D.fk_lodging_code
+              group by L.lodging_code, D.room_name, D.room_stock, max_person, price
+              having min(price) between 10000 and 100000
+			 ) A
+			 LEFT JOIN
+			 (
+			  SELECT D.fk_lodging_code, D.room_name, COUNT(*) AS RESERVATION_CNT 
+			  FROM tbl_room_detail D JOIN tbl_reservation RSV
+			  ON D.room_detail_code = RSV.fk_room_detail_code
+			  WHERE (RSV.check_in < '2024-07-29' AND RSV.check_out > '2024-07-28')
+			  and RSV.status = 1
+			  GROUP BY D.fk_lodging_code, D.room_name
+      
+			 ) B
+			 ON A.lodging_code || A.room_name = B.fk_lodging_code || B.room_name
+			) C
+			WHERE C.RESERVATION_STATE = '예약가능' and max_person >= 2
+          )D
+          on L.lodging_code = D.lodging_code
+	    where status = 1;
+
+    select *
+    from tbl_board;
+
+

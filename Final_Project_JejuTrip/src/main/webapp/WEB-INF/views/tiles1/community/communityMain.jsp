@@ -253,6 +253,35 @@
     }
 }
 
+
+.content-wrapper {
+    display: flex;
+    gap: 1rem;
+}
+
+.content-section {
+    margin-bottom: 2rem;
+    background-color: #f9f9f9;
+    
+    border-radius: 8px;
+    flex-grow: 1;
+}
+
+.right-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#content1 h4, #content2 h4, #content3 h4, #content4 h4 {
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+    .content-wrapper {
+        flex-direction: column;
+    }
+}
 </style>
 
 <!-- === 상단 카테고리 탭 === -->
@@ -292,20 +321,10 @@
 		</div>
 	</div>
 
-	<div class="d-flex">	
-		<!-- === 실시간 인기글 === -->
-		<div id="content2" class="col-md-5">
-			<h4>실시간 인기글</h4>
-			<main>
-				<table id="rankTable">
-					<!-- 인기글이 이곳에 삽입됩니다 -->
-				</table>
-			</main>
-		</div>
-
-		<!-- === 스텝 게시판 === -->
-		<div class="col-md-7">
+	<div class="content-wrapper">	
+		<div class="content-section">
 			
+			<%-- 
 			<div id="content3">
 				<h4>게하 스텝 구해요</h4>
 				<ul>
@@ -318,7 +337,7 @@
 					<li><a class="staffTitle" href="#">[쌍용게하] 조용한 게하에서 일하실 분 구해요</a></li>
 				</ul>
 			</div>
-			
+			--%>
 			<div id="content4">
 			    <h4>알쓸신잡 제주 방언</h4>
 			    <ul>
@@ -341,6 +360,21 @@
 					</li>
 				</ul>
 			</div>
+		
+		</div>
+		
+		<!-- === 스텝 게시판 === -->
+		<div class="col-md-6 right-column">
+			<!-- === 실시간 인기글 === -->
+			<div id="content2" class="content-section">
+				<h4>실시간 인기글</h4>
+				<main>
+					<table id="rankTable">
+						<!-- 인기글이 이곳에 삽입됩니다 -->
+					</table>
+				</main>
+			</div>
+			
 		</div>
 	</div>
 </div>

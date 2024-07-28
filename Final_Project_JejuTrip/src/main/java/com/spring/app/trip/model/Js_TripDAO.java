@@ -120,6 +120,15 @@ public interface Js_TripDAO {
 
 	// 글 작성일이 3일이내인 조회수 높은 커뮤니티 글목록 가져오기
 	List<BoardVO> getPopularBoard();
+
+	// 회원이 예약신청한 상세정보 가져오기
+	Map<String, String> getMemberReservationInfo(String reservation_code);
+
+	// 회원이 직접 예약취소상태 만들기
+	int memberCancelReserve(String reservation_code);
+
+	// 가격슬라이더 최대가격을 위한 숙소 최대가격 구해오기
+	int getLodgingMaxPirce();
 	
 	
 

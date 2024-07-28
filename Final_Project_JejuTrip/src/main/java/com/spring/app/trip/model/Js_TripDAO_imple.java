@@ -433,6 +433,39 @@ public class Js_TripDAO_imple implements Js_TripDAO {
 		
 	} // end of public List<BoardVO> getPopularBoard() {
 
+
+	// 회원이 예약신청한 상세정보 가져오기
+	@Override
+	public Map<String, String> getMemberReservationInfo(String reservation_code) {
+		
+		Map<String, String> memberReserveInfo = sqlsession.selectOne("js_trip.getMemberReservationInfo", reservation_code);
+		
+		return memberReserveInfo;
+		
+	} // end of public List<Map<String, String>> getMemberReservationInfo(String reservation_code) {
+
+
+	// 회원이 직접 예약취소상태 만들기
+	@Override
+	public int memberCancelReserve(String reservation_code) {
+		
+		int n = sqlsession.update("js_trip.memberCancelReserve", reservation_code);
+		
+		return n;
+		
+	} // end of public int memberCancelReserve(String reservation_code) {
+
+
+	// 가격슬라이더 최대가격을 위한 숙소 최대가격 구해오기
+	@Override
+	public int getLodgingMaxPirce() {
+		
+		int price = sqlsession.selectOne("js_trip.getLodgingMaxPirce");
+		
+		return price;
+		
+	} // end of public int getLodgingMaxPirce() {
+
 	
 	
 

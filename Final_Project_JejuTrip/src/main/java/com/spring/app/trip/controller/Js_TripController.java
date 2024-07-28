@@ -53,7 +53,12 @@ public class Js_TripController {
 		// 숙소리스트에 표현할 편의시설 목록 구해오기
 		List<Map<String,String>> convenientList = service.getConvenientList(lodging_code);
 		
+		// 가격슬라이더 최대가격을 위한 숙소 최대가격 구해오기
+		int max_price = service.getLodgingMaxPirce();
 		
+		// System.out.println(max_price);
+		
+		mav.addObject("max_price", max_price);
 		mav.addObject("convenientList", convenientList);
         mav.setViewName("lodging/lodgingList.tiles1");
        
@@ -74,7 +79,9 @@ public class Js_TripController {
 							  @RequestParam(defaultValue = "") String sort,
 							  @RequestParam(defaultValue = "") String check_in,
 							  @RequestParam(defaultValue = "") String check_out,
-							  @RequestParam(defaultValue = "2") String people) {
+							  @RequestParam(defaultValue = "2") String people,
+							  @RequestParam(defaultValue = "10000") String start_price,
+							  @RequestParam(defaultValue = "1000000") String end_price) {
 		/*
 		System.out.println("~~ 확인용 str_category " + str_category);
 		System.out.println("~~ 확인용 str_convenient " + str_convenient);
@@ -86,7 +93,10 @@ public class Js_TripController {
 		System.out.println("~~~ 확인용 check_out : " + check_out);
 		System.out.println("~~~ 확인용 people : " + people);
 		
+		System.out.println("시작가격 : " + start_price);
+		System.out.println("끝나는가격 : " + end_price);
 		*/
+		
 		
 		// 한 페이지당 보여줄 숙소 개수
 		int sizePerPage = 7;
@@ -165,6 +175,9 @@ public class Js_TripController {
 		paraMap.put("check_out", check_out);
 		paraMap.put("people", people);
 		
+		paraMap.put("start_price", start_price);
+		paraMap.put("end_price", end_price);
+		
 		// 숙소 전체 개수 가져오기
 		int totalCount = service.getLodgingTotalCount(paraMap);
 		
@@ -220,86 +233,159 @@ public class Js_TripController {
 		 System.out.println("~~~ 확인용 detail_check_out : " + detail_check_out);
 		 System.out.println("~~~ 확인용 detail_people : " + detail_people);
 		*/
+		
 		String lodging_code = lvo.getLodging_code();
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		
+		try {
+			int int_lodging_code = Integer.parseInt(lodging_code); 
+			int int_people = Integer.parseInt(detail_people); 
+			
+			String now = sdf.format(new Date());
+			
+			Date nowdate = sdf.parse(now);
+			
+			Date check_in = sdf.parse(detail_check_in);
+			Date check_out = sdf.parse(detail_check_out);
+			
+			if(check_in.before(nowdate) || check_out.compareTo(nowdate) <= 0  || 
+			   int_people <=0 || int_people > 20 ) {
+				
+				
+				// System.out.println("날짜 잘못입력함");
+				String message = "비정상적인 접근입니다.";
+				
+				String loc = request.getContextPath()+"/index.trip";
+		    	
+		    	mav.addObject("message", message);
+		    	mav.addObject("loc", loc);
+		    	
+		    	mav.setViewName("msg");
+		    	
+		    	return mav;
+				
+			}
+			
+			
+		} catch (ParseException | NumberFormatException e) {
+			
+			e.printStackTrace();
+			
+			// System.out.println("날짜 잘못입력함");
+			String message = "비정상적인 접근입니다.";
+			
+			String loc = request.getContextPath()+"/index.trip";
+	    	
+	    	mav.addObject("message", message);
+	    	mav.addObject("loc", loc);
+	    	
+	    	mav.setViewName("msg");
+	    	
+	    	return mav;
+		}
+		
+		
 		
 		// System.out.println("~~~ 확인용 : " + lodgingCode);
 		
 		LodgingVO lodgingDetail = service.getLodgingDetail(lodging_code);
 		// 숙소의 상세정보만 가져오기
 		
-		Map<String,String> dateSendMap = new HashMap<>();
-		
-		dateSendMap.put("lodging_code", lodging_code);
-		dateSendMap.put("check_in", detail_check_in);
-		dateSendMap.put("check_out", detail_check_out);
-		dateSendMap.put("people", detail_people);
-		
-		List<Map<String,String>> convenientList = service.getConvenientList(lodging_code);
-		// 한 숙소에대한 편의시설 가져오기 (메소드 재활용)
-		
-		List<Map<String,String>> roomDetailList = service.getRoomDetail(dateSendMap);
-		// 숙소의 객실 정보 가져오기
-		
-		HttpSession session = request.getSession();
-		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
-		
-		if(loginuser != null) {
+		if(lodgingDetail == null) {
 			
-			String userid = loginuser.getUserid();
+			String message = "비정상적인 접근입니다.";
 			
-			Map<String,String> chkMap = new HashMap<>();
+			String loc = request.getContextPath()+"/index.trip";
+	    	
+	    	mav.addObject("message", message);
+	    	mav.addObject("loc", loc);
+	    	
+	    	mav.setViewName("msg");
+	    	
+	    	return mav;
 			
-			chkMap.put("lodging_code", lodging_code);
-			chkMap.put("userid",userid);
+		}else {
 			
-			int chkLike = service.getLodgingLike(chkMap); // 한 숙소에 대해 좋아요를 눌렀는지 안눌렀는지
 			
-			if(chkLike > 0) {
+			Map<String,String> dateSendMap = new HashMap<>();
+			
+			dateSendMap.put("lodging_code", lodging_code);
+			dateSendMap.put("check_in", detail_check_in);
+			dateSendMap.put("check_out", detail_check_out);
+			dateSendMap.put("people", detail_people);
+			
+			List<Map<String,String>> convenientList = service.getConvenientList(lodging_code);
+			// 한 숙소에대한 편의시설 가져오기 (메소드 재활용)
+			
+			List<Map<String,String>> roomDetailList = service.getRoomDetail(dateSendMap);
+			// 숙소의 객실 정보 가져오기
+			
+			HttpSession session = request.getSession();
+			MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
+			
+			if(loginuser != null) {
 				
-				dateSendMap.put("chkLike", String.valueOf(chkLike));
-			}
-			
-			
-			int chkR = service.chkReservation(chkMap); // 숙소상세페이지 이동시에 예약했는지 확인하기 
-			
-			if(chkR > 0) {
+				String userid = loginuser.getUserid();
 				
-				dateSendMap.put("chkR", String.valueOf(chkR));
+				Map<String,String> chkMap = new HashMap<>();
 				
-				int chkC = service.chkReview(chkMap); // 리뷰를 작성했는지 안했는지 확인하기
+				chkMap.put("lodging_code", lodging_code);
+				chkMap.put("userid",userid);
 				
-				if(chkC > 0) {
+				int chkLike = service.getLodgingLike(chkMap); // 한 숙소에 대해 좋아요를 눌렀는지 안눌렀는지
+				
+				if(chkLike > 0) {
 					
-					dateSendMap.put("chkC", String.valueOf(chkC));
-					
-				} // end of if 리뷰를 작성했는지 안했는지 chkC > 0
+					dateSendMap.put("chkLike", String.valueOf(chkLike));
+				}
 				
-			} // end of 예약을 했는지 안했는지 chkR > 0
+				
+				int chkR = service.chkReservation(chkMap); // 숙소상세페이지 이동시에 예약했는지 확인하기 
+				
+				if(chkR > 0) {
+					
+					dateSendMap.put("chkR", String.valueOf(chkR));
+					
+					int chkC = service.chkReview(chkMap); // 리뷰를 작성했는지 안했는지 확인하기
+					
+					if(chkC > 0) {
+						
+						dateSendMap.put("chkC", String.valueOf(chkC));
+						
+					} // end of if 리뷰를 작성했는지 안했는지 chkC > 0
+					
+				} // end of 예약을 했는지 안했는지 chkR > 0
+				
+			} // end of 로그인 했는지 안했는지 if
 			
-		} // end of 로그인 했는지 안했는지 if
-		
-		
-		String local_status = lodgingDetail.getLocal_status();
-		
-		// 같은 지역구분 맛집 랜덤추천해주기
-		FoodstoreVO fvo = service.getRandomFood(local_status);
-		// 같은 지역구분 즐길거리 랜덤추천해주기
-		PlayVO pvo = service.getRandomPlay(local_status);
-		
-		Map<String,Object> randMap = new HashMap<>();
-		
-		randMap.put("fvo", fvo);
-		randMap.put("pvo", pvo);
-		
-		mav.addObject("randMap",randMap);
-		
-		mav.addObject("convenientList", convenientList);
-		mav.addObject("lodgingDetail", lodgingDetail);
-		mav.addObject("roomDetailList", roomDetailList);
-		mav.addObject("dateSendMap",dateSendMap);
-		
-		
-		mav.setViewName("lodging/lodgingDetail.tiles1");
+			
+			String local_status = lodgingDetail.getLocal_status();
+			
+			// 같은 지역구분 맛집 랜덤추천해주기
+			FoodstoreVO fvo = service.getRandomFood(local_status);
+			// 같은 지역구분 즐길거리 랜덤추천해주기
+			PlayVO pvo = service.getRandomPlay(local_status);
+			
+			Map<String,Object> randMap = new HashMap<>();
+			
+			randMap.put("fvo", fvo);
+			randMap.put("pvo", pvo);
+			
+			mav.addObject("randMap",randMap);
+			
+			mav.addObject("convenientList", convenientList);
+			mav.addObject("lodgingDetail", lodgingDetail);
+			mav.addObject("roomDetailList", roomDetailList);
+			mav.addObject("dateSendMap",dateSendMap);
+			
+			
+			mav.setViewName("lodging/lodgingDetail.tiles1");
+			
+			
+			
+			
+		}
 		
 		return mav;
 		
@@ -371,13 +457,31 @@ public class Js_TripController {
 	
 	// 결제 페이지 넘어가기
 	@RequestMapping("/lodgingReservation.trip")
-	public ModelAndView requiredLogin_lodgingReservation(HttpServletRequest request, 
+	public ModelAndView lodgingReservation(HttpServletRequest request, 
 										   HttpServletResponse response, 
 										   ModelAndView mav,
 										   @RequestParam(defaultValue = "") String lodging_code,
 										   @RequestParam(defaultValue = "") String room_detail_code,
 										   @RequestParam(defaultValue = "") String check_in,
 										   @RequestParam(defaultValue = "") String check_out) {
+		
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
+		
+		if(loginuser == null) {
+			
+			String message = "예약하려면 반드시 로그인을 하셔야합니다!!";
+			
+			String loc = request.getContextPath()+"/login.trip";
+	    	
+	    	mav.addObject("message", message);
+	    	mav.addObject("loc", loc);
+	    	
+	    	mav.setViewName("msg");
+	    	
+	    	return mav;
+			
+		} // end of if
 		
 		
 		Map<String,String> paraMap = new HashMap<>();
@@ -876,7 +980,7 @@ public class Js_TripController {
 	
 	// 한 숙소에 대한 객실 등록하기
 	@PostMapping("/registerRoomDetailEnd.trip")
-	public ModelAndView registerRoomDetailEnd(@RequestParam("attach[]") List<MultipartFile> multiFileList,
+	public ModelAndView registerRoomDetailEnd(@RequestParam("attach") List<MultipartFile> multiFileList,
 												ModelAndView mav , MultipartHttpServletRequest mrequest,
 											  @RequestParam("str_room_name") String str_room_name,
 											  @RequestParam("str_price") String str_price,
@@ -968,8 +1072,8 @@ public class Js_TripController {
 					rvo.setPrice(arr_price[i]);
 					rvo.setMin_person(Integer.parseInt(arr_min_person[i]));
 					rvo.setMax_person(Integer.parseInt(arr_max_person[i]));
-					rvo.setCheck_in((arr_check_in[i]) + "시");
-					rvo.setCheck_out((arr_check_out[i]) + "시");
+					rvo.setCheck_in((arr_check_in[i]));
+					rvo.setCheck_out((arr_check_out[i]));
 										
 					int n = service.insertRoomDetail(rvo); // 객실등록하기
 										
@@ -1107,7 +1211,7 @@ public class Js_TripController {
 	
 	// 한 숙소에 대한 객실 수정하기
 	@PostMapping("/updateRoomDetailEnd.trip")
-	public ModelAndView updateRoomDetailEnd(@RequestParam("attach[]") List<MultipartFile> multiFileList,
+	public ModelAndView updateRoomDetailEnd(@RequestParam("attach") List<MultipartFile> multiFileList,
 											ModelAndView mav , MultipartHttpServletRequest mrequest,
 											@RequestParam("str_room_detail_code") String str_room_detail_code,
 											@RequestParam("str_room_img") String str_room_img,
@@ -1545,5 +1649,99 @@ public class Js_TripController {
 		return json_arr.toString();
 		
 	} // end of String current_festival() {
+	
+	
+	// 유저 마이페이지에서 예약신청한 상세정보 모달페이지 가져오기
+	@ResponseBody
+	@PostMapping(value="JSONMemberReservationInfo.trip", produces="text/plain;charset=UTF-8")
+	public String memberReservationInfo(@RequestParam ("reservation_code") String reservation_code) {
+		
+		// 유저가 예약신청한 상세정보 가져오기
+		Map<String, String> memberReserveInfo = service.getMemberReservationInfo(reservation_code);
+		
+		JSONObject jsonObj = new JSONObject();
+		
+		Date now = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		
+
+		
+		if( memberReserveInfo != null) {
+			
+			jsonObj.put("lodging_name", memberReserveInfo.get("lodging_name"));
+			jsonObj.put("room_name", memberReserveInfo.get("room_name"));
+			jsonObj.put("lodging_address", memberReserveInfo.get("lodging_address"));
+			jsonObj.put("lodging_category", memberReserveInfo.get("lodging_category"));
+			jsonObj.put("lodging_tell", memberReserveInfo.get("lodging_tell"));
+			jsonObj.put("room_img", memberReserveInfo.get("room_img"));
+			
+			
+			String check_indate = memberReserveInfo.get("check_in");
+			
+			// 현재시간이 체크인시간보다 지났다면 예약만료로 예약취소버튼이 나타나지않게 한다.	
+			try {
+                Date check_in = sdf.parse(check_indate);
+                // System.out.println("compareto : " + check_in.compareTo(now));
+                if (check_in.compareTo(now) < 0  ) {
+                	// ||	(check_in.compareTo(now) < 0 && !"2".equals(memberReserveInfo.get("status") ) )
+                    jsonObj.put("status", "3");
+                    
+                } else {
+                    jsonObj.put("status", memberReserveInfo.get("status"));
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+                
+            } // end of catch
+			
+			
+			jsonObj.put("check_in", memberReserveInfo.get("str_check_in"));
+			jsonObj.put("check_out", memberReserveInfo.get("str_check_out"));
+			jsonObj.put("reservation_price", memberReserveInfo.get("reservation_price"));
+			jsonObj.put("reservation_date", memberReserveInfo.get("reservation_date"));
+			jsonObj.put("check_intime", memberReserveInfo.get("check_intime"));
+			jsonObj.put("check_outtime", memberReserveInfo.get("check_outtime"));
+			
+		} // end of if
+		
+		return jsonObj.toString();
+		
+	} // end of public String memberReservationInfo(@RequestParam ("reservation_code") String reservation_code) {
+	
+	
+	
+	@ResponseBody
+	@PostMapping(value="JSONMemberCancelReserve.trip", produces="text/plain;charset=UTF-8")
+	public String memberCancelReserve(@RequestParam ("reservation_code") String reservation_code) {
+		
+		int n = 0;
+		
+		if(reservation_code !=null) {
+			
+			// 회원이 직접 예약취소상태 만들기
+			n = service.memberCancelReserve(reservation_code);
+			
+		}
+		
+		JSONObject jsonObj = new JSONObject();
+		
+		jsonObj.put("result", n);
+		
+		return jsonObj.toString();
+		
+	} // end of public String memberCancelReserve(@RequestParam ("reservation_code") String reservation_code) {
+	
+	
+	
+	@RequestMapping(value="admin_FestivalList.trip")
+	public ModelAndView memberCancelReserve(ModelAndView mav) {
+		
+		mav.setViewName("community/admin_FestivalList.tiles1");
+		
+		
+		
+		return mav;
+		
+	} // end of public ModelAndView memberCancelReserve(ModelAndView mav) {
 	
 }

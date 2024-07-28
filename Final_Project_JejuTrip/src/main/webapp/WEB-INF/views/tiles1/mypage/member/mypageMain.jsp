@@ -91,8 +91,64 @@
 
    		   
        		
-       	})
+       	});
         
+       	
+       	// 클릭했을때 예약상세를 보여주는 모달창 띄우기 정수
+       	$(document).on("click", "tr", function(e){
+       		
+       		// const reservation_code = $(e.target).firstChild;
+       		const reservation_code = $(this).find("input").val();
+        	
+       		// alert('히히');
+       		// alert(reservation_code);
+       		
+       		open_modal(reservation_code);
+       		
+        }); // end of $(document).on("click", "tbody", function(e){
+        	
+        	
+        	
+       // 클릭했을때 예약취소하기  정수
+       $(document).on("click", "button#cancelReserve" , function(){
+    	   
+			// alert('히히');
+			// alert($("input:hidden[name='modal_reservation_code']").val());
+			
+			const reservation_code = $("input:hidden[name='modal_reservation_code']").val();
+			
+			if(confirm('정말 예약을 취소하시겠습니까 ?')){
+				
+				$.ajax({
+		 			url:"<%= ctxPath%>/JSONMemberCancelReserve.trip",
+		 			data:{"reservation_code":reservation_code},
+		 			type:"post",
+		 			dataType:"json",
+		 			success:function(json){
+		 				
+		 				if(json.result == "1"){
+		 				
+		 					alert("예약이 취소되었습니다.");
+			 				location.reload(true);
+		 				
+		 				}
+		 				else {
+		 					
+		 					alert("예약이 취소 실패");
+		 					return false;
+		 				}
+		 				
+		 			},
+		 			error: function(request, status, error){
+		 			   alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+		 			}
+		 			
+		 		}); // end of $.ajax
+			
+			} // end of if
+			
+       }); // end of $(document).on("click", "button#cancelReserve" , function(){})
+       
         
         
     }); // end of $(document).ready(function(){
@@ -760,6 +816,78 @@ function goViewAllReservationList(currentShowPageNo){
 		}
 		
 	}// end of function goViewComment(currentShowPageNo)------
+	
+	
+	
+	
+// 유저가 예약한 숙소정보를 모달로 띄우는 함수 (정수)
+function open_modal(reservation_code){
+    	
+    	$.ajax({
+    		
+    	
+			url:"<%= ctxPath%>/JSONMemberReservationInfo.trip",
+			data:{"reservation_code":reservation_code}, 
+			type:"post",
+			dataType:"json",
+			success:function(json){
+				let v_html = ``;
+				let b_html = ``;
+				
+			
+				v_html += `<div style="margin-bottom:5px;">숙소명 : \${json.lodging_name}</div>
+				 		   <div style="margin-bottom:5px;">숙소구분 : \${json.lodging_category}</div>
+						   <div style="margin-bottom:5px;">주소 : \${json.lodging_address}</div>
+				           <div style="margin-bottom:5px;">전화번호 : \${json.lodging_tell}</div>
+						   <div style="margin-bottom:5px;">객실명 : \${json.room_name}</div>
+					  	   <div style="margin-bottom:5px;">체크인 시간 : \${json.check_intime}</div>
+					  	   <div style="margin-bottom:5px;">체크아웃 시간 : \${json.check_outtime}</div>
+						   <div style="margin-bottom:5px;">예약결제일자 : \${json.reservation_date}</div>
+						   <div style="margin-bottom:5px;">예약결제금액 : \${json.reservation_price}</div>
+						   <div style="margin-bottom:5px;">예약 체크인일자 : \${json.check_in}</div>
+						   <div style="margin-bottom:5px;">예약 체크아웃일자 : \${json.check_out}</div>
+						   <img src="<%=ctxPath%>/resources/images/lodginglist/room/\${json.room_img}" style="width:100%; margin-bottom:20px;"/>`;
+						   
+						   
+				if(json.status == '0'){
+					v_html += `<div style="margin-bottom:5px;">예약상태 : <span style="color:blue; font-weight:bold;">예약대기중</span></div>`;
+					b_html += `<button type="button" id="cancelReserve" class="btn btn-warning btn-sm">예약취소하기</button>
+							   <button type="button" class="btn btn-danger btn-sm modal_close" data-dismiss="modal">닫기</button>`;
+				}
+				else if(json.status == '1'){
+					v_html += `<div style="margin-bottom:5px;">예약상태 : <span style="color:green; font-weight:bold;">예약확정</span></div>`;
+					b_html += `<button type="button" id="cancelReserve" class="btn btn-warning btn-sm">예약취소하기</button>
+						       <button type="button" class="btn btn-danger btn-sm modal_close" data-dismiss="modal">닫기</button>`;
+				}
+				else if(json.status == '3'){
+					v_html += `<div style="margin-bottom:5px;">예약상태 : <span style="color:green; font-weight:bold;">예약기간만료</span></div>`;
+					b_html += `<button type="button" class="btn btn-danger btn-sm modal_close" data-dismiss="modal">닫기</button>`;
+					
+				}
+				else if(json.status == '2'){
+					v_html += `<div style="margin-bottom:5px;">예약상태 : <span style="color:red; font-weight:bold;">예약취소</span></div>`;
+					b_html += `<button type="button" class="btn btn-danger btn-sm modal_close" data-dismiss="modal">닫기</button>`;
+				}
+				
+				v_html += `<input type="hidden" name="modal_reservation_code" value="\${reservation_code}" />`;
+				
+			    $("div.modal-body").html(v_html);
+			    $("div.modal-footer").html(b_html);
+			    
+			},
+			error: function(request, status, error){
+			   alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+			}
+			
+		});  // end of $.ajax
+    	
+    	
+    	
+    	$('#modal_showDetail').modal('show'); // 모달창 보여주기
+    	 
+    } // end of 
+	
+	
 </script>
 
 <div class="body">
@@ -943,4 +1071,30 @@ function goViewAllReservationList(currentShowPageNo){
 		</div>
 	</form>
 
+</div>
+
+
+<div class="modal fade" id="modal_showDetail" data-backdrop="static">
+
+	<div class="modal-dialog">
+		<div class="modal-content">
+	    
+	      <!-- Modal header -->
+	      <div class="modal-header">
+	        <h4 class="modal-title">예약 상세정보</h4>
+	        <button type="button" class="close modal_close" data-dismiss="modal">&times;</button>
+	      </div>
+	      
+	      <!-- Modal body -->
+	      <div class="modal-body">
+	      		
+	      </div>
+	      
+	      <!-- Modal footer -->
+	      <div class="modal-footer">
+	      	  
+	      </div>
+	      
+	    </div>    
+	</div>
 </div>
