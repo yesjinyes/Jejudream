@@ -160,7 +160,7 @@
 			  SELECT D.fk_lodging_code, D.room_name, COUNT(*) AS RESERVATION_CNT 
 			  FROM tbl_room_detail D JOIN tbl_reservation RSV
 			  ON D.room_detail_code = RSV.fk_room_detail_code
-			  WHERE RSV.check_in <![CDATA[<=]]> #{check_in} AND RSV.check_out <![CDATA[>=]]> #{check_out}
+			  WHERE (RSV.check_in <![CDATA[<]]> #{check_out} AND RSV.check_out <![CDATA[>]]> #{check_in})
 			  and RSV.status = 1
 			  GROUP BY D.fk_lodging_code, D.room_name
 			 ) B
@@ -233,7 +233,7 @@
 		<result property="room_img" column="room_img" javaType="String" />
 	</resultMap>
 	<select id="getRoomDetail" resultMap="RoomDetail" parameterType="HashMap">
-	
+	<![CDATA[
 		SELECT A.lodging_code, A.room_detail_code, A.room_name, A.price,
                A.room_stock - NVL(B.RESERVATION_CNT, 0) AS remaining_qty,
                A.min_person, A.max_person, A.room_img ,check_intime , check_outtime
@@ -250,13 +250,16 @@
 			  SELECT D.fk_lodging_code, D.room_name, COUNT(*) AS RESERVATION_CNT 
 			  FROM tbl_room_detail D JOIN tbl_reservation RSV
 			  ON D.room_detail_code = RSV.fk_room_detail_code
-			  WHERE RSV.check_in <![CDATA[<=]]> #{check_in} AND RSV.check_out <![CDATA[>=]]> #{check_out}
+			  WHERE RSV.status = 1 and 
+			  (
+		        (RSV.check_in < #{check_out} AND RSV.check_out > #{check_in}) 
+		      )
 			  GROUP BY D.fk_lodging_code, D.room_name
 			 ) B
 			 ON A.lodging_code || A.room_name = B.fk_lodging_code || B.room_name
-			 where max_person <![CDATA[>=]]> #{people}
+			 where max_person >= #{people}]]>
 	</select>
-	
+	<!--  (RSV.check_in <![CDATA[<=]]> #{check_in} AND RSV.check_out <![CDATA[>=]]> #{check_out}) -->
 	
 	<!-- 결제페이지에서 예약하려는 숙소와 객실정보 가져오기 -->
 	<resultMap type="HashMap" id="ReserveRoomDetail">

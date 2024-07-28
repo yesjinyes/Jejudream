@@ -94,7 +94,7 @@
        	});
         
        	
-       	
+       	// 클릭했을때 예약상세를 보여주는 모달창 띄우기 정수
        	$(document).on("click", "tr", function(e){
        		
        		// const reservation_code = $(e.target).firstChild;
@@ -109,7 +109,7 @@
         	
         	
         	
-        	
+       // 클릭했을때 예약취소하기  정수
        $(document).on("click", "button#cancelReserve" , function(){
     	   
 			// alert('히히');
@@ -142,11 +142,12 @@
 		 			error: function(request, status, error){
 		 			   alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
 		 			}
-		 		});
+		 			
+		 		}); // end of $.ajax
 			
 			} // end of if
 			
-       });
+       }); // end of $(document).on("click", "button#cancelReserve" , function(){})
        
         
         

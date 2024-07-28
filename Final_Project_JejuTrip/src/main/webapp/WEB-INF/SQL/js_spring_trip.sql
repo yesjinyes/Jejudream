@@ -1423,8 +1423,66 @@ from tbl_review;
     select *
     from tbl_lodging;
     
+    select * 
+    from tbl_room_detail;
+    update tbl_reservation set status = 1 where reservation_code = 32;
+    commit;
+    
+    
+    SELECT A.lodging_code, A.room_detail_code, A.room_name, A.price,
+               A.room_stock - NVL(B.RESERVATION_CNT, 0) AS remaining_qty,
+               A.min_person, A.max_person, A.room_img ,check_intime , check_outtime
+			 FROM 
+			 (
+			  SELECT L.lodging_code, D.room_name, D.room_stock, min_person, max_person, 
+                     price, room_detail_code, room_img, check_in as check_intime, check_out as check_outtime   
+			  FROM tbl_lodging L JOIN tbl_room_detail D
+			  ON L.lodging_code = D.fk_lodging_code 
+              where lodging_code = 5217
+              ) A
+			 LEFT JOIN
+			 (
+			  SELECT D.fk_lodging_code, D.room_name, COUNT(*) AS RESERVATION_CNT 
+			  FROM tbl_room_detail D JOIN tbl_reservation RSV
+			  ON D.room_detail_code = RSV.fk_room_detail_code
+			  WHERE RSV.status = 1 and 
+			  (RSV.check_in <= '2024-07-28' AND RSV.check_out >= '2024-07-30')
+			  GROUP BY D.fk_lodging_code, D.room_name
+			 ) B
+			 ON A.lodging_code || A.room_name = B.fk_lodging_code || B.room_name
+			 where max_person >= 2
+    
+    
+    SELECT A.lodging_code, A.room_detail_code, A.room_name, A.price,
+       A.room_stock - NVL(B.RESERVATION_CNT, 0) AS remaining_qty,
+       A.min_person, A.max_person, A.room_img, A.check_intime, A.check_outtime
+FROM (
+    SELECT L.lodging_code, D.room_name, D.room_stock, min_person, max_person,
+           price, room_detail_code, room_img, check_in AS check_intime, check_out AS check_outtime
+    FROM tbl_lodging L
+    JOIN tbl_room_detail D ON L.lodging_code = D.fk_lodging_code
+    WHERE L.lodging_code = 5217
+) A
+LEFT JOIN (
+    SELECT D.fk_lodging_code, D.room_name, COUNT(*) AS RESERVATION_CNT
+    FROM tbl_room_detail D
+    JOIN tbl_reservation RSV ON D.room_detail_code = RSV.fk_room_detail_code
+    WHERE RSV.status = 1
+    AND (
+        (RSV.check_in <= '2024-07-30' AND RSV.check_out >= '2024-07-28') -- 전체 기간이 겹치는 경우
+        OR (RSV.check_in <= '2024-07-28' AND RSV.check_out >= '2024-07-28') -- 시작일이 겹치는 경우
+        OR (RSV.check_in <= '2024-07-30' AND RSV.check_out >= '2024-07-30') -- 종료일이 겹치는 경우
+    )
+    GROUP BY D.fk_lodging_code, D.room_name
+) B ON A.lodging_code = B.fk_lodging_code AND A.room_name = B.room_name
+WHERE A.max_person >= 2
+    
     select *
     from tbl_reservation;
+    select *
+    from user_sequences
+    insert into tbl_reservation (reservation_code, fk_userid, fk_room_detail_code, check_in, check_out, reservation_price, status) 
+    values (SEQ_RESERVE.nextval, 'kudi02', 660, '2024-07-29', '2024-07-30' , 5, 1);
     
     select to_char(check_in, 'yyyy-mm-dd hh24:mi:ss') as c
     from tbl_reservation;

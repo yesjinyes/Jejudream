@@ -104,6 +104,7 @@
                     </table>
                 </div>
                 <div class="col-lg-4 col-md-5 mt-4 mt-md-0" style="align-content:center;">
+                	<c:if test="${not empty requestScope.randMap.fvo}">
                     <div class="recommendation">
                         <h5>같은 지역 맛집 추천</h5>
                         <div class="rand">
@@ -120,6 +121,9 @@
                             </div>
                         </div>
                     </div>
+                    </c:if>
+                    
+                    <c:if test="${not empty requestScope.randMap.pvo}">
                     <div class="recommendation">
                         <h5>같은 지역 즐길거리 추천</h5>
                         <div class="rand">
@@ -136,6 +140,8 @@
                             </div>
                         </div>
                     </div>
+                    </c:if>
+                    
                 </div>
             </div>
             <div class="text-center px-3 mb-4">

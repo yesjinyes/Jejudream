@@ -431,10 +431,28 @@ public class Js_TripService_imple implements Js_TripService {
 			
 			for(int i=0; i<reservationList.size(); i++) {
 				
-				String emailContents = "사용자 ID: " + reservationList.get(i).get("userid") + "<br>" +
-										"예약자명: " + reservationList.get(i).get("user_name") + 
-										"님의 방문 예약일은 <span style='color:red'>" + 
-										reservationList.get(i).get("check_in") + "</span> 입니다."; 
+				String emailContents = 
+					    "<div style='font-family: Arial, sans-serif; line-height: 1.6; color: #333;'>"
+					    + "<h2 style='color: #0056b3;'>예약 확인</h2>"
+					    + "<p>안녕하세요, " + reservationList.get(i).get("user_name") + "님,</p>"
+					    + "<p>예약해주신 체크인일자가 1일 남았습니다!</p>"
+					    + "<table style='border-collapse: collapse; width: 100%;'>"
+					    + "  <tr>"
+					    + "    <td style='border: 1px solid #ddd; padding: 8px; font-weight: bold;'>사용자 ID:</td>"
+					    + "    <td style='border: 1px solid #ddd; padding: 8px;'>" + reservationList.get(i).get("userid") + "</td>"
+					    + "  </tr>"
+					    + "  <tr>"
+					    + "    <td style='border: 1px solid #ddd; padding: 8px; font-weight: bold;'>예약자명:</td>"
+					    + "    <td style='border: 1px solid #ddd; padding: 8px;'>" + reservationList.get(i).get("user_name") + "</td>"
+					    + "  </tr>"
+					    + "  <tr>"
+					    + "    <td style='border: 1px solid #ddd; padding: 8px; font-weight: bold;'>방문 예약일:</td>"
+					    + "    <td style='border: 1px solid #ddd; padding: 8px; color: red;'>" + reservationList.get(i).get("check_in") + "</td>"
+					    + "  </tr>"
+					    + "</table>"
+					    + "<p>예약 변경이나 취소를 원하시면 고객 센터로 연락해 주시기 바랍니다.</p>"
+					    + "<p>감사합니다.</p>"
+					    + "</div>";
 				
 				mail.sendmail_Reservation(aES256.decrypt(reservationList.get(i).get("email")), emailContents);
 				

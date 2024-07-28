@@ -274,10 +274,14 @@ $(document).ready(function(){
         								<span>잔여객실 \${item.remaining_qty}개</span>
         								<br>
         								<span>기준인원 \${item.min_person} 명 / 최대인원 \${item.max_person} 명</span>`;
+        				const qty = `\${item.remaining_qty}`;
         				
-        				if("${item.remaining_qty}" == "0"){
+        				// alert(qty);
+        				
+        				if(`\${item.remaining_qty}` == "0"){
         					
-        					v_html += `<h4 class="pb-2" style="color: red;">예약 마감</h4>`;
+        					v_html += `<h4 class="pb-2" style="color: red;">예약 마감</h4>
+        						<input type="hidden" name="lodging_code1" value="\${lodging_code}" />`;
         				}
         				else {
         					
@@ -919,9 +923,15 @@ function goAddReview(){
                             <br>
                             <span>기준인원 ${roomDetail.min_person} 명 / 최대인원 ${roomDetail.max_person} 명</span>
                             <h4 class="pb-2" style="color: navy;"><fmt:formatNumber value="${roomDetail.price}" pattern="#,###" /> 원</h4>
+                            
+                            <c:if test="${roomDetail.remaining_qty != 0}">
                             <div class="mb-2">
                                 <button type="button" name="reservation" class="btn btn-success">예약하기</button>
                             </div>
+                            </c:if>
+                            <c:if test="${roomDetail.remaining_qty == 0}">
+                            <h4 class="pb-2" style="color: red;">예약 마감</h4>
+                            </c:if>
                             <input type="hidden" name="room_detail_code1" value="${roomDetail.room_detail_code}" />
                             <input type="hidden" name="lodging_code1" value="${roomDetail.lodging_code}" />
                             <input type="hidden" name="check_in1" value="" />
@@ -941,8 +951,10 @@ function goAddReview(){
                     </div>
                 </div>
                 <div class="col-lg-5 col-md-6 col-sm-12 p-0">
+                    <c:if test="${not empty requestScope.randMap.fvo}">
                     <div class="recommendation">
                         <h5>같은 지역 맛집 추천</h5>
+                        
                         <div class="rand">
                             <div>
                                 <a href="<%= ctxPath%>/foodstoreDetail.trip?food_store_code=${requestScope.randMap.fvo.food_store_code}"><img class="mini_img" alt="" src="<%= ctxPath%>/resources/images/foodstore/imgMain/${requestScope.randMap.fvo.food_main_img}"></a>
@@ -953,6 +965,9 @@ function goAddReview(){
                             </div>
                         </div>
                     </div>
+                    </c:if>
+                    
+                    <c:if test="${not empty requestScope.randMap.pvo}">
                     <div class="recommendation">
                         <h5>같은 지역 즐길거리 추천</h5>
                         <div class="rand">
@@ -965,6 +980,7 @@ function goAddReview(){
                             </div>
                         </div>
                     </div>
+                    </c:if>
                 </div>
             </div>
 
