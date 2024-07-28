@@ -12,7 +12,9 @@ import com.spring.app.trip.domain.BoardVO;
 import com.spring.app.trip.domain.CommentVO;
 import com.spring.app.trip.domain.CompanyVO;
 import com.spring.app.trip.domain.FoodstoreVO;
+import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.MemberVO;
+import com.spring.app.trip.domain.PlayVO;
 
 @Repository
 public class Dy_TripDAO_imple implements Dy_TripDAO {
@@ -478,6 +480,46 @@ public class Dy_TripDAO_imple implements Dy_TripDAO {
 		List<Map<String, String>> reservationList = sqlsession.selectList("dy_trip.getReservationList", paraMap);
 		
 		return reservationList;
+	}
+
+
+	// [전체 검색] 숙소 리스트 띄우기
+	@Override
+	public List<LodgingVO> searchLodgingList(String searchWord) {
+		
+		List<LodgingVO> lodgingList = sqlsession.selectList("dy_trip.searchLodgingList", searchWord);
+		
+		return lodgingList;
+	}
+
+
+	// [전체 검색] 맛집 리스트 띄우기
+	@Override
+	public List<FoodstoreVO> searchFoodstoreList(String searchWord) {
+		
+		List<FoodstoreVO> foodstoreList = sqlsession.selectList("dy_trip.searchFoodstoreList", searchWord);
+		
+		return foodstoreList;
+	}
+
+
+	// [전체 검색] 즐길거리 리스트 띄우기
+	@Override
+	public List<PlayVO> searchPlayList(String searchWord) {
+		
+		List<PlayVO> playList = sqlsession.selectList("dy_trip.searchPlayList", searchWord);
+		
+		return playList;
+	}
+
+
+	// [전체 검색] 커뮤니티 게시판 리스트 띄우기
+	@Override
+	public List<BoardVO> searchBoardList(String searchWord) {
+		
+		List<BoardVO> boardList = sqlsession.selectList("dy_trip.searchBoardList", searchWord);
+		
+		return boardList;
 	}
 	
 

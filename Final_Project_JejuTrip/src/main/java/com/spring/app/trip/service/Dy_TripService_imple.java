@@ -35,7 +35,9 @@ import com.spring.app.trip.domain.BoardVO;
 import com.spring.app.trip.domain.CommentVO;
 import com.spring.app.trip.domain.CompanyVO;
 import com.spring.app.trip.domain.FoodstoreVO;
+import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.MemberVO;
+import com.spring.app.trip.domain.PlayVO;
 import com.spring.app.trip.model.Dy_TripDAO;
 
 @Service
@@ -904,6 +906,46 @@ public class Dy_TripService_imple implements Dy_TripService {
         model.addAttribute("workbook", workbook);
         model.addAttribute("workbookName", paraMap.get("company_name") + " 숙소 예약내역");
     	
+	}
+
+
+	// [전체 검색] 숙소 리스트 띄우기
+	@Override
+	public List<LodgingVO> searchLodgingList(String searchWord) {
+		
+		List<LodgingVO> lodgingList = dao.searchLodgingList(searchWord);
+		
+		return lodgingList;
+	}
+
+
+	// [전체 검색] 맛집 리스트 띄우기
+	@Override
+	public List<FoodstoreVO> searchFoodstoreList(String searchWord) {
+		
+		List<FoodstoreVO> foodstoreList = dao.searchFoodstoreList(searchWord);
+		
+		return foodstoreList;
+	}
+
+
+	// [전체 검색] 즐길거리 리스트 띄우기
+	@Override
+	public List<PlayVO> searchPlayList(String searchWord) {
+		
+		List<PlayVO> playList = dao.searchPlayList(searchWord);
+		
+		return playList;
+	}
+
+
+	// [전체 검색] 커뮤니티 게시판 리스트 띄우기
+	@Override
+	public List<BoardVO> searchBoardList(String searchWord) {
+		
+		List<BoardVO> boardList = dao.searchBoardList(searchWord);
+		
+		return boardList;
 	}
 	
 }

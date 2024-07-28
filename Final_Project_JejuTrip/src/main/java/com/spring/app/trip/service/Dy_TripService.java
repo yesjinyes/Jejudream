@@ -11,7 +11,9 @@ import org.springframework.web.servlet.ModelAndView;
 import com.spring.app.trip.domain.BoardVO;
 import com.spring.app.trip.domain.CommentVO;
 import com.spring.app.trip.domain.FoodstoreVO;
+import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.MemberVO;
+import com.spring.app.trip.domain.PlayVO;
 
 public interface Dy_TripService {
 
@@ -119,5 +121,17 @@ public interface Dy_TripService {
 
 	// 업체 마이페이지에서 예약내역 Excel 파일로 다운받기
 	void reservationList_to_Excel(Map<String, String> paraMap, Model model);
+
+	// [전체 검색] 숙소 리스트 띄우기
+	List<LodgingVO> searchLodgingList(String searchWord);
+
+	// [전체 검색] 맛집 리스트 띄우기
+	List<FoodstoreVO> searchFoodstoreList(String searchWord);
+
+	// [전체 검색] 즐길거리 리스트 띄우기
+	List<PlayVO> searchPlayList(String searchWord);
+
+	// [전체 검색] 커뮤니티 게시판 리스트 띄우기
+	List<BoardVO> searchBoardList(String searchWord);
 	
 }

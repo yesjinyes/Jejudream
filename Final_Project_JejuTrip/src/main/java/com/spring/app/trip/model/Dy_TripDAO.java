@@ -7,7 +7,9 @@ import com.spring.app.trip.domain.BoardVO;
 import com.spring.app.trip.domain.CommentVO;
 import com.spring.app.trip.domain.CompanyVO;
 import com.spring.app.trip.domain.FoodstoreVO;
+import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.MemberVO;
+import com.spring.app.trip.domain.PlayVO;
 
 public interface Dy_TripDAO {
 
@@ -136,6 +138,18 @@ public interface Dy_TripDAO {
 
 	// 업체 숙소 예약내역 불러오기
 	List<Map<String, String>> getReservationList(Map<String, String> paraMap);
+
+	// [전체 검색] 숙소 리스트 띄우기
+	List<LodgingVO> searchLodgingList(String searchWord);
+
+	// [전체 검색] 맛집 리스트 띄우기
+	List<FoodstoreVO> searchFoodstoreList(String searchWord);
+
+	// [전체 검색] 즐길거리 리스트 띄우기
+	List<PlayVO> searchPlayList(String searchWord);
+
+	// [전체 검색] 커뮤니티 게시판 리스트 띄우기
+	List<BoardVO> searchBoardList(String searchWord);
 
 	
 }

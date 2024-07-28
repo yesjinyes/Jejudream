@@ -535,5 +535,40 @@
 	</select>
 
 	
+	<!-- [전체 검색] 숙소 리스트 띄우기 -->
+	<select id="searchLodgingList" parameterType="String" resultType="LodgingVO">
+		select lodging_code, local_status, lodging_category, lodging_name, main_img
+		from tbl_lodging
+		where (lower(lodging_name) like '%' || lower(#{searchWord}) || '%')
+		order by lodging_code desc
+	</select>
+	
+	
+	<!-- [전체 검색] 맛집 리스트 띄우기 -->
+	<select id="searchFoodstoreList" parameterType="String" resultType="FoodstoreVO">
+		select food_store_code, local_status, food_category, food_name, fileName, orgFilename
+		from tbl_food_store
+		where (lower(food_name) like '%' || lower(#{searchWord}) || '%')
+		order by food_store_code desc
+	</select>
+	
+	
+	<!-- [전체 검색] 즐길거리 리스트 띄우기 -->
+	<select id="searchPlayList" parameterType="String" resultType="PlayVO">
+		select play_code, local_status, play_category, play_name, play_main_img
+		from tbl_play
+		where (lower(play_name) like '%' || lower(#{searchWord}) || '%')
+		order by play_code desc
+	</select>
+	
+	
+	<!-- [전체 검색] 커뮤니티 게시판 리스트 띄우기 -->
+	<select id="searchBoardList" parameterType="String" resultType="BoardVO">
+		select seq, subject, content, category
+		from tbl_board
+		where status = 1 and
+			  (lower(subject) like '%' || lower(#{searchWord}) || '%')
+		order by seq desc
+	</select>
 	
 </mapper>

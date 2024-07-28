@@ -45,7 +45,9 @@ import com.spring.app.trip.domain.BoardVO;
 import com.spring.app.trip.domain.CommentVO;
 import com.spring.app.trip.domain.CompanyVO;
 import com.spring.app.trip.domain.FoodstoreVO;
+import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.MemberVO;
+import com.spring.app.trip.domain.PlayVO;
 import com.spring.app.trip.service.Dy_TripService;
 import com.spring.app.trip.service.Ws_TripService;
 
@@ -1854,7 +1856,7 @@ public class Dy_TripController {
 					// 다운로드가 실패한 경우
 					
 					out = response.getWriter();
-					out.println("<script type='text/javascript'>alert('파일 다운로드가 실패되었습니다.'); history.back();</script>");
+					out.println("<script type='text/javascript'>alert('파일 다운로드가 실패되었습니다.'); window.close();</script>");
 				}
 			}
 			
@@ -2103,9 +2105,45 @@ public class Dy_TripController {
 	
 	// header 전체검색
 	@GetMapping("allSearch.trip")
-	public String allSearch() {
+	public ModelAndView allSearch(ModelAndView mav, HttpServletRequest request) {
 		
-		return "main/allSearch.tiles1";
+		String searchWord = request.getParameter("searchWord");
+		
+		List<LodgingVO> lodgingList = service.searchLodgingList(searchWord);
+		List<FoodstoreVO> foodstoreList = service.searchFoodstoreList(searchWord);
+		List<PlayVO> playList = service.searchPlayList(searchWord);
+		List<BoardVO> boardList = service.searchBoardList(searchWord);
+		
+		// 검색된 각각의 리스트 개수 설정
+		int lodgingCount = 0;
+		if(lodgingList != null) lodgingCount = lodgingList.size();
+		
+		int foodstoreCount = 0;
+		if(foodstoreList != null) foodstoreCount = foodstoreList.size();
+		
+		int playCount = 0;
+		if(playList != null) playCount = playList.size();
+		
+		int boardCount = 0;
+		if(boardList != null) boardCount = boardList.size();
+		
+		
+		mav.addObject("searchWord", searchWord);
+		
+		mav.addObject("lodgingList", lodgingList);
+		mav.addObject("foodstoreList", foodstoreList);
+		mav.addObject("playList", playList);
+		mav.addObject("boardList", boardList);
+		
+		mav.addObject("lodgingCount", lodgingCount);
+		mav.addObject("foodstoreCount", foodstoreCount);
+		mav.addObject("playCount", playCount);
+		mav.addObject("boardCount", boardCount);
+		mav.addObject("allCount", lodgingCount + foodstoreCount + playCount + boardCount);
+		
+		mav.setViewName("main/allSearch.tiles1");
+		
+		return mav;
 	}
 	
 }
