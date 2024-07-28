@@ -53,7 +53,12 @@ public class Js_TripController {
 		// 숙소리스트에 표현할 편의시설 목록 구해오기
 		List<Map<String,String>> convenientList = service.getConvenientList(lodging_code);
 		
+		// 가격슬라이더 최대가격을 위한 숙소 최대가격 구해오기
+		int max_price = service.getLodgingMaxPirce();
 		
+		// System.out.println(max_price);
+		
+		mav.addObject("max_price", max_price);
 		mav.addObject("convenientList", convenientList);
         mav.setViewName("lodging/lodgingList.tiles1");
        
@@ -74,7 +79,9 @@ public class Js_TripController {
 							  @RequestParam(defaultValue = "") String sort,
 							  @RequestParam(defaultValue = "") String check_in,
 							  @RequestParam(defaultValue = "") String check_out,
-							  @RequestParam(defaultValue = "2") String people) {
+							  @RequestParam(defaultValue = "2") String people,
+							  @RequestParam(defaultValue = "10000") String start_price,
+							  @RequestParam(defaultValue = "1000000") String end_price) {
 		/*
 		System.out.println("~~ 확인용 str_category " + str_category);
 		System.out.println("~~ 확인용 str_convenient " + str_convenient);
@@ -86,7 +93,10 @@ public class Js_TripController {
 		System.out.println("~~~ 확인용 check_out : " + check_out);
 		System.out.println("~~~ 확인용 people : " + people);
 		
+		System.out.println("시작가격 : " + start_price);
+		System.out.println("끝나는가격 : " + end_price);
 		*/
+		
 		
 		// 한 페이지당 보여줄 숙소 개수
 		int sizePerPage = 7;
@@ -164,6 +174,9 @@ public class Js_TripController {
 		paraMap.put("check_in", check_in);
 		paraMap.put("check_out", check_out);
 		paraMap.put("people", people);
+		
+		paraMap.put("start_price", start_price);
+		paraMap.put("end_price", end_price);
 		
 		// 숙소 전체 개수 가져오기
 		int totalCount = service.getLodgingTotalCount(paraMap);
@@ -1708,7 +1721,6 @@ public class Js_TripController {
 			// 회원이 직접 예약취소상태 만들기
 			n = service.memberCancelReserve(reservation_code);
 			
-			
 		}
 		
 		JSONObject jsonObj = new JSONObject();
@@ -1719,5 +1731,17 @@ public class Js_TripController {
 		
 	} // end of public String memberCancelReserve(@RequestParam ("reservation_code") String reservation_code) {
 	
+	
+	
+	@RequestMapping(value="admin_FestivalList.trip")
+	public ModelAndView memberCancelReserve(ModelAndView mav) {
+		
+		mav.setViewName("community/admin_FestivalList.tiles1");
+		
+		
+		
+		return mav;
+		
+	} // end of public ModelAndView memberCancelReserve(ModelAndView mav) {
 	
 }

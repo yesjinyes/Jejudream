@@ -1502,3 +1502,54 @@ WHERE A.max_person >= 2
     on D.fk_lodging_code = L.lodging_code
     where R.reservation_code = '27';
 
+
+    select count(*)
+	    from tbl_lodging L
+	    join
+          (
+          select fk_lodging_code
+          from 
+          tbl_lodging_convenient V
+          join tbl_convenient N
+          on V.fk_convenient_code = N.convenient_code
+          group by fk_lodging_code
+          )T
+          on L.lodging_code = T.fk_lodging_code
+          join
+          (
+          	SELECT distinct lodging_code, RESERVATION_STATE
+			FROM 
+			(
+			SELECT A.lodging_code, A.room_name, A.room_stock, max_person,
+			       NVL(B.RESERVATION_CNT, 0) AS RESERVATION_CNT,
+			       CASE WHEN A.room_stock - NVL(B.RESERVATION_CNT, 0) >= 1 THEN '예약가능'
+			       ELSE '예약종료' END AS RESERVATION_STATE
+			 FROM 
+			 (
+			  SELECT L.lodging_code, D.room_name, D.room_stock, max_person, price
+			  FROM tbl_lodging L JOIN tbl_room_detail D
+			  ON L.lodging_code = D.fk_lodging_code
+              group by L.lodging_code, D.room_name, D.room_stock, max_person, price
+              having min(price) between 10000 and 100000
+			 ) A
+			 LEFT JOIN
+			 (
+			  SELECT D.fk_lodging_code, D.room_name, COUNT(*) AS RESERVATION_CNT 
+			  FROM tbl_room_detail D JOIN tbl_reservation RSV
+			  ON D.room_detail_code = RSV.fk_room_detail_code
+			  WHERE (RSV.check_in < '2024-07-29' AND RSV.check_out > '2024-07-28')
+			  and RSV.status = 1
+			  GROUP BY D.fk_lodging_code, D.room_name
+      
+			 ) B
+			 ON A.lodging_code || A.room_name = B.fk_lodging_code || B.room_name
+			) C
+			WHERE C.RESERVATION_STATE = '예약가능' and max_person >= 2
+          )D
+          on L.lodging_code = D.lodging_code
+	    where status = 1;
+
+    select *
+    from tbl_board;
+
+

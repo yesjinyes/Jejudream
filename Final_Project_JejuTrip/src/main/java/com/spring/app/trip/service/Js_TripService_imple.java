@@ -522,6 +522,17 @@ public class Js_TripService_imple implements Js_TripService {
 	} // end of public int memberCancelReserve(String reservation_code) {
 
 
+	// 가격슬라이더 최대가격을 위한 숙소 최대가격 구해오기
+	@Override
+	public int getLodgingMaxPirce() {
+		
+		int price = dao.getLodgingMaxPirce();
+		
+		return price;
+		
+	} // end of public int getLodgingMaxPirce() {
+
+
 	
 
 

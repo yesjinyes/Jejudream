@@ -124,6 +124,9 @@ public interface Js_TripService {
 	// 회원이 직접 예약취소상태 만들기
 	int memberCancelReserve(String reservation_code);
 
+	// 가격슬라이더 최대가격을 위한 숙소 최대가격 구해오기
+	int getLodgingMaxPirce();
+
 
 
 

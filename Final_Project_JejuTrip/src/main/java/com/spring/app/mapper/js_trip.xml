@@ -68,7 +68,8 @@
 				 (
 				  SELECT L.lodging_code, D.room_name, D.room_stock, max_person
 				  FROM tbl_lodging L JOIN tbl_room_detail D
-				  ON L.lodging_code = D.fk_lodging_code 
+				  ON L.lodging_code = D.fk_lodging_code
+				  where price between #{start_price} and #{end_price} 
 				 ) A
 				 LEFT JOIN
 				 (
@@ -154,6 +155,7 @@
 			  SELECT L.lodging_code, D.room_name, D.room_stock, max_person
 			  FROM tbl_lodging L JOIN tbl_room_detail D
 			  ON L.lodging_code = D.fk_lodging_code 
+			  where price between #{start_price} and #{end_price} 
 			 ) A
 			 LEFT JOIN
 			 (
@@ -662,5 +664,13 @@
 		update tbl_reservation set status = 2
 		where reservation_code = #{reservation_code}
 	</update>     
+	
+	
+	
+	<!-- 가격슬라이더 최대가격을 위한 숙소 최대가격 구해오기  -->
+	<select id="getLodgingMaxPirce" resultType="int">
+		select max(price)
+		from tbl_room_detail
+	</select>
  
 </mapper>
