@@ -1551,5 +1551,6 @@ WHERE A.max_person >= 2
 
     select *
     from tbl_board;
+    
 
-
+    desc tbl_festival;

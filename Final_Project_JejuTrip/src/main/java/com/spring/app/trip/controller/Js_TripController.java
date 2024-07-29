@@ -16,6 +16,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -238,20 +239,43 @@ public class Js_TripController {
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		
-		try {
-			int int_lodging_code = Integer.parseInt(lodging_code); 
-			int int_people = Integer.parseInt(detail_people); 
+		
+		if(!"".equals(detail_check_in) && !"".equals(detail_check_out)) {
 			
-			String now = sdf.format(new Date());
 			
-			Date nowdate = sdf.parse(now);
-			
-			Date check_in = sdf.parse(detail_check_in);
-			Date check_out = sdf.parse(detail_check_out);
-			
-			if(check_in.before(nowdate) || check_out.compareTo(nowdate) <= 0  || 
-			   int_people <=0 || int_people > 20 ) {
+			try {
+				int int_lodging_code = Integer.parseInt(lodging_code); 
+				int int_people = Integer.parseInt(detail_people); 
 				
+				String now = sdf.format(new Date());
+				
+				Date nowdate = sdf.parse(now);
+				
+				Date check_in = sdf.parse(detail_check_in);
+				Date check_out = sdf.parse(detail_check_out);
+				
+				if(check_in.before(nowdate) || check_out.compareTo(nowdate) <= 0  || 
+				   int_people <=0 || int_people > 20 ) {
+					
+					
+					// System.out.println("날짜 잘못입력함");
+					String message = "비정상적인 접근입니다.";
+					
+					String loc = request.getContextPath()+"/index.trip";
+			    	
+			    	mav.addObject("message", message);
+			    	mav.addObject("loc", loc);
+			    	
+			    	mav.setViewName("msg");
+			    	
+			    	return mav;
+					
+				}
+				
+				
+			} catch (ParseException | NumberFormatException e) {
+				
+				e.printStackTrace();
 				
 				// System.out.println("날짜 잘못입력함");
 				String message = "비정상적인 접근입니다.";
@@ -264,26 +288,11 @@ public class Js_TripController {
 		    	mav.setViewName("msg");
 		    	
 		    	return mav;
-				
 			}
 			
-			
-		} catch (ParseException | NumberFormatException e) {
-			
-			e.printStackTrace();
-			
-			// System.out.println("날짜 잘못입력함");
-			String message = "비정상적인 접근입니다.";
-			
-			String loc = request.getContextPath()+"/index.trip";
-	    	
-	    	mav.addObject("message", message);
-	    	mav.addObject("loc", loc);
-	    	
-	    	mav.setViewName("msg");
-	    	
-	    	return mav;
-		}
+		} // end of if
+		
+		
 		
 		
 		
@@ -1709,7 +1718,7 @@ public class Js_TripController {
 	} // end of public String memberReservationInfo(@RequestParam ("reservation_code") String reservation_code) {
 	
 	
-	
+	// 회원이 직접 예약취소하기 
 	@ResponseBody
 	@PostMapping(value="JSONMemberCancelReserve.trip", produces="text/plain;charset=UTF-8")
 	public String memberCancelReserve(@RequestParam ("reservation_code") String reservation_code) {
@@ -1738,10 +1747,50 @@ public class Js_TripController {
 		
 		mav.setViewName("community/admin_FestivalList.tiles1");
 		
-		
-		
 		return mav;
 		
 	} // end of public ModelAndView memberCancelReserve(ModelAndView mav) {
+	
+	
+	
+	// 축제와 행사 엑셀파일 다운받기
+	@PostMapping("downloadFestivalListExcelFile.trip")
+	public String downloadExcelFile(Model model) {
+		
+		service.festivalList_to_Excel(model);
+		// Model model 은 결과물을 담는 장소(Excel로 받기위해서)
+		
+		return "excelDownloadView";
+		// "excelDownloadView" 은 
+		// /board/src/main/webapp/WEB-INF/spring/appServlet/servlet-context.xml 의
+		// #19.에서 기술된 bean 의 id 값이다.
+		
+	} // end of public String downloadExcelFile
+	
+	
+	
+	@ResponseBody
+	@PostMapping(value="JSONAdminFestivalList.trip", produces="text/plain;charset=UTF-8")
+	public String adminFestivalList() {
+		
+		// List<Map<String,String>> adminFestivalList = service.adminFestivalList();
+		
+		JSONArray jsonArr = new JSONArray();
+		/*
+		for(Map<String,String> map : adminFestivalList) {
+			
+			JSONObject jsonObj = new JSONObject();
+			
+			// jsonObj.put("", value);
+			
+			
+			
+		}
+		
+		*/
+		
+		return jsonArr.toString();
+		
+	} // end of public String adminFestivalList() {
 	
 }

@@ -466,6 +466,18 @@ public class Js_TripDAO_imple implements Js_TripDAO {
 		
 	} // end of public int getLodgingMaxPirce() {
 
+
+	
+	// db에서 엑셀로 다운받을 축제와 행사 가져오기
+	@Override
+	public List<Map<String, String>> excel_to_festivalList() {
+		
+		List<Map<String, String>> festivalList = sqlsession.selectList("js_trip.excel_to_festivalList");
+		
+		return festivalList;
+		
+	} // end of public List<Map<String, String>> excel_to_festivalList() {
+
 	
 	
 
