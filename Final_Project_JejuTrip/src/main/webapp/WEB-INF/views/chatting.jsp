@@ -485,7 +485,7 @@
    <div id="chatMessage" style="background-color:rgb(255, 195, 84); border-radius:8px 8px 0 0; max-height: 530px; padding:10px 10px; overFlow: auto;"></div>
 
    <input type="text"   id="message" class="form-control" style="position:fixed; top:80%; border:solid 1px gray; border-radius:8px; width:95%; height:100px;" placeholder="메시지 내용"/>
-   <input type="button" id="btnSendMessage" class="btn btn-success btn-sm my-3" style="" value="전송" />
+   <input type="button" id="btnSendMessage" class="btn btn-success btn-sm my-3" value="전송" />
 </div>
 </div>
 </div>  
@@ -536,7 +536,7 @@ input#btnSendMessage {
 	border-radius:8px;
 	cursor: pointer;
 	position: fixed;
-	top:87%;
+	top:85%;
 	left:85%;
 }
 
