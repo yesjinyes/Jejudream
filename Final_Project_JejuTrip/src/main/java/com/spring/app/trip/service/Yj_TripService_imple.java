@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.LodgingVO;
+import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.domain.ReviewVO;
 import com.spring.app.trip.model.Yj_TripDAO;
 
@@ -227,6 +228,14 @@ public class Yj_TripService_imple implements Yj_TripService {
 		int n = dao.getTotalFaqList(paraMap);
 		// System.out.println("service 에서 FAQ 성공? => "  + n);
 		return n;
+	}
+
+
+	// == 공유자를 찾기 위한 특정글자가 들어간 회원명단 불러오기 == //
+	@Override
+	public List<MemberVO> searchFoodJoinUserList(String joinUserName) {
+		List<MemberVO> joinUserList = dao.searchFoodJoinUserList(joinUserName);
+		return joinUserList;
 	}
 
 

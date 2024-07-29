@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.LodgingVO;
+import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.domain.ReviewVO;
 
 public interface Yj_TripDAO {
@@ -91,6 +92,9 @@ public interface Yj_TripDAO {
 
 	// == FAQ 리스트 페이징 처리 위함 == //
 	int getTotalFaqList(Map<String, String> paraMap);
+
+	// == 공유자를 찾기 위한 특정글자가 들어간 회원명단 불러오기 == //
+	List<MemberVO> searchFoodJoinUserList(String joinUserName);
 
 	// == 인기순으로 정렬 == //
 	// List<FoodstoreVO> viewReadcountList(String readcount);

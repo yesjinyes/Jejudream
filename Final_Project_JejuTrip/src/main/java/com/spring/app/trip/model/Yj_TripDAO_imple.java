@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.LodgingVO;
+import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.domain.ReviewVO;
 
 @Repository
@@ -219,6 +220,14 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 		int n = sqlsession.selectOne("yj_trip.getTotalFaqList", paraMap);
 		//System.out.println("dao 에서 FAQ 성공? => "  + n);
 		return n;
+	}
+
+
+	// == 공유자를 찾기 위한 특정글자가 들어간 회원명단 불러오기 == //
+	@Override
+	public List<MemberVO> searchFoodJoinUserList(String joinUserName) {
+		List<MemberVO> joinUserList = sqlsession.selectList("yj_trip.searchFoodJoinUserList", joinUserName);
+		return joinUserList;
 	}
 
 

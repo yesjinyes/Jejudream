@@ -235,13 +235,15 @@ img.recommend-img {
   object-fit:cover;
 }
 
-
-
 a.recommend-lodging-title {
   text-decoration: none;
 }
 
-
+/* 공유자 추가 */
+input#joinUserName:focus{
+  outline: none;
+}
+	
 
 
 </style>
@@ -418,7 +420,8 @@ a.recommend-lodging-title {
 		});// end of $("button#btnLike").click(function() {})----------------------------
 		
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
+		// == 일정 시작 == //
+		
  		// == 일정추가 modal 달력 띄우기 == //
 		const today = new Date();
 	    const year = today.getFullYear();
@@ -541,7 +544,65 @@ a.recommend-lodging-title {
 				$("select#endMinute").prop("disabled",false);
 			}
 		});// end of $("input#allDay").click(function() {})------------------------
-    
+		
+		
+		// 공유자 추가하기
+		$("input#joinUserName").bind("keyup",function(){
+				var joinUserName = $(this).val();
+			//	console.log("확인용 joinUserName : " + joinUserName);
+				$.ajax({
+					url:"<%= ctxPath%>/schedule/insertSchedule/searchFoodJoinUserList.trip",
+					data:{"joinUserName":joinUserName},
+					dataType:"json",
+					success : function(json){
+						var joinUserArr = [];
+				    
+					//  input태그 공유자입력란에 "이" 를 입력해본 결과를 json.length 값이 얼마 나오는지 알아본다. 
+					//	console.log(json.length);
+					
+						if(json.length > 0){
+							
+							$.each(json, function(index,item){
+								var name = item.name;
+								if(name.includes(joinUserName)){ // name 이라는 문자열에 joinUserName 라는 문자열이 포함된 경우라면 true , 
+									                             // name 이라는 문자열에 joinUserName 라는 문자열이 포함되지 않은 경우라면 false 
+								   joinUserArr.push(name+"("+item.userid+")");
+								}
+							});
+							
+							$("input#joinUserName").autocomplete({  // 참조 https://jqueryui.com/autocomplete/#default
+								source:joinUserArr,
+								select: function(event, ui) {       // 자동완성 되어 나온 공유자이름을 마우스로 클릭할 경우 
+									add_joinUser(ui.item.value);    // 아래에서 만들어 두었던 add_joinUser(value) 함수 호출하기 
+									                                // ui.item.value 이  선택한이름 이다.
+									return false;
+						        },
+						        focus: function(event, ui) {
+						            return false;
+						        },
+						        appendTo: ".modal-body" // 자동완성 결과를 모달 내부로 설정
+							}); 
+							
+						}// end of if------------------------------------
+					}// end of success-----------------------------------
+				});
+		});// end of $("input#joinUserName").bind("keyup",function(){})------------------
+		
+
+		// x아이콘 클릭시 공유자 제거하기
+		$(document).on('click','div.displayUserList > span.plusUser > i',function(){
+				var text = $(this).parent().text(); // 이순신(leess/leesunsin@naver.com)
+				
+				var bool = confirm("공유자 목록에서 "+ text +" 회원을 삭제하시겠습니까?");
+				// 공유자 목록에서 이순신(leess/leesunsin@naver.com) 회원을 삭제하시겠습니까?
+				
+				if(bool) {
+					$(this).parent().remove();
+				}
+		});// end of $(document).on('click','div.displayUserList > span.plusUser > i',function(){})------------
+
+		
+		// == 일정 끝 == //
 		///////////////////////////////////////////////////////////////////////////////////
 
 		// == 지도 띄우기 == //
@@ -1010,6 +1071,7 @@ a.recommend-lodging-title {
 				                    <div class="form-group">
 				                    	<label for="food_name" class="col-form-label">맛집 이름</label>
 				                        <input type="text" class="form-control schedule-input mb-3" id="food_name" name="food_name" readonly="readonly" value="${requestScope.foodstorevo.food_name}">
+				                        <input type="hidden" class="form-control schedule-input mb-3" id="parent_code" name="parent_code" readonly="readonly" value="${requestScope.foodstorevo.food_store_code}">
 				                        
 				                        <input type="hidden" id="food_store_code" name="food_store_code" value="${requestScope.foodstorevo.food_store_code}" />
 				                        <input type="hidden" id="food_address" name="food_address" value="${requestScope.foodstorevo.food_address}" />
@@ -1045,8 +1107,9 @@ a.recommend-lodging-title {
 								        
 								        <div class="share_member">
 								        	<label class="mt-4">일정 공유자 추가</label><br>
-								        	<input type="text" class="form-control schedule-input" name="shareMember" id="shareMember" placeholder="일정을 공유할 회원 이름을 입력하세요." />
-								        
+								        	<input type="text" id="joinUserName" class="form-control schedule-input" placeholder="일정을 공유할 회원 이름을 입력하세요"/>
+											<div class="displayUserList"></div>
+											<input type="hidden" name="joinuser"/>
 								        </div>
 								        
 				                    </div>
