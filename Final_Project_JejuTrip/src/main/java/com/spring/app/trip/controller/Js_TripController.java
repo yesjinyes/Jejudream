@@ -83,6 +83,7 @@ public class Js_TripController {
 							  @RequestParam(defaultValue = "2") String people,
 							  @RequestParam(defaultValue = "10000") String start_price,
 							  @RequestParam(defaultValue = "1000000") String end_price) {
+		
 		/*
 		System.out.println("~~ 확인용 str_category " + str_category);
 		System.out.println("~~ 확인용 str_convenient " + str_convenient);

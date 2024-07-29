@@ -525,6 +525,16 @@ $(document).ready(function(){
 		    $('input:checkbox[name="convenient"]').prop('checked', false);
 		    $('input:checkbox[name="local_status"]').prop('checked', false);
 		    
+		    
+		    const frm = document.filterForm;
+		    
+		    frm.str_category.value = "";
+		    frm.str_convenient.value = "";
+		    frm.str_local.value = "";
+		    frm.people.value = "";
+		    frm.check_in.value = $("input:text[id='fromDate']").val();
+		    frm.check_out.value = $("input:text[id='toDate']").val();
+		    
 		 	// 슬라이더 값 초기화
 		    instance.update({
 		        from: min,
@@ -535,6 +545,10 @@ $(document).ready(function(){
 		    $inputFrom.prop("value", min);
 		    $inputTo.prop("value", max);
 			
+		    frm.start_price.value = min;
+		    frm.end_price.value = max;
+		    
+		    
 			goSearch();
 			
 		}
@@ -549,15 +563,27 @@ $(document).ready(function(){
         $('input:checkbox[name="convenient"]').prop('checked', false);
         $('input:checkbox[name="local_status"]').prop('checked', false);
         
-     	// 슬라이더 값 초기화
-        instance.update({
-            from: min,
-            to: max
-        });
+        const frm = document.filterForm;
+	    
+	    frm.str_category.value = "";
+	    frm.str_convenient.value = "";
+	    frm.str_local.value = "";
+	    frm.people.value = "";
+	    frm.check_in.value = $("input:text[id='fromDate']").val();
+	    frm.check_out.value = $("input:text[id='toDate']").val();
+	    
+	 	// 슬라이더 값 초기화
+	    instance.update({
+	        from: min,
+	        to: max
+	    });
 
-        // 입력 필드 값 초기화
-        $inputFrom.prop("value", min);
-        $inputTo.prop("value", max);
+	    // 입력 필드 값 초기화
+	    $inputFrom.prop("value", min);
+	    $inputTo.prop("value", max);
+		
+	    frm.start_price.value = min;
+	    frm.end_price.value = max;
         
     	goSearch();
         
