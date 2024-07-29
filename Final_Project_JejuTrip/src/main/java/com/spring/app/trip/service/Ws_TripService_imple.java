@@ -699,6 +699,27 @@ public class Ws_TripService_imple implements Ws_TripService {
 		int n = dao.get_all_chatting_admin(userid);
 		return n;
 	}
+
+	// 메인에 표시해줄 3개의 호텔을 랜덤으로 가져온다.
+	@Override
+	public List<Map<String, String>> get_rand_hotel_list() {
+		List<Map<String, String>> mapList = dao.get_rand_hotel_list();
+		return mapList;
+	}
+
+	// 메인에 표시해줄 3개의 리조트를 랜덤으로 가져온다.
+	@Override
+	public List<Map<String, String>> get_rand_resort_list() {
+		List<Map<String, String>> mapList = dao.get_rand_resort_list();
+		return mapList;
+	}
+	
+	// 메인에 표시해줄 3개의 게스트하우스를 랜덤으로 가져온다.
+	@Override
+	public List<Map<String, String>> get_rand_guestHouse_list() {
+		List<Map<String, String>> mapList = dao.get_rand_guestHouse_list();
+		return mapList;
+	}
 	
 	
 	

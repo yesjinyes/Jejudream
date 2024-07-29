@@ -68,6 +68,11 @@ public class Ws_TripController {
 	@GetMapping("/index.trip") 
 	public ModelAndView readComment(ModelAndView mav, HttpServletRequest request) {
 		
+		List<Map<String,String>> hotelList = service.get_rand_hotel_list();// 메인에 표시해줄 3개의 호텔을 랜덤으로 가져온다.
+		List<Map<String,String>> resortList = service.get_rand_resort_list();// 메인에 표시해줄 3개의 리조트를 랜덤으로 가져온다.
+		List<Map<String,String>> guestHouseList = service.get_rand_guestHouse_list();// 메인에 표시해줄 3개의 게스트하우스를 랜덤으로 가져온다.
+		
+		
 		HttpSession session = request.getSession();
 		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
 		CompanyVO loginCompanyuser = (CompanyVO)session.getAttribute("loginCompanyuser");
@@ -82,6 +87,9 @@ public class Ws_TripController {
 			i = service.get_new_chatting(loginCompanyuser.getCompanyid());// 로그인을 하고 메인에 들어갔을 때 새로 온 채팅이 있는지 확인해준다.
 		}
 		mav.addObject("i",i);
+		mav.addObject("hotelList",hotelList);
+		mav.addObject("resortList",resortList);
+		mav.addObject("guestHouseList",guestHouseList);
 		mav.setViewName("main/main.tiles1");
 		
 		return mav;

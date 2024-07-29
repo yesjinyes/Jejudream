@@ -1235,4 +1235,63 @@
 		where userid = #{userid}
 	</select>
 	
+	<!-- 메인에 표시해줄 3개의 호텔을 랜덤으로 가져온다. -->
+	<resultMap type="HashMap" id="rand_hotel">
+		<result property="lodging_code" column="lodging_code" 	javaType="String" />
+		<result property="main_img" 	column="main_img" javaType="String" />
+	</resultMap>
+	
+	<select id="get_rand_hotel_list" resultMap="rand_hotel">
+		<![CDATA[
+		select lodging_code, main_img
+		from
+		(
+		    select lodging_code, main_img
+		    from tbl_lodging
+		    where lodging_category = '호텔'
+		    order by DBMS_RANDOM.RANDOM
+		)
+		where rownum < 4
+		]]> 
+	</select>
+	
+	<!-- 메인에 표시해줄 3개의 리조트를 랜덤으로 가져온다. -->
+	<resultMap type="HashMap" id="rand_resort">
+		<result property="lodging_code" column="lodging_code" 	javaType="String" />
+		<result property="main_img" 	column="main_img" javaType="String" />
+	</resultMap>
+	
+	<select id="get_rand_resort_list" resultMap="rand_resort">
+		<![CDATA[
+		select lodging_code, main_img
+		from
+		(
+		    select lodging_code, main_img
+		    from tbl_lodging
+		    where lodging_category = '리조트'
+		    order by DBMS_RANDOM.RANDOM
+		)
+		where rownum < 4
+		]]> 
+	</select>
+	
+	<!-- 메인에 표시해줄 3개의 게스트하우스를 랜덤으로 가져온다. -->
+	<resultMap type="HashMap" id="rand_gusetHouse">
+		<result property="lodging_code" column="lodging_code" 	javaType="String" />
+		<result property="main_img" 	column="main_img" javaType="String" />
+	</resultMap>
+	
+	<select id="get_rand_guestHouse_list" resultMap="rand_gusetHouse">
+		<![CDATA[
+		select lodging_code, main_img
+		from
+		(
+		    select lodging_code, main_img
+		    from tbl_lodging
+		    where lodging_category = '게스트하우스'
+		    order by DBMS_RANDOM.RANDOM
+		)
+		where rownum < 4
+		]]> 
+	</select>
 </mapper>

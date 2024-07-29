@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
     String ctxPath = request.getContextPath();
     //    /MyMVC
@@ -13,7 +14,13 @@
 			$("a.nav-link").css({"color":"#838383"});
 			$(e.target).css({"color":"#FF5000"})
 		})
-	})// end of $(document).ready(function(){
+		
+		$(".main_hotel_div").on("click",function(e){
+			const lodging_code = $(e.target).next().val();
+			location.href = "<%=ctxPath%>/lodgingDetail.trip?lodging_code="+lodging_code;
+		})
+		
+	})
 </script>
 
 	<div class="main_video_div">
@@ -56,21 +63,30 @@
 	<div class="main_hotel">
 		<div class="jeju_hotel">
 			<div class="jeju_hotel_title">HOTEL</div>
-			<div><img src="<%=ctxPath%>/resources/images/main/hotel1.jpg"/></div>
-			<div><img src="<%=ctxPath%>/resources/images/main/hotel2.jpg"/></div>
-			<div><img src="<%=ctxPath%>/resources/images/main/hotel3.jpg"/></div>
+			<c:forEach var="hotel" items="${requestScope.hotelList}">
+				<div class="main_hotel_div">
+					<img style="width:100%;" src="<%=ctxPath%>/resources/images/lodginglist/${hotel.main_img}"/>
+					<input type="hidden" value="${hotel.lodging_code}">
+				</div>
+			</c:forEach>
 		</div>
 		<div class="jeju_resort">
-			<div><img src="<%=ctxPath%>/resources/images/main/jeju_resort1.jpg"/></div>
-			<div><img src="<%=ctxPath%>/resources/images/main/jeju_resort2.png"/></div>
-			<div><img src="<%=ctxPath%>/resources/images/main/jeju_resort3.jpg"/></div>
+			<c:forEach var="resort" items="${requestScope.resortList}">
+				<div class="main_hotel_div">
+					<img style="width:100%;" src="<%=ctxPath%>/resources/images/lodginglist/${resort.main_img}"/>
+					<input type="hidden" value="${resort.lodging_code}">
+				</div>
+			</c:forEach>
 			<div class="jeju_hotel_title">RESORT</div>
 		</div>
 		<div class="jeju_airbnb">
-			<div class="jeju_hotel_title">AIR BNB</div>
-			<div><img src="<%=ctxPath%>/resources/images/main/airbnb1.jpg"/></div>
-			<div><img src="<%=ctxPath%>/resources/images/main/airbnb2.jpg"/></div>
-			<div><img src="<%=ctxPath%>/resources/images/main/airbnb3.jpg"/></div>
+			<div class="jeju_hotel_title">GUEST HOUSE</div>
+			<c:forEach var="guestHouse" items="${requestScope.guestHouseList}">
+				<div class="main_hotel_div">
+					<img style="width:100%;" src="<%=ctxPath%>/resources/images/lodginglist/${guestHouse.main_img}"/>
+					<input type="hidden" value="${guestHouse.lodging_code}">
+				</div>
+			</c:forEach>
 		</div>
 	</div>
 	<!-- 호텔 컨텐츠 끝 -->
