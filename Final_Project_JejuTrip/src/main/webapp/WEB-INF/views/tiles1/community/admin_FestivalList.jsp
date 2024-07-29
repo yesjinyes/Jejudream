@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     
+<% String ctxPath = request.getContextPath(); %>    
+    
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>    
     
@@ -53,7 +55,68 @@ justify-content: center;
 }	
 	
 </style>    
-    
+
+
+
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+
+	
+	festivalList();
+	
+	
+	
+	
+	
+	
+	
+	
+	
+});
+
+function festivalList(){
+	
+	$.ajax({
+		
+        url: "<%= ctxPath%>/JSONAdminFestivalList.trip",
+        type: "get",
+        dataType: "json",
+        success: function(json) {
+            
+        	let v_html = ``;
+        	
+        	$.each(json, function(index, item){
+        		
+        		v_html += `<td class="cen text-center" style="cursor: pointer;"></td>
+		                   <td class="cen text-center"></td>
+		                   <td class="cen text-center"></td>
+		                    <td class="cen text-center"></td>
+		                    <td class="cen text-center"></td>
+		                    <td class="cen text-center"></td>
+		                    <td class="cen text-center">
+		                        <button type="button" class="btn btn-info">수정</button>
+		                        <button type="button" class="btn btn-danger">삭제</button>
+		                   </td>`;
+        		
+        	}); // end of $.each for
+        	
+        	
+        },
+        error: function(request, status, error) {
+            alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+        }
+        
+    }); // end of $.ajax({})
+	
+	
+	
+} // end of function festivalList(){}
+
+
+
+</script>
     
 <div class="container" style="padding: 3% 0;">
    
@@ -92,19 +155,7 @@ justify-content: center;
                 <tbody>
                     
                         <tr>
-                            <td class="cen text-center" style="cursor: pointer;">ddd</td>
-                            <td class="cen text-center">fff</td>
-                            <td class="cen text-center">cc
-                                
-                            </td>
-                            <td class="cen text-center">총 <fmt:formatNumber value="" type="number" groupingUsed="true" />원</td>
-                            <td class="cen text-center">dsa</td>
-                            <td class="cen text-center">asd</td>
-                            <td class="cen text-center">
-                                <button type="button" class="btn btn-info">수정</button>
-                                <button type="button" class="btn btn-danger">삭제</button>
-                                <input name="ordercode" type="hidden" value="${odr.ordercode}" />
-                            </td>
+                            
                         </tr>
                    
                 </tbody>
