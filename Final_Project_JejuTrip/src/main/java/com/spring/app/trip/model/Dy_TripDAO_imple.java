@@ -485,9 +485,9 @@ public class Dy_TripDAO_imple implements Dy_TripDAO {
 
 	// [전체 검색] 숙소 리스트 띄우기
 	@Override
-	public List<LodgingVO> searchLodgingList(String searchWord) {
+	public List<Map<String, String>> searchLodgingList(String searchWord) {
 		
-		List<LodgingVO> lodgingList = sqlsession.selectList("dy_trip.searchLodgingList", searchWord);
+		List<Map<String, String>> lodgingList = sqlsession.selectList("dy_trip.searchLodgingList", searchWord);
 		
 		return lodgingList;
 	}

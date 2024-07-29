@@ -3,6 +3,8 @@ package com.spring.app.trip.service;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.ui.Model;
+
 import com.spring.app.trip.domain.BoardVO;
 import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.LodgingVO;
@@ -126,6 +128,9 @@ public interface Js_TripService {
 
 	// 가격슬라이더 최대가격을 위한 숙소 최대가격 구해오기
 	int getLodgingMaxPirce();
+
+	// 축제와 행사 엑셀파일 다운받기
+	void festivalList_to_Excel(Model model);
 
 
 

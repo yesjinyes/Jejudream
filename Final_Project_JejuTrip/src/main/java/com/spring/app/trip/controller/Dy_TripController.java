@@ -464,6 +464,7 @@ public class Dy_TripController {
 	            
 	            
 	            // 3. FoodstoreVO fvo 에 fileName 값과 orgFilename 값과 fileSize 값을 넣어주기  
+	            fvo.setFood_main_img(newFileName);
 	            fvo.setFileName(newFileName);
 	            // WAS(톰캣)에 저장된 파일명(20240705173146189696448103000.jpg)
 	            
@@ -2107,9 +2108,9 @@ public class Dy_TripController {
 	@GetMapping("allSearch.trip")
 	public ModelAndView allSearch(ModelAndView mav, HttpServletRequest request) {
 		
-		String searchWord = request.getParameter("searchWord");
+		String searchWord = request.getParameter("headerSearchWord");
 		
-		List<LodgingVO> lodgingList = service.searchLodgingList(searchWord);
+		List<Map<String, String>> lodgingList = service.searchLodgingList(searchWord);
 		List<FoodstoreVO> foodstoreList = service.searchFoodstoreList(searchWord);
 		List<PlayVO> playList = service.searchPlayList(searchWord);
 		List<BoardVO> boardList = service.searchBoardList(searchWord);

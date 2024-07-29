@@ -129,6 +129,9 @@ public interface Js_TripDAO {
 
 	// 가격슬라이더 최대가격을 위한 숙소 최대가격 구해오기
 	int getLodgingMaxPirce();
+
+	// db에서 엑셀로 다운받을 축제와 행사 가져오기
+	List<Map<String, String>> excel_to_festivalList();
 	
 	
 

@@ -35,15 +35,20 @@
 	    });
 	    
 	 
+	    $("button#FestivalToExcel").click(function() {
 		
-		/* Demo purposes only */
-		$(".festivalHover").mouseleave(
-		  function() {
-		    $(this).removeClass("hover");
-		  }
-		);
+			// alert('히히');
+			const frm = document.goExcelDown;
+			
+			frm.method = "post";
+	        frm.action = "<%= ctxPath%>/downloadFestivalListExcelFile.trip";
+	        
+	        frm.submit();
+		    
+	    });	// end of $("button#FestivalToExcel").click(function() {})
+	    
 		
-	});
+	}); // $(document).ready(function() {})
 	
 	
 	// ========================= 랜덤 방언 보여주는거 시작  ========================= //
@@ -80,7 +85,8 @@
 
         currentIndex = (currentIndex + 1) % jsonData.length;
         sessionStorage.setItem('currentIndex', currentIndex);
-    }
+         
+    } 
 
     fetchData(); 
  // ================================= 끝 =========================================== //
@@ -152,21 +158,22 @@
 					
 						case "2":
 							category = `[숙박]</span>
-						  		<a class='rankTitle' href='<%=ctxPath%>/community/viewBoard.trip?seq=\${item.seq}&category=\${item.category}'`;
+						  		<a class='rankTitle' href='#' onclick='goBoardDetail("\${item.seq}","\${item.category}")'`;
 							break;
 						case "3":
 							category = `[관광지,체험]</span>
-						  		<a class='rankTitle' href='<%=ctxPath%>/community/viewBoard.trip?seq=\${item.seq}&category=\${item.category}'`;
+						  		<a class='rankTitle' href='#' onclick='goBoardDetail("\${item.seq}","\${item.category}")'`;
 							break;
 						case "4":
 							category = `[맛집]</span>
-						  		<a class='rankTitle' href='<%=ctxPath%>/community/viewBoard.trip?seq=\${item.seq}&category=\${item.category}'`;
+						  		<a class='rankTitle' href='#' onclick='goBoardDetail("\${item.seq}","\${item.category}")'`;
 							break;	
 	
 						default:
 							category = `[자유게시판]</span>
-						  		<a class='rankTitle' href='<%=ctxPath%>/community/viewBoard.trip?seq=\${item.seq}&category=\${item.category}'`;
+						  		<a class='rankTitle' href='#' onclick='goBoardDetail("\${item.seq}","\${item.category}")'`;
 							break;
+							
 					} // end of switch
 							
 					b_html +=	`\${category}>\${item.subject}</a>
@@ -189,7 +196,27 @@
 	    }); // end of $.ajax
 		
 		
-	} // end of 
+	} // end of function getPopularBoard(){}
+	
+	
+	function goBoardDetail(seq, category){
+		
+		// alert('히히');
+		
+		// alert(seq);
+		// alert(category);
+		
+		const frm = document.forReadCountBoard;
+		
+		frm.seq.value = seq;
+		frm.category.value = category;
+		
+		frm.method = "post";
+		frm.action = "<%= ctxPath%>/community/viewBoard_2.trip"; 
+		
+		frm.submit();
+		
+	} // end of function goBoardDetail(seq, category){}
 	
 	  
 </script>
@@ -313,7 +340,10 @@
 <div style="width: 70%; margin: 0 auto;">
 	<!-- === 추천 게시물 === -->
  	<div id="content1">
- 		<h4>진행중인 축제 / 행사</h4>
+ 		<div style="display: flex; justify-content: space-between; align-items: center;">
+	        <h4>진행중인 축제 / 행사</h4>
+	        <button type="button" class="btn btn-info" id="FestivalToExcel">전체기간 축제와 행사 엑셀다운받기</button>
+	    </div> 
 		<div class="text-right my-1">
 		    <div class="row mx-auto my-auto" id="festivalcontent">
 	            <!-- 축제 아이템들이 이곳에 삽입됩니다 -->
@@ -379,6 +409,10 @@
 	</div>
 </div>
 
-<form name="goStaffFrm">
-	<input type="hidden" name="staffNo" />
+<form name="goExcelDown">
+</form>
+
+<form name="forReadCountBoard">
+	<input type="hidden" name="seq" />
+	<input type="hidden" name="category" />
 </form>
