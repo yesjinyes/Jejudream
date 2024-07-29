@@ -216,13 +216,37 @@ span#data {
 		
 		
 		// ▒▒▒▒▒▒▒▒▒ 정렬 시작 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ //
+		
 		// == 전체보기 클릭 시 == //
-		$("button#btnAll").click(function() {
+ 		$("button#btnAll").click(function() {
 			const frm = document.dataFrm;
 			
+			frm.orderType.value = "";
 			frm.orderValue_asc.value = "";
 			frm.orderValue_desc.value = "";
 			
+			frm.str_category.value = "";
+			frm.str_area.value = "";
+			frm.searchWordFood.value = "";
+
+			$("input.categorySelectbox").prop("checked",false);
+			$("input.area_map").prop("checked",false);
+			$("input[name='searchWordFood']").val("");
+			
+			goAjax(currentShowPageNo);
+		});
+		
+		// == 인기순 클릭 시 == //
+		$("button#btnLike").click(function() {
+			const frm = document.dataFrm;
+			
+			// const readcount = $("input[name='readcount']").val();
+			
+			frm.orderType.value = "readcount"
+			frm.orderValue_asc.value = "";
+			frm.orderValue_desc.value = "";
+			
+			// console.log("리스트에서 조회수 => " + readcount);
 			goAjax(currentShowPageNo);
 		});
 		
@@ -251,7 +275,7 @@ span#data {
 	
 		
 		// == 검색하기 엔터 == //
-		$("input:text[name='searchbox']").bind("keyup", function(e){
+		$("input:text[name='searchWordFood']").bind("keyup", function(e){
 			if(e.keyCode == 13) {
 				goSearch();
 			}
@@ -260,7 +284,7 @@ span#data {
 	});// end of $(document).ready(function()})-------------------
 	
 	
-	// == 카테고리, 지역 Ajax 처리 == //
+	// == 상세 페이지 띄우기 == //
 	function goAjax(currentShowPageNo) {
 		
 		$("input:hidden[name='currentShowPageNo']").val(currentShowPageNo);
@@ -273,7 +297,7 @@ span#data {
 			data:form,
 			dataType:"json",
 			success:function(json) {
-				// console.log("json 확인" +JSON.stringify(json));
+				console.log("json 확인" +JSON.stringify(json));
 				
 				let v_html_main = ``;
 				let v_html_side = ``;
@@ -298,6 +322,7 @@ span#data {
 										                <span>\${item.food_address}</span>
 										            </div>
 										        </div>
+										       <!-- <input type="text" name="readcount" value="\${item.readcount}" /> -->
 										    </div>`;
 						}
 						
@@ -389,20 +414,6 @@ span#data {
 	////////////////////////////////////////////////////////////////////////////////////////////
 	// Function Declaration //
 	
-	// == 검색하기 == //
-	function goSearch() {
-		const searchWord = $("input[name='searchbox']").val();
-		// console.log("검색어 확인 : " + searchWord);
-		
-		const frm = document.dataFrm;
-		frm.searchWord.value = searchWord;
-		
-		goAjax();
-	}// end of function goSearch()--------------------
-	
-
-	////////////////////////////////////////////////////////////////////////////////
-	
 	// == 카테고리 전체 체크 == //
 	function selectAllcategory(selectAllcategory) {
 		const checkboxes = document.getElementsByName("food_category");
@@ -426,7 +437,6 @@ span#data {
 		}
 	}// end of function selectCategory()---------------------
 	
-	
 	// == 지역 전체 체크 == //
 	function selectAllarea(allArea) {
 		const checkboxes = document.getElementsByName("area");
@@ -449,6 +459,19 @@ span#data {
 			selectAllarea.checked = false;
 		}
 	}// end of function selectArea()---------------------
+	
+	// == 검색기능 == //
+	function goSearch() {
+		const searchWordFood = $("input[name='searchWordFood']").val();
+		// console.log("검색어 확인 : " + searchWordFood);
+		
+		const frm = document.dataFrm;
+
+		frm.searchWordFood.value = searchWordFood;
+		
+		goAjax(1);
+		
+	}// end of function goSearch()--------------------
 	
 	//////////////////////////////////////////////////////////////////////////////
 	
@@ -477,6 +500,7 @@ span#data {
 		frm.submit();
 	}// end of function goDetailRecommend(random_recommend_code)------------------
 	
+	
 </script>
 
 
@@ -487,31 +511,31 @@ span#data {
             <div class="row mt-2" style="width: 70%; margin-left: 4%;">
     			<h5 class="mr-5">카테고리 검색</h5>
     			<div class="mr-4">
-                    <input type="checkbox" class="mr-1" id="selectAllcategory" name="food_category_all" value="전체" onclick="selectAllcategory(this)"/>
+                    <input type="checkbox" class="mr-1 categorySelectbox" id="selectAllcategory" name="food_category_all" value="전체" onclick="selectAllcategory(this)"/>
                     <label for="selectAllcategory">전체</label>
                 </div>
                 <div class="mr-4">
-                    <input type="checkbox" class="mr-1" id="korean" name="food_category" value="한식" onclick="selectCategory()"/>
+                    <input type="checkbox" class="mr-1 categorySelectbox" id="korean" name="food_category" value="한식" onclick="selectCategory()"/>
                     <label for="korean">한식</label>
                 </div>
                 <div class="mr-4">
-                    <input type="checkbox" class="mr-1" id="japanese" name="food_category" value="일식" onclick="selectCategory()"/>
+                    <input type="checkbox" class="mr-1 categorySelectbox" id="japanese" name="food_category" value="일식" onclick="selectCategory()"/>
                     <label for="japanese">일식</label>
                 </div>
                 <div class="mr-4">
-                    <input type="checkbox" class="mr-1" id="western" name="food_category" value="양식" onclick="selectCategory()"/>
+                    <input type="checkbox" class="mr-1 categorySelectbox" id="western" name="food_category" value="양식" onclick="selectCategory()"/>
                     <label for="western">양식</label>
                 </div>
                 <div class="mr-4">
-                    <input type="checkbox" class="mr-1" id="chinese" name="food_category" value="중식" onclick="selectCategory()"/>
+                    <input type="checkbox" class="mr-1 categorySelectbox" id="chinese" name="food_category" value="중식" onclick="selectCategory()"/>
                     <label for="chinese">중식</label>
                 </div>
                 <div class="mr-4">
-                    <input type="checkbox" class="mr-1" id="etc" name="food_category" value="기타" onclick="selectCategory()"/>
+                    <input type="checkbox" class="mr-1 categorySelectbox" id="etc" name="food_category" value="기타" onclick="selectCategory()"/>
                     <label for="etc">기타</label>
                 </div>
                 <div class="mr-4">
-                    <input type="checkbox" class="mr-1" id="cafe" name="food_category" value="카페" onclick="selectCategory()"/>
+                    <input type="checkbox" class="mr-1 categorySelectbox" id="cafe" name="food_category" value="카페" onclick="selectCategory()"/>
                     <label for="cafe">카페</label>
                 </div>
      		</div>
@@ -531,7 +555,7 @@ span#data {
 	                </div>
 	                <div class="areamap" style="width:20%;">
                     	<img class="img_area mb-2" src="<%= ctxPath %>/resources/images/areamap_city.png" /><br>
-                        <input type="checkbox" id="area02" name="area" class="area_map mr-1" value="제주 시내" onclick="selectArea()">
+                        <input type="checkbox" id="area02" name="area" class="area_map mr-1" value="제주시 시내" onclick="selectArea()">
                         <label for="area02" class="label_chk mt-2">제주시 시내</label>
 	                </div>
 	                <div class="areamap" style="width: 20%;">
@@ -546,7 +570,7 @@ span#data {
 	                </div>
 	                <div class="areamap" style="width: 20%;">
 	                    <img class="img_area mb-2" src="<%= ctxPath %>/resources/images/areamap_bt_city.png" /><br>
-                        <input type="checkbox" id="area05" name="area" class="area_map mr-1" value="서귀포 시내" onclick="selectArea()">
+                        <input type="checkbox" id="area05" name="area" class="area_map mr-1" value="서귀포시 시내" onclick="selectArea()">
                         <label for="area05" class="label_chk mt-2">서귀포시 시내</label>
 	                </div>
 	                <div class="areamap" style="width: 20%;">
@@ -574,7 +598,7 @@ span#data {
 					<button type="button" id="btnDesc" class="sort">내림차순</button>
 	            </div>
 	            <div style="">
-	                <input type="text" name="searchbox" id="searchWord" placeholder="맛집 이름으로 검색">
+	                <input type="text" name="searchWordFood" id="searchWordFood" placeholder="맛집 이름으로 검색">
 	                <button type="button" id="btnSearch" title="검색" onclick="goSearch()">검색</button>
 	            </div>
             </div>
@@ -618,12 +642,12 @@ span#data {
 		<!-- 카테고리, 지역 체크박스 -->
 		<input type="hidden" name="str_category" />
 		<input type="hidden" name="str_area" />
-		<!-- 오름차순, 내림차순 정렬 -->
+		<!-- 인기순, 오름차순, 내림차순 정렬 -->
 		<input type="hidden" name="orderType" />
 		<input type="hidden" name="orderValue_asc" />
 		<input type="hidden" name="orderValue_desc" />
 		<!-- 검색어 -->
-		<input type="hidden" name="searchWord" />
+		<input type="hidden" name="searchWordFood" />
 		<!-- 페이징처리 -->
 		<input type="hidden" name="currentShowPageNo"/>
 	</form>

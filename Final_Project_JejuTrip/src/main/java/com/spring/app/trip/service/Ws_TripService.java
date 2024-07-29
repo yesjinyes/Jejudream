@@ -95,6 +95,9 @@ public interface Ws_TripService {
 	int get_from_admin_chatting_exist(String userid);// 새로 온 관리자 메세지가 있는지 확인한다.
 	int get_new_chatting_admin(String userid);// 로그인을 하고 메인에 들어갔을 때 새로 온 채팅이 있는지 확인해준다.
 	int get_all_chatting_admin(String userid);// 로그인을 했을 때 모든 채팅의 개수를 읽어온다.
+	List<Map<String, String>> get_rand_hotel_list();// 메인에 표시해줄 3개의 호텔을 랜덤으로 가져온다.
+	List<Map<String, String>> get_rand_resort_list();// 메인에 표시해줄 3개의 리조트를 랜덤으로 가져온다.
+	List<Map<String, String>> get_rand_guestHouse_list();// 메인에 표시해줄 3개의 게스트하우스를 랜덤으로 가져온다.
 	
 
 }

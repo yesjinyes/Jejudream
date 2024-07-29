@@ -230,6 +230,14 @@ public class Yj_TripService_imple implements Yj_TripService {
 	}
 
 
+	// == 인기순으로 정렬 == //
+//	@Override
+//	public List<FoodstoreVO> viewReadcountList(String readcount) {
+//		List<FoodstoreVO> readcountList = dao.viewReadcountList(readcount);
+//		return readcountList;
+//	}
+
+
 	
 
 	

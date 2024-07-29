@@ -118,9 +118,15 @@ select distinct  M.user_name, to_char(chatting_date,'yyyy-mm-dd') as chatting_da
 from tbl_chattinglog C 
 join tbl_member M
 on C.from_id = M.userid
-where C.to_id = 'admin'
+where C.to_id = 'admin';
 
-commit;
+select lodging_code, main_img
+from
+(
+    select lodging_code, main_img
+    from tbl_lodging
+    where lodging_category = '호텔'
+    order by DBMS_RANDOM.RANDOM
+)
+where rownum < 4;
 
-select *
-from tbl_member;

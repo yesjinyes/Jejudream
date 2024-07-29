@@ -68,8 +68,7 @@ div.main_recommend > div.main_recommend_banner > div.main_recommend_carousel img
 div.main_hotel {
     border:solid 0px red;
     width:70%;
-    margin: auto;
-    margin-top: 40px;
+    margin: 60px auto;
 }
 
 div.main_hotel > div.jeju_hotel,

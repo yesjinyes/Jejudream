@@ -9,6 +9,7 @@
 <%-- === #223. (웹채팅관련5) === --%>
 <script type="text/javascript">
 	let total_fileSize = 0;
+	let file_arr=[];
 	//=== !!! WebSocket 통신 프로그래밍은 HTML5 표준으로써 자바스크립트로 작성하는 것이다. !!! === //
 	// WebSocket(웹소켓)은 웹 서버로 소켓을 연결한 후 데이터를 주고 받을 수 있도록 만든 HTML5 표준이다. 
 	// 그런데 이러한 WebSocket(웹소켓)은 HTTP 프로토콜로 소켓 연결을 하기 때문에 웹 브라우저가 이 기능을 지원하지 않으면 사용할 수 없다. 
@@ -235,7 +236,7 @@
            isOnlyOneDialog = false; // 귀속말 대화가 아닌 모두에게 공개되는 대화임을 지정.
         });
         
-        let file_arr=[];// 첨부되어진 파일 정보를 담아둘 배열
+        file_arr=[];// 첨부되어진 파일 정보를 담아둘 배열
         $("input#message").on("dragenter",function(e){
 			/* "dragenter" 이벤트는 드롭대상인 박스 안에 Drag 한 파일이 최초로 들어왔을 때 */
 			e.preventDefault();
@@ -359,6 +360,8 @@
 	    });
         
         $("button#addCom").click(function(){
+        	
+        	
 			// 값을 입력했는지 안했는지 유효성 검사 시작 
 			let is_infoData_OK = true;
 			if(is_infoData_OK){
@@ -395,39 +398,13 @@
 				var formData = new FormData($("form[name='fileSend']").get(0));// $("form[name='prodInputFrm']").get(0) 폼 에 작성된 모든 데이터 보내기
 	            
 				if(file_arr.length > 0){ // 추가 이미지 파일을 추가했을 경우
-					// 첨부한 파일의 총합의 크기가 10MB 이상 이라면 전송을 하지 못하게 막는다.
-					let sum_file_size = 0;
-				
-					for(let i=0;i<file_arr.length;i++){
-						sum_file_size += file_arr[i].size;
-					}// end of for(let i=0;i<file_arr.length;i++){
-						
-					////////////////////////////////////////
-                   	// 첨부한 파일의 총량을 누적하는 용도 
-                   	total_fileSize += sum_file_size;
-	              	////////////////////////////////////////
-	              	
-					if( sum_file_size >= 10*1024*1024 ) { // 첨부한 파일의 총합의 크기가 10MB 이상 이라면 
-	                   alert("첨부한 추가이미지 파일의 총합의 크기가 10MB 이상이라서 제품등록을 할 수 없습니다.!!");
-	                   return; // 종료
-		            }
-					else{
-						formData.append("attachCount",file_arr.length);
-						file_arr.forEach(function(item,index){
-							formData.append("attach"+index,item); // 첨부파일 추가하기. item 이 첨부파일이다.
-						});// end of file_arr.forEach(function(item){
-					}
-				}// end of if(file_arr.length > 0){ // 추가 이미지 파일을 추가했을 경우
-				///////////////////////////////////////
-	          	// 첨부한 파일의 총량이 20MB 초과시 //   
-	          	if( total_fileSize > 20*1024*1024 ) {
-	                alert("ㅋㅋㅋ 첨부한 파일의 총합의 크기가 20MB를 넘어서 제품등록을 할 수 없습니다.!!");
-	              	return; // 종료
-	          	} 
-		       	///////////////////////////////////////
+					formData.append("attachCount",file_arr.length);
+					file_arr.forEach(function(item,index){
+						formData.append("attach"+index,item); // 첨부파일 추가하기. item 이 첨부파일이다.
+					});// end of file_arr.forEach(function(item){
+				}
 		       	
 				$.ajax({
-					<%-- url : "<%= ctxPath%>/shop/admin/productRegister.up", --%>
 	                url : "${pageContext.request.contextPath}/SendImageToChatting.trip",
 	                type : "post",
 	                data : formData,
@@ -435,11 +412,63 @@
 	                contentType:false,  // 파일 전송시 설정
 	                dataType:"json",
 	                success:function(json){
-	                	console.log("~~~ 확인용 : " + JSON.stringify(json));
-                        // ~~~ 확인용 : {"result":1}
-                        if(json.result == 1) {
-                	       location.href="${pageContext.request.contextPath}/shop/mallHomeMore.up"; 
-                        }
+	                	$('#modal_showDetail').modal('hide');
+	                	
+	                	messageObj = {}; // 자바스크립트 객체 생성함. 
+	                    messageObj.message = json.filename;
+	                    messageObj.type = "all";
+	                    messageObj.to = "all";
+	                  
+	                    const to = $("input#to").val();
+	                    if( to != "" ){
+	                       	messageObj.type = "one";
+	                        messageObj.to = to;
+	                    }
+	                    
+	                    websocket.send(JSON.stringify(messageObj));
+	                    // JSON.stringify() 는 값을 그 값을 나타내는 JSON 표기법의 문자열로 변환한다
+	                 
+	                    // 위에서 자신이 보낸 메시지를 웹소켓으로 보낸 다음에 자신이 보낸 메시지 내용을 웹페이지에 보여지도록 한다. 
+	                    
+	                    const now = new Date();
+	                    let ampm = "오전 ";
+	                    let hours = now.getHours();
+	                    
+	                    if(hours > 12) {
+	                        hours = hours - 12;
+	                        ampm = "오후 ";
+	                    }
+	                    
+	                    if(hours == 0) {
+	                        hours = 12;
+	                    }
+	                    
+	                    if(hours == 12) {
+	                      	ampm = "오후 ";
+	                    }
+	                    
+	                    let minutes = now.getMinutes();
+	                    if(minutes < 10) {
+	                       	minutes = "0"+minutes;
+	                    }
+	                  
+	                    const currentTime = ampm + hours + ":" + minutes; 
+	                    
+	                    if(isOnlyOneDialog == false) { // 귀속말이 아닌 경우
+	                       	$("div#chatMessage").append("<div style='background-color: #ffff80; display: inline-block; max-width: 80%; float: right; padding: 7px; border-radius: 8px; word-break: break-all;'>" + "<img style='width:100%;' src='<%=ctxPath%>/resources/images/chatting/"+json.filename+"'>" + "</div> <div style='display: inline-block; float: right; padding: 20px 5px 0 0; font-size: 7pt;'>"+currentTime+"</div> <div style='clear: both;'>&nbsp;</div>"); 
+	                                                                                                                                                                               /* word-break: break-all; 은 공백없이 영어로만 되어질 경우 해당구역을 빠져나가므로 이것을 막기위해서 사용한다. */
+	                    }
+	                    
+	                    else { // 귀속말인 경우. 글자색을 빨강색으로 함.
+	                       	$("div#chatMessage").append("<div style='background-color: #ffff80; display: inline-block; max-width: 80%; float: right; padding: 7px; border-radius: 8px; word-break: break-all; color: red;'>" + "<img style='width:100%;' src='<%=ctxPath%>/resources/images/chatting/"+json.filename+"'>" + "</div> <div style='display: inline-block; float: right; padding: 20px 5px 0 0; font-size: 7pt;'>"+currentTime+"</div> <div style='clear: both;'>&nbsp;</div>");
+	                                                                                                                                                                               /* word-break: break-all; 은 공백없이 영어로만 되어질 경우 해당구역을 빠져나가므로 이것을 막기위해서 사용한다. */
+	                    }
+	                    
+	                    $("div#chatMessage").scrollTop(99999999);
+	                    
+	                    $("input#message").val("");
+	                    $("input#message").focus();
+	                	
 	                },
 	                error: function(request, status, error){
 	                // alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
@@ -485,10 +514,12 @@
    <div id="chatMessage" style="background-color:rgb(255, 195, 84); border-radius:8px 8px 0 0; max-height: 530px; padding:10px 10px; overFlow: auto;"></div>
 
    <input type="text"   id="message" class="form-control" style="position:fixed; top:80%; border:solid 1px gray; border-radius:8px; width:95%; height:100px;" placeholder="메시지 내용"/>
-   <input type="button" id="btnSendMessage" class="btn btn-success btn-sm my-3" style="" value="전송" />
+   <input type="button" id="btnSendMessage" class="btn btn-success btn-sm my-3" value="전송" />
 </div>
 </div>
 </div>  
+
+<form name="fileSend"  enctype="multipart/form-data"></form>
 
 <!-- 사진 전송을 하려고 사진을 올려뒀을때 나타나는 모달 -->
 <div class="modal fade" id="modal_showDetail" role="dialog" data-backdrop="static">
@@ -503,9 +534,7 @@
       
       <!-- Modal body -->
       <div class="modal-body">
-      	<form name="fileSend"  enctype="multipart/form-data">
-      		
-      	</form>
+      	
       	<img name="previewImg" id="previewImg" style="width:100%;"/>
       </div>
       
@@ -536,7 +565,7 @@ input#btnSendMessage {
 	border-radius:8px;
 	cursor: pointer;
 	position: fixed;
-	top:87%;
+	top:85%;
 	left:85%;
 }
 

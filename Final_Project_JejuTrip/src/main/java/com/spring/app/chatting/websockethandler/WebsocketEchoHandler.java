@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -148,9 +149,18 @@ public class WebsocketEchoHandler extends TextWebSocketHandler{
                             
              	   if(loginuser.getUserid().equals(list.get(i).getUserid())) { // 본인이 작성한 채팅메시지일 경우라면.. 작성자명 없이 노랑배경색에 오른쪽 정렬로 보이게 한다.
              		   if("all".equals(list.get(i).getType())) { // 귀속말이 아닌 경우
-                 		  	wsession.sendMessage(
-             		  			new TextMessage("<div style='background-color: #ffff80; display: inline-block; max-width: 60%; float: right; padding: 7px; border-radius: 8px; word-break: break-all;'>" + list.get(i).getMessage() + "</div> <div style='display: inline-block; float: right; padding: 20px 5px 0 0; font-size: 7pt;'>"+list.get(i).getCurrentTime()+"</div> <div style='clear: both;'>&nbsp;</div>")  
-                     		); 
+                 		  	
+             			   if(list.get(i).getMessage().contains(".jpg") || list.get(i).getMessage().contains(".png")) {
+             				  wsession.sendMessage(
+                   		  			new TextMessage("<div style='background-color: #ffff80; display: inline-block; max-width: 80%; float: right; padding: 7px; border-radius: 8px; word-break: break-all;'><img style='width:100%;' src='"+map.get("ctxPath")+"/resources/images/chatting/"+list.get(i).getMessage()+"'>" + "</div> <div style='display: inline-block; float: right; padding: 20px 5px 0 0; font-size: 7pt;'>"+list.get(i).getCurrentTime()+"</div> <div style='clear: both;'>&nbsp;</div>")  
+             				  ); 
+             			   }
+             			   else {
+             				  wsession.sendMessage(
+                     		  			new TextMessage("<div style='background-color: #ffff80; display: inline-block; max-width: 60%; float: right; padding: 7px; border-radius: 8px; word-break: break-all;'>" + list.get(i).getMessage() + "</div> <div style='display: inline-block; float: right; padding: 20px 5px 0 0; font-size: 7pt;'>"+list.get(i).getCurrentTime()+"</div> <div style='clear: both;'>&nbsp;</div>")  
+               				  ); 
+             			   }
+             			   
              		   }
              		   else { // 귀속말인 경우. 글자색을 빨강색으로 함.
                  		  	wsession.sendMessage(
@@ -161,13 +171,20 @@ public class WebsocketEchoHandler extends TextWebSocketHandler{
                    
              	   else { // 다른 사람이 작성한 채팅메시지일 경우라면.. 작성자명이 나오고 흰배경색으로 보이게 한다.
              		   if("all".equals(list.get(i).getType())) { // 귀속말이 아닌 경우
-                 		  wsession.sendMessage(
-             				  new TextMessage("<img style='background-color:rgb(255, 195, 84); width:50px;' src='/JejuDream/resources/images/chatting_icon.jpg'/>[<span style='font-weight:bold; cursor:pointer;' class='loginuserName'>" +list.get(i).getName()+ "</span>]<br><div style='background-color: white; display: inline-block; max-width: 60%; padding: 7px; border-radius: 8px; word-break: break-all;'>"+ list.get(i).getMessage() +"</div> <div style='display: inline-block; padding: 20px 0 0 5px; font-size: 7pt;'>"+list.get(i).getCurrentTime()+"</div> <div>&nbsp;</div>" ) 
-         				  );
+                 		  if(list.get(i).getMessage().contains(".jpg") || list.get(i).getMessage().contains(".png")) {
+                 			 wsession.sendMessage(
+                    				  new TextMessage("<img style='width:50px;' src='/JejuDream/resources/images/chatting_icon.png'/>[<span style='font-weight:bold; cursor:pointer;' class='loginuserName'>" +list.get(i).getName()+ "</span>]<br><div style='background-color: white; display: inline-block; max-width: 80%; padding: 7px; border-radius: 8px; word-break: break-all;'><img style='width:100%;' src='"+map.get("ctxPath")+"/resources/images/chatting/"+list.get(i).getMessage()+"'>"+"</div> <div style='display: inline-block; padding: 20px 0 0 5px; font-size: 7pt;'>"+list.get(i).getCurrentTime()+"</div> <div>&nbsp;</div>" ) 
+                				  );
+                 		  }
+                 		  else {
+                 			 wsession.sendMessage(
+                    				  new TextMessage("<img style='width:50px;' src='/JejuDream/resources/images/chatting_icon.png'/>[<span style='font-weight:bold; cursor:pointer;' class='loginuserName'>" +list.get(i).getName()+ "</span>]<br><div style='background-color: white; display: inline-block; max-width: 60%; padding: 7px; border-radius: 8px; word-break: break-all;'>"+ list.get(i).getMessage() +"</div> <div style='display: inline-block; padding: 20px 0 0 5px; font-size: 7pt;'>"+list.get(i).getCurrentTime()+"</div> <div>&nbsp;</div>" ) 
+                		     );
+                 		  }
              		   }
              		   else { // 귀속말인 경우. 글자색을 빨강색으로 함.
                  		  	wsession.sendMessage(
-             		  			new TextMessage("<img style='background-color:rgb(255, 195, 84); width:50px;' src='/JejuDream/resources/images/chatting_icon.jpg'/>[<span style='font-weight:bold; cursor:pointer;' class='loginuserName'>" +list.get(i).getName()+ "</span>]<br><div style='background-color: white; display: inline-block; max-width: 60%; padding: 7px; border-radius: 8px; word-break: break-all; color: red;'>"+ list.get(i).getMessage() +"</div> <div style='display: inline-block; padding: 20px 0 0 5px; font-size: 7pt;'>"+list.get(i).getCurrentTime()+"</div> <div>&nbsp;</div>" ) 
+             		  			new TextMessage("<img style='width:50px;' src='/JejuDream/resources/images/chatting_icon.png'/>[<span style='font-weight:bold; cursor:pointer;' class='loginuserName'>" +list.get(i).getName()+ "</span>]<br><div style='background-color: white; display: inline-block; max-width: 60%; padding: 7px; border-radius: 8px; word-break: break-all; color: red;'>"+ list.get(i).getMessage() +"</div> <div style='display: inline-block; padding: 20px 0 0 5px; font-size: 7pt;'>"+list.get(i).getCurrentTime()+"</div> <div>&nbsp;</div>" ) 
          		  			);
              		   }
              	   }
@@ -244,9 +261,16 @@ public class WebsocketEchoHandler extends TextWebSocketHandler{
             	  // webSocketSession 은 웹소켓서버에 연결된 모든 클라이언트중 하나임.
             	  // wsession.getId() 와  webSocketSession.getId() 는 자동증가되는 고유한 값으로 나옴 
                  
-            	  webSocketSession.sendMessage(   
-        			  new TextMessage("<span style='display:none'>"+wsession.getId()+"</span>&nbsp;<img style='background-color:rgb(255, 195, 84); width:50px;' src='/JejuDream/resources/images/chatting_icon.jpg'/>[<span style='font-weight:bold; cursor:pointer;' class='loginuserName'>" +loginuser.getUser_name()+ "</span>]<br><div style='background-color: white; display: inline-block; max-width: 60%; padding: 7px; border-radius: 8px; word-break: break-all;'>"+ messageVO.getMessage() +"</div> <div style='display: inline-block; padding: 20px 0 0 5px; font-size: 7pt;'>"+currentTime+"</div> <div>&nbsp;</div>" )); 
-                                                                                                                                                                                                                                                                                                                             /* word-break: break-all; 은 공백없이 영어로만 되어질 경우 해당구역을 빠져나가므로 이것을 막기위해서 사용한다. */
+            	  if(messageVO.getMessage().contains(".jpg") || messageVO.getMessage().contains(".png")) {
+            		  webSocketSession.sendMessage(   
+                			  new TextMessage("<span style='display:none'>"+wsession.getId()+"</span>&nbsp;<img style='width:50px;' src='/JejuDream/resources/images/chatting_icon.png'/>[<span style='font-weight:bold; cursor:pointer;' class='loginuserName'>" +loginuser.getUser_name()+ "</span>]<br><div style='background-color: white; display: inline-block; max-width: 80%; padding: 7px; border-radius: 8px; word-break: break-all;'><img style='width:100%;' src='"+map.get("ctxPath")+"/resources/images/chatting/"+messageVO.getMessage()+"'>" +"</div> <div style='display: inline-block; padding: 20px 0 0 5px; font-size: 7pt;'>"+currentTime+"</div> <div>&nbsp;</div>" )); 
+     			   }
+            	  else {
+            		  webSocketSession.sendMessage(   
+                			  new TextMessage("<span style='display:none'>"+wsession.getId()+"</span>&nbsp;<img style='width:50px;' src='/JejuDream/resources/images/chatting_icon.png'/>[<span style='font-weight:bold; cursor:pointer;' class='loginuserName'>" +loginuser.getUser_name()+ "</span>]<br><div style='background-color: white; display: inline-block; max-width: 60%; padding: 7px; border-radius: 8px; word-break: break-all;'>"+ messageVO.getMessage() +"</div> <div style='display: inline-block; padding: 20px 0 0 5px; font-size: 7pt;'>"+currentTime+"</div> <div>&nbsp;</div>" )); 
+                                
+            	  }
+            	                                                                                                                                                                                                                                                                                                       /* word-break: break-all; 은 공백없이 영어로만 되어질 경우 해당구역을 빠져나가므로 이것을 막기위해서 사용한다. */
 				}
               
     	  }
