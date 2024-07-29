@@ -104,10 +104,9 @@
 	           
 	        } 
 			else {
-				$(e.target).addClass("input_error");
-	            $(e.target).next().show();
-	            $(e.target).next().text("상세주소를 입력해주세요.");
-	            checkLodging_address_detail = false;
+				$(e.target).removeClass("input_error");
+				$(e.target).next().hide();
+	            checkLodging_address_detail = true;
 	            
 	        }
 	    });
