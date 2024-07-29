@@ -62,10 +62,18 @@
 					</foreach>
 				</if>
 				<!-- 검색 -->
-				<if test="searchWord != ''">
-					AND lower(food_name) like '%'||lower(#{searchWord})||'%'
+				<if test="searchWordFood != null">
+					AND lower(food_name) like '%'||lower(#{searchWordFood})||'%'
 				</if>
-				
+			
+				<!-- 전체보기 -->
+				<if test="orderType =='' or orderType == 'all'">
+					ORDER BY food_store_code desc
+				</if>
+				<!-- 인기순 정렬 -->
+				<if test="orderType == 'readcount'">
+					ORDER BY ${orderType} desc
+				</if>
 				<!-- 오름차순 정렬 -->
 				<if test="orderValue_asc != null">
 					ORDER BY ${orderType} ${orderValue_asc}
@@ -74,9 +82,7 @@
 				<if test="orderValue_desc != null">
 					ORDER BY ${orderType} ${orderValue_desc}
 				</if>
-				<if test="orderType == null">
-					ORDER BY food_store_code
-				</if>
+				
 			)V
 		)V2
 		WHERE rno between #{startRno} and #{endRno}
@@ -87,23 +93,24 @@
 	<select id="getTotalCount" parameterType="HashMap" resultType="int">
 		select count(*)
 		from tbl_food_store
+		where 1=1
 		<!-- 카테고리 체크박스 다중선택 -->
 		<if test="arr_category != null">
-			where food_category IN
+			and food_category IN
 			<foreach collection="arr_category" index="i" open="(" separator="," close=")">
 				'${arr_category[i]}'
 			</foreach>
 		</if>
 		<!-- 지역 체크박스 다중선택 -->
 		<if test="arr_area != null">
-			where local_status IN
+			and local_status IN
 			<foreach collection="arr_area" index="i" open="(" separator="," close=")">
 				'${arr_area[i]}'
 			</foreach>
 		</if>
 		<!-- 검색 -->
-		<if test="searchWord != ''">
-			where lower(food_name) like '%'||lower(#{searchWord})||'%'
+		<if test="searchWordFood != ''">
+			and lower(food_name) like '%'||lower(#{searchWordFood})||'%'
 		</if>
 	</select>
 	
@@ -375,6 +382,12 @@
 	</select>
 
 
+
+	<!-- <select id="viewReadcountList" parameterType="String">
+		select *
+		from tbl_food_store
+		order by #{readcount}
+	</select> -->
 
 
 </mapper>

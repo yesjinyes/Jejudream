@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.servlet.ModelAndView;import org.springframework.web.servlet.ModelAndViewDefiningException;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.spring.app.trip.common.FileManager;
@@ -63,7 +63,7 @@ public class Yj_TripController {
 	public String foodstoreListJSON(HttpServletRequest request,
 							    @RequestParam(defaultValue="") String str_category,
 							    @RequestParam(defaultValue="") String str_area,
-							    @RequestParam(defaultValue="") String searchWord,
+							    @RequestParam(defaultValue="") String searchWordFood,
 							    @RequestParam(defaultValue="") String orderType, 
 							    @RequestParam(defaultValue="") String orderValue_asc,
 							    @RequestParam(defaultValue="") String orderValue_desc,
@@ -74,6 +74,10 @@ public class Yj_TripController {
 		// 조회수 처리
 		HttpSession session = request.getSession();
 		session.setAttribute("readCountPermission", "yes"); // session 에  "readCountPermission" 에 대한 값을 yes 라고 저장
+
+		
+		System.out.println("~~검색어 나와주세요 => " + searchWordFood);
+		
 		
 		// 페이징 처리
 		int sizePerPage = 7; //한페이지당 7개의 맛집
@@ -103,6 +107,27 @@ public class Yj_TripController {
 			map.put("arr_area", arr_area);
 		}
 		
+		// 전체보기 버튼
+		if(map.get("arr_category")!= null && "".equals(orderType) ) {
+			map.put("orderType", "all");
+		}
+		else if(map.get("arr_area")!= null && "".equals(orderType) ) {
+			map.put("orderType", "all");
+		}
+		else {
+			// 전체 정렬
+			if("".equals(orderType)) {
+				map.put("orderType", "all");
+				map.remove("arr_category");
+				map.remove("arr_area");
+			}
+		}
+		
+		// 인기순 정렬 
+		if("".equals(orderValue_asc) || "".equals(orderValue_desc)) {
+			map.put("orderType", orderType);
+		}
+		
 		// 오름차순 정렬 //
 		if(!"".equals(orderValue_asc)) {
 			map.put("orderType", orderType);
@@ -116,14 +141,14 @@ public class Yj_TripController {
 		}
 		
 		// 검색하기 //
-		if(searchWord == null) {
-			searchWord = "";
+		if(searchWordFood == null) {
+			searchWordFood = "";
 		}
 		 
-		if(searchWord != null) {
-			searchWord = searchWord.trim();
+		if(searchWordFood != null) {
+			searchWordFood = searchWordFood.trim();
 		}
-		map.put("searchWord", searchWord);
+		map.put("searchWordFood", searchWordFood);
 		
 		map.put("currentShowPageNo", currentShowPageNo); 
 
@@ -133,7 +158,8 @@ public class Yj_TripController {
 	    int totalCount = service.getTotalCount(map);
 	    System.out.println("totalCount => "+totalCount);
 	    
-		foodstoreList = service.viewFoodstoreList(map); // 맛집 리스트(조회수 증가X)
+	    // 맛집 리스트(조회수 증가X)
+		foodstoreList = service.viewFoodstoreList(map);
 		//System.out.println("foodstoreList 길이 : " + foodstoreList.size());
 		
 		List<FoodstoreVO> randomRecommend = service.randomRecommend(map); // 맛집 랜덤 추천
@@ -155,8 +181,9 @@ public class Yj_TripController {
 				jsonObj.put("food_content", storevo.getFood_content());
 				jsonObj.put("food_category", storevo.getFood_category());
 				jsonObj.put("food_address", storevo.getFood_address());
+				jsonObj.put("readcount", storevo.getReadCount());
 				jsonObj.put("status", 0);
-				
+								
 				jsonObj.put("totalCount", totalCount); //총 페이지 
             	jsonObj.put("currentShowPageNo", currentShowPageNo); // 현재페이지
             	jsonObj.put("sizePerPage", sizePerPage); // 한페이지당 보여줄 개수
