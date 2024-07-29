@@ -330,7 +330,7 @@ function goMainSearch(event) {
 			    
 			      <form name="allSearchFrm" class="form-inline mt-2 mt-lg-0 mr-auto" onsubmit="return goMainSearch(event)">
 					    <input type="text" id="headerSearchWord" name="headerSearchWord" class="mr-sm-2" style="background-color: #F5F5F5; border-width: 0 0 2px;" placeholder="검색어를 입력하세요">
-					    <button id="searchBtn" class="btn my-2 my-sm-0" type="button" onclick="goMainSearch(event)"><i class="fa-solid fa-magnifying-glass"></i></button>
+					    <button id="headSearchBtn" class="btn my-2 my-sm-0" type="button" onclick="goMainSearch(event)"><i class="fa-solid fa-magnifying-glass"></i></button>
 				  </form>
 				
 				<ul class="navbar-nav my-2 my-lg-0">
