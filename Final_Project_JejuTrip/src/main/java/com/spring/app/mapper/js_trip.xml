@@ -666,11 +666,29 @@
 	</update>     
 	
 	
-	
 	<!-- 가격슬라이더 최대가격을 위한 숙소 최대가격 구해오기  -->
 	<select id="getLodgingMaxPirce" resultType="int">
 		select max(price)
 		from tbl_room_detail
+	</select>
+	
+	
+	<!-- 2024년 축제와 행사 목록 -->
+	<resultMap type="HashMap" id="getExcel_to_festivalList">
+       <result property="festival_no"      column="festival_no"        javaType="String" />
+       <result property="title_name"        	  column="title_name"        javaType="String" />
+       <result property="img"       column="img"        javaType="String" />
+       <result property="startdate"         column="startdate"        javaType="String" />
+       <result property="enddate"    column="enddate"        javaType="String" />
+       <result property="local_status"            column="local_status"        javaType="String" />
+       <result property="link"            column="link"        javaType="String" />
+   </resultMap>
+	<select id="excel_to_festivalList" resultMap="getExcel_to_festivalList">
+		
+		select festival_no, title_name, img, to_char(startdate, 'yyyy-mm-dd') as startdate,
+				to_char(enddate, 'yyyy-mm-dd') as enddate, local_status, link
+		from tbl_festival
+	
 	</select>
  
 </mapper>

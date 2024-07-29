@@ -3,14 +3,32 @@ package com.spring.app.trip.service;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
+import org.apache.poi.common.usermodel.HyperlinkType;
+import org.apache.poi.hssf.usermodel.HSSFDataFormat;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.Hyperlink;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 
 import com.spring.app.trip.common.AES256;
 import com.spring.app.trip.common.GoogleMail;
@@ -531,6 +549,244 @@ public class Js_TripService_imple implements Js_TripService {
 		return price;
 		
 	} // end of public int getLodgingMaxPirce() {
+
+
+	
+	// 축제와 행사 엑셀파일 다운받기
+	@Override
+	public void festivalList_to_Excel(Model model) {
+		
+		// === 조회결과물인 empList 를 가지고 엑셀 시트 생성하기 ===
+	    // 시트를 생성하고, 행을 생성하고, 셀을 생성하고, 셀안에 내용을 넣어주면 된다.
+		
+		// 엑셀세팅해주기 (workbook이 엑셀파일 자체를 의미한다)
+		SXSSFWorkbook workbook = new SXSSFWorkbook();
+		
+		// 시트생성
+	    SXSSFSheet sheet = workbook.createSheet("2024년축제와행사");
+		
+	    // 시트 열 너비 설정 (0부터 시작) ==> 일단은 열은 고정적이다
+		sheet.setColumnWidth(0, 4000);
+		sheet.setColumnWidth(1, 7000);
+		sheet.setColumnWidth(2, 4000);
+		sheet.setColumnWidth(3, 3000);
+		sheet.setColumnWidth(4, 3000);
+		sheet.setColumnWidth(5, 15000);
+		
+		
+		
+		// 행의 위치를 나타내는 변수 
+	    int rowLocation = 0;
+	    
+		////////////////////////////////////////////////////////////////////////////////////////
+		// CellStyle 정렬하기(Alignment)
+		// CellStyle 객체를 생성하여 Alignment 세팅하는 메소드를 호출해서 인자값을 넣어준다.
+		// 아래는 HorizontalAlignment(가로)와 VerticalAlignment(세로)를 모두 가운데 정렬 시켰다.
+	    
+	    CellStyle mergeRowStyle = workbook.createCellStyle();
+	    // (workbook이 엑셀파일 자체를 의미한다) 즉, 아래의 설정으로 엑셀파일의
+	    
+	    mergeRowStyle.setAlignment(HorizontalAlignment.CENTER);
+	    // .setAlignment(HorizontalAlignment.CENTER) ==> 가로기준 가운데 정렬
+	    
+	    mergeRowStyle.setVerticalAlignment(VerticalAlignment.CENTER); 
+	 // import org.apache.poi.ss.usermodel.VerticalAlignment 으로 해야함.
+		// .setVerticalAlignment(VerticalAlignment.CENTER) ==> 세로기준 가운데 정렬
+	    
+	    
+	    CellStyle headerStyle = workbook.createCellStyle();
+	    
+	    headerStyle.setAlignment(HorizontalAlignment.CENTER);
+	    // .setAlignment(HorizontalAlignment.CENTER) ==> 가로기준 가운데 정렬
+	    
+	    headerStyle.setVerticalAlignment(VerticalAlignment.CENTER); 
+	    // .setVerticalAlignment(VerticalAlignment.CENTER) ==> 세로기준 가운데 정렬
+	    
+	    
+	    // CellStyle 배경색(ForegroundColor)만들기
+        // setFillForegroundColor 메소드에 IndexedColors Enum인자를 사용한다.
+        // setFillPattern은 해당 색을 어떤 패턴으로 입힐지를 정한다.
+	    
+	    // 엑셀 색채우기 스타일 설정하기 
+	    mergeRowStyle.setFillForegroundColor(IndexedColors.GOLD.getIndex()); // IndexedColors.DARK_BLUE.getIndex() 는 색상(남색)의 인덱스값을 리턴시켜준다.
+	    
+	    // 엑셀 테두리 스타일 설정하기  (아래 세팅은 실선)
+	    mergeRowStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+	    
+	    
+	    headerStyle.setFillForegroundColor(IndexedColors.LEMON_CHIFFON.getIndex());
+	    
+	    // 엑셀 테두리 스타일 설정하기  (아래 세팅은 실선)
+	    headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+	    
+	    
+        // Cell 폰트(Font) 설정하기
+        // 폰트 적용을 위해 POI 라이브러리의 Font 객체를 생성해준다.
+        // 해당 객체의 세터를 사용해 폰트를 설정해준다. 대표적으로 글씨체, 크기, 색상, 굵기만 설정한다.
+        // 이후 CellStyle의 setFont 메소드를 사용해 인자로 폰트를 넣어준다.
+        
+        Font mergeRowFont = workbook.createFont(); // import org.apache.poi.ss.usermodel.Font; 으로 한다.
+        
+        mergeRowFont.setFontName("나눔고딕"); // 엑셀 글씨체 설정하기
+	    
+        mergeRowFont.setFontHeight((short)500); // 엑셀 ?
+        mergeRowFont.setColor(IndexedColors.WHITE.getIndex()); // 엑셀 글자색 설정하기
+        mergeRowFont.setBold(true); // 엑셀 글자굵기 설정하기
+        
+        mergeRowStyle.setFont(mergeRowFont); // 위에 Font 선언하고 설정한 것을 style에다가 넣어준다.
+        
+        
+        
+        // CellStyle 테두리 Border
+        // 테두리는 각 셀마다 상하좌우 모두 설정해준다.
+        // setBorderTop, Bottom, Left, Right 메소드와 인자로 POI라이브러리의 BorderStyle 인자를 넣어서 적용한다.
+	    headerStyle.setBorderTop(BorderStyle.THICK);
+	    headerStyle.setBorderBottom(BorderStyle.THICK); // 선을 굵게
+	    headerStyle.setBorderLeft(BorderStyle.THIN);	// 선을 얇게
+	    headerStyle.setBorderRight(BorderStyle.THIN);
+        
+	    
+	    // Cell Merge 셀 병합시키기
+        /* 셀병합은 시트의 addMergeRegion 메소드에 CellRangeAddress 객체를 인자로 하여 병합시킨다.
+           CellRangeAddress 생성자의 인자로(시작 행, 끝 행, 시작 열, 끝 열) 순서대로 넣어서 병합시킬 범위를 정한다. 배열처럼 시작은 0부터이다.  
+        */
+        // 병합할 행 만들기
+	    Row mergeRow = sheet.createRow(rowLocation);  // 엑셀에서 행의 시작은 0 부터 시작한다. (import org!!!)
+	    // 즉, 해당 시트에 0번째 행을 만드는것이다 
+	    
+	    
+	    // 병합할 행에 "우리회사 사원정보" 로 셀을 만들어 셀에 스타일을 주기
+	    for(int i=0; i<6; i++) {
+	    // 여기서 8인 이유는 보여지는 컬럼갯수가 8이기 때문이다
+	    	
+	         Cell cell = mergeRow.createCell(i);
+	         // 즉, 해당시트에 0번째 행의 셀을만든다(8개의 셀)  
+	         cell.setCellStyle(mergeRowStyle);
+	         // 그리고 아주위에서 설정한 셀스타일(가운데정렬 폰트 등등)을 적용시키는것이다!
+	         cell.setCellValue("2024년 축제와 행사");
+	         // 병합한 셀에다가 값을 넣는다
+	         
+	    }// end of for-------------------------
+	    
+	    // 셀 병합하기  (rowLocation은 0으로 세팅했었다!
+	    sheet.addMergedRegion(new CellRangeAddress(rowLocation, rowLocation, 0, 5)); // 시작 행, 끝 행, 시작 열, 끝 열 
+	    // rowLocation ==> 
+	    ////////////////////////////////////////////////////////////////////////////////////////////////
+	    
+	    
+	    // 헤더 행 생성
+        Row headerRow = sheet.createRow(++rowLocation); // 엑셀에서 행의 시작은 0 부터 시작한다.
+                                                        // ++rowLocation는 전위연산자임.
+        // 즉, 여기서 rowLocation이 1로 변경된다!!! 1번쨰(두번째)행이라는 뜻
+        
+     // 해당 행의 첫번째 열 셀 생성
+        Cell headerCell = headerRow.createCell(0); // 엑셀에서 열의 시작은 0 부터 시작한다.
+        headerCell.setCellValue("축제등록번호");
+        headerCell.setCellStyle(headerStyle);
+        
+        // 해당 행의 두번째 열 셀 생성
+        headerCell = headerRow.createCell(1);
+        headerCell.setCellValue("축제 및 행사명");
+        headerCell.setCellStyle(headerStyle);
+        
+        // 해당 행의 세번째 열 셀 생성
+        headerCell = headerRow.createCell(2);
+        headerCell.setCellValue("지역구분");
+        headerCell.setCellStyle(headerStyle);
+        
+        // 해당 행의 네번째 열 셀 생성
+        headerCell = headerRow.createCell(3);
+        headerCell.setCellValue("시작날짜");
+        headerCell.setCellStyle(headerStyle);
+        
+        
+        // 해당 행의 다섯번째 열 셀 생성
+        headerCell = headerRow.createCell(4);
+        headerCell.setCellValue("종료날짜");
+        headerCell.setCellStyle(headerStyle);
+        
+        // 해당 행의 여섯번째 열 셀 생성
+        headerCell = headerRow.createCell(5);
+        headerCell.setCellValue("상세링크");
+        headerCell.setCellStyle(headerStyle);
+        
+        
+        // 즉, 위에까지 순서는 구분할 부분의 스타일을 만들어놓고 세팅해주고, 셀을 만들고 만들어진 스타일을 적용시키고 값을 넣는다!!! (병합이 제일 마지막)
+        
+        
+        // 삽입될 행에 적용할 스타일 생성
+        CellStyle contentStyle = workbook.createCellStyle();
+        
+        contentStyle.setAlignment(HorizontalAlignment.CENTER);
+	    // .setAlignment(HorizontalAlignment.CENTER) ==> 가로기준 가운데 정렬
+	    
+        contentStyle.setVerticalAlignment(VerticalAlignment.CENTER); 
+	    // .setVerticalAlignment(VerticalAlignment.CENTER) ==> 세로기준 가운데 정렬
+	    
+        contentStyle.setWrapText(true); // 텍스트 줄 바꿈
+        
+        
+        // ==== 축제및 행사 내용에 해당하는 행 및 셀 생성하기 ==== //
+        Row bodyRow = null;
+        Cell bodyCell = null;
+        
+        List<Map<String,String>> festivalList = dao.excel_to_festivalList();
+        
+        for(int i=0; i<festivalList.size(); i++) {
+        	
+        	Map<String, String> festivalMap = festivalList.get(i);
+        	// 전체 축제와 행사목록 가져오기
+        	
+        	// 행생성
+            bodyRow = sheet.createRow(i + (rowLocation+1));
+            // 여기서는 첫 rowLocation이 2가된다 (즉, 내용이 들어갈 3번째 행) for문이라서 내용이 있는만큼 행이 증가된다!
+            
+            // 데이터 축제등록번호 표시
+            bodyCell = bodyRow.createCell(0);
+            bodyCell.setCellValue(festivalMap.get("festival_no"));
+            bodyCell.setCellStyle(contentStyle);
+            
+            // 데이터 축제와행사명 표시
+            bodyCell = bodyRow.createCell(1);
+            bodyCell.setCellValue(festivalMap.get("title_name")); 
+            bodyCell.setCellStyle(contentStyle);
+            
+            // 데이터 지역구분 표시
+            bodyCell = bodyRow.createCell(2);
+            bodyCell.setCellValue(festivalMap.get("local_status")); 
+            bodyCell.setCellStyle(contentStyle);
+            
+            // 데이터 측제시작일자 표시
+            bodyCell = bodyRow.createCell(3);
+            bodyCell.setCellValue(festivalMap.get("startdate")); 
+            bodyCell.setCellStyle(contentStyle);
+            
+            // 데이터 축제종료일자 표시
+            bodyCell = bodyRow.createCell(4);
+            bodyCell.setCellValue(festivalMap.get("enddate")); 
+            bodyCell.setCellStyle(contentStyle);
+            
+            // 데이터 축제상세링크 표시
+            
+            Hyperlink link_article = workbook.getCreationHelper().createHyperlink(HyperlinkType.URL);
+            link_article.setAddress(festivalMap.get("link"));
+            
+            bodyCell = bodyRow.createCell(5);
+            bodyCell.setHyperlink(link_article);
+            bodyCell.setCellValue(festivalMap.get("link"));
+            bodyCell.setCellStyle(contentStyle);
+
+        	
+        } // end of for
+        
+        
+        // 각 행과 셀의 데이터와 스타일 적용이 끝났다면	 model을 통해서 위 내용을 받아준다!
+        model.addAttribute("locale", Locale.KOREA); // 얘만 import java.util!!!!!!!!!!
+        model.addAttribute("workbook", workbook);
+        model.addAttribute("workbookName", "2024년 제주도 축제와 행사");
+        
+		
+	} // end of public void festivalList_to_Excel(Model model) {
 
 
 	
