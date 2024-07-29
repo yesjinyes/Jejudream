@@ -92,6 +92,9 @@ public interface Yj_TripDAO {
 	// == FAQ 리스트 페이징 처리 위함 == //
 	int getTotalFaqList(Map<String, String> paraMap);
 
+	// == 인기순으로 정렬 == //
+	// List<FoodstoreVO> viewReadcountList(String readcount);
+
 	
 
 	

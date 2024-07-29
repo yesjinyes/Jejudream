@@ -222,6 +222,14 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 	}
 
 
+	// == 인기순으로 정렬 == //
+//	@Override
+//	public List<FoodstoreVO> viewReadcountList(String readcount) {
+//		List<FoodstoreVO> readcountList = sqlsession.selectList("yj_trip.viewReadcountList", readcount);
+//		return readcountList;
+//	}
+
+
 
 
 
