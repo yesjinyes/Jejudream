@@ -98,7 +98,7 @@ $(document).ready(function() {
     // 검색창 엔터 시 전체 검색
     $("input#headerSearchWord").keyup(function(e) {
     	if(e.keyCode == 13) {
-    		goSearch(e);
+    		goMainSearch(e);
     	}
     });
     
@@ -223,7 +223,7 @@ function whatWeather(){
 
 
 // === 전체 검색 ===
-function goSearch(event) {
+function goMainSearch(event) {
 	
 	if(event) {
 		event.preventDefault();
@@ -328,9 +328,9 @@ function goSearch(event) {
 			    </ul>
 			    
 			    
-			      <form name="allSearchFrm" class="form-inline mt-2 mt-lg-0 mr-auto" onsubmit="return goSearch(event)">
+			      <form name="allSearchFrm" class="form-inline mt-2 mt-lg-0 mr-auto" onsubmit="return goMainSearch(event)">
 					    <input type="text" id="headerSearchWord" name="headerSearchWord" class="mr-sm-2" style="background-color: #F5F5F5; border-width: 0 0 2px;" placeholder="검색어를 입력하세요">
-					    <button id="searchBtn" class="btn my-2 my-sm-0" type="button" onclick="goSearch(event)"><i class="fa-solid fa-magnifying-glass"></i></button>
+					    <button id="searchBtn" class="btn my-2 my-sm-0" type="button" onclick="goMainSearch(event)"><i class="fa-solid fa-magnifying-glass"></i></button>
 				  </form>
 				
 				<ul class="navbar-nav my-2 my-lg-0">
