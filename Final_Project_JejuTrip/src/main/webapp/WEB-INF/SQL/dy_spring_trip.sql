@@ -366,3 +366,23 @@ and fk_room_detail_code = '652'
 and check_in >= '2024-07-15' and check_out <= '2024-07-16';
 
 
+
+
+
+-- [전체검색] 숙박 리스트 조회 (객실 최저가 포함)
+SELECT lodging_code, local_status, lodging_category, lodging_name, min_price, main_img
+FROM tbl_lodging L JOIN
+(
+    select fk_lodging_code, min(price) AS MIN_PRICE
+    from tbl_room_detail
+    group by fk_lodging_code
+) R
+ON L.lodging_code = R.fk_lodging_code
+WHERE status = 1 and (lower(lodging_name) like '%' || lower('제주') || '%')
+ORDER BY lodging_code desc;
+
+
+
+
+
+

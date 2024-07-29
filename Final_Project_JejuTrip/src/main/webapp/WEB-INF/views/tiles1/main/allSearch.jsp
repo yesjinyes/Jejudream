@@ -2,6 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <%
 	String ctxPath = request.getContextPath();
@@ -24,7 +25,98 @@
     .card:hover {
     	cursor: pointer;
     }
+    
+    div.showMoreBtnDiv > div {
+    	cursor: pointer;
+    }
 </style>
+
+<script>
+$(document).ready(function () {
+	<%-- 숙박 더보기 버튼 클릭 시 --%>
+    $('#showLodgingMoreBtn').on('click', function () {
+        $('.lodging-item.d-none').removeClass('d-none');
+        $(this).hide();
+    });
+    
+    <%-- 맛집 더보기 버튼 클릭 시 --%>
+    $('#showFoodstoreMoreBtn').on('click', function () {
+        $('.foodstore-item.d-none').removeClass('d-none');
+        $(this).hide();
+    });
+    
+    <%-- 즐길거리 더보기 버튼 클릭 시 --%>
+    $('#showPlayMoreBtn').on('click', function () {
+        $('.play-item.d-none').removeClass('d-none');
+        $(this).hide();
+    });
+    
+    <%-- 커뮤니티 더보기 버튼 클릭 시 --%>
+    $('#showBoardMoreBtn').on('click', function () {
+        $('.board-item.d-none').removeClass('d-none');
+        $(this).hide();
+    });
+    
+    
+ 	// === 날짜 생성 ===
+    function getFormattedDate(date) {
+        const year = date.getFullYear();
+        const month = ('0' + (date.getMonth() + 1)).slice(-2);
+        const day = ('0' + date.getDate()).slice(-2);
+        return `\${year}-\${month}-\${day}`;
+    }
+    
+    
+    <%-- 숙박 검색 결과 상세 이동 --%>
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+    
+    const detailCheckIn = getFormattedDate(today);
+    const detailCheckOut = getFormattedDate(tomorrow);
+	
+//  console.log("detailCheckIn : ", detailCheckIn);
+//  console.log("detailCheckOut : ", detailCheckOut);
+    
+    $("div.lodging-item > .card").click(function() {
+    	
+//    	alert("lodging_code : " + $(this).find("input:hidden").val());
+    	
+    	const lodgingCode = $(this).find("input:hidden").val();
+        const detailPeople = 2;
+        
+        const url = `<%=ctxPath%>/lodgingDetail.trip?lodging_code=\${lodgingCode}&detail_check_in=\${detailCheckIn}&detail_check_out=\${detailCheckOut}&detail_people=\${detailPeople}`;
+    	location.href = url;
+    });
+    
+    
+    <%-- 맛집 검색 결과 상세 이동 --%>
+    $("div.foodstore-item > .card").click(function() {
+    	
+    	location.href = "<%=ctxPath%>/foodstoreDetail.trip?food_store_code=" + $(this).find("input:hidden").val();
+    	
+    });
+    
+    
+    <%-- 즐길거리 검색 결과 상세 이동 --%>
+    $("div.play-item > .card").click(function() {
+    	
+    	location.href = "<%=ctxPath%>/goAddSchedule.trip?play_code=" + $(this).find("input:hidden").val();
+    	
+    });
+    
+    
+    <%-- 커뮤니티 검색 결과 상세 이동 --%>
+    $("div.board-item > .card").click(function() {
+    	
+//    	alert("seq : " + $(this).find("input:hidden.board_seq").val() + ", category : " + $(this).find("input:hidden.board_category").val());
+    	
+    	location.href = "<%=ctxPath%>/community/viewBoard.trip?seq=" + $(this).find("input:hidden.board_seq").val() + "&category=" + $(this).find("input:hidden.board_category").val();
+    });
+    
+});
+
+</script>
 
 <div class="container" style="width: 70%; margin: 0 auto;">
 	<div class="mt-5 mb-5">
@@ -39,8 +131,8 @@
 				<span style="font-size: 1.2rem; font-weight: 600;">숙박&nbsp;<span class="font-weight-bold" style="font-size: 1rem; color: #ff7433;">${requestScope.lodgingCount}개</span></span>
 				
 				<div id="lodgingList" class="row mt-3">
-					<c:forEach var="lodging" items="${requestScope.lodgingList}">
-						<div class="col-md-3">
+					<c:forEach var="lodging" items="${requestScope.lodgingList}" varStatus="status">
+						<div class="col-md-3 lodging-item <c:if test='${status.index gt 7}'>d-none</c:if>">
 							<div class="card">
 			                    <img src="<%=ctxPath%>/resources/images/lodginglist/${lodging.main_img}" class="card-img-top" height="200px">
 			                    <div class="card-body">
@@ -55,7 +147,8 @@
 			                        	</c:choose>
 			                        </h5>
 			                        <h6 class="card-subtitle mb-2 text-muted">${lodging.local_status}</h6>
-			                        <p class="card-text">726,000 원</p>
+			                        <p class="card-text font-weight-bold"><fmt:formatNumber value="${lodging.min_price}" pattern="#,###" />원</p>
+			                        <input type="hidden" value="${lodging.lodging_code}">
 			                    </div>
 			                </div>
 						</div>
@@ -63,8 +156,8 @@
 				</div>
 				
 				<c:if test="${requestScope.lodgingCount gt 8}">
-					<div class="text-center">
-						<div style="border: solid 1px #ccc; height:70px; width: 30%; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
+					<div class="text-center showMoreBtnDiv">
+						<div id="showLodgingMoreBtn" style="border: solid 1px #ccc; height:70px; width: 30%; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
 							더보기
 							<i class="fa-solid fa-chevron-down ml-2"></i>
 						</div>
@@ -79,10 +172,10 @@
 				<span style="font-size: 1.2rem; font-weight: 600;">맛집&nbsp;<span class="font-weight-bold" style="font-size: 1rem; color: #ff7433;">${requestScope.foodstoreCount}개</span></span>
 				
 				<div id="foodstoreList" class="row mt-3">
-					<c:forEach var="foodstore" items="${requestScope.foodstoreList}">
-						<div class="col-md-3">
+					<c:forEach var="foodstore" items="${requestScope.foodstoreList}" varStatus="status">
+						<div class="col-md-3 foodstore-item <c:if test='${status.index gt 7}'>d-none</c:if>">
 							<div class="card">
-			                    <img src="<%=ctxPath%>/resources/images/foodimg/${foodstore.orgFilename}" class="card-img-top" height="200px">
+			                    <img src="<%=ctxPath%>/resources/images/foodimg/${foodstore.food_main_img}" class="card-img-top" height="200px">
 			                    <div class="card-body">
 			                        <h5 class="card-title">
 		                        		<c:choose>
@@ -95,7 +188,8 @@
 			                        	</c:choose>
 			                        </h5>
 			                        <h6 class="card-subtitle mb-2 text-muted">${foodstore.local_status}</h6>
-			                        <p class="card-text">${foodstore.food_category}</p>
+			                        <p class="card-text font-weight-bold">${foodstore.food_category}</p>
+			                        <input type="hidden" value="${foodstore.food_store_code}">
 			                    </div>
 			                </div>
 						</div>
@@ -103,8 +197,8 @@
 				</div>
 				
 				<c:if test="${requestScope.foodstoreCount gt 8}">
-					<div class="text-center">
-						<div style="border: solid 1px #ccc; height:70px; width: 30%; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
+					<div class="text-center showMoreBtnDiv">
+						<div id="showFoodstoreMoreBtn" style="border: solid 1px #ccc; height:70px; width: 30%; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
 							더보기
 							<i class="fa-solid fa-chevron-down ml-2"></i>
 						</div>
@@ -119,8 +213,8 @@
 				<span style="font-size: 1.2rem; font-weight: 600;">즐길거리&nbsp;<span class="font-weight-bold" style="font-size: 1rem; color: #ff7433;">${requestScope.playCount}개</span></span>
 				
 				<div id="playList" class="row mt-3">
-					<c:forEach var="play" items="${requestScope.playList}">
-						<div class="col-md-3">
+					<c:forEach var="play" items="${requestScope.playList}" varStatus="status">
+						<div class="col-md-3 play-item <c:if test='${status.index gt 7}'>d-none</c:if>">
 							<div class="card">
 			                    <img src="<%=ctxPath%>/resources/images/play/${play.play_main_img}" class="card-img-top" height="200px">
 			                    <div class="card-body">
@@ -135,7 +229,8 @@
 			                        	</c:choose>
 			                        </h5>
 			                        <h6 class="card-subtitle mb-2 text-muted">${play.local_status}</h6>
-			                        <p class="card-text">${play.play_category}</p>
+			                        <p class="card-text font-weight-bold">${play.play_category}</p>
+			                        <input type="hidden" value="${play.play_code}">
 			                    </div>
 			                </div>
 						</div>
@@ -143,8 +238,8 @@
 				</div>
 				
 				<c:if test="${requestScope.playCount gt 8}">
-					<div class="text-center">
-						<div style="border: solid 1px #ccc; height:70px; width: 30%; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
+					<div class="text-center showMoreBtnDiv">
+						<div id="showPlayMoreBtn" style="border: solid 1px #ccc; height:70px; width: 30%; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
 							더보기
 							<i class="fa-solid fa-chevron-down ml-2"></i>
 						</div>
@@ -159,8 +254,8 @@
 				<span style="font-size: 1.2rem; font-weight: 600;">커뮤니티&nbsp;<span class="font-weight-bold" style="font-size: 1rem; color: #ff7433;">${requestScope.boardCount}개</span></span>
 				
 				<div id="communityList" class="row mt-3">
-					<c:forEach var="board" items="${requestScope.boardList}">
-						<div class="col-md-3">
+					<c:forEach var="board" items="${requestScope.boardList}" varStatus="status">
+						<div class="col-md-3 board-item <c:if test='${status.index gt 7}'>d-none</c:if>">
 							<div class="card">
 		                    	<div class="card-body">
 								    <h5 class="card-title">
@@ -180,6 +275,8 @@
 								    	<c:if test="${board.category == 4}">맛집</c:if>
 								    </h6>
 								    <%-- <p class="card-text">${board.content}</p> --%>
+								    <input class="board_seq" type="hidden" value="${board.seq}">
+								    <input class="board_category" type="hidden" value="${board.category}">
 						  		</div>
 			                </div>
 						</div>
@@ -187,8 +284,8 @@
 				</div>
 				
 				<c:if test="${requestScope.boardCount gt 8}">
-					<div class="text-center">
-						<div style="border: solid 1px #ccc; height:70px; width: 30%; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
+					<div class="text-center showMoreBtnDiv">
+						<div id="showBoardMoreBtn" style="border: solid 1px #ccc; height:70px; width: 30%; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
 							더보기
 							<i class="fa-solid fa-chevron-down ml-2"></i>
 						</div>

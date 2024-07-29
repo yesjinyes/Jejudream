@@ -123,7 +123,7 @@ public interface Dy_TripService {
 	void reservationList_to_Excel(Map<String, String> paraMap, Model model);
 
 	// [전체 검색] 숙소 리스트 띄우기
-	List<LodgingVO> searchLodgingList(String searchWord);
+	List<Map<String, String>> searchLodgingList(String searchWord);
 
 	// [전체 검색] 맛집 리스트 띄우기
 	List<FoodstoreVO> searchFoodstoreList(String searchWord);
