@@ -1043,6 +1043,12 @@ a.recommend-lodging-title {
 											<input type="hidden" name="enddate"/>
 								        </div>
 								        
+								        <div class="share_member">
+								        	<label class="mt-4">일정 공유자 추가</label><br>
+								        	<input type="text" class="form-control schedule-input" name="shareMember" id="shareMember" placeholder="일정을 공유할 회원 이름을 입력하세요." />
+								        
+								        </div>
+								        
 				                    </div>
 				                </div>
 			                </form>
