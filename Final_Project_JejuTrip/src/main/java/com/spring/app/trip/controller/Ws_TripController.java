@@ -260,11 +260,26 @@ public class Ws_TripController {
 		String detail_address = mrequest.getParameter("detail_address");
 		
 		lodgingvo.setLodging_address(address + " " + detail_address);
+		
+		// 숙소명
+		String lodging_name = lodgingvo.getLodging_name();
+		lodging_name = lodging_name.replaceAll("<", "&lt");
+		lodging_name = lodging_name.replaceAll(">", "&gt");
+		lodging_name = lodging_name.replaceAll("\r\n", "<br>");
+		lodgingvo.setLodging_name(lodging_name);
+		
+		// 상세주소
+		String lodging_address = lodgingvo.getLodging_address();
+		lodging_address = lodging_address.replaceAll("<", "&lt");
+		lodging_address = lodging_address.replaceAll(">", "&gt");
+		lodging_address = lodging_address.replaceAll("\r\n", "<br>");
+		lodgingvo.setLodging_address(lodging_address);
+		
+		// 숙소 설명 스크립트공격 방어
 		String content = lodgingvo.getLodging_content();
 		content = content.replaceAll("<", "&lt");
 		content = content.replaceAll(">", "&gt");
 		content = content.replaceAll("\r\n", "<br>");
-		
 		lodgingvo.setLodging_content(content);
 		
 		HttpSession session = mrequest.getSession();
