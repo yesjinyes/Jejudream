@@ -261,7 +261,7 @@ $(document).ready(function(){
                     	
                     	v_html += `<div class="single-post d-flex justify-content-between">
                             		<div style="width: 35%;">
-                            			<img src="<%= ctxPath%>/resources/images/lodginglist/room/\${item.room_img}" class="img-fluid" style="width:100%; height:300px;" />
+                            			<img style="cursor: pointer;"  name="roomimg" src="<%= ctxPath%>/resources/images/lodginglist/room/\${item.room_img}" class="img-fluid" style="width:100%; height:300px;" />
                         			</div>
                         			<div style="flex: 1; display: flex; flex-direction: column; padding-left: 20px;">
                             			<h3 class="mt-3">\${item.room_name}</h3>
@@ -563,6 +563,18 @@ $(document).ready(function(){
         
     }); // end of $("i").on('click', function(e) {})
 	
+    
+    $(document).on("click", "img[name='roomimg']", function(){
+    	
+    	// alert('히히');
+    	
+    	// alert($(this).attr("src"));
+    	
+    	const imgsrc = $(this).attr("src");
+    	
+    	open_modal_img(imgsrc);
+    	
+    }); // end of $(document).on("click", "img[name='roomimg']", function()){} )
 	
 }); // end of $(document).ready(function(){})
 
@@ -720,6 +732,16 @@ function goAddReview(){
 	}); // end of $.ajax
 		
 } // end of function goAddReview(){}
+
+function open_modal_img(imgsrc){
+	
+	v_html = `<img src="\${imgsrc}" style="width:100%; margin-bottom:20px;"/>`;
+	
+	$("div.modal-body").html(v_html);
+	
+	$('#modal_showDetail').modal('show');
+	
+} // end of function open_modal_img(imgsrc){}
 	
 </script>
 
@@ -847,6 +869,7 @@ function goAddReview(){
                     <c:if test="${empty sessionScope.loginuser or (not empty sessionScope.loginuser and empty requestScope.dateSendMap.chkLike)}">
                         <i class="fa-regular fa-heart" id="addLike" style="cursor: pointer; color: #fbb623; font-size: 35px;"></i>
                     </c:if>
+                    
                 </div>
             </div>
             <div class="col-12">
@@ -909,7 +932,7 @@ function goAddReview(){
                 <c:forEach var="roomDetail" items="${requestScope.roomDetailList}">
                     <div class="single-post d-flex justify-content-between">
                         <div style="width: 35%;">
-                            <img src="<%= ctxPath%>/resources/images/lodginglist/room/${roomDetail.room_img}" class="img-fluid" style="width:100%; height:300px;" />
+                            <img name="roomimg" style="cursor: pointer;" src="<%= ctxPath%>/resources/images/lodginglist/room/${roomDetail.room_img}" class="img-fluid" style="width:100%; height:300px;" />
                         </div>
                         <div style="flex: 1; display: flex; flex-direction: column; padding-left: 20px;">
                             <h3 class="mt-3">${roomDetail.room_name}</h3>
@@ -1011,7 +1034,30 @@ function goAddReview(){
         </div>
     </div>
 
+<div class="modal fade" id="modal_showDetail" data-backdrop="static">
 
+	<div class="modal-dialog">
+		<div class="modal-content">
+	    
+	      <!-- Modal header -->
+	      <div class="modal-header">
+	        <h4 class="modal-title">객실 이미지 </h4>
+	        <button type="button" class="close modal_close" data-dismiss="modal">&times;</button>
+	      </div>
+	      
+	      <!-- Modal body -->
+	      <div class="modal-body modal-lg">
+	      		
+	      </div>
+	      
+	      <!-- Modal footer -->
+	      <div class="modal-footer">
+	      	  <button type="button" class="btn btn-danger btn-sm modal_close" data-dismiss="modal">닫기</button>
+	      </div>
+	      
+	    </div>    
+	</div>
+</div>
 <form name="reserve">
 	<input type="hidden" name="room_detail_code" />
 	<input type="hidden" name="lodging_code" value="" />
