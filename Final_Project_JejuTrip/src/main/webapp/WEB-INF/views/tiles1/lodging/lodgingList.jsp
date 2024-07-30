@@ -636,16 +636,16 @@ $(document).ready(function(){
 		                			  </div>
 		                			  <div style="border-left: solid 2px #ffdccc; height:75%; align-self:center; margin-right: 1%;"></div>
 									  <div class="px-3" style="align-self: flex-end;">
-										  <span style="color:#b5aec4;">1박 기준</span>
+										  <span style="color:#b5aec4;">1박 기준 최저가</span>
 		                    			  <h4 class="pb-2" style="color: #ff9933;">\${Number(item.price).toLocaleString('en')}원</h4>
 									  </div>
 		            			   </div>`;
 		        		
 		        	}); // end of $.each
 		        	
-		        	console.log("json[0].sizePerPage" , jsonData[0].sizePerPage);
-		        	console.log("json[0].totalCount" , jsonData[0].totalCount);
-		        	console.log("json[0].currentShowPageNo" , jsonData[0].currentShowPageNo);
+		        	// console.log("json[0].sizePerPage" , jsonData[0].sizePerPage);
+		        	// console.log("json[0].totalCount" , jsonData[0].totalCount);
+		        	// console.log("json[0].currentShowPageNo" , jsonData[0].currentShowPageNo);
 		        	
 					if( Number(currentShowPageNo) != 1){
 		        		
@@ -653,7 +653,7 @@ $(document).ready(function(){
 		        		
 		        	}
 		        	
-		        	const totalPage = Math.ceil( Number(jsonData[0].totalCount) / Number(jsonData[0].sizePerPage));
+					const totalPage = Math.ceil( Number(jsonData[0].totalCount) / Number(jsonData[0].sizePerPage));
 		        	
 		        	// console.log("totalPage ==> ", totalPage);
 		        	// console.log("totalPage type==> ", typeof totalPage);
@@ -664,6 +664,9 @@ $(document).ready(function(){
 	        		
 	        		v_html += "<span class='py-3' style='font-size: 20pt;'>해당하는 숙소가 없습니다</span>";
 	        		
+	        		const totalPage = 0;
+	        		
+	        		makePageBar(currentShowPageNo, totalPage, sort);
 	        	}
 		        	
 	        	$('div#result_list').html(v_html);
