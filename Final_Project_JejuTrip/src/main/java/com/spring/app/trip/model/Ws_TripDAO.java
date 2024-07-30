@@ -74,7 +74,7 @@ public interface Ws_TripDAO {
 	int getTotalScheduleCount(Map<String, String> paraMap);// 총 일정 검색 건수(totalCount)
 	List<Map<String, String>> scheduleListSearchWithPaging(Map<String, String> paraMap);// 페이징 처리한 캘린더 가져오기(검색어가 없다라도 날짜범위 검색은 항시 포함된 것임)
 	int registerSchedule_end(Map<String, String> paraMap);// 일정 등록하기
-	List<MemberVO> searchJoinUserList(String joinUserName);// 공유자 명단 불러오기
+	List<MemberVO> searchJoinUserList(Map<String, String> paraMap);// 공유자 명단 불러오기
 	int editSchedule_end(Calendar_schedule_VO svo);// 일정 수정 완료하기
 	int deleteSchedule(String scheduleno);// 일정삭제하기
 	String getCompanyidToTblReservation(String reservation_code);// 해당 예약에 관련된 companyid를 가져와야한다.

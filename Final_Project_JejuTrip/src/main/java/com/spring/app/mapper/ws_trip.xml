@@ -962,10 +962,10 @@
     </insert>
 	
 	<!-- 공유자를 찾기 위한 특정글자가 들어간 회원명단 불러오기 -->
-    <select id="searchJoinUserList" parameterType="String" resultType="MemberVO">
+    <select id="searchJoinUserList" parameterType="HashMap" resultType="MemberVO">
     	select userid, user_name
 		from tbl_member
-		where lower(user_name) like '%'|| lower(#{joinUserName}) ||'%'
+		where lower(user_name) like '%'|| lower(#{joinUserName}) ||'%' and userid != #{userid}
     </select>
     
     <!-- 일정수정하가 -->

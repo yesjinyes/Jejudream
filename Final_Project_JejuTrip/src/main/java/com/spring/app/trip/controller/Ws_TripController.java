@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.print.DocFlavor.STRING;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -2187,9 +2188,15 @@ public class Ws_TripController {
 	public String searchJoinUserList(HttpServletRequest request) {
 		
 		String joinUserName = request.getParameter("joinUserName");
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
+		String userid = loginuser.getUserid();
+		Map<String,String> paraMap = new HashMap<>();
+		paraMap.put("joinUserName", joinUserName);
+		paraMap.put("userid", userid);
 		
 		// 공유자 명단 불러오기
-		List<MemberVO> joinUserList = service.searchJoinUserList(joinUserName);
+		List<MemberVO> joinUserList = service.searchJoinUserList(paraMap);
 
 		JSONArray jsonArr = new JSONArray();
 		if(joinUserList != null && joinUserList.size() > 0) {

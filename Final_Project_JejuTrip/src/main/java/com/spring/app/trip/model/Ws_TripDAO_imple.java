@@ -477,8 +477,8 @@ public class Ws_TripDAO_imple implements Ws_TripDAO {
 	
 	// 공유자 명단 불러오기
 	@Override
-	public List<MemberVO> searchJoinUserList(String joinUserName) {
-		List<MemberVO> mvo = sqlsession.selectList("ws_trip.searchJoinUserList",joinUserName);
+	public List<MemberVO> searchJoinUserList(Map<String, String> paraMap) {
+		List<MemberVO> mvo = sqlsession.selectList("ws_trip.searchJoinUserList",paraMap);
 		return mvo;
 	}
 	

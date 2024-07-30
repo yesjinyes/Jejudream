@@ -547,8 +547,8 @@ public class Ws_TripService_imple implements Ws_TripService {
 	
 	// 공유자 명단 불러오기
 	@Override
-	public List<MemberVO> searchJoinUserList(String joinUserName) {
-		List<MemberVO> mvo = dao.searchJoinUserList(joinUserName);
+	public List<MemberVO> searchJoinUserList(Map<String, String> paraMap) {
+		List<MemberVO> mvo = dao.searchJoinUserList(paraMap);
 		return mvo;
 	}
 	
