@@ -1,238 +1,345 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-
-<%
-String ctxPath = request.getContextPath();
-%>
-
-<%-- Bootstrap CSS --%>
-<link rel="stylesheet" href="<%= ctxPath%>/resources/bootstrap-4.6.2-dist/css/bootstrap.min.css" type="text/css">
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    pageEncoding="UTF-8"%>
+<% String ctxPath = request.getContextPath(); %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="java.net.InetAddress" %>
+<link rel="stylesheet" href="<%=ctxPath%>/resources/css/mypage/member/mypageMain.css"/>
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 
 
 <style type="text/css">
 
-.container {
-	
-	border: solid 0px red;
-    float: none;
-    width: 100%;
-    margin: 64px auto 0px;
+input#searchWordFaq {
+  height: 35px;
+  padding-left: 1%;
+  border: solid 1px gray;
+  border-radius: 5px;
+}
+
+button#btnSearch {
+  height: 35px;
+  border: solid 1px gray;
+  border-radius: 5px;
 }
 
 
-table#memberTbl {
-   width: 100%;
-   margin: 0 auto;
+
+ul.nav-tabs {
+  width: 90%;
 }
 
-table#memberTbl th, table#memberTbl td {
-   text-align: center;
-   font-size: 12pt;
+.accordion {
+  width: 90%;
+  /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
 }
 
-table#memberTbl tr.memberInfo:hover {
-   background-color: #e6ffe6;
-   cursor: pointer;
+div.accordionEach {
+  margin-bottom: 1%;
 }
 
-form[name="member_search_frm"] {
-   border: solid 0px red;
-   width: 50%;
-   margin: 0 auto 3% auto;
-   display: flex;
-   align-items: center;
+.accordion-item {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  margin-bottom: 2%;
+  overflow: hidden;
 }
 
-form[name="member_search_frm"] button.btn-secondary {
-   width: 20%;
-   height: 5%;
-   margin-left: 2%;
-   margin-right: 2%;
+.accordion-header {
+  width: 100%;
+  background-color: #fff2e6;
+  color: #333333;
+  padding: 15px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
 }
 
-div#pageBar {
-   border: solid 0px red;
-   width: 80%;
-   margin: 3% auto 0 auto;
-   display: flex;
+.accordion-header:hover {
+  background-color: #ffe5cc;
 }
 
-div#pageBar>nav {
-   margin: auto;
+.arrow {
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+  border-top-color: #333333;
+  transform: translateY(-50%);
+  transition: transform 0.3s ease;
 }
 
-.titleArea{
-    color: #1a1a1a;
-    font-size: 32px;
-    font-weight: 700;
-    text-align: center;
-    line-height: 40px;
-    text-transform: uppercase;
-    
- }
- 
- a{
-    color:black !important;
- }
- 
+/* 화살표 회전 */
+.accordion-item.active .arrow {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.accordion-content {
+  padding: 15px;
+  font-size: 14px;
+  line-height: 1.6;
+  display: none;
+}
+
+.accordion-item.active .accordion-content {
+  display: block;
+}
+
+span.faq_answer {
+  font-size: 12pt;
+}
+
+div.accordion-content {
+  padding: 2%;
+}
+
+.backgroundColor {
+    background-color: #ffe5cc;
+}
 
 </style>
 
 
+
 <script type="text/javascript">
+	
+	$(document).ready(function(){
 
+		let searchWordFaq = "";
+		
+		goViewFaqList(1,searchWordFaq); // 자주묻는질문 전체 띄우기
+		
 
-$(document).ready(function() {
+		// == 카테고리 값 띄우기 == //
+		$("a.faq_category").click(function(e) {
+			// alert($(e.target).text());
+			
+			const faq_category = $(e.target).text(); // 선택한 카테고리 값 가져오기
 
+			if(faq_category == '전체') {
+				$("input[name='faq_category']").val(""); // input 태그에 클릭된 카테고리 꽂아주기 (전체일 경우 "" 이 되고, mapper 에서 조건 주었음)
+			}
+			else {
+				$("input[name='faq_category']").val(faq_category); // input 태그에 클릭된 카테고리 꽂아주기
+			}
+			
+			goViewFaqList(1, searchWordFaq);
+			
+			$("input[name='searchWordFaq']").val(""); // 검색 후 카테고리 탭 변경 시 검색창 초기화
+			
+		});// end of $("a.faq_category").click(function(e) {})-------------------------
+		
+		
+		// == 검색하기 엔터 == //
+   		$("input[name='searchWordFaq']").bind("keyup", function(e){
+			 if(e.keyCode == 13) {
+				const searchWordFaq = $(this).val();
+				//console.log("검색어 확인 : "+ searchWordFaq);
+				
+				goViewFaqList(1, searchWordFaq);
+			} 
+		});
+		
+				
+		
+		
+	});// end of $(document).ready(function(){})-----------------------------------------
+	
+	// ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+	
+	// == 질문 아코디언 == //
+	function toggleAccordion(header) {
 
+		var content = header.nextElementSibling;
 
-
-   $("table#questioTbl tr.questioninfo").click(e=>{
-      
-      const question_seq = $(e.target).parent().children(".question_seq").text();
-   
-      const frm = document.QuestionDetail_frm;
-      frm.question_seq.value = question_seq;
-      
-      <%-- frm.action = "<%= ctxPath%>/member/memberOneDetail.up" --%>
-      frm.action = "<%= ctxPath%>/member/questionView.dk";
-      frm.method = "post";
-      frm.submit();
-   });   
-
-   
-
-});//end of ------------------------
-
-function goSearch(){
+	    // content가 숨겨져 있으면 보이게 하고, 보이는 중이면 숨기기
+	    if (content.style.display === 'block') {
+	        content.style.display = 'none';
+	    } else {
+	        content.style.display = 'block';
+	    }
+	}// end of function toggleAccordion(header)-----------------------
 	
 	
-	const searchType = $("select[name='searchType']").val();
+	///////////////////////////////////////////////////////////////////////////////////////////////
 	
-	if(searchType == ""){
-		alert("검색대상을 선택하세요!!");
-		return;//종료
-	}
+	// == 자주묻는질문 리스트 띄우기 == //
+	function goViewFaqList(currentShowPageNo, searchWordFaq){
+		searchWordFaq = $("input[name='searchWordFaq']").val();
+		// console.log("검색어 : " + searchWordFaq);
+		
+		$.ajax({
+			url:"<%= ctxPath%>/faqListJSON.trip",
+			data:{"currentShowPageNo":currentShowPageNo
+				, "faq_category":$("input[name='faq_category']").val()
+				, "searchWordFaq":searchWordFaq},
+			type:"get",
+			dataType:"json",
+			success:function(json){
+				// console.log(JSON.stringify(json));
+				
+				let v_html_faq = "";
+				
+				if(json.length > 0){
+					$.each(json, function(index, item){
+						v_html_faq += `<div class="accordionEach">
+										   <div class="accordion-header" id="accordion-header" onclick="toggleAccordion(this)">
+											   <span>Q.</span>&nbsp;&nbsp;
+						    			       <input type="hidden" name="faq_seq" value="\${item.faq_seq}" />
+								               <span class="faq_question">\${item.faq_question}</span>
+								               <span class="arrow"></span>
+								           </div>
+									       <div class="accordion-content" id="accordion-content">
+									       	   <span class="faq_answer">\${item.faq_answer}</span>
+									       </div>
+									   </div>`;
+						
+					}); // end of $.each-------------------------
+					
+					// 페이지바 함수 호출 
+				    const totalPage = Math.ceil(json[0].totalCount/json[0].sizePerPage); 
+				 	// console.log("totalPage : ", totalPage);
+				 	
+				    makeAllFaqListPageBar(currentShowPageNo, totalPage);
+				}
+				else {
+					v_html_faq += "<span style='font-size: 13pt;'>등록된 질문이 없습니다.</span>";
+				}
+				
+				$("div#faqList").html(v_html_faq);
+				
+			},
+			error: function(request, status, error){
+			   alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+			}
+			
+		});// $.ajax-----------------------------
+		
+		
+		// == 자주묻는질문 페이지바 == //
+		function makeAllFaqListPageBar(currentShowPageNo, totalPage){
+			const blockSize = 10;
+			
+			let loop = 1;
+			
+			let pageNo = Math.floor((currentShowPageNo - 1)/blockSize) * blockSize + 1;
+			
+			let pageBar_HTML = "<ul style='list-style:none;'>";
+			
+			// [맨처음][이전] 만들기
+			if(pageNo != 1) {
+				pageBar_HTML += "<li class='fist_page'><a href='javascript:goViewFaqList(1,"+searchWordFaq+")'>[맨처음]</a></li>";
+				pageBar_HTML += "<li class='before_page'><a href='javascript:goViewFaqList("+(pageNo-1)+","+searchWordFaq+")'>[이전]</a></li>"; 
+			}
+			
+			while( !(loop > blockSize || pageNo > totalPage) ) {
+				
+				if(pageNo == currentShowPageNo) {
+					pageBar_HTML += "<li class='this_page_no'>"+pageNo+"</li>";
+				}
+				else {
+					pageBar_HTML += "<li class='choice_page_no'><a href='javascript:goViewFaqList("+pageNo+",searchWordFaq)'>"+pageNo+"</a></li>"; 
+				}
+				
+				loop++;
+				pageNo++;
+			}// end of while------------------------ 
+			
+			// [다음][마지막] 만들기
+			if(pageNo <= totalPage) {
+				pageBar_HTML += "<li class='next_page_no'><a href='javascript:goViewFaqList("+pageNo+","+searchWordFaq+")'>[다음]</a></li>";
+				pageBar_HTML += "<li class='last_page_no'><a href='javascript:goViewFaqList("+totalPage+","+searchWordFaq+")'>[마지막]</a></li>"; 
+			}
+			
+			pageBar_HTML += "</ul>";		
+			
+			// 페이지바 출력하기
+			$("div#faqList_pageBar").html(pageBar_HTML);
+		}
+		
+	}// end of function goViewFaqList(currentShowPageNo)-------------------------
 	
-	const frm = document.member_search_frm; //회원을 찾는 폼
-	// frm.action = "memberList.up";
-	// form 태그에 action 이 명기되지 않았으면 현재보이는 URL 경로로 submit 되어진다.
-	// frm.method = "get";
-	// form 태그에 method 를 명기하지 않으면 "get" 방식이다.
-	frm.submit();
+	///////////////////////////////////////////////////////////////////////////////////////////////
+
+ 	// == 검색하기 == //
+	function goSearch() {
+		const searchWordFaq = $("input[name='searchWordFaq']").val();
+		// console.log("검색어 확인 : " + searchWordFaq);
+		
+		goViewFaqList(1, searchWordFaq);
+	}// end of function goSearch()--------------------
 	
-}//end of function goSearch()-----------------	
-
-
-
-   
+	
+	
 </script>
 
 
-
-
-
-<div class="container">
-   <h2 class="titleArea ">
-      <font face="Arial">1:1문의</font>
-   </h2>
+<div class="body">
    
-   <br> &nbsp;
-   
-   <div style="display:flex;justify-content:flex-end;">
-      <button type="button" class="btn" style="background-color: #ff8000; font-weight: bold; color:#fff;" onclick="" >문의사항등록</button>
-   </div>
-      
-   &nbsp;
-   <table class="table table-hover" id="questioTbl">
-      <thead>
-         <tr>
-            <th>번호</th>
-            <th>제목</th>
-            <th>작성일</th>
-            <th>작성자</th>
-            <th>답변</th>
-         </tr>
-      </thead>
-
-         <tbody>
-            <c:if test="${not empty requestScope.questionList}" >
-               <c:forEach var="question" items="${requestScope.questionList}" varStatus="status">
-                  <c:if test="${sessionScope.loginuser.id == question.id || sessionScope.loginuser.id == 'admin'}" >
-                     <tr class="questioninfo" >
-                     	<fmt:parseNumber var="currentPage" value="${requestScope.currentPage}"/>
-          				<fmt:parseNumber var="blockSize" value="${requestScope.blockSize}"/>
-          				
-          				<td>${(requestScope.totalQuestionCount) -( currentPage - 1 ) * blockSize-(status.index)}</td>
-                        <td class="question_seq" style="display:none;">${question.question_seq}</td>  <%--번호--%>    
-                        <td>${question.title}</td>                          						  <%--제목 --%>
-                        <td>${question.ragisterdate}</td>                   		                  <%--작성일 --%>
-                        <td>${question.id}</td>                        				                  <%--작성자 --%>
-                        <td>
-                           <c:choose>
-                               <c:when test="${question.hasAnswer}">
-                                   답변완료
-                               </c:when>
-                               <c:otherwise>
-                                   미답변
-                               </c:otherwise>
-                           </c:choose>
-                        </td>
-                     </tr>
-                  </c:if>
-               </c:forEach>
-            </c:if>
-            
-            <c:if test="${empty requestScope.questionList}">
-                   <td colspan="5">검색 결과가 없습니다.</td>
-               </c:if>
-      </tbody>
-         
-
-   </table>
-
-   &nbsp;
-   <c:if test="${sessionScope.loginuser.id == 'admin'}">
-   <form class="text-center mb-5 " name="member_search_frm" style="align-items: baseline;">
-      <select name="searchType1" style="height: 41px;">
-         <option value="">전체</option>
-         <option value="noAnswer">미답변</option>
-         <option value="yesAnswer">답변완료</option>
-      </select> &nbsp;
-
-      <select name="searchType2" style="height: 41px;">
-         
-         <option value="">전체</option>
-         <option value="id">아이디</option>
-      </select> &nbsp; 
-      
-      <input type="text" name="searchWord" style="height: 40px; text-transform: none !important;"  />
-      <input type="text"style="display: none;" />
-         
-
-      <button type="button" class="btn btn-secondary" onclick="goSearch()">찾기</button>
-   </form>
-	</c:if>
+ 	<form class="reservationFrm" name="reservationFrm">
+		
+		<div class="faq_header">
+			<div>
+				<h2 style="margin-bottom: 3%; font-weight: bold;">자주 묻는 질문</h2>
+				<p>고객님들이 제주드림 상품 및 서비스에 대해 자주 문의하는 내용입니다.<br>원하는 내용을 찾지 못하실 경우 <span style="color: orange;">웹채팅</span>으로 문의해 주시면 친절하게 안내해 드리겠습니다.
+			</div>
+			
+			<!-- 검색창 -->
+			<div style="margin-top: 5%;">
+				<span>
+					<input type="text" name="searchWordFaq" id="searchWordFaq" placeholder="검색어를 입력하세요.">
+					<input type="text" style="display: none;">
+	                <button type="button" id="btnSearch" title="검색" onclick="goSearch()">검색</button>
+				</span>
+			</div>
+		</div>
+		
+		<div class="faq_content" style="margin-top: 5%;">
+			
+			<!-- FAQ 카테고리 navigation bar -->
+			<ul class="nav nav-tabs">
+				<li class="nav-item">
+					<a class="nav-link active faq_category" data-toggle="tab" href="#faqList">전체</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link faq_category" data-toggle="tab" href=#faqList>예약</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link faq_category" data-toggle="tab" href="#faqList">카드/결제</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link faq_category" data-toggle="tab" href="#faqList">숙소</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link faq_category" data-toggle="tab" href="#faqList">맛집</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link faq_category" data-toggle="tab" href="#faqList">즐길거리</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link faq_category" data-toggle="tab" href="#faqList">기타</a>
+				</li>
+			</ul>
+			
+			<!-- FAQ 질문, 답변 리스트 -->
+			<div class="tab-content" style="border: none;"><br>
+				<div class="accordion">
+				    <div class="accordion-item" id="accordion-item">
+				    	<div id="faqList">
+				    	
+				    	</div>
+				    </div>
+				</div>
+			</div>
+			<div id="faqList_pageBar" class="pageBar"></div>
+			<input type="hidden" name="faq_category"/>
+			
+		</div>
+	</form>
 
 
-   <div id="pageBar">
-       <nav>
-          <ul class="pagination">${requestScope.pageBar}</ul>
-       </nav>
-    </div>
 </div>
-
-<form name="QuestionDetail_frm">
-   <input type="hidden" name="question_seq"/> <%--한명의 회원을 넘겨주기위해--%>
-   <input type="hidden" name="goBackURL" value="${requestScope.currentURL}" /> <%--한명의 회원을 넘겨주기위해--%>
-</form>
-
-
-
-
