@@ -10,6 +10,12 @@
 
 <style type="text/css">
 
+button#btnRegisterFaq {
+  
+}
+
+
+
 input#searchWordFaq {
   height: 35px;
   padding-left: 1%;
@@ -47,6 +53,7 @@ div.accordionEach {
 }
 
 .accordion-header {
+  display: flex;
   width: 100%;
   background-color: #fff2e6;
   color: #333333;
@@ -188,15 +195,23 @@ div.accordion-content {
 					$.each(json, function(index, item){
 						v_html_faq += `<div class="accordionEach">
 										   <div class="accordion-header" id="accordion-header" onclick="toggleAccordion(this)">
-											   <span>Q.</span>&nbsp;&nbsp;
-						    			       <input type="hidden" name="faq_seq" value="\${item.faq_seq}" />
-								               <span class="faq_question">\${item.faq_question}</span>
-								               <span class="arrow"></span>
+											   <div style="width: 80%;">
+												   <span>Q.</span>&nbsp;&nbsp;
+							    			       <input type="hidden" name="faq_seq" value="\${item.faq_seq}" />
+									               <span class="faq_question">\${item.faq_question}</span>
+											   </div>
+											   <div style="width: 17%;">
+											   	   <button type="button" id="btnEditFaq">수정</button>
+										       	   <button type="button" id="btnDeleteFaq">삭제</button>
+								               </div>
+											   <div class="justify-content-right" style="width: 3%;">
+								               	   <span class="arrow"></span>
+								               </div>
 								           </div>
 									       <div class="accordion-content" id="accordion-content">
 									       	   <span class="faq_answer">\${item.faq_answer}</span>
 									       </div>
-									   </div>`;
+									   </div>`; 
 						
 					}); // end of $.each-------------------------
 					
@@ -299,10 +314,16 @@ div.accordion-content {
  	<form class="reservationFrm" name="reservationFrm">
 		
 		<div class="faq_header">
-			<div>
-				<h2 style="margin-bottom: 3%; font-weight: bold;">자주 묻는 질문</h2>
-				<p>고객님들이 제주드림 상품 및 서비스에 대해 자주 문의하는 내용입니다.<br>원하는 내용을 찾지 못하실 경우 <span style="color: orange;">웹채팅</span>으로 문의해 주시면 친절하게 안내해 드리겠습니다.
+			<div class="row">
+				<div class="col-md-9">
+					<h2 style="margin-bottom: 3%; font-weight: bold;">자주 묻는 질문</h2>
+					<p>고객님들이 제주드림 상품 및 서비스에 대해 자주 문의하는 내용입니다.<br>원하는 내용을 찾지 못하실 경우 <span style="color: orange;">웹채팅</span>으로 문의해 주시면 친절하게 안내해 드리겠습니다.
+				</div>
+				<div class="col-md-3">
+					<button type="button" id="btnRegisterFaq">질문등록</button>
+				</div>
 			</div>
+		
 			
 			<!-- 검색창 -->
 			<div style="margin-top: 5%;">

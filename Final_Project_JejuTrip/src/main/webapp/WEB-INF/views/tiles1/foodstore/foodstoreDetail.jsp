@@ -406,7 +406,7 @@ span.plusUser{
 				location.href = "login.trip";
 				
 				return; // 종료
-			}
+			} 
 			else{
 				//로그인을 한 경우라면
 				$.ajax({
