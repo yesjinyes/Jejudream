@@ -111,7 +111,7 @@ div.main_hotel > div.jeju_resort {
 }
 
 div.main_hotel > div.jeju_resort > div:nth-child(4) {
-    background-color: #b4ff96;
+    background-color: #9ff596;
     color:white;
     text-align: center;
     padding-top: 85px;
@@ -147,7 +147,7 @@ div.main_hotel > div.jeju_airbnb > div:nth-child(1) {
     background-color: #96b7ff;
     color:white;
     text-align: center;
-    padding-top: 85px;
+    padding-top: 40px;
     font-size: 40pt;
     width:250px;
     height:250px;

@@ -100,7 +100,6 @@ $(document).ready(function(){
 		  $("select#searchType").val("${requestScope.paraMap.searchType}");
 		  $("input#searchWord").val("${requestScope.paraMap.searchWord}");
 		  $("select#sizePerPage").val("${requestScope.paraMap.str_sizePerPage}");
-		  $("select#fk_lgcatgono").val("${requestScope.paraMap.fk_lgcatgono}");
 	}
 	 
 }); // end of $(document).ready(function(){}-------------
@@ -196,10 +195,6 @@ function goSearch(){
 				<div>
 					<input type="text" id="fromDate" name="startdate" style="width: 90px;" readonly="readonly">&nbsp;&nbsp; 
 	            -&nbsp;&nbsp; <input type="text" id="toDate" name="enddate" style="width: 90px;" readonly="readonly">&nbsp;&nbsp;
-	            	<select id="fk_lgcatgono" name="fk_lgcatgono" style="height: 30px;">
-						<option value="">모든캘린더</option>
-						<option value="1">내 캘린더</option>
-					</select>&nbsp;&nbsp;	
 					<select id="searchType" name="searchType" style="height: 30px;">
 						<option value="">검색대상선택</option>
 						<option value="subject">제목</option>
