@@ -58,7 +58,7 @@ public class Yj_TripController {
 	
 	
 	
-	// == 맛집 리스트 페이지 (Ajax 처리) == //
+	// == 맛집 리스트 페이지 띄우기 == //
 	@ResponseBody
 	@GetMapping(value="foodstoreListJSON.trip", produces="text/plain;charset=UTF-8")
 	public String foodstoreListJSON(HttpServletRequest request,
@@ -301,6 +301,13 @@ public class Yj_TripController {
 	@ResponseBody
 	@PostMapping(value =("foodLike.trip"),produces="text/plain;charset=UTF-8")
 	 public String foodLike(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
+		
+		if(loginuser == null) {
+			
+		}
 		
 		String parent_code = request.getParameter("parent_code");
 		String fk_userid = request.getParameter("fk_userid");

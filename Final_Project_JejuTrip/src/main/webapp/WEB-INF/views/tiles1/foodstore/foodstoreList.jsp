@@ -297,10 +297,11 @@ span#data {
 			data:form,
 			dataType:"json",
 			success:function(json) {
-				console.log("json 확인" +JSON.stringify(json));
+				console.log(JSON.stringify(json));
 				
 				let v_html_main = ``;
 				let v_html_side = ``;
+				let isexist = false; // 리스트에 내용이 없을 경우에  '관련 데이터가 없습니다.' 라고 띄우기 위함
 				
 				if(json.length > 0) {
 				
@@ -322,8 +323,8 @@ span#data {
 										                <span>\${item.food_address}</span>
 										            </div>
 										        </div>
-										       <!-- <input type="text" name="readcount" value="\${item.readcount}" /> -->
 										    </div>`;
+							isexist = true;
 						}
 						
 						// 맛집 랜덤 추천
@@ -341,18 +342,15 @@ span#data {
 						
 					});// end of json.forEach------------------------
 					
-					// console.log("json[0].sizePerPage" , json[0].sizePerPage);
-		        	// console.log("json[0].totalCount" , json[0].totalCount);
-		        	// console.log("json[0].currentShowPageNo" , Number(json[0].currentShowPageNo));
-		        	
 		        	const totalPage = Math.ceil(json[0].totalCount / json[0].sizePerPage);
 			        PageBar(Number(currentShowPageNo), totalPage);
+			        
+			        if(!isexist) { // 리스트에 띄울 내용이 없을 경우
+						v_html_main = "<div style='width: 100%; margin-top: 3%;'><span style='font-size: 15pt; font-weight: 500; margin-left: 4%;'>관련 데이터가 없습니다.</span></div>";
+						$("div#pageBar").html("");
+					}
 				}
-				
-			 	else {
-					v_html = "<span>관련 데이터가 없습니다.</span>";
-				}	 
-					
+			
 				$("div#storeList").html(v_html_main);
 				$("div#side").html(v_html_side);
 			},

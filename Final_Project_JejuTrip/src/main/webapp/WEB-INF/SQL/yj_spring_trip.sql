@@ -469,7 +469,12 @@ select * from user_tables;
 select * from TBL_CALENDAR_SCHEDULE
 order by scheduleno desc
 
-delete from TBL_CALENDAR_SCHEDULE where scheduleno = '78'
+
+desc TBL_CALENDAR_SCHEDULE
+
+delete from TBL_CALENDAR_SCHEDULE where FK_SMCATGONO = '2'
+
 
 commit;
+
 
