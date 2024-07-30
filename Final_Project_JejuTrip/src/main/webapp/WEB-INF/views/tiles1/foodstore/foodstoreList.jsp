@@ -312,7 +312,7 @@ span#data {
 												<div class="imgMainList">
 										            <img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodimg/\${item.food_main_img}" onclick="goDetail(\${item.food_store_code})" style="cursor: pointer;" alt="..." />
 									        	</div>
-										        <div class="contentList">
+										        <div class="contentList" onclick="goDetail(\${item.food_store_code})" style="cursor: pointer;">
 										            <div class="mb-3">
 										            	<h3 class="pt-3 title"><a href="<%= ctxPath %>/foodstoreDetail.trip?food_store_code=\${item.food_store_code}">\${item.food_name}</a></h3>
 										            	<span>\${item.food_content}</span>
@@ -332,7 +332,7 @@ span#data {
 											    <div class="recommend-img">
 										            <img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodimg/\${item.food_main_img}" onclick="goDetailRecommend(\${item.random_recommend_code})" style="cursor: pointer;" alt="..." />
 										        </div>
-										        <div class="mt-2">
+										        <div class="mt-2" onclick="goDetailRecommend(\${item.random_recommend_code})" style="cursor: pointer;">
 										        	<span>\${item.food_name}</span><br>
 										        	<span style="color: #808080;">\${item.food_content}</span>
 										        </div>
