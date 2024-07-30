@@ -2312,6 +2312,9 @@ public class Ws_TripController {
 			newChattingCnt = service.get_new_chatting(loginCompanyuser.getCompanyid());// 로그인을 하고 메인에 들어갔을 때 새로 온 채팅이 있는지 확인해준다.
 			mav.addObject("newChattingCnt",newChattingCnt);
 		}
+		else {
+			mav.setViewName("mypage/support.tiles1");
+		}
 		
 		return mav;
 		

@@ -166,7 +166,7 @@ public class Hs_TripController {
 			
 			int sizePerPage = 6; //한페이지당 6개의 글 보여주기
 		    
-		    Map<String,Object> paraMap = new HashMap<>();
+		    Map<String,Object> playParaMap = new HashMap<>();
 		    
 		    if("".equals(currentShowPageNo) || currentShowPageNo == null) {
 		    	currentShowPageNo="1";
@@ -178,26 +178,29 @@ public class Hs_TripController {
 		    int startRno = ((Integer.parseInt(currentShowPageNo)- 1) * sizePerPage) + 1; // 시작 행번호 
 		    int endRno = startRno + sizePerPage - 1; // 끝 행번호
 		    
-		    paraMap.put("startRno",String.valueOf(startRno) );
-		    paraMap.put("endRno",String.valueOf(endRno));
+		    playParaMap.put("startRno",String.valueOf(startRno) );
+		    playParaMap.put("endRno",String.valueOf(endRno));
 		     
 		   
 		    if(!"".equals(category)) { 
-		    	paraMap.put("category", category);
+		    	playParaMap.put("category", category);
 		    }
 		    if(!"".equals(str_local)) {
 				String[] arr_local_status = str_local.trim().split("\\,"); // in 절을 사용하기 위해서는 배열로 만든 후 넘겨줘야한다
 				
-				paraMap.put("arr_local_status",arr_local_status);
+				playParaMap.put("arr_local_status",arr_local_status);
 			} 
-		    paraMap.put("currentShowPageNo", currentShowPageNo);
-		    paraMap.put("searchWord", searchWord); 
+		    playParaMap.put("currentShowPageNo", currentShowPageNo);
+		    playParaMap.put("searchWord", searchWord); 
 		    
 		    //전체개수
-		    int totalCount = service.getPlayTotalCount(paraMap);
+		    int totalCount = service.getPlayTotalCount(playParaMap);
 		    //System.out.println("totalCount"+totalCount);
 		    //조건에 맞는 리트 가져오기
-			List<PlayVO> playList=service.getPlayListByCategory(paraMap);
+		    
+		    
+		    
+			List<PlayVO> playList=service.getPlayListByCategory(playParaMap);
 			
 			JSONArray jsonArr = new JSONArray();
 			if(playList != null) {
@@ -211,6 +214,13 @@ public class Hs_TripController {
 					jsonObj.put("play_address",playvo.getPlay_address() ); 
 					jsonObj.put("play_main_img",playvo.getPlay_main_img() ); 
 					jsonObj.put("play_code",playvo.getPlay_code() ); 
+					
+					// 좋아요 개수를 추가하기 위해 paraMap에 play_code 추가
+		            Map<String, String> paraMap = new HashMap<>();
+		            paraMap.put("parent_code", playvo.getPlay_code());
+		            int likeCount = service.countLike(paraMap); // countLike 메소드 호출
+		            jsonObj.put("likeCount", likeCount); // 좋아요 개수 추가
+
 					
 					jsonObj.put("totalCount", totalCount); //총 페이지 
 	            	jsonObj.put("sizePerPage", sizePerPage); //한페이지당 보여줄 개수
@@ -585,7 +595,7 @@ public class Hs_TripController {
 		
 		
 		@ResponseBody
-		@GetMapping(value =("countLike.trip"),produces="text/plain;charset=UTF-8")
+		@GetMapping(value ="countLike.trip",produces="text/plain;charset=UTF-8")
 		 public String countLike(HttpServletRequest request, HttpServletResponse response) throws Exception {
 			
 			String parent_code = request.getParameter("parent_code");

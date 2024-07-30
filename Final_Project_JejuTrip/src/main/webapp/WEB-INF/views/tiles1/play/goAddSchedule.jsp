@@ -130,8 +130,7 @@ label{
 }
 
 .imgPlay{
-width: 500px;
-height: 500px;
+width: 70%;
 border-radius: 2%;
 }
 
@@ -943,34 +942,7 @@ function goLikeDislikeCount(){ // 좋아요, 싫어요 갯수를 보여주도록
 
 
 //-----------------------------------------------------------------------
-<%-- 
-function goCheckSchedule(){ // 일정추가를 했는지 알아오는것
-	$.ajax({
-        url: "<%= ctxPath %>/checkSchedule.trip",
-        data: {"parent_code": "${requestScope.playvo.play_code}",
-	           "fk_userid": "${sessionScope.loginuser.userid}" },
-        dataType: "json",
-        success: function(json) {
-            if (json.calcheck) {
-            	$("p#addScheduletitle").text("일정 확인하러가기");
-                $("#addSchedule_btn").hide();
-                $("#checkSchedule_btn").show();
-                
-            } else {
-            	$("p#addScheduletitle").text("일정 추가");
-                $("#addSchedule_btn").show();
-                $("#checkSchedule_btn").hide();
-                
-                
-                
-            }
-        },
-        error: function(request, status, error) {
-            alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
-        }
-    });
-	
-}//end of function goCheckSchedule() --%>
+
 
 function goScheduleAdd(){
 	
@@ -1039,9 +1011,6 @@ function goDelete() {
 					<button type="button" class="iconbtn addSchedule" id ="addSchedule_btn" onclick="goScheduleAdd()">
 							<img class="icon" id="calender" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_calender.png">
 					</button>
-					<%-- <button type="button" class="iconbtn addSchedule" id ="checkSchedule_btn" onclick="#">
-							<img class="icon" id="calenderUp" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_calenderUp.png">
-					</button> --%>
 					<p class="icon-title" id="addScheduletitle">일정추가</p>
 				</div>
 			</li>
@@ -1053,12 +1022,12 @@ function goDelete() {
         <h5>[ ${requestScope.playvo.play_category} ]</h5><br>
     </div>
     
-    <div style="display: flex; justify-content:space-between;">
-    	<div>
-     	<img style="margin-left: 5%" class="imgPlay" src="<%= ctxPath %>/resources/images/play/${requestScope.playvo.play_main_img}">
-     </div>
+    <div style="display: flex;">
+    	<div class="col-lg-7">
+     		<img style="margin-left: 5%; height: 500px;" class="imgPlay" src="<%= ctxPath %>/resources/images/play/${requestScope.playvo.play_main_img}">
+     	</div>
      
-    	<div style="text-align: left; font-size: 20px; width: 500px;">
+    	<div class="col-lg-5" style="font-size: 20px;">
     		<span>${requestScope.playvo.play_content}</span> <br><br>
     		<span>운영시간 : </span>
     		<span>${requestScope.playvo.play_businesshours}</span> <br><br>
@@ -1179,11 +1148,11 @@ function goDelete() {
 		        
 		      </div>
 		      
-		      <input type="hidden" name="fk_userid" value="${sessionScope.loginuser.userid}"><!--이거 hidden 으로 바꾸기 -->
-	      	  <input type="hidden" name="parent_code" value="${requestScope.playvo.play_code}"><!--이거 hidden 으로 바꾸기 -->
-	      	  <input type="hidden" name="review_division" value="${requestScope.playvo.review_division}"><!--이거 hidden 으로 바꾸기 -->
-	      	  <input type="hidden" name="subject" value="${requestScope.playvo.play_name}"><!--이거 hidden 으로 바꾸기 -->
-	      	  <input type="hidden" name="place" value="${requestScope.playvo.play_address}"><!--이거 hidden 으로 바꾸기 -->
+		      <input type="hidden" name="fk_userid" value="${sessionScope.loginuser.userid}">
+	      	  <input type="hidden" name="parent_code" value="${requestScope.playvo.play_code}">
+	      	  <input type="hidden" name="review_division" value="${requestScope.playvo.review_division}">
+	      	  <input type="hidden" name="subject" value="${requestScope.playvo.play_name}">
+	      	  <input type="hidden" name="place" value="${requestScope.playvo.play_address}">
 		      
 		      <!-- Modal footer -->
 		      <div class="modal-footer">
