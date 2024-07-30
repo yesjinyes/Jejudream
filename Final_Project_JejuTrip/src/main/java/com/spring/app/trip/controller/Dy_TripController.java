@@ -45,11 +45,9 @@ import com.spring.app.trip.domain.BoardVO;
 import com.spring.app.trip.domain.CommentVO;
 import com.spring.app.trip.domain.CompanyVO;
 import com.spring.app.trip.domain.FoodstoreVO;
-import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.domain.PlayVO;
 import com.spring.app.trip.service.Dy_TripService;
-import com.spring.app.trip.service.Ws_TripService;
 
 @Controller
 public class Dy_TripController {
@@ -548,7 +546,7 @@ public class Dy_TripController {
         
         
 		
-		// !!!! 크로스 사이트 스크립트 공격에 대응하는 안전한 코드(시큐어코드) 작성하기 !!!!
+		// !!!! XSS 공격 막기 !!!!
 		String food_content = fvo.getFood_content();
 		food_content = food_content.replaceAll("<", "&lt");
 		food_content = food_content.replaceAll(">", "&gt");
@@ -2128,6 +2126,11 @@ public class Dy_TripController {
 		
 		String searchWord = request.getParameter("headerSearchWord");
 		
+		// === XSS 공격 막기 ===
+		searchWord = searchWord.replaceAll("<", "&lt");
+		searchWord = searchWord.replaceAll(">", "&gt");
+		searchWord = searchWord.replaceAll("\r\n", "<br>"); // 입력한 내용에서 엔터는 <br>로 변환하기
+		
 		List<Map<String, String>> lodgingList = service.searchLodgingList(searchWord);
 		List<FoodstoreVO> foodstoreList = service.searchFoodstoreList(searchWord);
 		List<PlayVO> playList = service.searchPlayList(searchWord);
@@ -2172,7 +2175,7 @@ public class Dy_TripController {
 	public String allSearchShow(HttpServletRequest request) {
 		
 		String searchWord = request.getParameter("searchWord");
-
+		
 		List<Map<String, String>> lodgingList = service.searchLodgingList(searchWord);
 		List<FoodstoreVO> foodstoreList = service.searchFoodstoreList(searchWord);
 		List<PlayVO> playList = service.searchPlayList(searchWord);

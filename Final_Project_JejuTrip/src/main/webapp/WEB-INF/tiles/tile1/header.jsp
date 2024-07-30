@@ -90,6 +90,9 @@ div#displayList::-webkit-scrollbar-track {
     background-color: #e6e6e6;
   }
 
+div.resultDiv:hover {
+	background-color: #e6e6e6;
+}
 </style>
 
 <script type="text/javascript">
@@ -156,7 +159,7 @@ $(document).ready(function() {
 							
 							const result = word.substring(0, idx) + "<span style='color: #ff7433; font-weight: bold;'>" + word.substring(idx, idx+len) + "</span>" + word.substring(idx+len);
 							
-							v_html += `<span style="color: #808080; cursor:pointer; margin-bottom: 5%;" class="result">\${result}</span><br>`;
+							v_html += `<div class="resultDiv"><span style="color: #808080; cursor:pointer; margin-bottom: 5%;" class="result">\${result}</span></div>`;
 							
 						}); // end of $.each() ----------------------------------------------------
 						

@@ -183,9 +183,9 @@ $(function () {
 
         const mobile = $(e.target).val().trim();
 
-        const regExp_mobile = new RegExp(/^01[016789]{1}[0-9]{3,4}[0-9]{4}$/);
+        const regExp_mobile = new RegExp(/^0[0-9]{2}[0-9]{3,4}[0-9]{4}$/);
         const bool = regExp_mobile.test(mobile);
-
+		
         if(mobile == "") {
             $(e.target).addClass("input_error");
             $(e.target).next().show();

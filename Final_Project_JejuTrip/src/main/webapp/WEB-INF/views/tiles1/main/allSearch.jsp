@@ -120,7 +120,8 @@ $(document).ready(function () {
 
 <div class="container" style="width: 70%; margin: 0 auto;">
 	<div class="mt-5 mb-5">
-		<div style="margin-bottom: 7%;">
+		<div class="d-flex align-items-end" style="margin-bottom: 7%;">
+			<img src="<%=ctxPath%>/resources/images/logo.png" height="70" class="mr-2">
 			<span style="font-size: 1.5rem;"><span class="font-weight-bold">'${requestScope.searchWord}'</span> 검색결과</span>
 			&nbsp;&nbsp;<span class="font-weight-bold" style="font-size: 1.2rem; color: #ff7433;">${requestScope.allCount}개</span>
 		</div>
