@@ -260,6 +260,12 @@ public class Ws_TripController {
 		String detail_address = mrequest.getParameter("detail_address");
 		
 		lodgingvo.setLodging_address(address + " " + detail_address);
+		String content = lodgingvo.getLodging_content();
+		content = content.replaceAll("<", "&lt");
+		content = content.replaceAll(">", "&gt");
+		content = content.replaceAll("\r\n", "<br>");
+		
+		lodgingvo.setLodging_content(content);
 		
 		HttpSession session = mrequest.getSession();
 		CompanyVO loginuser = (CompanyVO)session.getAttribute("loginCompanyuser");
