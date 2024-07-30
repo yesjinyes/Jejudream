@@ -435,7 +435,6 @@
 				dataType: "json",
 				success: function(json) {
 					if(json.n == 1) {
-						alert("글이 삭제되었습니다.");
 						
 						if(${requestScope.boardvo.category} == 1) {
 							location.href = "<%=ctxPath%>/community/freeBoard.trip";
@@ -450,6 +449,10 @@
 							location.href = "<%=ctxPath%>/community/foodBoard.trip";
 							
 						}
+						
+					} else {
+						alert("글 삭제 실패");
+						history.back();
 					}
 				},
 				error: function(request, status, error){

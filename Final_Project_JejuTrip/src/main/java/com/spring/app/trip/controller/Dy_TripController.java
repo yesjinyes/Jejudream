@@ -1069,7 +1069,25 @@ public class Dy_TripController {
 		
 		if(n == 1) {
 			mav.addObject("message", "글 등록이 성공되었습니다.");
-			mav.addObject("loc", mrequest.getContextPath() + "/communityMain.trip");
+			
+			switch (boardvo.getCategory()) {
+			case "1":
+				mav.addObject("loc", mrequest.getContextPath() + "/community/freeBoard.trip");
+				break;
+				
+			case "2":
+				mav.addObject("loc", mrequest.getContextPath() + "/community/lodgingBoard.trip");
+				break;
+				
+			case "3":
+				mav.addObject("loc", mrequest.getContextPath() + "/community/playBoard.trip");
+				break;
+				
+			case "4":
+				mav.addObject("loc", mrequest.getContextPath() + "/community/foodBoard.trip");
+				break;
+
+			} // end of switch() -------------------------------
 			
 		} else {
 			mav.addObject("message", "글 등록에 실패하였습니다.\\n메인 페이지로 돌아갑니다.");
