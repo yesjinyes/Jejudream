@@ -308,6 +308,11 @@
 	 	// 댓글의 '답글' 버튼 클릭 시 댓글 작성창 추가
 	    $(document).on("click", ".reply-btn", function() {
 	    	
+	    	if(${empty sessionScope.loginuser}) {
+	    		alert("댓글 작성은 로그인 후 이용해주세요!");
+	    		return;
+	    	}
+	    	
 	        // 클릭된 '답글' 버튼의 부모 요소를 찾음
 	        const replyAreaDiv = $(this).closest('.comment').find('.reply-area');
 	        
