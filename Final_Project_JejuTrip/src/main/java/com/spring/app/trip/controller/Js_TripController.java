@@ -240,7 +240,9 @@ public class Js_TripController {
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		
-		
+		sdf.setLenient(false);
+	    // false 로 해주어야만 입력한 값을 날짜 타입으로 변경할때 날짜로 되지 못하는 값일 경우 오류가 발생한다.
+	    // 날짜로 파싱될 때 허술하게 하지 말고 엄격하게 하라고 설정해주는 것이라고 생각하면 된다. 
 		if(!"".equals(detail_check_in) && !"".equals(detail_check_out)) {
 			
 			
@@ -840,6 +842,13 @@ public class Js_TripController {
 		
 		if(review_code !=null && content !=null) {
 			
+			// !!!! 크로스 사이트 스크립트 공격에 대응하는 안전한 코드(시큐어코드) 작성하기 !!!!
+			content = content.replaceAll("<", "&lt");
+			content = content.replaceAll(">", "&gt");
+
+	        // 입력한 내용에서 엔터는 <br>로 변환하기
+			content = content.replaceAll("\r\n", "<br>");
+	       
 			paraMap.put("review_code", review_code);
 			paraMap.put("content", content);
 			
@@ -892,6 +901,18 @@ public class Js_TripController {
 		System.out.println("review_content = "+rvo.getReview_content());
 		System.out.println("review_division_R = "+rvo.getReview_division_R());
 		*/
+		
+		
+		// !!!! 크로스 사이트 스크립트 공격에 대응하는 안전한 코드(시큐어코드) 작성하기 !!!!
+		String content = rvo.getReview_content();
+		
+		content = content.replaceAll("<", "&lt");
+		content = content.replaceAll(">", "&gt");
+
+        // 입력한 내용에서 엔터는 <br>로 변환하기
+		content = content.replaceAll("\r\n", "<br>");
+		
+		rvo.setReview_content(content);
 		
 		// 숙소 리뷰 작성하기
 		n = service.addLodgingReview(rvo);
@@ -1514,6 +1535,17 @@ public class Js_TripController {
 	            e.printStackTrace();
 	         }   
 		}
+		
+		// !!!! 크로스 사이트 스크립트 공격에 대응하는 안전한 코드(시큐어코드) 작성하기 !!!!
+		String content = lvo.getLodging_content();
+		
+		content = content.replaceAll("<", "&lt");
+		content = content.replaceAll(">", "&gt");
+
+        // 입력한 내용에서 엔터는 <br>로 변환하기
+		content = content.replaceAll("\r\n", "<br>");
+		
+		lvo.setLodging_content(content);
 
 		
 		lvo.setLodging_address((address + " " + detail_address).trim());

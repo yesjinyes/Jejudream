@@ -1556,5 +1556,36 @@ WHERE A.max_person >= 2
     from tbl_calendar_schedule;
     select *
     from tbl_food_store;
+    select *
+    from tbl_company;
 
     desc tbl_festival;
+    
+    select *
+    from tbl_room_detail
+    where fk_lodging_code = 5161
+    
+    
+    update tbl_room_detail set room_name = '주니어 스위트 트윈+이디 조식 2인' ,room_img = '5161_주니어 스위트 트윈+이디 조식 2인.jpg'
+    where room_detail_code = 386
+    
+    update tbl_room_detail set room_name = '클래식 스위트 트윈+이디 조식 2인' ,room_img = '5161_주니어 스위트 트윈+이디 조식 2인.jpg'
+    where room_detail_code = 387
+    
+    
+    
+    select *
+    from tbl_review
+    where parent_code in (select lodging_code from tbl_lodging where fk_companyid = 'jejuceo');
+    
+    select *
+    from tbl_lodging
+    where fk_companyid = 'jejuceo';
+    
+    select *
+    from tbl_lodging
+    where status =0;
+    
+    delete from tbl_lodging where lodging_code = 5573;
+    commit;
+    
