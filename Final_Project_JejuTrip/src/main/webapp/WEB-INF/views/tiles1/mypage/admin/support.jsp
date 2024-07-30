@@ -11,10 +11,32 @@
 <style type="text/css">
 
 button#btnRegisterFaq {
-  
+  margin-right: 10%;
 }
 
+select#category-selectbox {
+  display: block;
+  width: 80%;
+  height: 50px;
+  border-radius: 8px;
+  border: solid 1px rgba(15, 19, 42, .1);
+  padding: 0 0 0 15px;
+  font-size: 16px;
+  color: gray;
+}
 
+.input_error {
+  border: solid 1px red !important;
+}
+
+textarea.register-input {
+  height: 100px;
+}
+
+div.form-group > label {
+  font-size: 14pt;
+  margin-left: 1%;
+}
 
 input#searchWordFaq {
   height: 35px;
@@ -29,15 +51,12 @@ button#btnSearch {
   border-radius: 5px;
 }
 
-
-
 ul.nav-tabs {
   width: 90%;
 }
 
 .accordion {
   width: 90%;
-  /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
 }
 
 div.accordionEach {
@@ -80,6 +99,7 @@ div.accordionEach {
   transition: transform 0.3s ease;
 }
 
+
 /* 화살표 회전 */
 .accordion-item.active .arrow {
   transform: translateY(-50%) rotate(180deg);
@@ -120,10 +140,8 @@ div.accordion-content {
 		
 		goViewFaqList(1,searchWordFaq); // 자주묻는질문 전체 띄우기
 		
-
 		// == 카테고리 값 띄우기 == //
 		$("a.faq_category").click(function(e) {
-			// alert($(e.target).text());
 			
 			const faq_category = $(e.target).text(); // 선택한 카테고리 값 가져오기
 
@@ -145,18 +163,22 @@ div.accordion-content {
    		$("input[name='searchWordFaq']").bind("keyup", function(e){
 			 if(e.keyCode == 13) {
 				const searchWordFaq = $(this).val();
-				//console.log("검색어 확인 : "+ searchWordFaq);
-				
 				goViewFaqList(1, searchWordFaq);
 			} 
 		});
 		
-				
+		
+		// == 일정등록 버튼 클릭 시 모달 띄우기 == //
+		$("button#btnRegisterFaq").click(function() {
+			$("#faqRegisterModal").modal("show");
+		});
 		
 		
 	});// end of $(document).ready(function(){})-----------------------------------------
 	
 	// ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+	
+	/////// Function Declaration ///////
 	
 	// == 질문 아코디언 == //
 	function toggleAccordion(header) {
@@ -171,13 +193,11 @@ div.accordion-content {
 	    }
 	}// end of function toggleAccordion(header)-----------------------
 	
-	
-	///////////////////////////////////////////////////////////////////////////////////////////////
-	
+		
 	// == 자주묻는질문 리스트 띄우기 == //
 	function goViewFaqList(currentShowPageNo, searchWordFaq){
+		
 		searchWordFaq = $("input[name='searchWordFaq']").val();
-		// console.log("검색어 : " + searchWordFaq);
 		
 		$.ajax({
 			url:"<%= ctxPath%>/faqListJSON.trip",
@@ -187,7 +207,6 @@ div.accordion-content {
 			type:"get",
 			dataType:"json",
 			success:function(json){
-				// console.log(JSON.stringify(json));
 				
 				let v_html_faq = "";
 				
@@ -195,16 +214,16 @@ div.accordion-content {
 					$.each(json, function(index, item){
 						v_html_faq += `<div class="accordionEach">
 										   <div class="accordion-header" id="accordion-header" onclick="toggleAccordion(this)">
-											   <div style="width: 80%;">
+											   <div style="width: 78%;">
 												   <span>Q.</span>&nbsp;&nbsp;
 							    			       <input type="hidden" name="faq_seq" value="\${item.faq_seq}" />
 									               <span class="faq_question">\${item.faq_question}</span>
 											   </div>
-											   <div style="width: 17%;">
-											   	   <button type="button" id="btnEditFaq">수정</button>
-										       	   <button type="button" id="btnDeleteFaq">삭제</button>
+											   <div style="width: 20%;">
+											   	   <button type="button" class="btn btn-sm btn-secondary ml-5 mr-2" id="btnEditFaq">수정</button>
+										       	   <button type="button" class="btn btn-sm btn-danger" id="btnDeleteFaq">삭제</button>
 								               </div>
-											   <div class="justify-content-right" style="width: 3%;">
+											   <div class="justify-content-right" style="width: 2%;">
 								               	   <span class="arrow"></span>
 								               </div>
 								           </div>
@@ -231,7 +250,6 @@ div.accordion-content {
 			error: function(request, status, error){
 			   alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
 			}
-			
 		});// $.ajax-----------------------------
 		
 		
@@ -279,14 +297,63 @@ div.accordion-content {
 	}// end of function goViewFaqList(currentShowPageNo)-------------------------
 	
 	///////////////////////////////////////////////////////////////////////////////////////////////
-
+	
  	// == 검색하기 == //
 	function goSearch() {
 		const searchWordFaq = $("input[name='searchWordFaq']").val();
-		// console.log("검색어 확인 : " + searchWordFaq);
-		
 		goViewFaqList(1, searchWordFaq);
 	}// end of function goSearch()--------------------
+	
+	
+	// == 자주묻는질문 등록하기 == //
+	function goRegisterFaq() {
+
+	    const selected_category = $("#category-selectbox option:selected").val();
+		const question = $("textarea#question").val().trim();
+		const answer = $("textarea#answer").val().trim();
+		
+		// 카테고리 유효성 검사
+		if(selected_category == "카테고리 선택") {
+			alert("질문 카테고리를 선택하세요");
+			return;
+		}
+		
+		// 질문 유효성 검사
+		if(question == "") {
+			alert("질문 내용을 입력하세요");
+			$("textarea#question").focus();
+			return;
+		}
+		
+		// 답변 유효성 검사
+		if(answer == "") {
+			alert("답변 내용을 입력하세요");
+			$("textarea#answer").focus();
+			return;
+		}
+		
+		$("input[name='question']").val(question);
+		$("input[name='answer']").val(answer);
+
+		const submit = $("form[name='reservationFrm']").serialize();
+	
+		// 질문 등록 데이터 넘기기
+		$.ajax({
+			url:"addQuestion.trip",
+			type:"post",
+			data:submit,
+			success:function(json) {
+				alert("일정 등록에 성공했습니다.");
+				$("#faqRegisterModal").modal("hide");
+			},
+			error: function(request, status, error) {
+                alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+            }
+		});// end of $.ajax------------------------
+		
+	}// end of function goRegisterFaq()--------------------
+	
+	
 	
 	
 	
@@ -314,15 +381,58 @@ div.accordion-content {
  	<form class="reservationFrm" name="reservationFrm">
 		
 		<div class="faq_header">
-			<div class="row">
-				<div class="col-md-9">
-					<h2 style="margin-bottom: 3%; font-weight: bold;">자주 묻는 질문</h2>
-					<p>고객님들이 제주드림 상품 및 서비스에 대해 자주 문의하는 내용입니다.<br>원하는 내용을 찾지 못하실 경우 <span style="color: orange;">웹채팅</span>으로 문의해 주시면 친절하게 안내해 드리겠습니다.
-				</div>
-				<div class="col-md-3">
-					<button type="button" id="btnRegisterFaq">질문등록</button>
-				</div>
+			<div>
+				<h2 style="margin-bottom: 3%; font-weight: bold;">자주 묻는 질문</h2>
+				<p>고객님들이 제주드림 상품 및 서비스에 대해 자주 문의하는 내용입니다.<br>원하는 내용을 찾지 못하실 경우 <span style="color: orange;">웹채팅</span>으로 문의해 주시면 친절하게 안내해 드리겠습니다.
 			</div>
+		
+			<!-- 자주묻는질문 등록 모달 시작-->
+		    <div class="modal fade" id="faqRegisterModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		        <div class="modal-dialog modal-lg" role="document">
+		            <div class="modal-content">
+		            
+		                <div class="modal-header">
+		                    <h3 class="modal-title" id="exampleModalLabel" style="margin-left: 2%; font-weight: 500;">자주묻는질문 등록</h3>
+		                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		                        <span aria-hidden="true">&times;</span>
+		                    </button>
+		                </div>
+		                
+		                <div class="modal-body" style="padding: 2% 5%;">
+		                    <div class="form-group">
+								<label class="col-form-label">질문 카테고리</label>
+		                    	<select name="category-selectbox" id="category-selectbox" class="mb-3">
+		                    		<option selected>카테고리 선택</option>
+		                    		<option>예약</option>
+		                    		<option>카드/결제</option>
+		                    		<option>숙소</option>
+		                    		<option>맛집</option>
+		                    		<option>즐길거리</option>
+		                    		<option>기타</option>
+		                    	</select>
+		                        
+		                        <label for="question" class="col-form-label">질문</label>
+		                        <textarea class="form-control register-input mb-3" id="question" name="question" placeholder="등록할 질문을 작성하세요."></textarea>
+		                        <input type="hidden" id="question" name="question"/><br>
+		                        
+		                        <label for="answer" class="col-form-label">답변</label>
+		                        <textarea class="form-control register-input mb-3" id="answer" name="answer" placeholder="질문에 대한 답변을 작성하세요."></textarea>
+		                        <input type="hidden" id="answer" name="answer"/>
+						    
+		                    </div>
+		                </div>
+		                
+		                <div class="modal-footer">
+		                    <button type="button" class="btn btn-secondary" data-dismiss="modal" id="sprintSettingModalClose">취소</button>
+		                    <button type="button" class="btn btn-info" id="btnRegister" onclick="goRegisterFaq()">등록</button>
+		                </div>
+		    
+		            </div>
+		        </div>
+		    </div>
+			<!-- 일정 추가 모달 끝-->
+		
+		
 		
 			
 			<!-- 검색창 -->
@@ -335,9 +445,11 @@ div.accordion-content {
 			</div>
 		</div>
 		
+
 		<div class="faq_content" style="margin-top: 5%;">
-			
+					
 			<!-- FAQ 카테고리 navigation bar -->
+			<button type="button" class="btn btn-warning float-right" id="btnRegisterFaq">질문등록</button>	
 			<ul class="nav nav-tabs">
 				<li class="nav-item">
 					<a class="nav-link active faq_category" data-toggle="tab" href="#faqList">전체</a>

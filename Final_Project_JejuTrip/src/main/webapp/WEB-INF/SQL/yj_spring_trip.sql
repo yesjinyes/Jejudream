@@ -478,3 +478,8 @@ delete from TBL_CALENDAR_SCHEDULE where FK_SMCATGONO = '2'
 commit;
 
 
+select * from tbl_faq
+order by faq_category
+
+select * from tbl_review;
+
