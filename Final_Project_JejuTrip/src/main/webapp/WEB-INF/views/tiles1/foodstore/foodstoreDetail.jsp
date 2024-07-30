@@ -221,8 +221,8 @@ div#map {
   height:450px;
 }
 
-
 /*--------------------------------------------------------*/
+
 /* 근처 숙소 랜덤 추천 */
 div.recommend-img-box {
   overflow:hidden;
@@ -239,12 +239,28 @@ a.recommend-lodging-title {
   text-decoration: none;
 }
 
+/*--------------------------------------------------------*/
+
 /* 공유자 추가 */
-input#joinUserName:focus{
+input#FoodjoinUserName:focus{
   outline: none;
 }
-	
 
+.ui-autocomplete {
+  max-height: 100px;
+  overflow-y: auto;
+}
+
+span.plusUser{
+  float:left; 
+  background-color: #ffdccc;
+  color:#595959;
+  border-radius: 5px;
+  padding: 8px;
+  margin: 3px;
+  transition: .8s;
+  margin-top: 6px;
+}
 
 </style>
 
@@ -388,9 +404,6 @@ input#joinUserName:focus{
 				alert("좋아요는 로그인 후 가능합니다.");
 				
 				location.href = "login.trip";
-				
-				/* var referrer = document.referrer;
-				console.log("이전 페이지 URL: "+referrer); */
 				
 				return; // 종료
 			}
@@ -547,9 +560,8 @@ input#joinUserName:focus{
 		
 		
 		// 공유자 추가하기
-		<%-- $("input#joinUserName").bind("keyup",function(){
+		$("input#FoodjoinUserName").bind("keyup",function(){
 				var joinUserName = $(this).val();
-				console.log("확인용 joinUserName : " + joinUserName);
 				
 				$.ajax({
 					url:"<%= ctxPath%>/schedule/insertSchedule/searchFoodJoinUserList.trip",
@@ -558,21 +570,19 @@ input#joinUserName:focus{
 					success : function(json){
 						console.log("공유자 넘어오는지 확인 => "+JSON.stringify(json));
 						var joinUserArr = [];
-				    
-					//  input태그 공유자입력란에 "이" 를 입력해본 결과를 json.length 값이 얼마 나오는지 알아본다. 
-					//	console.log(json.length);
+						// console.log(json.length);
 					
 						if(json.length > 0){
 							
 							$.each(json, function(index,item){
-								var name = item.name;
-								if(name.includes(joinUserName)){ // name 이라는 문자열에 joinUserName 라는 문자열이 포함된 경우라면 true , 
+								var user_name = item.user_name;
+								if(user_name.includes(joinUserName)){ // name 이라는 문자열에 joinUserName 라는 문자열이 포함된 경우라면 true , 
 									                             // name 이라는 문자열에 joinUserName 라는 문자열이 포함되지 않은 경우라면 false 
-								   joinUserArr.push(name+"("+item.userid+")");
+								   joinUserArr.push(user_name+"("+item.userid+")");
 								}
 							});
 							
-							$("input#joinUserName").autocomplete({  // 참조 https://jqueryui.com/autocomplete/#default
+							$("input#FoodjoinUserName").autocomplete({  // 참조 https://jqueryui.com/autocomplete/#default
 								source:joinUserArr,
 								select: function(event, ui) {       // 자동완성 되어 나온 공유자이름을 마우스로 클릭할 경우 
 									add_joinUser(ui.item.value);    // 아래에서 만들어 두었던 add_joinUser(value) 함수 호출하기 
@@ -585,24 +595,22 @@ input#joinUserName:focus{
 						        appendTo: ".modal-body" // 자동완성 결과를 모달 내부로 설정
 							}); 
 							
-						}// end of if------------------------------------
-					}// end of success-----------------------------------
+						}// end of if---------------------------
+					}// end of success------------------
 				});
 		});// end of $("input#joinUserName").bind("keyup",function(){})------------------ 
-		
 	
-		// x아이콘 클릭시 공유자 제거하기
+		// x 아이콘 클릭시 공유자 제거하기
 		$(document).on('click','div.displayUserList > span.plusUser > i',function(){
-				var text = $(this).parent().text(); // 이순신(leess/leesunsin@naver.com)
-				
-				var bool = confirm("공유자 목록에서 "+ text +" 회원을 삭제하시겠습니까?");
-				// 공유자 목록에서 이순신(leess/leesunsin@naver.com) 회원을 삭제하시겠습니까?
-				
-				if(bool) {
-					$(this).parent().remove();
-				}
-		});// end of $(document).on('click','div.displayUserList > span.plusUser > i',function(){})-------------- --%>
-
+			var text = $(this).parent().text(); // 이순신(leess/leesunsin@naver.com)
+			
+			var bool = confirm("공유자 목록에서 "+ text +" 회원을 삭제하시겠습니까?");
+			// 공유자 목록에서 이순신(leess/leesunsin@naver.com) 회원을 삭제하시겠습니까?
+			
+			if(bool) {
+				$(this).parent().remove();
+			}
+		});// end of $(document).on('click','div.displayUserList > span.plusUser > i',function(){})--------------
 		
 		// == 일정 끝 == //
 		///////////////////////////////////////////////////////////////////////////////////
@@ -703,8 +711,8 @@ input#joinUserName:focus{
 		$("input[name=startdate]").val(startdate);
 		$("input[name=enddate]").val(enddate);
 		
-		
-		const schedule = $("form[name='scheduleFrm']").serialize();
+		// 일정 Form
+		//const schedule = $("form[name='scheduleFrm']").serialize();
 		
 		// 일정 제목 유효성 검사
 		const scheduleTitle = $("input#scheduleTitle").val().trim();
@@ -743,13 +751,42 @@ input#joinUserName:focus{
        		}
        	}
 		
+     	// 공유자 넣어주기
+		var plusUser_elm = document.querySelectorAll("div.displayUserList > span.plusUser");
+		var joinUserArr = new Array();
+		
+		plusUser_elm.forEach(function(item,index,array){
+		//	console.log(item.innerText.trim());
+			/*
+				이순신(leess) 
+				아이유1(iyou1) 
+				설현(seolh) 
+			*/
+			joinUserArr.push(item.innerText.trim());
+		});
+		
+		var joinuser = joinUserArr.join(",");
+		console.log("공유자 => " + joinuser);
+		// 이순신(leess),아이유1(iyou1),설현(seolh) 
+		
+		$("input[name=joinuser]").val(joinuser);
+		
+		// 일정 Form
+		const schedule = $("form[name='scheduleFrm']").serialize();
+		
+		<%-- var frm = document.scheduleFrm;
+		frm.action="<%= ctxPath%>/schedule/registerSchedule_end.action";
+		frm.method="post";
+		frm.submit(); --%>
+       	
+       	
 		// 일정 등록 데이터 넘기기
 		$.ajax({
 			url:"addFoodSchedule.trip",
 			type:"post",
 			data:schedule,
 			success:function(json) {
-				// console.log("방문 시간 넘기기 => " + JSON.stringify(json));
+				// console.log("일정 데이터 넘기기 => " + JSON.stringify(json));
 				
 				alert("일정 등록에 성공했습니다.");
 				$("#calendarModal").modal("hide");
@@ -952,8 +989,26 @@ input#joinUserName:focus{
 	
 	}// end of function goDelete()-------------------
 	
+	
+	// == 공유자를 넣어주기 == //
+	function add_joinUser(value){  // value 는 공유자로 선택한 이름
+		
+		var plusUser_es = $("div.displayUserList > span.plusUser").text();
+	 	// console.log("확인용 plusUser_es => " + plusUser_es);
+	  
+		if(plusUser_es.includes(value)) { 
+			alert("이미 추가한 회원입니다.");
+		}
+		
+		else {
+			$("div.displayUserList").append("<span class='plusUser'>"+value+"&nbsp;<i class='fas fa-times-circle'></i></span>");
+		}
+		
+		$("input#FoodjoinUserName").val("");
+		
+	}// end of function add_joinUser(value){}----------------------------			
+	
 </script>
-
 
 
 <div id="container">
@@ -1071,9 +1126,6 @@ input#joinUserName:focus{
 			                <form name="scheduleFrm">
 				                <div class="modal-body" style="padding: 7%;">
 				                    <div class="form-group">
-				                    	<%-- <label for="food_name" class="col-form-label">맛집 이름</label>
-				                        <input type="text" class="form-control schedule-input mb-3" id="food_name" name="food_name" readonly="readonly" value="${requestScope.foodstorevo.food_name}">
-				                         --%>
 				                        <input type="hidden" class="form-control schedule-input mb-3" id="parent_code" name="parent_code" readonly="readonly" value="${requestScope.foodstorevo.food_store_code}">
 				                        
 				                        <input type="hidden" id="food_store_code" name="food_store_code" value="${requestScope.foodstorevo.food_store_code}" />
@@ -1110,8 +1162,8 @@ input#joinUserName:focus{
 								        
 								        <div class="joinUser">
 								        	<label class="mt-4">일정 공유자 추가</label><br>
-								        	<input type="text" id="joinUserName" class="form-control schedule-input" placeholder="일정을 공유할 회원 이름을 입력하세요"/>
-											<div class="displayUserList"></div>
+								        	<input type="text" id="FoodjoinUserName" class="form-control schedule-input" placeholder="일정을 공유할 회원 이름을 입력하세요"/>
+											<div class="displayUserList"></div><br>
 											<input type="hidden" name="joinuser"/>
 								        </div>
 								        

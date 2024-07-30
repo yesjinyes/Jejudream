@@ -464,7 +464,12 @@ select *
 from tbl_food_store;
 
 
+select * from user_tables;
 
-delete from tbl_faq where faq_category 
-commit;= '기타';
+select * from TBL_CALENDAR_SCHEDULE
+order by scheduleno desc
+
+delete from TBL_CALENDAR_SCHEDULE where scheduleno = '78'
+
+commit;
 
