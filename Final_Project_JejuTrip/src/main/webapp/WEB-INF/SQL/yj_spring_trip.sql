@@ -148,6 +148,41 @@ insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_
 insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '기타', '비회원 예약이 가능한가요?', '당사 웹사이트는 회원 전용으로 운영되고 있습니다. 회원가입을 통해 서비스를 자유롭게 이용해보세요.');
 insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '기타', '불편사항 문의는 어디에 하면 되나요?', '고객센터 내 채팅 기능을 이용하여 불편사항을 접수해 주시면 확인 후 답변 드리겠습니다.');
 
+-- FAQ 추가 insert 
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '예약', '예약 취소 및 변경은 어떻게 하나요?', '마이페이지에서 예약 확인 및 취소가 가능합니다. 기타 문의는 웹채팅을 이용해주세요.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '예약', '예약 시 예약자와 투숙자가 상이해도 무방한가요?', '가급적 예약자와 투숙자가 일치해야 하며, 상이할 경우 투숙자명 일치가 필요로 됨에 따라 [마이페이지 > 채팅] 을 통하여 변경 요청 주시기 바랍니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '예약', '상품 예약 후 비상 연락처가 있나요?', '비상 연락처는 예약한 업체를 확인 후 해당업체로 연락하여 주시길 바랍니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '예약', '예약 후 문의사항이 있습니다.', '예약 후 문의사항이 있으신 경우 마이페이지 내 채팅으로 문의 주시면 최대한 빨리 응대해드리도록 하겠습니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '예약', '예약은 언제 확정나나요?', '예약 상태는 로그인 후 [마이페이지 > 예약내역] 에서 확인 가능하며, 승인대기 상태에서 업체의 승인 여부에 따라 확정 및 취소가 결정됩니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '카드/결제', '세금 계산서가 발행되나?', '호텔 요금은 부가가치세법에 의해서 세금계산서 발행이 되지 않습니다. 회사 경비 처리를 위해서는 카드 영수증이나 확정서를 증빙 서류로 제출하시기 바랍니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '카드/결제', '결제 실패 사유와 해결방안에 대해 자세히 알려주세요.', '상품 주문 시 네트워크 환경 또는 상품 판매 상황 등에 따라 일시적으로 주문이 실패할 수 있습니다. 잠시 후 다시 시도해 주시기 바랍니다. 상품 재고와 관련된 경우에는 판매자에게 문의해 주시면 빠른 안내를 받으실 수 있습니다. ');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '카드/결제', '법인카드로 결제할 수 있나요?', '제주드림에서 판매하는 모든 상품은 법인카드로 결제 가능합니다. 다만, 할부 결제 및 포인트 사용은 불가하니 참고 부탁드립니다. 자세한 결제 방법은 카드사별로 상이할 수 있으니 해당 카드사로 확인해 주시기 바랍니다. ');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '카드/결제', '결제방법을 변경하고 싶어요.', '결제 완료 이후에는 결제방법을 변경할 수 없습니다. 결제방법 변경이 필요하다면 주문한 상품을 취소 후 재구매해 주셔야 합니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '카드/결제', '구매자와 다른 명의의 신용카드로 결제할 수 있나요?', '카드 소유자 본인이 입증된 경우 다른 명의의 신용카드로 결제 가능합니다. 인터넷 안전결제(ISP), 안심클릭 서비스, 공인인증서 등을 통하여 인증이 완료되었다면 결제 가능합니다. 정상 결제 후에도 문제 발생 소지가 있을 시 금융법 위반 등 부정 사용으로 간주되어 불이익을 당할 수 있습니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '숙소', '결제 후 취소시, 취소수수료가 발생하나요?', '입실일 기준으로 취소수수료가 발생할 수 있으며, 상품별/취소 요청 시점별 수수료 기준이 상이합니다. 예약하실 때  상품의 취소수수료 정책을 확인해 주세요.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '숙소', '숙소는 어떻게 예약하나요?', '웹사이트 상단 숙소 메뉴에서 체크인 일정을 선택하시고 원하시는 숙소를 선택하시면 상세 페이지에서 예약이 가능합니다. 결제까지 완료되어야 예약이 완료되기 때문에 유의해주시기 바랍니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '숙소', '숙소 리뷰를 작성하고 싶어요.', '리뷰 작성은 로그인 후 숙소 상세 페이지에서 작성 가능합니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '숙소', '취소된 상품을 다시 주문할 수 있나요?', '상품이 판매 중이라면 재구매할 수 있습니다. 상품 재구매를 원하신다면 주문 내역에서 상품명을 클릭하여 상품을 다시 구매할 수 있습니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '숙소', '비회원도 숙소를 예약할 수 있나요?', '제주드림 상품은 회원 전용으로, 회원가입 후에 숙소 예약이 가능합니다. 웹사이트 우측 상단의 회원가입 기능을 통해 사이트를 자유롭게 이용해주세요.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '맛집', '인기 많은 맛집을 보고싶어요.', '웹사이트 상단의 "맛집" 메뉴에서 인기순으로 조회하시면 회원들의 조회수를 기반으로 한 인기 순위 확인이 가능합니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '맛집', '맛집까지 가는 방법이 궁금해요.', '맛집 상세 페이지 죄측 하단의 "위치 확인" 에서 지도 속 맛집을 클릭하시면 길찾기 기능을 사용하실 수 있습니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '맛집', '특정 맛집을 조회하고 싶어요.', '웹사이트 상단의 전체검색 기능을 이용하시거나, "맛집" 메뉴 클릭 후 검색 박스에 찾고자 하는 맛집명을 검색해주세요.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '맛집', '근처 숙소 추천은 어떤 기능인가요?', '맛집 상세 페이지 우측 하단의 "근처 숙소 추천" 기능은 조회하신 맛집 근처에 있는 숙소가 랜덤으로 추천된 것입니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '즐길거리', '즐길거리가 무엇인가요?', '즐길거리 메뉴에서는 제주도 내의 관광지, 전시회, 체험을 확인해보실 수 있습니다. 원하시는 서비스를 자유롭게 이용해보세요.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '즐길거리', '특정 카테고리만 조회하고 싶어요.', '웹사이트 상단"즐길거리" 메뉴 클릭 후 좌측의 카테고리를 선택하여 원하시는 내용을 확인하실 수 있습니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '즐길거리', '즐길거리 정보는 어디에서 확인할 수 있나요?', '웹사이트 상단 "즐길거리" 메뉴 클릭 후 리스트에 마우스 커서를 올리시면 상세 정보 확인이 가능합니다. 클릭하여 상세 페이지에서 더 자세한 내용을 확인해보세요.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '즐길거리', '이용 관련해서 문의하고 싶은 것이 있습니다.', '즐길거리 리스트 및 상세 페이지에서 연락처를 통해 해당 업체에 연락 가능합니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '기타', '외국인도 회원가입을 할 수 있나요?', '내/외국인 구분 없이 국내 통신사 본인 인증을 통해 가입하실 수 있습니다. 외국인도 국내 휴대폰 개통 정보가 있으면 휴대폰 본인 인증을 통해 회원가입 하실 수 있습니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '기타', '개명했는데 이름 변경이 가능한가요?', '로그인 후 [마이페이지 > 회원정보 수정] 메뉴에서 이름을 수정하실 수 있습니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '기타', '좋아요를 누른 내용이 궁금해요.', '로그인 후 [마이페이지 > 좋아요] 메뉴에서 숙소, 맛집, 즐길거리 좋아요 목록을 확인하실 수 있습니다. 좋아요를 취소하시려면 목록 중 한개를 클릭하여 상세 페이지에서 취소 가능합니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '기타', '아이디/비밀번호가 기억나지 않아요.', '로그인 페이지에서 [아이디 찾기 | 비밀번호 찾기] 를 이용해주세요.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '기타', '제 명의로 가입된 휴대폰 번호가 없는 경우, 다른 사람의 휴대폰번호를 사용해 회원가입을 해도 되나요?', '회원 가입 시 본인 명의의 휴대폰 번호로 본인 인증이 필요하기 때문에, 본인 명의의 휴대폰 번호가 없는 경우 회원 가입이 불가합니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '기타', '리뷰 작성은 어떻게 하나요?', '리뷰 작성은 로그인 후 상세 페이지에서 작성 가능합니다.');
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '기타', '지역 구분은 어떤 기준인가요?', '지역은 주소를 기준으로 하여 [제주시 시내/동부/서부, 서귀포시 시내/동부/서부] 로 나뉘어 있습니다. 방문하고자 하는 지역을 선택하여 조회가 가능합니다.');
+
+
+rollback;
+commit;
 
 insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '기타', '3불편사항 문의는 어디에 하면 되나요?', '고객센터 내 채팅 기능을 이용하여 불편사항을 접수해 주시면 확인 후 답변 드리겠습니다.');
 insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer) values(seq_faq.nextval, '기타', '4불편사항 문의는 어디에 하면 되나요?', '고객센터 내 채팅 기능을 이용하여 불편사항을 접수해 주시면 확인 후 답변 드리겠습니다.');
@@ -424,4 +459,12 @@ where RNO between 1 and 10
 
 select *
 from tbl_member;
+
+select *
+from tbl_food_store;
+
+
+
+delete from tbl_faq where faq_category 
+commit;= '기타';
 

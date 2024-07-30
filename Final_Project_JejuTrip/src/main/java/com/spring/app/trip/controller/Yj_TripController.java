@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -75,10 +76,6 @@ public class Yj_TripController {
 		HttpSession session = request.getSession();
 		session.setAttribute("readCountPermission", "yes"); // session 에  "readCountPermission" 에 대한 값을 yes 라고 저장
 
-		
-		System.out.println("~~검색어 나와주세요 => " + searchWordFood);
-		
-		
 		// 페이징 처리
 		int sizePerPage = 7; //한페이지당 7개의 맛집
 		
@@ -156,7 +153,7 @@ public class Yj_TripController {
 		
 		// 맛집 전체개수
 	    int totalCount = service.getTotalCount(map);
-	    System.out.println("totalCount => "+totalCount);
+	    // System.out.println("totalCount => "+totalCount);
 	    
 	    // 맛집 리스트(조회수 증가X)
 		foodstoreList = service.viewFoodstoreList(map);
@@ -540,6 +537,8 @@ public class Yj_TripController {
 			login_userid = loginuser.getUserid();
 		}
 		
+		// System.out.println("parent_code 확인 => " + parent_code);
+		
 		Map<String, String> paraMap = new HashMap<>();
 		
 		paraMap.put("parent_code", parent_code);
@@ -568,6 +567,31 @@ public class Yj_TripController {
 		return mav;
 	}
 	
+	
+	// === 공유자를 찾기 위한 특정글자가 들어간 회원명단 불러오기 ===
+/*	@ResponseBody
+	@RequestMapping(value="/schedule/insertSchedule/searchFoodJoinUserList.trip", produces="text/plain;charset=UTF-8")
+	public String searchPlayJoinUserList(HttpServletRequest request) {
+		
+		String joinUserName = request.getParameter("joinUserName");
+		
+		// 회원 명단 불러오기
+		List<MemberVO> joinUserList = service.searchFoodJoinUserList(joinUserName);
+
+		JSONArray jsonArr = new JSONArray();
+		if(joinUserList != null && joinUserList.size() > 0) {
+			for(MemberVO mvo : joinUserList) {
+				JSONObject jsObj = new JSONObject();
+				jsObj.put("userid", mvo.getUserid());
+				jsObj.put("name", mvo.getUser_name());
+				
+				jsonArr.put(jsObj);
+			}
+		}
+		
+		return jsonArr.toString();
+	}
+*/
 	
 	// == 맛집 수정 페이지 요청 (관리자) == //
 	@GetMapping("/editFoodstore.trip")
@@ -768,7 +792,7 @@ public class Yj_TripController {
 		List<Map<String,String>> faqList = service.viewAllFaqList_paging(paraMap);
 		
 		int totalCount = service.getTotalFaqList(paraMap); // FAQ 리스트 페이징 처리 위함
-		System.out.println("~~~FAQ 개수 => " + totalCount);
+		// System.out.println("~~~FAQ 개수 => " + totalCount);
 		
 		JSONArray jsonArr = new JSONArray(); // [] 
 		
