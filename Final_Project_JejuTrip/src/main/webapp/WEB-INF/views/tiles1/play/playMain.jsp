@@ -217,7 +217,8 @@
 
 
 .front .inner_front p{
-  font-size: 25px;
+  margin-top: -3%;
+  font-size: 18px;
   margin-bottom: 2rem;
   position: relative;
 }
@@ -245,9 +246,12 @@ font-size: 17px;
 }
 /*-----------------------------------------------------------------------------------------  */
 
-.icon{
-width: 30px;
+img.icon {
+  width: 5%;
+  margin-bottom: 3%;
 }
+
+
 
 </style>
 
@@ -383,10 +387,11 @@ function contentPlay(currentShowPageNo) {
                     v_html += "      <div class='container_card'>";
                     v_html += "        <div class='front' style='background-image: url(<%= ctxPath %>/resources/images/play/" + item.play_main_img + ")'>";
                     v_html += "          <div class='inner_front'>";
-                    v_html += "            <p style='font-size: 20px;font-weight: bold;'>" + item.play_name + "</p>";
-                    v_html += "            <span style=' color:#786b94;font-size: 15px;'>" + item.play_category + "</span>";
-                    v_html += "         <input type='hidden' name='play_code' value='" + item.play_code + "'/>"; 
-
+                    v_html += "             <img class='icon' src='<%= ctxPath %>/resources/images/foodstore/icon/LikeUp.png'>"
+                    v_html += "             <p class='count'>"+item.likeCount+"</p>"
+                    v_html += "             <p style='font-size: 20px;font-weight: bold;'>" + item.play_name + "</p>";
+                    v_html += "             <span style=' color:#786b94;font-size: 15px;'>" + item.play_category + "</span>";
+                    v_html += "         	<input type='hidden' name='play_code' value='" + item.play_code + "'/>"; 
                     v_html += "          </div>";
                     v_html += "        </div>";
                     v_html += "        <div class='back'>";

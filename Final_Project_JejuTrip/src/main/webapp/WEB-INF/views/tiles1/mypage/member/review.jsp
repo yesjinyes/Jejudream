@@ -40,21 +40,21 @@ function goViewAllReviewList(currentShowPageNo){
 	           $.each(json, function(index, item){ 
 	                             
 	                v_html += "<tr>";
-	              	v_html += "<td style='text-align: center;'>"+item.rno+"</td>";
+	              	v_html += "<td>"+item.rno+"</td>";
 	              	if(item.review_division_R == 'A'){
-	              	    v_html += "<td style='text-align: center;'><span style='font-weight:bold;'>숙소</span></td>";
+	              	    v_html += "<td><span style='font-weight:bold;'>숙소</span></td>";
 	              	  v_html += "<input type='hidden' value='<%= ctxPath%>/lodgingDetail.trip?lodging_code="+item.parent_code+"'>";
 	              	}
 					if(item.review_division_R == 'B'){
-						v_html += "<td style='text-align: center;'><span style='font-weight:bold;'>맛집</span></td>";
+						v_html += "<td><span style='font-weight:bold;'>맛집</span></td>";
 						v_html += "<input type='hidden' value='<%= ctxPath%>/foodstoreDetail.trip?food_store_code="+item.parent_code+"'>";
 					}
 					if(item.review_division_R == 'C'){
-						v_html += "<td style='text-align: center;'><span style='font-weight:bold;'>즐길거리</span></td>";
+						v_html += "<td><span style='font-weight:bold;'>즐길거리</span></td>";
 						v_html += "<input type='hidden' value='<%= ctxPath%>/goAddSchedule.trip?play_code="+item.parent_code+"'>"
 					}
-					v_html += "<td >"+item.review_content+"</td>";
-					v_html += "<td style='text-align: center;'>"+item.registerday+"</td>";
+					v_html += "<td>"+item.review_content+"</td>";
+					v_html += "<td>"+item.registerday+"</td>";
 					v_html += "</tr>";
 			    	
 			    	
@@ -73,12 +73,14 @@ function goViewAllReviewList(currentShowPageNo){
 	        $("tbody#all_review_tbody").html(v_html);
 	        $("span#reservation_reception").html(r_html);
 	        
-	        $("tbody#all_review_tbody tr").each(function() {
-                var link = $(this).find('input[type=hidden]').val();
-                $(this).find('td').click(function() {
-                    window.location.href = link;
-                });
-            });
+	        if (json.length > 0){
+		        $("tbody#all_review_tbody tr").each(function() {
+	                var link = $(this).find('input[type=hidden]').val();
+	                $(this).find('td').click(function() {
+	                    window.location.href = link;
+	                });
+	            });
+	        }
 	    },
 	    error: function(request, status, error){
 	        alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
@@ -148,10 +150,10 @@ function goViewAllReviewList(currentShowPageNo){
 			           $.each(json, function(index, item){ 
 			                             
 			              v_html += "<tr>";
-			              	v_html += "<td style='text-align: center;'>"+item.rno+"</td>";
-							v_html += "<td style='text-align: center;'>"+item.food_name+"</td>";
+			              	v_html += "<td>"+item.rno+"</td>";
+							v_html += "<td>"+item.food_name+"</td>";
 		              	    v_html += "<td>"+item.review_content+"</td>";
-							v_html += "<td style='text-align: center;'>"+item.registerday+"</td>";
+							v_html += "<td>"+item.registerday+"</td>";
 							v_html += "<input type='hidden' value='<%= ctxPath%>/foodstoreDetail.trip?food_store_code="+item.parent_code+"'>";
 							v_html += "</tr>";
 					    	
@@ -171,12 +173,15 @@ function goViewAllReviewList(currentShowPageNo){
 			        $("tbody#food_review_tbody").html(v_html);
 			        $("span#food_count").html(r_html);
 			        
-			        $("tbody#food_review_tbody tr").each(function() {
-		                var link = $(this).find('input[type=hidden]').val();
-		                $(this).find('td').click(function() {
-		                    window.location.href = link;
-		                });
-		            });
+			        
+			        if (json.length > 0){
+				        $("tbody#food_review_tbody tr").each(function() {
+			                var link = $(this).find('input[type=hidden]').val();
+			                $(this).find('td').click(function() {
+			                    window.location.href = link;
+			                });
+			            });
+			        }
 			        
 			    },
 			    error: function(request, status, error){
@@ -246,10 +251,10 @@ function goViewAllReviewList(currentShowPageNo){
 				           $.each(json, function(index, item){ 
 				                             
 				              v_html += "<tr>";
-				              	v_html += "<td style='text-align: center;'>"+item.rno+"</td>";
-								v_html += "<td style='text-align: center;'>"+item.play_name+"</td>";
+				              	v_html += "<td>"+item.rno+"</td>";
+								v_html += "<td>"+item.play_name+"</td>";
 								v_html += "<td>"+item.review_content+"</td>";
-								v_html += "<td style='text-align: center;'>"+item.registerday+"</td>";
+								v_html += "<td>"+item.registerday+"</td>";
 								v_html += "<input type='hidden' value='<%= ctxPath%>/goAddSchedule.trip?play_code="+item.parent_code+"'>";
 								v_html += "</tr>";
 						    	
@@ -269,12 +274,15 @@ function goViewAllReviewList(currentShowPageNo){
 				        $("tbody#play_review_tbody").html(v_html);
 				        $("span#play_count").html(r_html);
 				        
-				        $("tbody#play_review_tbody tr").each(function() {
-			                var link = $(this).find('input[type=hidden]').val();
-			                $(this).find('td').click(function() {
-			                    window.location.href = link;
-			                });
-			            });
+				        
+				        if (json.length > 0){
+					        $("tbody#play_review_tbody tr").each(function() {
+				                var link = $(this).find('input[type=hidden]').val();
+				                $(this).find('td').click(function() {
+				                    window.location.href = link;
+				                });
+				            });
+				        }
 				        
 				    },
 				    error: function(request, status, error){
@@ -346,10 +354,10 @@ function goViewAllReviewList(currentShowPageNo){
 					           $.each(json, function(index, item){ 
 					                             
 					              v_html += "<tr>";
-					              	v_html += "<td style='text-align: center;'>"+item.rno+"</td>";
-									v_html += "<td style='text-align: center;'>"+item.lodging_name+"</td>";
+					              	v_html += "<td>"+item.rno+"</td>";
+									v_html += "<td>"+item.lodging_name+"</td>";
 				              	    v_html += "<td>"+item.review_content+"</td>";
-									v_html += "<td style='text-align: center;'>"+item.registerday+"</td>";
+									v_html += "<td>"+item.registerday+"</td>";
 									v_html += "<input type='hidden' value='<%= ctxPath%>/lodgingDetail.trip?lodging_code="+item.parent_code+"'>";
 									v_html += "</tr>";
 							    	
@@ -369,14 +377,14 @@ function goViewAllReviewList(currentShowPageNo){
 					        $("tbody#login_review_tbody").html(v_html);
 					        $("span#lodging_count").html(r_html);
 					        
-					        
-					        $("tbody#login_review_tbody tr").each(function() {
-				                var link = $(this).find('input[type=hidden]').val();
-				                $(this).find('td').click(function() {
-				                    window.location.href = link;
-				                });
-				            });
-					        
+					        if (json.length > 0){
+						        $("tbody#login_review_tbody tr").each(function() {
+					                var link = $(this).find('input[type=hidden]').val();
+					                $(this).find('td').click(function() {
+					                    window.location.href = link;
+					                });
+					            });
+					        }
 					    },
 					    error: function(request, status, error){
 					        alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
@@ -539,10 +547,10 @@ function goViewAllReviewList(currentShowPageNo){
 				<table class="table table-hover">
 				  <thead>
 				    <tr>
-				      <th style='text-align: center;'>#</th>
-				      <th style='text-align: center;'>카테고리</th>
-				      <th style='text-align: center;'>내용</th>
-				      <th style='text-align: center;'>작성일자</th>
+				      <th>#</th>
+				      <th>카테고리</th>
+				      <th>내용</th>
+				      <th>작성일자</th>
 				    </tr>
 				  </thead>
 				  <tbody id="all_review_tbody"></tbody>
@@ -554,10 +562,10 @@ function goViewAllReviewList(currentShowPageNo){
 					<table class="table table-hover">
 				 		 <thead>
 						    <tr>
-						      <th style='text-align: center;'>#</th>
-						      <th style='text-align: center;'>숙소명</th>
-						      <th style='text-align: center;'>후기내용</th>
-						      <th style='text-align: center;'>작성일자</th>
+						      <th>#</th>
+						      <th>숙소명</th>
+						      <th>후기내용</th>
+						      <th>작성일자</th>
 						    </tr>
 						  </thead>
 			    		 <tbody id="login_review_tbody"></tbody>
@@ -569,10 +577,10 @@ function goViewAllReviewList(currentShowPageNo){
 					<table class="table table-hover">
 				 		 <thead>
 						    <tr>
-						      <th style='text-align: center;'>#</th>
-						      <th style='text-align: center;'>가게이름</th>
-						      <th style='text-align: center;'>후기내용</th>
-						      <th style='text-align: center;'>작성일자</th>
+						      <th>#</th>
+						      <th>가게이름</th>
+						      <th>후기내용</th>
+						      <th>작성일자</th>
 						    </tr>
 						  </thead>
 			    		 <tbody id="food_review_tbody"></tbody>
@@ -584,10 +592,10 @@ function goViewAllReviewList(currentShowPageNo){
 					<table class="table table-hover">
 				 		 <thead>
 						    <tr>
-						      <th style='text-align: center;'>#</th>
-						      <th style='text-align: center;'>즐길거리이름</th>
-						      <th style='text-align: center;'>후기내용</th>
-						      <th style='text-align: center;'>작성일자</th>
+						      <th>#</th>
+						      <th>즐길거리이름</th>
+						      <th>후기내용</th>
+						      <th>작성일자</th>
 						    </tr>
 						  </thead>
 			    		 <tbody id="play_review_tbody"></tbody>
