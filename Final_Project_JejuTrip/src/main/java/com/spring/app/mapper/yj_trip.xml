@@ -383,11 +383,11 @@
 
 
 	<!-- 공유자를 찾기 위한 특정글자가 들어간 회원명단 불러오기 --> 
- 	<select id="searchFoodJoinUserList" parameterType="String" resultType="com.spring.app.board.domain.MemberVO">
+ 	<!-- <select id="searchFoodJoinUserList" parameterType="String" resultType="com.spring.app.board.domain.MemberVO">
     	select userid, user_name
 		from tbl_member
 		where lower(user_name) like '%'|| lower(#{joinUserName}) ||'%'
-    </select>
+    </select> -->
 
 
 

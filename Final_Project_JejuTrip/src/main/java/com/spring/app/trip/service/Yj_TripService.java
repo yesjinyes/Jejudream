@@ -69,7 +69,7 @@ public interface Yj_TripService {
 	int addFoodSchedule(Map<String, String> paraMap);
 	
 	// == 일정 추가 공유자를 찾기 위한 특정글자가 들어간 회원명단 불러오기 == //
-	List<MemberVO> searchFoodJoinUserList(String joinUserName);
+	// List<MemberVO> searchFoodJoinUserList(String joinUserName);
 
 	// == 맛집 수정을 위해 VO 에 있는 정보 불러오기 == //
 	FoodstoreVO getFoodstorevo(String food_store_code);

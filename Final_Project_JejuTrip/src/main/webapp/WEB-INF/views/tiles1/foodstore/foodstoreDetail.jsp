@@ -547,14 +547,16 @@ input#joinUserName:focus{
 		
 		
 		// 공유자 추가하기
-		$("input#joinUserName").bind("keyup",function(){
+		<%-- $("input#joinUserName").bind("keyup",function(){
 				var joinUserName = $(this).val();
-			//	console.log("확인용 joinUserName : " + joinUserName);
+				console.log("확인용 joinUserName : " + joinUserName);
+				
 				$.ajax({
 					url:"<%= ctxPath%>/schedule/insertSchedule/searchFoodJoinUserList.trip",
 					data:{"joinUserName":joinUserName},
 					dataType:"json",
 					success : function(json){
+						console.log("공유자 넘어오는지 확인 => "+JSON.stringify(json));
 						var joinUserArr = [];
 				    
 					//  input태그 공유자입력란에 "이" 를 입력해본 결과를 json.length 값이 얼마 나오는지 알아본다. 
@@ -586,9 +588,9 @@ input#joinUserName:focus{
 						}// end of if------------------------------------
 					}// end of success-----------------------------------
 				});
-		});// end of $("input#joinUserName").bind("keyup",function(){})------------------
+		});// end of $("input#joinUserName").bind("keyup",function(){})------------------ 
 		
-
+	
 		// x아이콘 클릭시 공유자 제거하기
 		$(document).on('click','div.displayUserList > span.plusUser > i',function(){
 				var text = $(this).parent().text(); // 이순신(leess/leesunsin@naver.com)
@@ -599,7 +601,7 @@ input#joinUserName:focus{
 				if(bool) {
 					$(this).parent().remove();
 				}
-		});// end of $(document).on('click','div.displayUserList > span.plusUser > i',function(){})------------
+		});// end of $(document).on('click','div.displayUserList > span.plusUser > i',function(){})-------------- --%>
 
 		
 		// == 일정 끝 == //
@@ -1069,15 +1071,16 @@ input#joinUserName:focus{
 			                <form name="scheduleFrm">
 				                <div class="modal-body" style="padding: 7%;">
 				                    <div class="form-group">
-				                    	<label for="food_name" class="col-form-label">맛집 이름</label>
+				                    	<%-- <label for="food_name" class="col-form-label">맛집 이름</label>
 				                        <input type="text" class="form-control schedule-input mb-3" id="food_name" name="food_name" readonly="readonly" value="${requestScope.foodstorevo.food_name}">
+				                         --%>
 				                        <input type="hidden" class="form-control schedule-input mb-3" id="parent_code" name="parent_code" readonly="readonly" value="${requestScope.foodstorevo.food_store_code}">
 				                        
 				                        <input type="hidden" id="food_store_code" name="food_store_code" value="${requestScope.foodstorevo.food_store_code}" />
 				                        <input type="hidden" id="food_address" name="food_address" value="${requestScope.foodstorevo.food_address}" />
 				                        
-				                        <label for="scheduleTitle" class="col-form-label">일정 제목</label>
-				                        <input type="text" class="form-control schedule-input mb-3" id="scheduleTitle" name="scheduleTitle">
+				                        <label for="scheduleTitle" class="col-form-label">맛집 이름</label>
+				                        <input type="text" class="form-control schedule-input mb-3" id="scheduleTitle" name="scheduleTitle" readonly="readonly" value="${requestScope.foodstorevo.food_name}">
 				                        
 				                        <label for="scheduleContent" class="col-form-label">일정 내용</label>
 				                        <input type="text" class="form-control schedule-input mb-3" id="scheduleContent" name="scheduleContent">
@@ -1105,7 +1108,7 @@ input#joinUserName:focus{
 											<input type="hidden" name="enddate"/>
 								        </div>
 								        
-								        <div class="share_member">
+								        <div class="joinUser">
 								        	<label class="mt-4">일정 공유자 추가</label><br>
 								        	<input type="text" id="joinUserName" class="form-control schedule-input" placeholder="일정을 공유할 회원 이름을 입력하세요"/>
 											<div class="displayUserList"></div>

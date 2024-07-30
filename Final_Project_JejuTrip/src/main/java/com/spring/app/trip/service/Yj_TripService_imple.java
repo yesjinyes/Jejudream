@@ -232,11 +232,11 @@ public class Yj_TripService_imple implements Yj_TripService {
 
 
 	// == 공유자를 찾기 위한 특정글자가 들어간 회원명단 불러오기 == //
-	@Override
-	public List<MemberVO> searchFoodJoinUserList(String joinUserName) {
-		List<MemberVO> joinUserList = dao.searchFoodJoinUserList(joinUserName);
-		return joinUserList;
-	}
+//	@Override
+//	public List<MemberVO> searchFoodJoinUserList(String joinUserName) {
+//		List<MemberVO> joinUserList = dao.searchFoodJoinUserList(joinUserName);
+//		return joinUserList;
+//	}
 
 
 	// == 인기순으로 정렬 == //

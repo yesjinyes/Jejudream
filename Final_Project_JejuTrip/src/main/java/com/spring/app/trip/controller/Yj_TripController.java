@@ -537,7 +537,7 @@ public class Yj_TripController {
 			login_userid = loginuser.getUserid();
 		}
 		
-		System.out.println("parent_code 확인 => " + parent_code);
+		// System.out.println("parent_code 확인 => " + parent_code);
 		
 		Map<String, String> paraMap = new HashMap<>();
 		
@@ -569,7 +569,7 @@ public class Yj_TripController {
 	
 	
 	// === 공유자를 찾기 위한 특정글자가 들어간 회원명단 불러오기 ===
-	@ResponseBody
+/*	@ResponseBody
 	@RequestMapping(value="/schedule/insertSchedule/searchFoodJoinUserList.trip", produces="text/plain;charset=UTF-8")
 	public String searchPlayJoinUserList(HttpServletRequest request) {
 		
@@ -591,7 +591,7 @@ public class Yj_TripController {
 		
 		return jsonArr.toString();
 	}
-	
+*/
 	
 	// == 맛집 수정 페이지 요청 (관리자) == //
 	@GetMapping("/editFoodstore.trip")
@@ -792,7 +792,7 @@ public class Yj_TripController {
 		List<Map<String,String>> faqList = service.viewAllFaqList_paging(paraMap);
 		
 		int totalCount = service.getTotalFaqList(paraMap); // FAQ 리스트 페이징 처리 위함
-		System.out.println("~~~FAQ 개수 => " + totalCount);
+		// System.out.println("~~~FAQ 개수 => " + totalCount);
 		
 		JSONArray jsonArr = new JSONArray(); // [] 
 		

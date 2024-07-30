@@ -94,7 +94,7 @@ public interface Yj_TripDAO {
 	int getTotalFaqList(Map<String, String> paraMap);
 
 	// == 공유자를 찾기 위한 특정글자가 들어간 회원명단 불러오기 == //
-	List<MemberVO> searchFoodJoinUserList(String joinUserName);
+	//List<MemberVO> searchFoodJoinUserList(String joinUserName);
 
 	// == 인기순으로 정렬 == //
 	// List<FoodstoreVO> viewReadcountList(String readcount);
