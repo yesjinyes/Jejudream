@@ -555,6 +555,6 @@
 	<c:if test="${requestScope.get_from_admin_chatting_exist > 0}">
 		<div style="float:right; width:10px; height:10px; border-radius:50%; background-color:red;"></div>
 	</c:if>
-	<img style='width:70px;' src='<%=ctxPath%>/resources/images/chatting_icon.jpg'/>
+	<img style='width:70px;' src='<%=ctxPath%>/resources/images/chatting_icon.png'/>
 	<div style="font-weight:bold;">1:1문의</div>
 </div>
