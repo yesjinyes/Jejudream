@@ -1553,6 +1553,8 @@ WHERE A.max_person >= 2
     from tbl_board;
     
     select *
+    from tbl_calendar_schedule;
+    select *
     from tbl_food_store;
 
     desc tbl_festival;
