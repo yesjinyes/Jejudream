@@ -68,6 +68,27 @@ input:focus {
 .weather-text {
     font-size: 14px; /* 원하는 폰트 크기로 설정 */
 }
+
+div#displayList {
+	position: absolute;
+	top: 5.6em;
+	margin-left: 36%;
+	overflow: auto;
+}
+
+div#displayList::-webkit-scrollbar {
+	width: 7px;
+}
+
+div#displayList::-webkit-scrollbar-thumb {
+	background-color: #ff854d;
+	border-radius: 10px;
+}
+
+div#displayList::-webkit-scrollbar-track {
+    background-color: #e6e6e6;
+  }
+
 </style>
 
 <script type="text/javascript">
@@ -101,6 +122,63 @@ $(document).ready(function() {
     		goMainSearch(e);
     	}
     });
+    
+    // 자동완성창 숨기기
+    $("div#displayList").hide();
+    
+    // 검색어 자동완성
+    $("input:text#headerSearchWord").keyup(function() {
+
+		const wordLength = $(this).val().trim().length;
+		// 검색어에서 공백을 제거한 길이를 알아온다.
+		
+		if(wordLength == 0) {
+			$("div#displayList").hide();
+			// 검색어가 공백이거나 검색어 입력 후 백스페이스키를 눌러서 검색어를 모두 지우면 검색된 내용이 안 나오도록 해야 한다.
+			
+		} else {
+			$.ajax({
+				url: "<%=ctxPath%>/allSearchShow.trip",
+				data: {"searchWord": $(this).val().trim()},
+				dataType: "json",
+				success: function(json) {
+					if(json.length > 0) {
+						
+						let v_html = ``;
+						
+						$.each(json, function(index, item) {
+							
+							const word = item.word;
+							
+							const idx = word.toLowerCase().indexOf($("input:text[name='headerSearchWord']").val().toLowerCase());
+							const len = $("input:text[name='headerSearchWord']").val().length;
+							
+							const result = word.substring(0, idx) + "<span style='color: #ff7433; font-weight: bold;'>" + word.substring(idx, idx+len) + "</span>" + word.substring(idx+len);
+							
+							v_html += `<span style="color: #808080; cursor:pointer; margin-bottom: 5%;" class="result">\${result}</span><br>`;
+							
+						}); // end of $.each() ----------------------------------------------------
+						
+						const input_width = $("input[name='headerSearchWord']").css("width"); // 검색어 input 태그 width 값 알아오기
+						$("div#displayList").css({"width":input_width}); // 자동 완성 div의 width 크기를 검색어 입력 input 태그의 width 와 일치시키기
+						
+						$("div#displayList").html(v_html);
+						$("div#displayList").show();
+					}
+				},
+				error: function(request, status, error){
+					alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+				}
+			});
+		}
+    }); // end of $("input:text#headerSearchWord").keyup(function() {}) --------------------------------------
+    
+    // 자동완성에 있는 검색어 클릭 시
+	$(document).on("click", "span.result", function(e) {
+		const word = $(e.target).text();
+		$("input[name='headerSearchWord']").val(word);
+		$("div#displayList").hide();
+	});
     
 }); // end of $(document).ready(function() {}) -------------------------
 
@@ -332,6 +410,11 @@ function goMainSearch(event) {
 					    <input type="text" id="headerSearchWord" name="headerSearchWord" class="mr-sm-2" style="background-color: #F5F5F5; border-width: 0 0 2px;" placeholder="검색어를 입력하세요">
 					    <button id="headSearchBtn" class="btn my-2 my-sm-0" type="button" onclick="goMainSearch(event)"><i class="fa-solid fa-magnifying-glass"></i></button>
 				  </form>
+				  
+				  <%-- 검색어 자동완성 보여주기 --%>
+				  <div id="displayList" style="border: solid 1px #ccc; height: 60px;">
+				  <!-- width: 218px; -->
+				  </div>
 				
 				<ul class="navbar-nav my-2 my-lg-0">
 					
