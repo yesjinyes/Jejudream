@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>  
 <% String ctxPath = request.getContextPath(); %>
-<link rel="stylesheet" href="<%=ctxPath%>/resources/css/mypage/myRegisterHotel.css"/>
+<link rel="stylesheet" href="<%=ctxPath%>/resources/css/mypage/company/myRegisterHotel.css"/>
 <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 
