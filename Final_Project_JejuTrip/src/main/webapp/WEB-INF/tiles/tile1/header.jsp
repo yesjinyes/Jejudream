@@ -81,7 +81,8 @@ div#displayList::-webkit-scrollbar {
 }
 
 div#displayList::-webkit-scrollbar-thumb {
-	background-color: #ff854d;
+	/* background-color: #ff854d; */
+	background-color: #ccc;
 	border-radius: 10px;
 }
 
