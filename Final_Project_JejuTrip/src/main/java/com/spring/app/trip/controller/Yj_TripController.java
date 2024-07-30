@@ -153,14 +153,11 @@ public class Yj_TripController {
 		
 		// 맛집 전체개수
 	    int totalCount = service.getTotalCount(map);
-	    // System.out.println("totalCount => "+totalCount);
 	    
 	    // 맛집 리스트(조회수 증가X)
 		foodstoreList = service.viewFoodstoreList(map);
-		//System.out.println("foodstoreList 길이 : " + foodstoreList.size());
 		
 		List<FoodstoreVO> randomRecommend = service.randomRecommend(map); // 맛집 랜덤 추천
-		// System.out.println("~~~ 확인용 randomRecommend => "+ randomRecommend.size());
 		
 		//////////////////////////////////////////////////////////////////////////////
 		
@@ -206,8 +203,6 @@ public class Yj_TripController {
 			}// end of for--------------------------------.
 		}
 		
-		// System.out.println(jsonArr.toString());
-		
 		return jsonArr.toString();
 	}
 	
@@ -220,11 +215,7 @@ public class Yj_TripController {
 		
 		String food_store_code = "";
 		food_store_code = request.getParameter("food_store_code");
-		
-		// System.out.println("-------------------------------------------------------");
-		// System.out.println("## 확인용 food_store_code => "+ food_store_code);
-		// System.out.println("## 확인용 random_recommend_code => "+ random_recommend_code);
-		
+	
 		HttpSession session = request.getSession();
 		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
 		
@@ -262,19 +253,12 @@ public class Yj_TripController {
 			}
 		}
 		
-		///////////////////////////////////////////////////
+		/////////////////////////////////////////////////////
 		// 근처 숙소 랜덤 추천
 		String local_status = foodstorevo.getLocal_status();
 		lodgingList = service.getLodgingList(local_status);
 		
-	/*	for(LodgingVO lvo :lodgingList) {
-		//System.out.println("~~숙소 랜덤추천 확인 => "+lvo.getLodging_name());
-		System.out.println("~~숙소 랜덤추천 확인 => "+lvo.getMain_img());
-		}*/
-		///////////////////////////////////////////////////
-		
-		
-		////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////
 	
 		List<Map<String, String>> addimgList = service.viewfoodaddImg(paraMap); // 맛집 상세 추가 이미지
 
@@ -284,7 +268,6 @@ public class Yj_TripController {
  		mav.addObject("addimgList", addimgList);
 		
  		mav.setViewName("foodstore/foodstoreDetail.tiles1");
-		
 		
  		return mav;
 	}
@@ -296,7 +279,6 @@ public class Yj_TripController {
 	public ModelAndView view_2(ModelAndView mav, HttpServletRequest request, RedirectAttributes redirectAttr) {
 		
 		String food_store_code = request.getParameter("food_store_code");
-		System.out.println("~~~~ food_store_code 나와주세요 => "+ food_store_code);
 		
 		HttpSession session = request.getSession();
 		session.setAttribute("readCountPermission", "yes");
@@ -324,9 +306,6 @@ public class Yj_TripController {
 		String fk_userid = request.getParameter("fk_userid");
 		String like_division_R = "B";
 		
-		// System.out.println("좋아요 버튼 클릭 parent_code"+parent_code);
-		// System.out.println("좋아요 버튼 클릭 fk_userid"+fk_userid);
-		
 		int n = 0;
 
 		Map<String, String> paraMap = new HashMap<>();
@@ -343,8 +322,6 @@ public class Yj_TripController {
 			service.deleteLike(paraMap); // 좋아요 지우기
 	        n=0;
 		}
-		
-		//System.out.println("n" + n);
 		
 	    JSONObject jsonObj = new JSONObject(); 
 	    jsonObj.put("n", n);
@@ -405,8 +382,6 @@ public class Yj_TripController {
 		jsonObj.put("n", n);
 		jsonObj.put("fk_userid", reviewvo.getFk_userid());
 		
-		//System.out.println("### controller 에서 insert 확인 : "+ jsonObj.toString());
-		
 		return jsonObj.toString();
 	}
 	
@@ -434,13 +409,8 @@ public class Yj_TripController {
 		
 		List<ReviewVO> reviewList = service.getReviewList(paraMap);
 		
-//		for(ReviewVO rvo : reviewList) {
-//			System.out.println("@@@ 리뷰 내용 나와주세요 => " +rvo.getReview_content());
-//		}
-		
-		
-		int totalCount = service.getReviewTotalCount(parent_code); // 리뷰 총 개수 구하기
-		// System.out.println("~~ 리뷰 totalCount 확인 => " + totalCount);
+		// 리뷰 총 개수 구하기
+		int totalCount = service.getReviewTotalCount(parent_code); 
 		
 		JSONArray jsonArr = new JSONArray();
 		
@@ -460,7 +430,6 @@ public class Yj_TripController {
 			}// end of for------------------
 		}
 	
-		//System.out.println("~~~리뷰 List jsonArr 확인 => "+jsonArr.toString());
 		return jsonArr.toString();
 	}
 	
@@ -473,7 +442,6 @@ public class Yj_TripController {
 		
 		String review_code = request.getParameter("review_code");
 		String review_content = request.getParameter("review_content");
-		// System.out.println("~~~review_content 확인 => "+review_content);
 		
 		Map<String, String> paraMap = new HashMap<>();
 		paraMap.put("review_code", review_code);
@@ -497,7 +465,6 @@ public class Yj_TripController {
 		
 		Map<String, String> paraMap = new HashMap<>();
 		paraMap.put("review_code", review_code);
-		//paraMap.put("parent_code", parent_code);
 		
 		int n = 0;
 		
@@ -514,6 +481,7 @@ public class Yj_TripController {
 	}
 	
 	
+	
 	///////////////////////////////////////////////////////////////////////////////////
 	// ***** 관리자 기능 ***** //
 	
@@ -526,18 +494,16 @@ public class Yj_TripController {
 										@RequestParam(defaultValue="") String scheduleTitle,
 										@RequestParam(defaultValue="") String scheduleContent,
 										@RequestParam(defaultValue="") String startdate,
-										@RequestParam(defaultValue="") String enddate) {
+										@RequestParam(defaultValue="") String enddate,
+										@RequestParam(defaultValue="") String joinuser) {
 		
 		HttpSession session = request.getSession();
 		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
-		// System.out.println("로그인 된 id 확인 => " + loginuser.getUserid());
 		
 		String login_userid = null;
 		if(loginuser != null) { // 로그인 한 상태일 때
 			login_userid = loginuser.getUserid();
 		}
-		
-		// System.out.println("parent_code 확인 => " + parent_code);
 		
 		Map<String, String> paraMap = new HashMap<>();
 		
@@ -551,6 +517,7 @@ public class Yj_TripController {
 		paraMap.put("scheduleContent", scheduleContent);
 		paraMap.put("startdate", startdate);
 		paraMap.put("enddate", enddate);
+		paraMap.put("joinuser", joinuser);
 		
 		int n = 0;
 		
@@ -568,8 +535,8 @@ public class Yj_TripController {
 	}
 	
 	
-	// === 공유자를 찾기 위한 특정글자가 들어간 회원명단 불러오기 ===
-/*	@ResponseBody
+	// == 일정 공유자를 찾기 위한 특정글자가 들어간 회원명단 불러오기 == //
+	@ResponseBody
 	@RequestMapping(value="/schedule/insertSchedule/searchFoodJoinUserList.trip", produces="text/plain;charset=UTF-8")
 	public String searchPlayJoinUserList(HttpServletRequest request) {
 		
@@ -583,7 +550,7 @@ public class Yj_TripController {
 			for(MemberVO mvo : joinUserList) {
 				JSONObject jsObj = new JSONObject();
 				jsObj.put("userid", mvo.getUserid());
-				jsObj.put("name", mvo.getUser_name());
+				jsObj.put("user_name", mvo.getUser_name());
 				
 				jsonArr.put(jsObj);
 			}
@@ -591,19 +558,16 @@ public class Yj_TripController {
 		
 		return jsonArr.toString();
 	}
-*/
+
 	
 	// == 맛집 수정 페이지 요청 (관리자) == //
 	@GetMapping("/editFoodstore.trip")
 	public ModelAndView editFoodstore(ModelAndView mav, HttpServletRequest request) {
 		
 		String food_store_code = request.getParameter("food_store_code");
-		// System.out.println("~~~~ food_store_code 확인 => " + food_store_code);
 		
 		// 맛집 수정을 위해 VO 에 있는 정보 불러오기
 		FoodstoreVO foodstorevo = service.getFoodstorevo(food_store_code);
-		
-		// System.out.println("~~ 수정용 맛집이름 확인 => " + foodstorevo.getFood_name()); 
 		
 		mav.addObject("foodstorevo", foodstorevo);
 		
@@ -638,10 +602,7 @@ public class Yj_TripController {
 				Map<String, String> img_map = service.getImg(food_store_code);
 				String food_main_img = img_map.get("food_main_img");
 				String filename = img_map.get("filename");
-				
-				//System.out.println("!! food_main_img 확인 => " + food_main_img);
-				//System.out.println("!! filename 확인 => " + filename);
-				
+
 				if(filename != null ) {
 					// 운영경로에 올라가있는 filename 이 null 이 아니면 
 					fileManager.doFileDelete(filename, path);
@@ -666,7 +627,7 @@ public class Yj_TripController {
 				e.printStackTrace();
 			}
 			
-		}// end of if(!attach.isEmpty())---------------
+		}
 		//  ============ 첨부파일 처리 끝 ============ // 
 	
 		int n = service.editFoodEnd(foodstorevo); // 맛집  수정하기
@@ -704,7 +665,6 @@ public class Yj_TripController {
 		String path = root + "resources" + File.separator + "images" + File.separator + "foodimg";
 
 		String food_store_code = request.getParameter("food_store_code");
-		// System.out.println("~~~ food_store_code 확인 => " + food_store_code);
 		
 		int totalCount = service.getReviewTotalCount(parent_code); // 리뷰 테이블 삭제를 위한 것
 		
@@ -716,10 +676,7 @@ public class Yj_TripController {
 			
 			String food_main_img = img_map.get("food_main_img");
 			String filename = img_map.get("filename");
-			
-			// System.out.println("!! delete food_main_img 확인 => " + food_main_img);
-			// System.out.println("!! delete filename 확인 => " + filename);
-			
+
 			if(filename != null) {
 				// 운영경로에 올라가있는 filename 이 null 이 아니면 
 				fileManager.doFileDelete(filename, path);
@@ -738,10 +695,7 @@ public class Yj_TripController {
 		jsonObj.put("n", n);
 		jsonObj.put("totalCount", totalCount);
 		
-		//System.out.println("### controller 에서 insert 확인 : "+ jsonObj.toString());
-		
 		return jsonObj.toString();
-		
 	}
 	
 	
@@ -756,11 +710,8 @@ public class Yj_TripController {
 		String currentShowPageNo = request.getParameter("currentShowPageNo"); 
 		
 		String faq_category = request.getParameter("faq_category"); // 카테고리 탭 선택 ajax 적용을 위한 것
-		// System.out.println("faq_category => " + faq_category );
 
 		String searchWordFaq = request.getParameter("searchWordFaq"); 
-		// System.out.println("검색어 확인 => " + searchWordFaq);
-		
 		
 		Map<String, String> paraMap = new HashMap<>();
 		
@@ -792,7 +743,6 @@ public class Yj_TripController {
 		List<Map<String,String>> faqList = service.viewAllFaqList_paging(paraMap);
 		
 		int totalCount = service.getTotalFaqList(paraMap); // FAQ 리스트 페이징 처리 위함
-		// System.out.println("~~~FAQ 개수 => " + totalCount);
 		
 		JSONArray jsonArr = new JSONArray(); // [] 
 		
@@ -813,8 +763,6 @@ public class Yj_TripController {
 			}// end of for-----------------------
 		}
 		
-		
-		//System.out.println(jsonArr.toString());
 		return jsonArr.toString(); 	
 	}
 	

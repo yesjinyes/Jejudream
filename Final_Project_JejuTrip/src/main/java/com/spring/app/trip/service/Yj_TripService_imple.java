@@ -164,6 +164,13 @@ public class Yj_TripService_imple implements Yj_TripService {
 		return n;
 	}
 
+	// == 일정 공유자를 찾기 위한 특정글자가 들어간 회원명단 불러오기 == //
+	@Override
+	public List<MemberVO> searchFoodJoinUserList(String joinUserName) {
+		List<MemberVO> joinUserList = dao.searchFoodJoinUserList(joinUserName);
+		return joinUserList;
+	}
+
 
 	// == 맛집 수정을 위해 VO 에 있는 정보 불러오기 == //
 	@Override
@@ -231,23 +238,8 @@ public class Yj_TripService_imple implements Yj_TripService {
 	}
 
 
-	// == 공유자를 찾기 위한 특정글자가 들어간 회원명단 불러오기 == //
-//	@Override
-//	public List<MemberVO> searchFoodJoinUserList(String joinUserName) {
-//		List<MemberVO> joinUserList = dao.searchFoodJoinUserList(joinUserName);
-//		return joinUserList;
-//	}
-
-
-	// == 인기순으로 정렬 == //
-//	@Override
-//	public List<FoodstoreVO> viewReadcountList(String readcount) {
-//		List<FoodstoreVO> readcountList = dao.viewReadcountList(readcount);
-//		return readcountList;
-//	}
-
-
 	
+
 
 	
 

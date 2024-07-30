@@ -2165,4 +2165,54 @@ public class Dy_TripController {
 		return mav;
 	}
 	
+	
+	// header 전체검색 자동완성
+	@ResponseBody
+	@GetMapping(value="allSearchShow.trip", produces="text/plain;charset=UTF-8")
+	public String allSearchShow(HttpServletRequest request) {
+		
+		String searchWord = request.getParameter("searchWord");
+
+		List<Map<String, String>> lodgingList = service.searchLodgingList(searchWord);
+		List<FoodstoreVO> foodstoreList = service.searchFoodstoreList(searchWord);
+		List<PlayVO> playList = service.searchPlayList(searchWord);
+		List<BoardVO> boardList = service.searchBoardList(searchWord);
+		
+		JSONArray jsonArr = new JSONArray();
+		
+		if(lodgingList != null) {
+			for(Map<String, String> lodging : lodgingList) {
+				JSONObject jsonObj = new JSONObject();
+				jsonObj.put("word", lodging.get("lodging_name"));
+				jsonArr.put(jsonObj);
+			}
+		}
+		
+		if(foodstoreList != null) {
+			for(FoodstoreVO foodstore : foodstoreList) {
+				JSONObject jsonObj = new JSONObject();
+				jsonObj.put("word", foodstore.getFood_name());
+				jsonArr.put(jsonObj);
+			}
+		}
+		
+		if(playList != null) {
+			for(PlayVO play : playList) {
+				JSONObject jsonObj = new JSONObject();
+				jsonObj.put("word", play.getPlay_name());
+				jsonArr.put(jsonObj);
+			}
+		}
+		
+		if(boardList != null) {
+			for(BoardVO board : boardList) {
+				JSONObject jsonObj = new JSONObject();
+				jsonObj.put("word", board.getSubject());
+				jsonArr.put(jsonObj);
+			}
+		}
+		
+		return jsonArr.toString();
+	}
+	
 }

@@ -1019,7 +1019,7 @@ function open_modal_img(imgsrc){
                             </div>
                             <textarea class="flex-grow-1" name="review_content" id="review_content" rows="4" placeholder="이용후기를 댓글로 남겨주세요!"></textarea>
                             <div class="input-buttons ml-3 d-flex flex-column justify-content-between">
-                                <button type="button" class="btn btn-warning btn-sm" onclick="goAddReivew()">작성</button>
+                                <button type="button" class="btn btn-warning btn-sm" onclick="goAddReview()">작성</button>
                                 <button type="reset" class="btn btn-light btn-sm">취소</button>
                                 <input type="hidden" name="fk_userid" value="${sessionScope.loginuser.userid}">
                                 <input type="hidden" name="review_division_R" value="${requestScope.lodgingDetail.review_division}">
