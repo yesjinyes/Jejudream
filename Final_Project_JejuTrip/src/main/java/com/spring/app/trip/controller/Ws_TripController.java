@@ -2,23 +2,21 @@ package com.spring.app.trip.controller;
 
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.Part;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -1872,10 +1870,23 @@ public class Ws_TripController {
 		try {
 			Integer.parseInt(scheduleno);
 			Map<String,String> map = service.detailSchedule(scheduleno);
-			mav.addObject("map", map);
-			mav.setViewName("mypage/member/detailSchedule.tiles1");
+			if(map == null) {
+				String loc = "javascript:history.back()";
+				String message = "비정상적인 접근입니다.";
+				mav.addObject("message", message);
+				mav.addObject("loc", loc);
+				mav.setViewName("msg");
+			}
+			else {
+				mav.addObject("map", map);
+				mav.setViewName("mypage/member/detailSchedule.tiles1");
+			}
 		} catch (NumberFormatException e) {
-			mav.setViewName("redirect:/my_schedule.action");
+			String loc = "javascript:history.back()";
+			String message = "비정상적인 접근입니다.";
+			mav.addObject("message", message);
+			mav.addObject("loc", loc);
+			mav.setViewName("msg");
 		}
 		
 		return mav;
@@ -1919,7 +1930,39 @@ public class Ws_TripController {
 		String str_currentShowPageNo = request.getParameter("currentShowPageNo");
 		String str_sizePerPage = request.getParameter("sizePerPage");
 	
-		String fk_lgcatgono = request.getParameter("fk_lgcatgono");
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
+		if(!fk_userid.equals(loginuser.getUserid())) {
+			String loc = "javascript:history.back()";
+			String message = "비정상적인 접근입니다.";
+			mav.addObject("message", message);
+			mav.addObject("loc", loc);
+			mav.setViewName("msg");
+			return mav;
+		}
+		
+		SimpleDateFormat sdformat = new SimpleDateFormat("yyyy-MM-dd");
+		
+		sdformat.setLenient(false);
+		// false 로 해주어야만 입력한 값을 날짜 타입으로 변경할때 날짜로 되지 못하는 값일 경우 오류가 발생한다.
+		// 날짜로 파싱될 때 허술하게 하지 말고 엄격하게 하라고 설정해주는 것이라고 생각하면 된다. 
+		
+		// === 문자열을 날짜 형태로 변환하기 ===
+		try {
+			Date startdate_date = sdformat.parse(startdate);
+			Date enddate_date = sdformat.parse(enddate);
+			
+		} catch (ParseException e) {
+			String loc = "javascript:history.back()";
+			String message = "비정상적인 접근입니다.";
+			mav.addObject("message", message);
+			mav.addObject("loc", loc);
+			mav.setViewName("msg");
+			return mav;
+		}
+		
+		
+		String fk_lgcatgono = "1";
 		
 		if(searchType==null || (!"subject".equals(searchType) && !"content".equals(searchType)  && !"joinuser".equals(searchType))) {  
 			searchType="";
@@ -1942,9 +1985,6 @@ public class Ws_TripController {
 				str_sizePerPage ="10";
 		}
 		
-		if(fk_lgcatgono == null ) {
-			fk_lgcatgono="";
-		}
 		
 		Map<String, String> paraMap = new HashMap<String, String>();
 		paraMap.put("startdate", startdate);
