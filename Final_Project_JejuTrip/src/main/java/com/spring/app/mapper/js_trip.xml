@@ -37,6 +37,7 @@
 	          select fk_lodging_code , min(price) as price
 	          from tbl_room_detail
 	          group by fk_lodging_code
+	          having min(price) between #{start_price} and #{end_price}
 	          )P
 	          on L.lodging_code = P.fk_lodging_code
 	          join
@@ -66,17 +67,16 @@
 				       ELSE '예약종료' END AS RESERVATION_STATE
 				 FROM 
 				 (
-				  SELECT L.lodging_code, D.room_name, D.room_stock, max_person
+				  SELECT L.lodging_code, D.room_name, D.room_stock, max_person, price
 				  FROM tbl_lodging L JOIN tbl_room_detail D
 				  ON L.lodging_code = D.fk_lodging_code
-				  where price between #{start_price} and #{end_price} 
 				 ) A
 				 LEFT JOIN
 				 (
 				  SELECT D.fk_lodging_code, D.room_name, COUNT(*) AS RESERVATION_CNT 
 				  FROM tbl_room_detail D JOIN tbl_reservation RSV
 				  ON D.room_detail_code = RSV.fk_room_detail_code
-				  WHERE RSV.check_in <![CDATA[<=]]> #{check_in} AND RSV.check_out <![CDATA[>=]]> #{check_out}
+				  WHERE (RSV.check_in <![CDATA[<]]> #{check_out} AND RSV.check_out <![CDATA[>]]> #{check_in})
 				  and RSV.status = 1
 				  GROUP BY D.fk_lodging_code, D.room_name
 				 ) B
@@ -143,6 +143,14 @@
           on L.lodging_code = T.fk_lodging_code
           join
           (
+          select fk_lodging_code , min(price) as price
+          from tbl_room_detail
+          group by fk_lodging_code
+             having min(price) between #{start_price} and #{end_price}
+          )P
+          on L.lodging_code = P.fk_lodging_code
+          join
+          (
           	SELECT distinct lodging_code, RESERVATION_STATE
 			FROM 
 			(
@@ -154,8 +162,7 @@
 			 (
 			  SELECT L.lodging_code, D.room_name, D.room_stock, max_person
 			  FROM tbl_lodging L JOIN tbl_room_detail D
-			  ON L.lodging_code = D.fk_lodging_code 
-			  where price between #{start_price} and #{end_price} 
+			  ON L.lodging_code = D.fk_lodging_code
 			 ) A
 			 LEFT JOIN
 			 (
