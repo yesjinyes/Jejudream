@@ -240,7 +240,9 @@ public class Js_TripController {
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		
-		
+		sdf.setLenient(false);
+	    // false 로 해주어야만 입력한 값을 날짜 타입으로 변경할때 날짜로 되지 못하는 값일 경우 오류가 발생한다.
+	    // 날짜로 파싱될 때 허술하게 하지 말고 엄격하게 하라고 설정해주는 것이라고 생각하면 된다. 
 		if(!"".equals(detail_check_in) && !"".equals(detail_check_out)) {
 			
 			
