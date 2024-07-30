@@ -1293,7 +1293,20 @@ public class Js_TripController {
 			        
 			        long fileSize = 0;
 			        // 첨부파일의 크기 
+			        
+			        // 객실명 태그공격 막아내기
+			        arr_room_name[i] = arr_room_name[i].replaceAll("<", "&lt");
+			        arr_room_name[i] = arr_room_name[i].replaceAll(">", "&gt");
+			        
+			        // 입실시간 태그공격 막아내기
+			        arr_check_in[i] = arr_check_in[i].replaceAll("<", "&lt");
+			        arr_check_in[i] = arr_check_in[i].replaceAll(">", "&gt");
 
+			        // 퇴실시간 태그공격 막아내기
+			        arr_check_out[i] = arr_check_out[i].replaceAll("<", "&lt");
+			        arr_check_out[i] = arr_check_out[i].replaceAll(">", "&gt");
+
+			       
 	                try {
 	                    // 기존 이미지 파일명 삭제
 	                    fileManager.doFileDelete(arr_room_img[i], path);
@@ -1545,8 +1558,23 @@ public class Js_TripController {
         // 입력한 내용에서 엔터는 <br>로 변환하기
 		content = content.replaceAll("\r\n", "<br>");
 		
-		lvo.setLodging_content(content);
+		String lvo_name = lvo.getLodging_name();
+		
+		lvo_name = lvo_name.replaceAll("<", "&lt");
+		lvo_name = lvo_name.replaceAll(">", "&gt");
 
+        // 입력한 내용에서 엔터는 <br>로 변환하기
+		lvo_name = lvo_name.replaceAll("\r\n", "<br>");
+		
+		lvo.setLodging_name(lvo_name);
+
+		detail_address = detail_address.replaceAll("<", "&lt");
+		detail_address = detail_address.replaceAll(">", "&gt");
+
+        // 입력한 내용에서 엔터는 <br>로 변환하기
+		detail_address = detail_address.replaceAll("\r\n", "<br>");
+		
+		
 		
 		lvo.setLodging_address((address + " " + detail_address).trim());
 		
