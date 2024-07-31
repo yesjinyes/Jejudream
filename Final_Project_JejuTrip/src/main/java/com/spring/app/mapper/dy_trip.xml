@@ -268,7 +268,9 @@
 			 , filename, orgfilename, filesize
 		FROM
 		(
-			select row_number() over(order by seq desc) AS rno
+    		select row_number() over(order by 
+                             		 CASE WHEN fk_userid = 'admin' THEN 0 ELSE 1 END,
+                             		 seq desc) AS rno
 				 , seq, fk_userid, name, subject
 			     , readCount, to_char(regDate, 'yyyy-mm-dd hh24:mi') AS regDate
 			     , commentCount, filename, orgfilename, filesize

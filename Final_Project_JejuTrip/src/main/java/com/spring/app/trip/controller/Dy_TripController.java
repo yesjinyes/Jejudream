@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import javax.mail.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -1013,11 +1014,12 @@ public class Dy_TripController {
 	@PostMapping("community/addBoardEnd.trip")
 	public ModelAndView addBoardEnd(ModelAndView mav, BoardVO boardvo, MultipartHttpServletRequest mrequest) {
 		
+		HttpSession session = mrequest.getSession();
+		
 		MultipartFile attach = boardvo.getAttach();
 		
 		if(attach != null) {
 			
-			HttpSession session = mrequest.getSession();
 			String root = session.getServletContext().getRealPath("/"); 
 			// WAS의 webapp의 절대경로
 			
@@ -1061,6 +1063,13 @@ public class Dy_TripController {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
+		
+		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
+		
+		// 관리자가 글을 작성할 경우 글제목 앞에 "[관리자]" 붙이기
+		if("admin".equals(loginuser.getUserid())) {
+			boardvo.setSubject("[관리자] " + boardvo.getSubject());
 		}
 		
 		int n = 0;

@@ -230,7 +230,7 @@ div#pageBar a {
 		<tbody>
 			<c:if test="${not empty requestScope.freeBoardList}">
 				<c:forEach var="boardvo" items="${requestScope.freeBoardList}" varStatus="status">
-					<tr>
+					<tr <c:if test="${boardvo.fk_userid == 'admin'}">style="background-color: rgb(242, 242, 242, 0.7);"</c:if>>
 						<td align="center">
 							${(requestScope.totalCount) - (requestScope.currentShowPageNo - 1) * (requestScope.sizePerPage) - (status.index)}
 							<%-- >>> 페이징 처리 시 보여주는 순번 공식 <<<
