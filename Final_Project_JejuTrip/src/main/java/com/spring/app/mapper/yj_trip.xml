@@ -346,7 +346,7 @@
 	</delete>
 
 
-	<!-- 자주묻는질문 전체 띄우기 (페이징O) -->
+	<!-- 자주묻는질문(FAQ) 전체 띄우기 (페이징O) -->
 	<resultMap type="HashMap" id="faqList_map">
 		<result property="faq_seq" 		column="faq_seq" 		javaType="String" />
 		<result property="faq_category" column="faq_category" 	javaType="String" />
@@ -390,15 +390,30 @@
 	</select>
 
 
-	<!-- 자주묻는질문 등록(관리자)-->
-	<insert id="registerQuestion" parameterType="HashMap">
+	<!-- FAQ 등록(관리자)-->
+	<insert id="registerFAQ" parameterType="HashMap">
 		insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer)
 		values(seq_faq.nextval, #{faq_category}, #{faq_question}, #{faq_answer})
 	</insert>
 
 
+	<!-- FAQ 수정(관리자) -->
+	<update id="updateFAQ" parameterType="HashMap">
+		update tbl_faq set faq_question = #{question_update}, faq_answer = #{answer_update}
+		where faq_seq = #{faq_seq}
+	</update>
 
-
+	<!-- FAQ 삭제(관리자) -->
+	<delete id="deleteFAQ" parameterType="String">
+		delete from tbl_faq
+		where faq_seq = #{faq_seq}
+	</delete>
+	
+	
+	
+	
+	
+	
 
 
 </mapper>
