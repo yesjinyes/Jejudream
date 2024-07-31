@@ -332,6 +332,7 @@ div.accordion-content {
 			return;
 		}
 		
+		$("input[name='selected_category']").val(selected_category);
 		$("input[name='question']").val(question);
 		$("input[name='answer']").val(answer);
 
@@ -339,12 +340,20 @@ div.accordion-content {
 	
 		// 질문 등록 데이터 넘기기
 		$.ajax({
-			url:"addQuestion.trip",
+			url:"<%= ctxPath%>/registerQuestion.trip",
 			type:"post",
 			data:submit,
+			dataType:"json",
 			success:function(json) {
-				alert("일정 등록에 성공했습니다.");
-				$("#faqRegisterModal").modal("hide");
+				if(json.n == 1) {
+					alert("질문 등록에 성공했습니다.");
+	        		$("#faqRegisterModal").modal("hide");
+	        		location.href = "<%= ctxPath%>/support.trip"
+	        	}
+				else {
+	        		alert("질문 등록에 실패했습니다.");
+	        		$("#faqRegisterModal").modal("hide");
+	        	}
 			},
 			error: function(request, status, error) {
                 alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
@@ -352,10 +361,6 @@ div.accordion-content {
 		});// end of $.ajax------------------------
 		
 	}// end of function goRegisterFaq()--------------------
-	
-	
-	
-	
 	
 </script>
 
@@ -410,10 +415,11 @@ div.accordion-content {
 		                    		<option>즐길거리</option>
 		                    		<option>기타</option>
 		                    	</select>
+		                    	<input type="hidden" name="selected_category"/>
 		                        
 		                        <label for="question" class="col-form-label">질문</label>
 		                        <textarea class="form-control register-input mb-3" id="question" name="question" placeholder="등록할 질문을 작성하세요."></textarea>
-		                        <input type="hidden" id="question" name="question"/><br>
+		                        <input type="hidden" id="question" name="question"/>
 		                        
 		                        <label for="answer" class="col-form-label">답변</label>
 		                        <textarea class="form-control register-input mb-3" id="answer" name="answer" placeholder="질문에 대한 답변을 작성하세요."></textarea>

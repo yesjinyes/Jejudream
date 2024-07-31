@@ -233,7 +233,14 @@ public class Yj_TripService_imple implements Yj_TripService {
 	@Override
 	public int getTotalFaqList(Map<String, String> paraMap) {
 		int n = dao.getTotalFaqList(paraMap);
-		// System.out.println("service 에서 FAQ 성공? => "  + n);
+		return n;
+	}
+
+
+	// == 자주묻는질문 등록(관리자) == //
+	@Override
+	public int registerQuestion(Map<String, String> paraMap) {
+		int n = dao.registerQuestion(paraMap);
 		return n;
 	}
 

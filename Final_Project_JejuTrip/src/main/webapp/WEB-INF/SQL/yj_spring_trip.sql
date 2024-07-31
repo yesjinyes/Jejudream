@@ -479,7 +479,20 @@ commit;
 
 
 select * from tbl_faq
-order by faq_category
+order by CAST(faq_seq AS INT) desc;
+
+delete from tbl_faq
+where faq_answer = '답변 test'
+
+commit;
 
 select * from tbl_review;
+
+select * from user_sequences
+
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer)
+values(SEQ_FAQ.nextval, 
+
+
+
 

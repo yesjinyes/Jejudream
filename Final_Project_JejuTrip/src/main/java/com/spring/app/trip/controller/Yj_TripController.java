@@ -24,6 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.spring.app.trip.common.FileManager;
+import com.spring.app.trip.domain.FaqVO;
 import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.MemberVO;
@@ -775,6 +776,34 @@ public class Yj_TripController {
 	
 	
 	
+	// == 자주묻는질문 등록(관리자) == //
+	@ResponseBody
+	@PostMapping(value="/registerQuestion.trip", produces="text/plain;charset=UTF-8")
+	public String registerQuestion(HttpServletRequest request) {
+		
+		String selected_category = request.getParameter("selected_category");
+		String question = request.getParameter("question");
+		String answer = request.getParameter("answer");
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("faq_category", selected_category);
+		paraMap.put("faq_question", question);
+		paraMap.put("faq_answer", answer);
+		
+		int n = 0;
+		
+		try {
+			n = service.registerQuestion(paraMap);
+		
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("n", n);
+		
+		return jsonObj.toString();
+	}
 	
 	
 	
