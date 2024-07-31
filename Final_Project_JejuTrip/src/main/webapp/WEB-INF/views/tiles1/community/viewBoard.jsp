@@ -507,7 +507,7 @@
 	// === 댓글 쓰기 ===
 	function goAddComment() {
 		
-		const comment_content = $("textarea[name='content']").val().trim();
+		const comment_content = $("textarea#comment_content").val().trim();
 		
 		if(comment_content == "") {
 			alert("댓글 내용을 입력하세요!");
@@ -826,7 +826,7 @@
 								<input type="text" class="font-weight-bold" name="name" value="${sessionScope.loginuser.user_name}" style="border: none; background-color: #FAFAFA;" readonly>
 							</c:if>
 						</span>
-						<textarea class="mb-2" name="content" style="width: 100%; height: 100px; border: none; background-color: #fafafa;" placeholder="댓글을 작성해주세요."></textarea>
+						<textarea class="mb-2" id="comment_content" name="content" style="width: 100%; height: 100px; border: none; background-color: #fafafa;" placeholder="댓글을 작성해주세요."></textarea>
 						<input type="hidden" name="parentSeq" value="${requestScope.boardvo.seq}" readonly />
 						<div style="text-align: right;"><button type="button" class="btn" id="addCommentBtn" onclick="goAddComment()">등록</button></div>
 					</div>
