@@ -12,7 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.spring.app.trip.common.FileManager;
 import com.spring.app.trip.domain.Calendar_schedule_VO;
+import com.spring.app.trip.domain.CompanyVO;
 import com.spring.app.trip.domain.LikeVO;
+import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.domain.PlayVO;
 import com.spring.app.trip.domain.ReviewVO;
@@ -371,6 +373,25 @@ public class Hs_TripService_imple implements Hs_TripService {
 		List<Map<String, String>> adminLogingReviewList = dao.adminLogingReviewList(paraMap);
 		return adminLogingReviewList;
 	}
+	
+	//회사별 리뷰 가져오기
+	@Override
+	public List<Map<String, String>> logingCmpReviewList(Map<String, String> paraMap) {
+		List<Map<String, String>> logingCmpReviewList =dao.logingCmpReviewList(paraMap);
+		return logingCmpReviewList;
+	}
+	@Override
+	public int getCmpLoginReviewCount(Map<String, String> paraMap) {
+		int n = dao.getCmpLoginReviewCount(paraMap);
+		return n;
+	}
+	//회사가 가지고 있는 숙소리스트 가져오기
+	@Override
+	public List<LodgingVO> lodgingList(String companyid) {
+		List<LodgingVO> lodgingList = dao.lodgingList(companyid);
+		return lodgingList;
+	}
+	
 	
 	
 	

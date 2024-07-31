@@ -194,6 +194,7 @@
 .container_card .back{
     -webkit-transform: rotateY(180deg);
             transform: rotateY(180deg);
+            cursor: pointer;
    
 }
 
@@ -206,12 +207,14 @@
 .container_card:hover .back{
   -webkit-transform: rotateY(0deg);
           transform: rotateY(0deg);
+          cursor: pointer;
   
 }
 
 .container_card:hover .front{
   -webkit-transform: rotateY(-180deg);
           transform: rotateY(-180deg);
+          cursor: pointer;
  
 }
 
@@ -420,7 +423,9 @@ function contentPlay(currentShowPageNo) {
 	            
             }
             else {
+            	const totalPage = 0;
                 v_html += "현재 카테고리 준비중 입니다...";
+                PageBar(currentShowPageNo, totalPage);
             }
             $("div#categoryList").html(v_html);
             

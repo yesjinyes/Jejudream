@@ -13,7 +13,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import com.spring.app.trip.domain.Calendar_schedule_VO;
+import com.spring.app.trip.domain.CompanyVO;
 import com.spring.app.trip.domain.LikeVO;
+import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.domain.PlayVO;
 import com.spring.app.trip.domain.ReviewVO;
@@ -332,6 +334,28 @@ public class Hs_TripDAO_imple implements Hs_TripDAO {
 		List<Map<String, String>> adminLogingReviewList = sqlsession.selectList("hs_trip.adminLogingReviewList",paraMap);
 		return adminLogingReviewList;
 	}
+
+	
+	//회사별 리뷰 가져오기
+	@Override
+	public List<Map<String, String>> logingCmpReviewList(Map<String, String> paraMap) {
+		List<Map<String, String>> logingCmpReviewLis = sqlsession.selectList("hs_trip.logingCmpReviewList",paraMap);
+		return logingCmpReviewLis;
+	}
+
+	@Override
+	public int getCmpLoginReviewCount(Map<String, String> paraMap) {
+		int n = sqlsession.selectOne("hs_trip.getCmpLoginReviewCount",paraMap);
+		return n;
+	}
+
+	//회사가 가지고있는 숙소리스트 가져오기
+	@Override
+	public List<LodgingVO> lodgingList(String companyid) {
+		List<LodgingVO> lodgingList = sqlsession.selectList("hs_trip.lodgingList",companyid);
+		return lodgingList;
+	}
+
 	
 	
 	
