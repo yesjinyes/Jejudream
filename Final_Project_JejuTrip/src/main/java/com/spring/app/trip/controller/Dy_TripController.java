@@ -722,6 +722,13 @@ public class Dy_TripController {
 	// 휴면 해제 - 비밀번호 변경 페이지 요청
 	@GetMapping("login/idleUpdateEnd.trip")
 	public ModelAndView idleUpdateEnd(ModelAndView mav, HttpServletRequest request) {
+
+		String referer = request.getHeader("referer"); 
+		
+		if(referer == null) {
+			mav.setViewName("redirect:/index.trip");
+			return mav;
+		}
 		
 		String memberType = request.getParameter("memberType");
 		String id = request.getParameter("id");
@@ -1873,7 +1880,7 @@ public class Dy_TripController {
 					// 다운로드가 실패한 경우
 					
 					out = response.getWriter();
-					out.println("<script type='text/javascript'>alert('파일 다운로드가 실패되었습니다.'); window.close();</script>");
+					out.println("<script type='text/javascript'>alert('파일 다운로드가 실패되었습니다.'); history.back();</script>");
 				}
 			}
 			
@@ -1982,11 +1989,18 @@ public class Dy_TripController {
 		paraMap.put("pw", pw);
 		paraMap.put("login_id", login_id);
 		
-		int n = service.deleteBoard(paraMap);
-
+		int result = 0;
+		
+		try { // 커뮤니티 글 삭제(Transaction 처리)
+			result = service.deleteBoard(paraMap);
+			
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		
 		JSONObject jsonObj = new JSONObject();
-		jsonObj.put("n", n);
-
+		jsonObj.put("result", result);
+		
 		return jsonObj.toString();
 	}
 	

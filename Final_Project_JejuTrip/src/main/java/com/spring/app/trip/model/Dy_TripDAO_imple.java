@@ -521,6 +521,16 @@ public class Dy_TripDAO_imple implements Dy_TripDAO {
 		
 		return boardList;
 	}
+
+
+	// 커뮤니티 원글에 대한 댓글 삭제 (status 0으로 update)
+	@Override
+	public int deleteCommentByParentSeq(String parentSeq) {
+		
+		int n = sqlsession.update("dy_trip.deleteCommentByParentSeq", parentSeq);
+		
+		return n;
+	}
 	
 
 }

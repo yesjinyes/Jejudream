@@ -439,7 +439,7 @@
 				type: "post",
 				dataType: "json",
 				success: function(json) {
-					if(json.n == 1) {
+					if(json.result == 1) {
 						
 						if(${requestScope.boardvo.category} == 1) {
 							location.href = "<%=ctxPath%>/community/freeBoard.trip";

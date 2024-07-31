@@ -151,5 +151,8 @@ public interface Dy_TripDAO {
 	// [전체 검색] 커뮤니티 게시판 리스트 띄우기
 	List<BoardVO> searchBoardList(String searchWord);
 
+	// 커뮤니티 원글에 대한 댓글 삭제
+	int deleteCommentByParentSeq(String parentSeq);
+
 	
 }

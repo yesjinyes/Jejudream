@@ -384,5 +384,23 @@ ORDER BY lodging_code desc;
 
 
 
+-- ========= 휴면해제/비밀번호변경 확인 ========= --
+update tbl_member set lastpwdchangedate = '24/01/01'
+where userid = 'test000';
+commit;
+
+select *
+from tbl_member_loginhistory
+where fk_userid = 'test000';
+
+update tbl_member_loginhistory set logindate = '23/01/01'
+where fk_userid = 'test000';
+commit;
+
+select userid, lastpwdchangedate, idle
+from tbl_member
+where userid = 'test000';
+
+
 
 

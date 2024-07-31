@@ -586,4 +586,11 @@
 		order by seq desc
 	</select>
 	
+	
+	<!-- 커뮤니티 원글에 대한 댓글 삭제 (status 0으로 update) -->
+	<update id="deleteCommentByParentSeq" parameterType="String">
+		update tbl_comment set status = 0
+		where parentSeq = #{parentSeq}
+	</update>
+	
 </mapper>
