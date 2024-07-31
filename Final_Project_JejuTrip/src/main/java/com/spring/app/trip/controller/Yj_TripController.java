@@ -763,7 +763,6 @@ public class Yj_TripController {
 				jsonObj.put("faq_question", faqMap.get("faq_question"));
 				jsonObj.put("faq_answer", faqMap.get("faq_answer"));
 				
-				
 				jsonObj.put("totalCount", totalCount);   
 				jsonObj.put("sizePerPage", sizePerPage);  
 				
