@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.spring.app.trip.domain.Calendar_schedule_VO;
+import com.spring.app.trip.domain.CompanyVO;
 import com.spring.app.trip.domain.LikeVO;
+import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.domain.PlayVO;
 import com.spring.app.trip.domain.ReviewVO;
@@ -107,6 +109,15 @@ public interface Hs_TripDAO {
 	//4. 숙소
 	int adminLogingReviewCount(Map<String, String> paraMap);
 	List<Map<String, String>> adminLogingReviewList(Map<String, String> paraMap);
+
+	
+	//회사별 리뷰 가져오기
+	List<Map<String, String>> logingCmpReviewList(Map<String, String> paraMap);
+	int getCmpLoginReviewCount(Map<String, String> paraMap);
+
+	//회사가 가지고 있는 숙소리스트 가져오기
+	List<LodgingVO> lodgingList(String companyid);
+	
 
 
 	

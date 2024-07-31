@@ -369,7 +369,7 @@
 			<if test='searchWordFaq != null'>
 				and faq_question like '%'||lower(#{searchWordFaq})||'%'
 			</if>
-			order by faq_seq desc
+			order by cast(faq_seq AS int) desc
 			)V
 		)V2
 		where RNO between #{startRno} and #{endRno}
@@ -389,6 +389,12 @@
 		</if>
 	</select>
 
+
+	<!-- 자주묻는질문 등록(관리자)-->
+	<insert id="registerQuestion" parameterType="HashMap">
+		insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer)
+		values(seq_faq.nextval, #{faq_category}, #{faq_question}, #{faq_answer})
+	</insert>
 
 
 

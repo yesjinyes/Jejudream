@@ -207,7 +207,8 @@ div.accordion-content {
 				    makeAllFaqListPageBar(currentShowPageNo, totalPage);
 				}
 				else {
-					v_html_faq += "<span style='font-size: 13pt;'>등록된 질문이 없습니다.</span>";
+					v_html_faq = "<span style='font-size: 14pt; margin: 2%;'>등록된 질문이 없습니다.</span>";
+					$("div#faqList_pageBar").html("");
 				}
 				
 				$("div#faqList").html(v_html_faq);

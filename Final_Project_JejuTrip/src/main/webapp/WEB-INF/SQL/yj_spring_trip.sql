@@ -469,7 +469,30 @@ select * from user_tables;
 select * from TBL_CALENDAR_SCHEDULE
 order by scheduleno desc
 
-delete from TBL_CALENDAR_SCHEDULE where scheduleno = '78'
+
+desc TBL_CALENDAR_SCHEDULE
+
+delete from TBL_CALENDAR_SCHEDULE where FK_SMCATGONO = '2'
+
 
 commit;
+
+
+select * from tbl_faq
+order by CAST(faq_seq AS INT) desc;
+
+delete from tbl_faq
+where faq_answer = '답변 test'
+
+commit;
+
+select * from tbl_review;
+
+select * from user_sequences
+
+insert into tbl_faq(faq_seq, faq_category, faq_question, faq_answer)
+values(SEQ_FAQ.nextval, 
+
+
+
 

@@ -31,7 +31,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.app.trip.common.FileManager;
 import com.spring.app.trip.domain.Calendar_schedule_VO;
+import com.spring.app.trip.domain.CompanyVO;
 import com.spring.app.trip.domain.LikeVO;
+import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.domain.PlayVO;
 import com.spring.app.trip.domain.ReviewVO;
@@ -110,7 +112,16 @@ public class Hs_TripController {
 			String detail_address = mrequest.getParameter("detail_address");
 			
 			playvo.setPlay_address(address + " " + detail_address);
-		
+			
+			address = address.replaceAll("<", "&lt;");
+			address = address.replaceAll(">", "&gt;");
+			address = address.replaceAll("\r\n", "<br>");
+			
+			detail_address = detail_address.replaceAll("<", "&lt;");
+			detail_address = detail_address.replaceAll(">", "&gt;");
+			detail_address = detail_address.replaceAll("\r\n", "<br>");
+			
+			
 			int n = service.registerPlayEnd(playvo);
 			
 			if(n == 1) {
@@ -174,6 +185,12 @@ public class Hs_TripController {
 		    if("".equals(searchWord) || searchWord == null) {
 		    	searchWord="";
 		    }
+		    
+
+		    searchWord = searchWord.replaceAll("<", "&lt;");
+		    searchWord = searchWord.replaceAll(">", "&gt;");
+		    searchWord = searchWord.replaceAll("\r\n", "<br>");
+		    
 		    
 		    int startRno = ((Integer.parseInt(currentShowPageNo)- 1) * sizePerPage) + 1; // 시작 행번호 
 		    int endRno = startRno + sizePerPage - 1; // 끝 행번호
@@ -270,19 +287,20 @@ public class Hs_TripController {
 		@PostMapping(value = "reviewRegister.trip",produces="text/plain;charset=UTF-8")
 		public String reviewRegister (HttpServletRequest request) {
 			 
+			
 			 
 			 String review_content = request.getParameter("review_content");
 	         String fk_userid = request.getParameter("fk_userid");
 	         String parent_code = request.getParameter("play_code");
 	         String review_division_R = "C";
-	        /* 
+	        
 	         // **** 크로스 사이트 스크립트 공격에 대응하는 안전한 코드(시큐어 코드) 작성하기 **** // 
-	         contents = contents.replaceAll("<", "&lt;");
-	         contents = contents.replaceAll(">", "&gt;");
+	         review_content = review_content.replaceAll("<", "&lt;");
+	         review_content = review_content.replaceAll(">", "&gt;");
 	         
 	         // 입력한 내용에서 엔터는 <br>로 변환시키기
-	         contents = contents.replaceAll("\r\n", "<br>");
-	         */
+	         review_content = review_content.replaceAll("\r\n", "<br>");
+	         
 	         
 	         ReviewVO reviewvo = new ReviewVO();
 	         reviewvo.setFk_userid(fk_userid);
@@ -363,6 +381,12 @@ public class Hs_TripController {
 			String review_code = request.getParameter("review_code");
 			String review_content = request.getParameter("review_content");
 			
+			// **** 크로스 사이트 스크립트 공격에 대응하는 안전한 코드(시큐어 코드) 작성하기 **** // 
+	         review_content = review_content.replaceAll("<", "&lt;");
+	         review_content = review_content.replaceAll(">", "&gt;");
+	         
+	         // 입력한 내용에서 엔터는 <br>로 변환시키기
+	         review_content = review_content.replaceAll("\r\n", "<br>");
 			
 			Map<String, String>paraMap = new HashMap<>();
 			paraMap.put("review_code",review_code);
@@ -487,6 +511,14 @@ public class Hs_TripController {
 			// =========== !!! 첨부파일 업로드 끝 !!! ============ //;
 			String address = mrequest.getParameter("play_address");
 			String detail_address = mrequest.getParameter("detail_address");
+			
+			address = address.replaceAll("<", "&lt;");
+			address = address.replaceAll(">", "&gt;");
+			address = address.replaceAll("\r\n", "<br>");
+			
+			detail_address = detail_address.replaceAll("<", "&lt;");
+			detail_address = detail_address.replaceAll(">", "&gt;");
+			detail_address = detail_address.replaceAll("\r\n", "<br>");
 			
 			playvo.setPlay_address(address + " " + detail_address);
 			
@@ -654,6 +686,9 @@ public class Hs_TripController {
 		public String searchPlayJoinUserList(HttpServletRequest request) {
 			
 			String joinUserName = request.getParameter("joinUserName");
+			joinUserName = joinUserName.replaceAll("<", "&lt;");
+			joinUserName = joinUserName.replaceAll(">", "&gt;");
+			joinUserName = joinUserName.replaceAll("\r\n", "<br>");
 			
 			// 회원명단 불러오기
 			List<MemberVO> joinUserList = service.searchPlayJoinUserList(joinUserName);
@@ -692,7 +727,19 @@ public class Hs_TripController {
 			String content = request.getParameter("content");
 			String fk_userid = request.getParameter("fk_userid");
 			String schedule_divison = request.getParameter("review_division");
-			System.out.println("parent_code" + parent_code);
+			//System.out.println("parent_code" + parent_code);
+			
+			
+			// **** 크로스 사이트 스크립트 공격에 대응하는 안전한 코드(시큐어 코드) 작성하기 **** // 
+			content = content.replaceAll("<", "&lt;");
+			content = content.replaceAll(">", "&gt;");
+			content = content.replaceAll("\r\n", "<br>");
+
+			joinuser = joinuser.replaceAll("<", "&lt;");
+			joinuser = joinuser.replaceAll(">", "&gt;");
+			joinuser = joinuser.replaceAll("\r\n", "<br>");
+			
+			
 			Map<String,String> paraMap = new HashMap<String, String>();
 			paraMap.put("startdate", startdate);
 			paraMap.put("enddate", enddate);
@@ -725,32 +772,7 @@ public class Hs_TripController {
 		}
 		
 		
-		
-//		@ResponseBody
-//		@GetMapping(value =("checkSchedule.trip"),produces="text/plain;charset=UTF-8")
-//		 public String checkSchedule(HttpServletRequest request, HttpServletResponse response) throws Exception {
-//			
-//			String parent_code = request.getParameter("parent_code");
-//		    String fk_userid = request.getParameter("fk_userid");
-//
-//		    Map<String, String> paraMap = new HashMap<>();
-//		    
-//		    JSONObject jsonObj = new JSONObject();
-//		    paraMap.put("parent_code", parent_code);
-//
-//		    if (fk_userid != null && !fk_userid.isEmpty()) {
-//		        paraMap.put("fk_userid", fk_userid);
-//		        
-//		        List<Calendar_schedule_VO> calcheck = service.checkSchedule(paraMap); // 좋아요를 했는지 알아오는 것 (0 또는 1)
-//		        jsonObj.put("calcheck", calcheck != null ? calcheck.size() > 0 : false);
-//		    } else {
-//		        jsonObj.put("calcheck", false);
-//		    }
-//
-//		    return jsonObj.toString();
-//		}
-		
-		
+
 		///////////////////////////////오픈api 시작////////////////////////////////////
 		@ResponseBody //제이슨 쓸때는 무!족!권! 써야함
 		@GetMapping(value="/api/jejuBang_eon_JSON.trip", produces = "text/plain;charset=UTF-8")
@@ -977,7 +999,7 @@ public class Hs_TripController {
 		
 		
 		
-		//즐길거리 리뷰 가져오기
+		//숙소 리뷰 가져오기
 		@ResponseBody
 		@PostMapping(value =("/userLoginReviewListJSON.trip"),produces="text/plain;charset=UTF-8")
 		 public String userLoginReviewListJSON(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -1413,15 +1435,86 @@ public class Hs_TripController {
 			
 		}
 		
+
+		
+		
+		
+		// 기업마이페이지 - 리뷰쓴 수량 알아오기
+		@GetMapping(value = "cmpReview.trip", produces = "text/plain;charset=UTF-8")
+		public ModelAndView reviewCmp(HttpServletRequest request, ModelAndView mav) {
+	
+			HttpSession session = request.getSession();
+			CompanyVO loginCompanyuser = (CompanyVO)session.getAttribute("loginCompanyuser");
+	
+			if (loginCompanyuser != null) {
+				List<LodgingVO> lodgingList = service.lodgingList(loginCompanyuser.getCompanyid());
+				mav.addObject("lodgingList", lodgingList);
+				mav.setViewName("mypage/company/cmpReview.tiles1");
+			} else {
+	
+				String message = "비정상적인 경로입니다.";
+				String loc = "javascript:history.back()";
+	
+				mav.addObject("message", message);
+				mav.addObject("loc", loc);
+	
+				mav.setViewName("msg");
+	
+			}
+	
+			return mav;
+		}
+		
+		
+		//숙소 리뷰 가져오기
+		@ResponseBody
+		@PostMapping(value =("/companyLogingReviewListJSON.trip"),produces="text/plain;charset=UTF-8")
+		 public String companyLogingReviewListJSON(HttpServletRequest request, HttpServletResponse response) throws Exception {
+			
+			String fk_companyid = request.getParameter("fk_companyid");
+			String lodging_name = request.getParameter("lodging_name");
+			if("".equals(lodging_name) || lodging_name == null) {
+				lodging_name="";
+			}
+			Map<String,String> paraMap = new HashMap<>();
+
+		    paraMap.put("fk_companyid", fk_companyid);
+		    paraMap.put("lodging_name", lodging_name);
+		    
+		    
+		    
+		    //전체개수
+		    int totalCount = service.getCmpLoginReviewCount(paraMap);
+
+		    //조건에 맞는 리트스 가져오기
+		    List<Map<String,String>> logingCmpReviewList = service.logingCmpReviewList(paraMap);
+			
+			JSONArray jsonArr = new JSONArray();
+			if(logingCmpReviewList != null) {
+				for(Map<String,String> map : logingCmpReviewList) {
+					JSONObject jsonObj = new JSONObject(); //{}
+					jsonObj.put("rno",map.get("rno"));  //rno
+					jsonObj.put("lodging_name",map.get("lodging_name")); //숙소명 lodginVO
+					jsonObj.put("review_content",map.get("review_content")); // 후기내용 리뷰VO
+					jsonObj.put("registerday",map.get("registerday")); //작성일자 리뷰VO
+					jsonObj.put("lodging_code",map.get("lodging_code"));  //부모코드
+					jsonObj.put("fk_userid",map.get("fk_userid"));  //부모코드
+					
+					jsonObj.put("totalCount", totalCount); //총 페이지 
+				
+	            	//System.out.println("jsonArr.toString() :"+ jsonArr.toString());
+	            	
+					jsonArr.put(jsonObj);
+				}
+			}
+			return jsonArr.toString();
+
+		}
 		
 		
 		
 		
-		
-		
-		
-		
-		
+
 		
 		
 		

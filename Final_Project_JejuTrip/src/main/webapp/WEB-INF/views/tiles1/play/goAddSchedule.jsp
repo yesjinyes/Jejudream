@@ -301,7 +301,7 @@ $(document).ready(function() {
 	
 	const today = new Date();
     const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
+    const month = String(today.getMonth() + 1).padStart(2, '0');
     const day = String(today.getDate()).padStart(2, '0');
 	
     let currentShowPageNo = 1; // currentShowPageNo 초기값
@@ -320,7 +320,7 @@ $(document).ready(function() {
             
             if(review_content == "") {
                alert("리뷰 내용을 입력해 주세요.");
-               $("textarea[name='review_content']").val(""); // 공백제거
+               $("textarea[name='review_content']").val(""); 
                return; // 종료
             }  
             
@@ -334,12 +334,12 @@ $(document).ready(function() {
                    console.log(JSON.stringify(json));
                   
                    if(json.n == 1) {
-                       goReviewListView(currentShowPageNo); // 함수 호출하기 
+                       goReviewListView(currentShowPageNo);
                      }
                     
-                     else  {
-                        alert("리뷰 작성이 실패했습니다.");
-                     }
+                   else  {
+                      alert("리뷰 작성이 실패했습니다.");
+                   }
                    
                    $("textarea[name='review_content']").val("").focus();
                 },
@@ -392,8 +392,8 @@ $(document).ready(function() {
 	        
 	        $('input#toDate').datepicker('option', 'minDate', '+1D');
 	     });
-    //------------------------------------------------------------------------ 
-	// === *** 시간(type="date") 관련 시작 *** === //
+   
+      //------------------------------------------------------------------------ 
 		// 시작시간, 종료시간		
 		var html="";
 		for(var i=0; i<24; i++){
@@ -422,7 +422,6 @@ $(document).ready(function() {
 		
 		$("select#startMinute").html(html);
 		$("select#endMinute").html(html);
-		// === *** 시간(type="date") 관련 끝 *** === //
 		
 		// '종일' 체크박스 클릭시
 		$("input#allDay").click(function() {
@@ -449,7 +448,6 @@ $(document).ready(function() {
     
     //--------------------------------------map관련---------------------------------------//
 		 
-    	// 서버 측 변수를 JavaScript 변수로 할당
         var playAddress = document.getElementById("playAddress").textContent.trim();
         
         // 지도 생성 및 설정
@@ -460,16 +458,14 @@ $(document).ready(function() {
         };  
         var map = new kakao.maps.Map(mapContainer, mapOption); 
 
-        // 주소-좌표 변환 객체를 생성합니다
+        // 주소-좌표 변환 객체를 생성
         var geocoder = new kakao.maps.services.Geocoder();
 
-        // 주소로 좌표를 검색합니다
+        // 주소로 좌표를 검색
         geocoder.addressSearch(playAddress, function(result, status) {
             if (status === kakao.maps.services.Status.OK) {
                 var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
                 var message = 'latlng: new kakao.maps.LatLng(' + result[0].y + ', ' + result[0].x + ')';
-                //var resultDiv = document.getElementById('clickLatlng'); 
-                //resultDiv.innerHTML = message;
 
                 // 결과값으로 받은 위치를 마커로 표시합니다
                 var marker = new kakao.maps.Marker({
@@ -528,7 +524,7 @@ $(document).ready(function() {
 
 		// x아이콘 클릭시 공유자 제거하기
 		$(document).on('click','div.displayUserList2 > span.plusUser > i',function(){
-				var text = $(this).parent().text(); // 이순신(leess/leesunsin@naver.com)
+				var text = $(this).parent().text();
 				
 				var bool = confirm("공유자 목록에서 "+ text +" 님을 삭제하시겠습니까?");
 				
@@ -553,7 +549,7 @@ $(document).ready(function() {
 		// 등록 버튼 클릭
 		$("button#register").click(function(){
 
-			// 일자 유효성 검사 (시작일자가 종료일자 보다 크면 안된다!!)
+			// 일자 유효성 검사 
 			var startDate = $("input#fromDate").val();	
 	    	var sArr = startDate.split("-");
 	    	startDate= "";	
@@ -615,30 +611,15 @@ $(document).ready(function() {
 			$("input[name=startdate]").val(sdate);
 			$("input[name=enddate]").val(edate);
 		
-		//	console.log("캘린더 소분류 번호 => " + $("select[name=fk_smcatgono]").val());
-			/*
-			      캘린더 소분류 번호 => 1 OR 캘린더 소분류 번호 => 2 OR 캘린더 소분류 번호 => 3 OR 캘린더 소분류 번호 => 4 
-			*/
-			
-		//  console.log("색상 => " + $("input#color").val());
-			
 			// 공유자 넣어주기
 			var plusUser_elm = document.querySelectorAll("div.displayUserList2 > span.plusUser");
 			var joinUserArr = new Array();
 			
 			plusUser_elm.forEach(function(item,index,array){
-			//	console.log(item.innerText.trim());
-				/*
-					이순신(leess) 
-					아이유1(iyou1) 
-					설현(seolh) 
-				*/
 				joinUserArr.push(item.innerText.trim());
 			});
 			
 			var joinuser = joinUserArr.join(",");
-		//	console.log("공유자 => " + joinuser);
-			// 이순신(leess),아이유1(iyou1),설현(seolh) 
 			
 			$("input[name=joinuser]").val(joinuser);
 			
@@ -663,14 +644,6 @@ $(document).ready(function() {
 function add_joinUser(value){  // value 가 공유자로 선택한이름 이다.
 	
 	var plusUser_es = $("div.displayUserList2 > span.plusUser").text();
-
- // console.log("확인용 plusUser_es => " + plusUser_es);
-    /*
-    	확인용 plusUser_es => 
-			확인용 plusUser_es => 이순신(leess/hanmailrg@naver.com)
-			확인용 plusUser_es => 이순신(leess/hanmailrg@naver.com)아이유1(iyou1/younghak0959@naver.com)
-			확인용 plusUser_es => 이순신(leess/hanmailrg@naver.com)아이유1(iyou1/younghak0959@naver.com)아이유2(iyou2/younghak0959@naver.com)
-    */
 
 	if(plusUser_es.includes(value)) {  // plusUser_es 문자열 속에 value 문자열이 들어있다라면 
 		alert("이미 추가한 회원입니다.");
@@ -778,10 +751,7 @@ function add_joinUser(value){  // value 가 공유자로 선택한이름 이다.
  		pageBar_HTML += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='javascript:goReviewListView("+totalPage+")'>[마지막]</a></li>";
  	}
  	
- 	
  	pageBar_HTML += "</ul>";
- 	
- 	// 156.댓글 페이지바 출력하기
  	$("div#pageBar").html(pageBar_HTML);
  	
  }
@@ -796,9 +766,7 @@ function delMyReview(review_code){
 	            data:{"review_code":review_code},
 	            dataType:"json",
 	            success:function(json){
-	            // console.log(JSON.stringify(json));
-	            // {"n":1} 또는 {"n":0}
-	            
+          
 	               if(json.n == 1) {
 	                  alert("리뷰 삭제 완료.");
 	                  goReviewListView(1); // 특정 제품의 제품후기글들을 보여주는 함수 호출하기 
@@ -821,9 +789,7 @@ function delMyReview(review_code){
 // 리뷰 수정하는 함수
 function updateMyReview(index,review_code){
 		const origin_elmt = $("div#review" + index).html();//원래의 제품후기 엘리먼트   
-		//alert(origin_elmt)
 		
-		//alert($("div#review" + index).html())
 		const review_contents = $("div#review" + index).text().substring(1);
 		
 		$("div.commentUpdate").hide(); 
@@ -894,15 +860,13 @@ function golikeAdd(){
           	if(json.n == 1){
           		alert("좋아요 등록 완료");
           		goLikeDislikeCount();
-          		
           	}
           	else{
           		alert("좋아요 취소");
-          		goLikeDislikeCount()
+          		goLikeDislikeCount();
           		
           	}
 
-            
           },
           error: function(request, status, error){
              alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);

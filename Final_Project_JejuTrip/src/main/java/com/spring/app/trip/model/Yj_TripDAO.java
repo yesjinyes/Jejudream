@@ -96,6 +96,9 @@ public interface Yj_TripDAO {
 	// == FAQ 리스트 페이징 처리 위함 == //
 	int getTotalFaqList(Map<String, String> paraMap);
 
+	// == 자주묻는질문 등록(관리자) == //
+	int registerQuestion(Map<String, String> paraMap);
+
 
 
 

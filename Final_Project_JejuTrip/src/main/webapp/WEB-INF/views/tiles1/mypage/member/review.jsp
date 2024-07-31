@@ -304,8 +304,8 @@ function goViewAllReviewList(currentShowPageNo){
 		 	
 		 	// [맨처음] [이전] 만들기
 		 	if(pageNo != 1) {
-		 		pageBar_HTML += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='javascript:goViewfoodReviewList(1)'>[맨처음]</a></li>";
-		 		pageBar_HTML += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='javascript:goViewfoodReviewList("+(pageNo-1)+")'>[이전]</a></li>";
+		 		pageBar_HTML += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='javascript:goViewPlayReviewList(1)'>[맨처음]</a></li>";
+		 		pageBar_HTML += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='javascript:goViewPlayReviewList("+(pageNo-1)+")'>[이전]</a></li>";
 		 	}
 		 	
 		 	while(!(loop>blockSize || pageNo > totalPage)) {
@@ -313,7 +313,7 @@ function goViewAllReviewList(currentShowPageNo){
 		 			pageBar_HTML += "<li style='display:inline-block; width:30px; font-size:12pt; border:solid 1px gray; color:red; padding:2px 4px;'>"+pageNo+"</a></li>";
 		 		}
 		 		else {
-		 			pageBar_HTML += "<li style='display:inline-block; width:30px; font-size:12pt;'><a href='javascript:goViewfoodReviewList("+pageNo+")'>"+pageNo+"</a></li>";
+		 			pageBar_HTML += "<li style='display:inline-block; width:30px; font-size:12pt;'><a href='javascript:goViewPlayReviewList("+pageNo+")'>"+pageNo+"</a></li>";
 		 		}
 		 		loop++;
 		 		pageNo++;
@@ -321,8 +321,8 @@ function goViewAllReviewList(currentShowPageNo){
 		 	
 		 	// [다음] [마지막] 만들기
 		 	if(pageNo <= totalPage) {
-		 		pageBar_HTML += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='javascript:goViewfoodReviewList("+(pageNo+1)+")'>[다음]</a></li>";
-		 		pageBar_HTML += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='javascript:goViewfoodReviewList("+totalPage+")'>[마지막]</a></li>";
+		 		pageBar_HTML += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='javascript:goViewPlayReviewList("+(pageNo+1)+")'>[다음]</a></li>";
+		 		pageBar_HTML += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='javascript:goViewPlayReviewList("+totalPage+")'>[마지막]</a></li>";
 		 	}
 		 	
 		 	

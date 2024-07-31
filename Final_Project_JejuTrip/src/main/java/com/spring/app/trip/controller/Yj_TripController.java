@@ -24,6 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.spring.app.trip.common.FileManager;
+import com.spring.app.trip.domain.FaqVO;
 import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.MemberVO;
@@ -58,7 +59,7 @@ public class Yj_TripController {
 	
 	
 	
-	// == 맛집 리스트 페이지 (Ajax 처리) == //
+	// == 맛집 리스트 페이지 띄우기 == //
 	@ResponseBody
 	@GetMapping(value="foodstoreListJSON.trip", produces="text/plain;charset=UTF-8")
 	public String foodstoreListJSON(HttpServletRequest request,
@@ -301,6 +302,13 @@ public class Yj_TripController {
 	@ResponseBody
 	@PostMapping(value =("foodLike.trip"),produces="text/plain;charset=UTF-8")
 	 public String foodLike(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
+		
+		if(loginuser == null) {
+			
+		}
 		
 		String parent_code = request.getParameter("parent_code");
 		String fk_userid = request.getParameter("fk_userid");
@@ -768,6 +776,34 @@ public class Yj_TripController {
 	
 	
 	
+	// == 자주묻는질문 등록(관리자) == //
+	@ResponseBody
+	@PostMapping(value="/registerQuestion.trip", produces="text/plain;charset=UTF-8")
+	public String registerQuestion(HttpServletRequest request) {
+		
+		String selected_category = request.getParameter("selected_category");
+		String question = request.getParameter("question");
+		String answer = request.getParameter("answer");
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("faq_category", selected_category);
+		paraMap.put("faq_question", question);
+		paraMap.put("faq_answer", answer);
+		
+		int n = 0;
+		
+		try {
+			n = service.registerQuestion(paraMap);
+		
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("n", n);
+		
+		return jsonObj.toString();
+	}
 	
 	
 	

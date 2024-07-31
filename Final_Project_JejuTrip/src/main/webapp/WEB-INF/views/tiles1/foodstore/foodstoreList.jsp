@@ -9,6 +9,15 @@
 
 <style type="text/css">
 
+input#searchWordFood {
+  border: solid 1px gray;
+  border-radius: 5px;
+  height: 30px;
+}
+
+button#btnSearch {
+  height: 30px;
+}
 
 .single-post {
   margin-bottom: 20px;
@@ -148,7 +157,6 @@ span#data {
 			});
 	
 			const str_category = arr_category.join();
-			// console.log("~~확인용 str_category => " + str_category);
 			
 			const frm = document.dataFrm;
 			frm.str_category.value = str_category;
@@ -167,8 +175,7 @@ span#data {
 			});
 	
 			const str_category = arr_category.join();
-			// console.log("~~확인용 str_category => " + str_category);
-			
+
 			const frm = document.dataFrm;
 			frm.str_category.value = str_category;
 
@@ -187,7 +194,6 @@ span#data {
 			});
 		
 			const str_area = arr_area.join();
-			// console.log("~~~확인용 str_area => " + str_area);
 			
 			const frm = document.dataFrm;
 			frm.str_area.value = str_area;
@@ -205,7 +211,6 @@ span#data {
 			});
 		
 			const str_area = arr_area.join();
-			// console.log("~~~확인용 str_area => " + str_area);
 			
 			const frm = document.dataFrm;
 			frm.str_area.value = str_area;
@@ -240,13 +245,10 @@ span#data {
 		$("button#btnLike").click(function() {
 			const frm = document.dataFrm;
 			
-			// const readcount = $("input[name='readcount']").val();
-			
 			frm.orderType.value = "readcount"
 			frm.orderValue_asc.value = "";
 			frm.orderValue_desc.value = "";
 			
-			// console.log("리스트에서 조회수 => " + readcount);
 			goAjax(currentShowPageNo);
 		});
 		
@@ -293,14 +295,15 @@ span#data {
 		const form = $("form[name='dataFrm']").serialize();
 		
 		$.ajax({
-			url:"foodstoreListJSON.trip",
+			url:"<%= ctxPath%>/foodstoreListJSON.trip",
 			data:form,
 			dataType:"json",
 			success:function(json) {
-				console.log("json 확인" +JSON.stringify(json));
+				console.log(JSON.stringify(json));
 				
 				let v_html_main = ``;
 				let v_html_side = ``;
+				let isexist = false; // 리스트에 내용이 없을 경우에  '관련 데이터가 없습니다.' 라고 띄우기 위함
 				
 				if(json.length > 0) {
 				
@@ -322,8 +325,8 @@ span#data {
 										                <span>\${item.food_address}</span>
 										            </div>
 										        </div>
-										       <!-- <input type="text" name="readcount" value="\${item.readcount}" /> -->
 										    </div>`;
+							isexist = true;
 						}
 						
 						// 맛집 랜덤 추천
@@ -333,26 +336,23 @@ span#data {
 										            <img class="imgMain img-fluid" src="<%= ctxPath %>/resources/images/foodimg/\${item.food_main_img}" onclick="goDetailRecommend(\${item.random_recommend_code})" style="cursor: pointer;" alt="..." />
 										        </div>
 										        <div class="mt-2" onclick="goDetailRecommend(\${item.random_recommend_code})" style="cursor: pointer;">
-										        	<span>\${item.food_name}</span><br>
-										        	<span style="color: #808080;">\${item.food_content}</span>
+										        	<span style="font-size: 14pt; font-weight: 500;">\${item.food_name}</span><br>
+										        	<span style="color: #808080; font-weight: 400;">\${item.food_content}</span>
 										        </div>
 									      	</div>`
 						}
 						
 					});// end of json.forEach------------------------
 					
-					// console.log("json[0].sizePerPage" , json[0].sizePerPage);
-		        	// console.log("json[0].totalCount" , json[0].totalCount);
-		        	// console.log("json[0].currentShowPageNo" , Number(json[0].currentShowPageNo));
-		        	
 		        	const totalPage = Math.ceil(json[0].totalCount / json[0].sizePerPage);
 			        PageBar(Number(currentShowPageNo), totalPage);
+			        
+			        if(!isexist) { // 리스트에 띄울 내용이 없을 경우
+						v_html_main = "<div style='width: 100%; margin-top: 3%;'><span style='font-size: 15pt; font-weight: 500; margin-left: 4%;'>관련 데이터가 없습니다.</span></div>";
+						$("div#pageBar").html("");
+					}
 				}
-				
-			 	else {
-					v_html = "<span>관련 데이터가 없습니다.</span>";
-				}	 
-					
+			
 				$("div#storeList").html(v_html_main);
 				$("div#side").html(v_html_side);
 			},
@@ -463,7 +463,6 @@ span#data {
 	// == 검색기능 == //
 	function goSearch() {
 		const searchWordFood = $("input[name='searchWordFood']").val();
-		// console.log("검색어 확인 : " + searchWordFood);
 		
 		const frm = document.dataFrm;
 
@@ -478,7 +477,6 @@ span#data {
 	// == 맛집 상세 페이지로 이동 == //
 	function goDetail(food_store_code) {
 		const frm = document.goDetailFrm;
-		// console.log("확인용 food_store_code => "+ food_store_code);
 		
 		frm.food_store_code.value = food_store_code;
 		frm.random_recommend_code.value = "";
@@ -491,7 +489,6 @@ span#data {
 	// == 맛집 추천 상세 페이지로 이동 == //
 	function goDetailRecommend(random_recommend_code) {
 		const frm = document.goDetailFrm;
-		// console.log("확인용 random_recommend_code => "+ random_recommend_code);
 		
 		frm.random_recommend_code.value = random_recommend_code;
 		frm.food_store_code.value = "";
@@ -598,7 +595,7 @@ span#data {
 					<button type="button" id="btnDesc" class="sort">내림차순</button>
 	            </div>
 	            <div style="">
-	                <input type="text" name="searchWordFood" id="searchWordFood" placeholder="맛집 이름으로 검색">
+	                <input type="text" name="searchWordFood" id="searchWordFood" placeholder=" 맛집 이름으로 검색">
 	                <button type="button" id="btnSearch" title="검색" onclick="goSearch()">검색</button>
 	            </div>
             </div>

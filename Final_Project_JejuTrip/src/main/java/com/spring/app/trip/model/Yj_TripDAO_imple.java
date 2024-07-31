@@ -226,7 +226,14 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 	@Override
 	public int getTotalFaqList(Map<String, String> paraMap) {
 		int n = sqlsession.selectOne("yj_trip.getTotalFaqList", paraMap);
-		//System.out.println("dao 에서 FAQ 성공? => "  + n);
+		return n;
+	}
+
+
+	// == 자주묻는질문 등록(관리자) == //
+	@Override
+	public int registerQuestion(Map<String, String> paraMap) {
+		int n = sqlsession.insert("yj_trip.registerQuestion", paraMap);
 		return n;
 	}
 
