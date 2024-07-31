@@ -278,11 +278,11 @@ span.plusUser{
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		// == 리뷰 input 엔터 키 == //
-		$("textarea[name='review_content']").bind("keyup", function(e) {
+		/* $("textarea[name='review_content']").bind("keyup", function(e) {
 			if(e.keyCode == 13) {
 				goAddReview();
 			}
-		});
+		}); */
 		
 		// == 리뷰 아이콘 클릭 시 리뷰 리스트로 이동 == //
 		const reviewList = document.getElementById("reviewList");
@@ -1228,7 +1228,8 @@ span.plusUser{
 	<div class="row bottom">
 		<div class="col-md-8">
 			<div class="border rounded" id="map_div">
-				<h3 class="mb-5">위치 확인</h3>
+				<h3>위치 확인</h3><br>
+				<span>※ 지도 속의 맛집 이름을 클릭하여 길찾기 기능을 사용해보세요!</span><br><br>
 				<div id="map"></div>
 				<input type="hidden" name="food_address" id="food_address" value="${requestScope.foodstorevo.food_address}" />
 				<input type="text" style="display: none;" />
