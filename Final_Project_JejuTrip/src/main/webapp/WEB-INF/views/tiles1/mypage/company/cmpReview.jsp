@@ -180,7 +180,7 @@ $(document).ready(function(){
 
 	$(document).on('change', '#local_status', function() {
 	    const selectedValue = $(this).val();
-	    goViewCmpLoginReviewList(currentShowPageNo, selectedValue); // 선택된 숙소에 대한 리뷰를 가져옴
+	    goViewCmpLoginReviewList(selectedValue); // 선택된 숙소에 대한 리뷰를 가져옴
 	});
 });
 
