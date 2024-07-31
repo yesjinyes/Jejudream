@@ -438,7 +438,7 @@
 	<!-- 커뮤니티 글 삭제 처리하기 (status를 0으로 update 하기) -->
 	<update id="deleteBoard" parameterType="HashMap">
 		update tbl_board set status = 0
-		where seq = #{seq} and pw = #{pw}
+		where seq = #{seq}
 	</update>
 	
 	

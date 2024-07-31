@@ -629,7 +629,7 @@ public class Dy_TripService_imple implements Dy_TripService {
 			return n1;
 			
 		} else {
-			if(!(paraMap.get("login_id").equals(boardvo.getFk_userid()))) {
+			if(!(paraMap.get("login_id").equals(boardvo.getFk_userid())) && !"admin".equals(paraMap.get("login_id"))) {
 				return n1;
 				
 			} else {
