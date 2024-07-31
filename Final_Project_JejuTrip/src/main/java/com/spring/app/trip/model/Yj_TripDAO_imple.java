@@ -214,7 +214,7 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 
 	//////////////////////////////////////////////////////////////////////////////////////////
 
-	// == 자주묻는질문 전체 띄우기 (페이징O) == //
+	// == 자주묻는질문(FAQ) 전체 띄우기 (페이징O) == //
 	@Override
 	public List<Map<String, String>> viewAllFaqList_paging(Map<String, String> paraMap) {
 		List<Map<String, String>> faqList = sqlsession.selectList("yj_trip.viewAllFaqList_paging", paraMap);
@@ -230,10 +230,26 @@ public class Yj_TripDAO_imple implements Yj_TripDAO {
 	}
 
 
-	// == 자주묻는질문 등록(관리자) == //
+	// == FAQ 등록(관리자) == //
 	@Override
-	public int registerQuestion(Map<String, String> paraMap) {
-		int n = sqlsession.insert("yj_trip.registerQuestion", paraMap);
+	public int registerFAQ(Map<String, String> paraMap) {
+		int n = sqlsession.insert("yj_trip.registerFAQ", paraMap);
+		return n;
+	}
+
+
+	// == FAQ 수정(관리자) == //
+	@Override
+	public int updateFAQ(Map<String, String> paraMap) {
+		int n = sqlsession.update("yj_trip.updateFAQ", paraMap);
+		return n;
+	}
+
+
+	// == FAQ 삭제(관리자) == //
+	@Override
+	public int deleteFAQ(String faq_seq) {
+		int n = sqlsession.delete("yj_trip.deleteFAQ", faq_seq);
 		return n;
 	}
 

@@ -710,7 +710,7 @@ public class Yj_TripController {
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	// == 자주묻는질문 리스트 띄우기 == //
+	// == 자주묻는질문(FAQ) 리스트 띄우기 == //
 	@ResponseBody
 	@GetMapping(value="/faqListJSON.trip", produces="text/plain;charset=UTF-8") 
 	public String faqListJSON(HttpServletRequest request) {
@@ -775,10 +775,10 @@ public class Yj_TripController {
 	
 	
 	
-	// == 자주묻는질문 등록(관리자) == //
+	// == FAQ 등록(관리자) == //
 	@ResponseBody
-	@PostMapping(value="/registerQuestion.trip", produces="text/plain;charset=UTF-8")
-	public String registerQuestion(HttpServletRequest request) {
+	@PostMapping(value="/registerFAQ.trip", produces="text/plain;charset=UTF-8")
+	public String registerFAQ(HttpServletRequest request) {
 		
 		String selected_category = request.getParameter("selected_category");
 		String question = request.getParameter("question");
@@ -792,7 +792,60 @@ public class Yj_TripController {
 		int n = 0;
 		
 		try {
-			n = service.registerQuestion(paraMap);
+			n = service.registerFAQ(paraMap);
+		
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("n", n);
+		
+		return jsonObj.toString();
+	}
+	
+	
+	// == FAQ 수정(관리자) == //
+	@ResponseBody
+	@PostMapping(value="/updateFAQ.trip", produces="text/plain;charset=UTF-8")
+	public String updateFAQ(HttpServletRequest request) {
+		
+		String update_faq_seq = request.getParameter("update_faq_seq");
+		String question_update = request.getParameter("question_update");
+		String answer_update = request.getParameter("answer_update");
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("faq_seq", update_faq_seq);
+		paraMap.put("question_update", question_update);
+		paraMap.put("answer_update", answer_update);
+		
+		int n = 0;
+		
+		try {
+			n = service.updateFAQ(paraMap);
+		
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("n", n);
+		
+		return jsonObj.toString();
+	}
+	
+	
+	// == FAQ 삭제(관리자) == //
+	@ResponseBody
+	@PostMapping(value="/deleteFAQ.trip", produces="text/plain;charset=UTF-8")
+	public String deleteFAQ(HttpServletRequest request) {
+		
+		String faq_seq = request.getParameter("faq_seq");
+		
+		int n = 0;
+		
+		try {
+			n = service.deleteFAQ(faq_seq);
 		
 		} catch (Throwable e) {
 			e.printStackTrace();

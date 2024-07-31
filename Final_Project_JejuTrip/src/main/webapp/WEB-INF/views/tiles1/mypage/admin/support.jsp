@@ -195,6 +195,45 @@ div.accordion-content {
 			
 		});// end of $(document).on("click", "button.btnUpdateReview", function(e)--------------
 		
+		
+		// == 질문 삭제 == //
+		$(document).on("click", "button#btnDeleteFaq", function(e) {
+			
+			const $button = $(e.target);
+		    const $faqItem = $button.closest('.accordionEach'); // 버튼이 속한 아코디언 아이템
+
+		    const faqSeq = $faqItem.find("input[name='faq_seq']").val();
+		    //const question = $faqItem.find(".faq_question").text();
+		    //const answer = $faqItem.find(".faq_answer").text();
+		    
+		    // const deleteFrm = $("form[name='reservationFrm']").serialize();
+	       	
+			// 질문 삭제 데이터 넘기기
+			if(confirm("정말로 삭제하시겠습니까?")) {
+				
+				$.ajax({
+					url:"<%= ctxPath%>/deleteFAQ.trip",
+					type:"post",
+					data:{"faq_seq":faqSeq},
+					dataType:"json",
+					success:function(json) {
+
+						if(json.n == 1) {
+							alert("질문을 삭제했습니다.");
+							goViewFaqList(1, "");
+						}
+						else {
+							alert("질문 삭제에 실패했습니다.");
+						}
+					},
+					error: function(request, status, error) {
+		                alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+		            }
+				});// end of $.ajax------------------------
+				
+				
+			}
+		});// end of $(document).on("click", "button#btnDeleteFaq", function(e)--------------
 
 		
 	});// end of $(document).ready(function(){})-----------------------------------------
@@ -321,10 +360,34 @@ div.accordion-content {
 	
 	// == 질문 수정 == //
 	function goUpdateFaq() {
-	
+
+		// const faq_seq = $("input[name='update_faq_seq']").val();
+		const question_update = $("textarea[name='question_update']").val();
+		const answer_update = $("textarea[name='answer_update']").val();
 		
+		$("input[name='question_update']").val(question_update);
+		$("input[name='answer_update']").val(answer_update);
+			
+		// 질문 Form
+		const updateFrm = $("form[name='reservationFrm']").serialize();
+       	
+		// 질문 수정 데이터 넘기기
+		$.ajax({
+			url:"<%= ctxPath%>/updateFAQ.trip",
+			type:"post",
+			data:updateFrm,
+			success:function(json) {
+				alert("질문 수정 완료");
+				$("#faqUpdateModal").modal("hide");
+				goViewFaqList(1, "");
+			},
+			error: function(request, status, error) {
+                alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+            }
+		});// end of $.ajax------------------------
 		
 	}// end of function goUpdateFaq()---------------
+	
 	
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	
@@ -370,13 +433,13 @@ div.accordion-content {
 	
 		// 질문 등록 데이터 넘기기
 		$.ajax({
-			url:"<%= ctxPath%>/registerQuestion.trip",
+			url:"<%= ctxPath%>/registerFAQ.trip",
 			type:"post",
 			data:submit,
 			dataType:"json",
 			success:function(json) {
 				if(json.n == 1) {
-					alert("질문 등록에 성공했습니다.");
+					alert("질문을 등록했습니다.");
 	        		$("#faqRegisterModal").modal("hide");
 	        		location.href = "<%= ctxPath%>/support.trip"
 	        	}
@@ -417,7 +480,7 @@ div.accordion-content {
 		
 		<div class="faq_header">
 			<div>
-				<h2 style="margin-bottom: 3%; font-weight: bold;">자주 묻는 질문</h2>
+				<h2 style="margin-bottom: 3%; font-weight: bold;">자주 묻는 질문 (FAQ)</h2>
 				<p>고객님들이 제주드림 상품 및 서비스에 대해 자주 문의하는 내용입니다.<br>원하는 내용을 찾지 못하실 경우 <span style="color: orange;">웹채팅</span>으로 문의해 주시면 친절하게 안내해 드리겠습니다.
 			</div>
 		
@@ -427,7 +490,7 @@ div.accordion-content {
 		            <div class="modal-content">
 		            
 		                <div class="modal-header">
-		                    <h3 class="modal-title" id="exampleModalLabel" style="margin-left: 2%; font-weight: 500;">자주묻는질문 등록</h3>
+		                    <h3 class="modal-title" id="exampleModalLabel" style="margin-left: 2%; font-weight: 800; color: orange;">FAQ 등록</h3>
 		                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 		                        <span aria-hidden="true">&times;</span>
 		                    </button>
@@ -481,7 +544,7 @@ div.accordion-content {
 
 		<div class="faq_content" style="margin-top: 5%;">
 					
-			<!-- FAQ 카테고리 navigation bar -->
+			<!-- FAQ 카테고리 네비바 -->
 			<button type="button" class="btn btn-warning float-right" id="btnRegisterFaq">질문등록</button>	
 			<ul class="nav nav-tabs">
 				<li class="nav-item">
@@ -507,7 +570,7 @@ div.accordion-content {
 				</li>
 			</ul>
 			
-			<!-- FAQ 질문, 답변 리스트 -->
+			<!-- FAQ 리스트 담기는 곳 -->
 			<div class="tab-content" style="border: none;"><br>
 				<div class="accordion">
 				    <div class="accordion-item" id="accordion-item">
@@ -520,13 +583,13 @@ div.accordion-content {
 			<div id="faqList_pageBar" class="pageBar"></div>
 			<input type="hidden" name="faq_category"/>
 			
-			<!-- 질문 수정, 삭제 모달 시작-->
+			<!-- 질문 수정 모달 시작-->
 		    <div class="modal fade" id="faqUpdateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		        <div class="modal-dialog modal-lg" role="document">
 		            <div class="modal-content">
 		            
 		                <div class="modal-header">
-		                    <h3 class="modal-title" id="exampleModalLabel" style="margin-left: 2%; font-weight: 500;">자주묻는 질문 수정</h3>
+		                    <h3 class="modal-title" id="exampleModalLabel" style="margin-left: 2%; font-weight: 800; color: orange;">FAQ 수정</h3>
 		                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 		                        <span aria-hidden="true">&times;</span>
 		                    </button>
@@ -536,14 +599,14 @@ div.accordion-content {
 		                    <div class="form-group">
 		                    	<input type="hidden" name="update_faq_seq"/><br>
 		                    	
-		                    	<span>※ 수정사항을 입력해주세요.</span><br><br>
+		                    	<span>※ 수정사항을 입력해주세요.</span><br><br><br>
 		                    	
 		                        <label for="question_update" class="col-form-label">질문</label>
-		                        <textarea class="form-control update-input mb-3" id="question_update" name="question_update"></textarea>
-		                        <input type="hidden" id="question_update" name="question_update"/>
+		                        <textarea class="form-control update-input mb-1" id="question_update" name="question_update"></textarea>
+		                        <input type="hidden" id="question_update" name="question_update"/><br>
 		                        
 		                        <label for="answer_update" class="col-form-label">답변</label>
-		                        <textarea class="form-control update-input mb-3" id="answer_update" name="answer_update"></textarea>
+		                        <textarea class="form-control update-input mb-4" id="answer_update" name="answer_update"></textarea>
 		                        <input type="hidden" id="answer_update" name="answer_update"/>
 		                    </div>
 		                </div>

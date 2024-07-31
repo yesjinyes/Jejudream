@@ -221,7 +221,7 @@ public class Yj_TripService_imple implements Yj_TripService {
 
 	/////////////////////////////////////////////////////////////////////////////////////
 	
-	// == 자주묻는질문 전체 띄우기 (페이징O) == //
+	// == 자주묻는질문(FAQ) 전체 띄우기 (페이징O) == //
 	@Override
 	public List<Map<String, String>> viewAllFaqList_paging(Map<String, String> paraMap) {
 		List<Map<String, String>> faqList = dao.viewAllFaqList_paging(paraMap);
@@ -237,10 +237,26 @@ public class Yj_TripService_imple implements Yj_TripService {
 	}
 
 
-	// == 자주묻는질문 등록(관리자) == //
+	// == FAQ 등록(관리자) == //
 	@Override
-	public int registerQuestion(Map<String, String> paraMap) {
-		int n = dao.registerQuestion(paraMap);
+	public int registerFAQ(Map<String, String> paraMap) {
+		int n = dao.registerFAQ(paraMap);
+		return n;
+	}
+
+
+	// == FAQ 수정(관리자) == //
+	@Override
+	public int updateFAQ(Map<String, String> paraMap) {
+		int n = dao.updateFAQ(paraMap);
+		return n;
+	}
+
+
+	// == FAQ 삭제(관리자) == //
+	@Override
+	public int deleteFAQ(String faq_seq) {
+		int n = dao.deleteFAQ(faq_seq);
 		return n;
 	}
 

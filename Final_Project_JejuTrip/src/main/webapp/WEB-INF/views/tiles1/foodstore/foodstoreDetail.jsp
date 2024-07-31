@@ -1207,7 +1207,7 @@ span.plusUser{
 				<tr>
 					<th style="display: none;">review_code</th>
 					<th style="text-align: center;">내용</th>
-					<th style="width: 12%;">작성자 아이디</th>
+					<th style="width: 12%;">작성자</th>
 					<th style="width: 12%;">작성일자</th>
 					<c:if test="${not empty sessionScope.loginuser}">
 						<th style="width: 12%;">수정/삭제</th>
@@ -1218,7 +1218,7 @@ span.plusUser{
 			</tbody>
 		</table>
 		<!-- 리뷰 페이지바 -->
-		<div style="display: flex;">
+		<div style="display: flex; margin-top: 4%;">
         	<div id="pageBar" style="margin: auto; text-align: center;"></div>
         </div>
 	</div>
