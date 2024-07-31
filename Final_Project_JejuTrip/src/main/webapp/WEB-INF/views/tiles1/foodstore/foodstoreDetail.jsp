@@ -288,7 +288,6 @@ span.plusUser{
 		const reviewList = document.getElementById("reviewList");
 		
 		$("button#btnReview").click(function() {
-			// alert("리뷰 버튼 클릭");
 			window.scrollBy({top: reviewList.getBoundingClientRect().top, behavior: 'smooth'});
 		});
 
@@ -301,7 +300,6 @@ span.plusUser{
 			const $btn = $(e.target);
 			
 			if($(e.target).text() == "수정"){
-				// alert("리뷰수정");
 			  	// alert($(e.target).parent().parent().children("td:nth-child(1)").text()); // 수정전 리뷰 내용
 
 			  	const $content = $(e.target).parent().parent().children("td:nth-child(2)");
@@ -315,7 +313,6 @@ span.plusUser{
 			    
 			    $(document).on("keyup", "input#review_update", function(e){
 			    	if(e.keyCode == 13){
-			    	    // alert("완료버튼 엔터");
 			    		$btn.click();
 			    	}
 			    }); 
@@ -329,14 +326,11 @@ span.plusUser{
 				const review_content = $(e.target).parent().parent().children("td:nth-child(2)").children("input").val(); // 수정 후 리뷰 내용
 				
 				$.ajax({
-					url:"updateReview.trip",
+					url:"<%= ctxPath%>/updateReview.trip",
 					type:"post",
 					data:{"review_code":review_code, "review_content":review_content},
 					dataType:"json",
 					success:function(json) {
-						// console.log("~~리뷰 수정 값 들어가나 확인 : "+JSON.stringify(json));
-						
-						//$(e.target).parent().parent().children("td:nth-child(2)").html(content);
 						
 						const currentShowPageNo = $(e.target).parent().parent().find("input.currentShowPageNo").val(); 
 						
@@ -361,8 +355,6 @@ span.plusUser{
 		$(document).on("click", "button.btnDeleteReview", function(e) {
 
 			if($(e.target).text() == "취소") {
-				// alert("댓글 수정취소");
-				
 				const $review_content = $(e.target).parent().parent().children("td:nth-child(2)");
 				
 				$review_content.html(`\${origin_review_content}`); // 변수명 지역변수 적용
@@ -373,16 +365,15 @@ span.plusUser{
 			
 			else if($(e.target).text() == "삭제") {
 				const review_code = $(e.target).parent().parent().children("td:nth-child(1)").text(); // 삭제할 리뷰번호
-				// alert("삭제할 리뷰번호" + review_code);
 				
 				if(confirm("정말로 삭제하시겠습니까?")) {
 					$.ajax({
-						url:"deleteReview.trip",
+						url:"<%= ctxPath%>/deleteReview.trip",
 						type:"post",
 						data:{"review_code": review_code},
 						dataType:"json",
 						success:function(json){
-							// console.log("리뷰삭제 =>" + JSON.stringify(json))
+							alert("리뷰가 삭제되었습니다.");
 							goViewReview(1);
 						},
 						error: function(request, status, error){
@@ -398,30 +389,27 @@ span.plusUser{
 		
 		// == 좋아요 기능 == //
 		$("button#btnLike").click(function() {
-			// alert("좋아요 버튼 클릭");
 			
 			if(${empty sessionScope.loginuser}) {
 				alert("좋아요는 로그인 후 가능합니다.");
 				
 				location.href = "login.trip";
 				
-				return; // 종료
-			}
+				return;
+			} 
 			else{
 				//로그인을 한 경우라면
 				$.ajax({
-					url:"foodLike.trip",
+					url:"<%= ctxPath%>/foodLike.trip",
 					type:"POST",
 					data:{"parent_code":"${requestScope.foodstorevo.food_store_code}",
 						  "fk_userid":"${sessionScope.loginuser.userid}"},
 					dataType:"json", 
 					success:function(json) {
 						if(json.n == 1){
-							// alert("좋아요 등록 완료");
 							goLikeDislikeCount();
 						}
 						else{
-							// alert("좋아요 취소");
 							goLikeDislikeCount();
 						}
 			        },
@@ -499,8 +487,7 @@ span.plusUser{
             beforeShow: function(input) {
                var i_offset = jQuery(input).offset();
                setTimeout(function(){
-                  jQuery("#ui-datepicker-div").css({"left":i_offset});
-                  // datepicker의 div의 포지션을 강제로 클릭한 input 위치로 이동시킨다.
+                  jQuery("#ui-datepicker-div").css({"left":i_offset}); // datepicker의 div의 포지션을 강제로 클릭한 input 위치로 이동시킨다.
                });
             }
         });
@@ -558,7 +545,6 @@ span.plusUser{
 			}
 		});// end of $("input#allDay").click(function() {})------------------------
 		
-		
 		// 공유자 추가하기
 		$("input#FoodjoinUserName").bind("keyup",function(){
 				var joinUserName = $(this).val();
@@ -570,22 +556,21 @@ span.plusUser{
 					success : function(json){
 						console.log("공유자 넘어오는지 확인 => "+JSON.stringify(json));
 						var joinUserArr = [];
-						// console.log(json.length);
 					
 						if(json.length > 0){
 							
 							$.each(json, function(index,item){
 								var user_name = item.user_name;
 								if(user_name.includes(joinUserName)){ // name 이라는 문자열에 joinUserName 라는 문자열이 포함된 경우라면 true , 
-									                             // name 이라는 문자열에 joinUserName 라는 문자열이 포함되지 않은 경우라면 false 
+									                             	  // name 이라는 문자열에 joinUserName 라는 문자열이 포함되지 않은 경우라면 false 
 								   joinUserArr.push(user_name+"("+item.userid+")");
 								}
 							});
 							
-							$("input#FoodjoinUserName").autocomplete({  // 참조 https://jqueryui.com/autocomplete/#default
+							$("input#FoodjoinUserName").autocomplete({
 								source:joinUserArr,
 								select: function(event, ui) {       // 자동완성 되어 나온 공유자이름을 마우스로 클릭할 경우 
-									add_joinUser(ui.item.value);    // 아래에서 만들어 두었던 add_joinUser(value) 함수 호출하기 
+									add_joinUser(ui.item.value);    // 아래에서 만들어 두었던 add_joinUser(value) 함수 호출
 									                                // ui.item.value 이  선택한이름 이다.
 									return false;
 						        },
@@ -605,7 +590,6 @@ span.plusUser{
 			var text = $(this).parent().text(); // 이순신(leess/leesunsin@naver.com)
 			
 			var bool = confirm("공유자 목록에서 "+ text +" 회원을 삭제하시겠습니까?");
-			// 공유자 목록에서 이순신(leess/leesunsin@naver.com) 회원을 삭제하시겠습니까?
 			
 			if(bool) {
 				$(this).parent().remove();
@@ -613,6 +597,7 @@ span.plusUser{
 		});// end of $(document).on('click','div.displayUserList > span.plusUser > i',function(){})--------------
 		
 		// == 일정 끝 == //
+		
 		///////////////////////////////////////////////////////////////////////////////////
 
 		// == 지도 띄우기 == //
@@ -627,36 +612,31 @@ span.plusUser{
 	    };  
 	    var map = new kakao.maps.Map(mapContainer, mapOption); 
 
-	    // 주소-좌표 변환 객체를 생성합니다
+	    // 주소-좌표 변환 객체를 생성
 	    var geocoder = new kakao.maps.services.Geocoder();
 
-	    // 주소로 좌표를 검색합니다
+	    // 주소로 좌표를 검색
 	    geocoder.addressSearch(food_address, function(result, status) {
 	        if (status === kakao.maps.services.Status.OK) {
 	            var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
 	            var message = 'latlng: new kakao.maps.LatLng(' + result[0].y + ', ' + result[0].x + ')';
-	            //var resultDiv = document.getElementById('clickLatlng'); 
-	            //resultDiv.innerHTML = message;
 
-	            // 결과값으로 받은 위치를 마커로 표시합니다
+	            // 결과값으로 받은 위치를 마커로 표시
 	            var marker = new kakao.maps.Marker({
 	                map: map,
 	                position: coords
 	            });
 
-	            // 인포윈도우로 장소에 대한 설명을 표시합니다
+	            // 인포윈도우로 장소에 대한 설명을 표시
 	            var infowindow = new kakao.maps.InfoWindow({
 	                content: '<div style="width:150px;text-align:center;padding:6px 0;" ><a href="https://map.kakao.com/link/to/${requestScope.foodstorevo.food_name},' + result[0].y+','+ result[0].x+'" target="_blank" style="color:black;">${requestScope.foodstorevo.food_name}</a></div>'
 	            });
 	            infowindow.open(map, marker);
 	            
-	            // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+	            // 지도의 중심을 결과값으로 받은 위치로 이동
 	            map.setCenter(coords);
 	        }
 	    });  
-	    
-		///////////////////////////////////////////////////////////////////////////////////
-
 	    
 	});// end of $(document).ready(function() {})-----------------------------
 	
@@ -705,14 +685,9 @@ span.plusUser{
        	var scheduleDate = $("input#scheduleDate").val();
        	var startdate = scheduleDate + $("select#startHour").val()+$("select#startMinute").val()+"00";
 		var enddate = scheduleDate + $("select#endHour").val()+$("select#endMinute").val()+"00";
-		// console.log("~~startDate 확인 => " + startDate);
-		// console.log("~~endDate 확인 => " + endDate);
 		
 		$("input[name=startdate]").val(startdate);
 		$("input[name=enddate]").val(enddate);
-		
-		// 일정 Form
-		//const schedule = $("form[name='scheduleFrm']").serialize();
 		
 		// 일정 제목 유효성 검사
 		const scheduleTitle = $("input#scheduleTitle").val().trim();
@@ -756,38 +731,23 @@ span.plusUser{
 		var joinUserArr = new Array();
 		
 		plusUser_elm.forEach(function(item,index,array){
-		//	console.log(item.innerText.trim());
-			/*
-				이순신(leess) 
-				아이유1(iyou1) 
-				설현(seolh) 
-			*/
 			joinUserArr.push(item.innerText.trim());
 		});
 		
 		var joinuser = joinUserArr.join(",");
 		console.log("공유자 => " + joinuser);
-		// 이순신(leess),아이유1(iyou1),설현(seolh) 
 		
 		$("input[name=joinuser]").val(joinuser);
 		
 		// 일정 Form
 		const schedule = $("form[name='scheduleFrm']").serialize();
-		
-		<%-- var frm = document.scheduleFrm;
-		frm.action="<%= ctxPath%>/schedule/registerSchedule_end.action";
-		frm.method="post";
-		frm.submit(); --%>
-       	
        	
 		// 일정 등록 데이터 넘기기
 		$.ajax({
-			url:"addFoodSchedule.trip",
+			url:"<%= ctxPath%>/addFoodSchedule.trip",
 			type:"post",
 			data:schedule,
 			success:function(json) {
-				// console.log("일정 데이터 넘기기 => " + JSON.stringify(json));
-				
 				alert("일정 등록에 성공했습니다.");
 				$("#calendarModal").modal("hide");
 			},
@@ -796,7 +756,7 @@ span.plusUser{
             }
 		});// end of $.ajax------------------------
 
-	}// end of function viewScheduleModal()------------------------------
+	}// end of function addSchedule()------------------------------
 	
 	/////////////// === 리뷰 시작 === ///////////////////////////////////////////////////////////////////////
 	
@@ -818,8 +778,6 @@ span.plusUser{
 	        type:"post",
 	        dataType:"json",
 	        success:function(json){
-	        	// console.log("리뷰 insert 확인 : ", JSON.stringify(json));
-	        	// {"food_store_code":"5316","fk_userid":"yy6037","n":1}
 	        	
 	        	if(json.n == 1) {
 	        		alert("리뷰가 등록되었습니다.");
@@ -849,7 +807,6 @@ span.plusUser{
 				, "currentShowPageNo":currentShowPageNo},
 			dataType:"json",
 			success:function(json) {
-				// console.log("리뷰 select 확인 : "+JSON.stringify(json));
 				
 				let v_html = ""; // 작성한 리뷰
 				let count_html = 0; // 리뷰 총 개수
@@ -892,8 +849,6 @@ span.plusUser{
 				
 				$("tbody#reviewDisplay").html(v_html); // 작성된 리뷰 자리에 넣어주기
 				$("p#reviewCount").html(count_html); // 리뷰 총 개수 넣어주기
-				
-				
 				
 			},
 			error: function(request, status, error){
@@ -970,7 +925,6 @@ span.plusUser{
 		        type:"post",
 		        dataType:"json",
 		        success:function(json){
-		        	// console.log("맛집 삭제 확인 : ", JSON.stringify(json));
 		        	
 		        	if(json.n == 1 || json.totalCount == 0) {
 		        		alert("맛집이 삭제되었습니다.");
@@ -994,7 +948,6 @@ span.plusUser{
 	function add_joinUser(value){  // value 는 공유자로 선택한 이름
 		
 		var plusUser_es = $("div.displayUserList > span.plusUser").text();
-	 	// console.log("확인용 plusUser_es => " + plusUser_es);
 	  
 		if(plusUser_es.includes(value)) { 
 			alert("이미 추가한 회원입니다.");
@@ -1074,7 +1027,6 @@ span.plusUser{
 				<!-- 아이콘 모음 시작 -->
 				<ul class="list" style="display: flex; margin-left: 8%;">
 					<li class="list-item">
-						<!-- <button type="button" class="iconbtn" onclick="golikeAdd()"> -->
 						<button type="button" class="iconbtn" id="btnLike">
 							<div class="item-each">
 								<img class="icon like" id="like" src="<%= ctxPath %>/resources/images/foodstore/icon/Like.png">
@@ -1272,46 +1224,45 @@ span.plusUser{
 	</div>
 	
 	<!-- 지도, 랜덤추천 -->
-		<!-- 지도 -->
-		<div class="row bottom">
-			<div class="col-md-8">
-				<div class="border rounded" id="map_div">
-					<h3 class="mb-5">위치 확인</h3>
-					<div id="map"></div>
-					<input type="hidden" name="food_address" id="food_address" value="${requestScope.foodstorevo.food_address}" />
-					<input type="text" style="display: none;" />
-				</div>
+	<!-- 지도 -->
+	<div class="row bottom">
+		<div class="col-md-8">
+			<div class="border rounded" id="map_div">
+				<h3 class="mb-5">위치 확인</h3>
+				<div id="map"></div>
+				<input type="hidden" name="food_address" id="food_address" value="${requestScope.foodstorevo.food_address}" />
+				<input type="text" style="display: none;" />
 			</div>
-			
-			<!-- 랜덤추천 -->
-			<div class="col-md-4 border rounded">
-				<div>
-					<h3 class="mb-4 mt-4 ml-3">근처 숙소 추천</h3>
-					<div class="recommend-lodging">
-						<c:forEach var="lodgingList" items="${requestScope.lodgingList}" begin="0" end="1">
-							<div class="border rounded p-3 mb-3">
-							    <div class="recommend-img-box">
-							    	<a href="<%= ctxPath%>/lodgingDetail.trip?lodging_code=${lodgingList.lodging_code}"> 
-						            	<img class="recommend-img img-fluid" src="<%= ctxPath %>/resources/images/lodginglist/${lodgingList.main_img}" alt="..." />
-						        	</a>
-						        </div>
-						        <div class="mt-2">
-							        <a href="<%= ctxPath%>/lodgingDetail.trip?lodging_code=${lodgingList.lodging_code}" class="recommend-lodging-title" > 
-							        	<span style="color: black; font-size: 14pt;">${lodgingList.lodging_name}</span><br>
-						        	</a>
-						        </div>
-					      	</div>
-				      	</c:forEach>
-					</div>
+		</div>
+		
+		<!-- 랜덤추천 -->
+		<div class="col-md-4 border rounded">
+			<div>
+				<h3 class="mb-4 mt-4 ml-3">근처 숙소 추천</h3>
+				<div class="recommend-lodging">
+					<c:forEach var="lodgingList" items="${requestScope.lodgingList}" begin="0" end="1">
+						<div class="border rounded p-3 mb-3">
+						    <div class="recommend-img-box">
+						    	<a href="<%= ctxPath%>/lodgingDetail.trip?lodging_code=${lodgingList.lodging_code}"> 
+					            	<img class="recommend-img img-fluid" src="<%= ctxPath %>/resources/images/lodginglist/${lodgingList.main_img}" alt="..." />
+					        	</a>
+					        </div>
+					        <div class="mt-2">
+						        <a href="<%= ctxPath%>/lodgingDetail.trip?lodging_code=${lodgingList.lodging_code}" class="recommend-lodging-title" > 
+						        	<span style="color: black; font-size: 14pt;">${lodgingList.lodging_name}</span><br>
+					        	</a>
+					        </div>
+				      	</div>
+			      	</c:forEach>
 				</div>
 			</div>
 		</div>
+		
+	</div>
+	<!-- 지도, 랜덤추천 끝 -->
 	
-</div>
+</div><!-- container 끝 -->
 <br><br>
-<!-- container 끝 -->
-
-
 
 
 
