@@ -132,6 +132,12 @@ public interface Js_TripService {
 	// 축제와 행사 엑셀파일 다운받기
 	void festivalList_to_Excel(Model model);
 
+	// 관리자가 보는 축제/행사 정보 가져오기
+	List<Map<String, String>> adminFestivalList(Map<String, String> paraMap);
+
+	// 관리자가 보는 축제/행사 개수 가져오기
+	int getFestivalTotalCount(Map<String, String> paraMap);
+
 
 
 

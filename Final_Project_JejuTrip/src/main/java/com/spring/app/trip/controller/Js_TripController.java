@@ -1803,17 +1803,6 @@ public class Js_TripController {
 	
 	
 	
-	@RequestMapping(value="admin_FestivalList.trip")
-	public ModelAndView memberCancelReserve(ModelAndView mav) {
-		
-		mav.setViewName("community/admin_FestivalList.tiles1");
-		
-		return mav;
-		
-	} // end of public ModelAndView memberCancelReserve(ModelAndView mav) {
-	
-	
-	
 	// 축제와 행사 엑셀파일 다운받기
 	@PostMapping("downloadFestivalListExcelFile.trip")
 	public String downloadExcelFile(Model model) {
@@ -1829,29 +1818,119 @@ public class Js_TripController {
 	} // end of public String downloadExcelFile
 	
 	
+	// 관리자용 축제와행사 목록 페이지로 이동하기
+	@RequestMapping(value="admin_FestivalList.trip")
+	public ModelAndView memberCancelReserve(ModelAndView mav, HttpServletRequest request) {
+		
+		HttpSession session = request.getSession();
+		
+		MemberVO mvo = (MemberVO)session.getAttribute("loginuser");
+		
+		if(!"admin".equals(mvo.getUserid())) {
+			
+			String message = "관리자만 접근 가능한 페이지입니다!";
+			String loc = "javascript:history.back()";
+
+			mav.addObject("message", message);
+			mav.addObject("loc", loc);
+			
+			mav.setViewName("msg");
+			
+			return mav;
+			
+		} // end of if
+		
+		mav.setViewName("community/admin_FestivalList.tiles1");
+		
+		return mav;
+		
+	} // end of public ModelAndView memberCancelReserve(ModelAndView mav) {
 	
+	
+	// 
 	@ResponseBody
 	@PostMapping(value="JSONAdminFestivalList.trip", produces="text/plain;charset=UTF-8")
-	public String adminFestivalList() {
+	public String adminFestivalList(@RequestParam (value="searchWord", defaultValue = "") String searchWord,
+									@RequestParam (value="len", defaultValue = "8") String len,
+									@RequestParam (value="start", defaultValue = "1") String start) {
 		
-		// List<Map<String,String>> adminFestivalList = service.adminFestivalList();
+		
+		Map<String,String> paraMap = new HashMap<>();
+		
+		paraMap.put("searchWord", searchWord);
+		
+		paraMap.put("start", start);
+		
+		String end = String.valueOf(Integer.parseInt(start) + Integer.parseInt(len) - 1);
+		
+		paraMap.put("end", end);
+		
+		List<Map<String,String>> adminFestivalList = service.adminFestivalList(paraMap);
+		// 관리자가 보는 축제/행사 정보 가져오기
+		
+		int totalCount = service.getFestivalTotalCount(paraMap);
+		// 관리자가 보는 축제/행사 개수 가져오기
+		
+		// System.out.println("더보기 totalCount" + totalCount);
 		
 		JSONArray jsonArr = new JSONArray();
-		/*
-		for(Map<String,String> map : adminFestivalList) {
-			
-			JSONObject jsonObj = new JSONObject();
-			
-			// jsonObj.put("", value);
-			
-			
-			
-		}
 		
-		*/
+		if(adminFestivalList != null && adminFestivalList.size() > 0 ) {
+			
+			for(Map<String,String> map : adminFestivalList) {
+				
+				JSONObject jsonObj = new JSONObject();
+				
+				// jsonObj.put("", value);
+				
+				jsonObj.put("festival_no", map.get("festival_no"));
+				jsonObj.put("title_name", map.get("title_name"));
+				jsonObj.put("img", map.get("img"));
+				jsonObj.put("startdate", map.get("startdate"));
+				jsonObj.put("enddate", map.get("enddate"));
+				jsonObj.put("local_status", map.get("local_status"));
+				jsonObj.put("link", map.get("link"));
+				
+				jsonObj.put("totalCount", totalCount);
+				
+				jsonArr.put(jsonObj);
+				
+			} // end of for
+			
+		} // end of if
 		
 		return jsonArr.toString();
 		
 	} // end of public String adminFestivalList() {
+	
+	
+	
+	@PostMapping("RegisterFestival.trip")
+	public ModelAndView goRegisterFestival(ModelAndView mav, HttpServletRequest request,
+										   @RequestParam (value="admin", defaultValue = "") String admin) {
+		
+		HttpSession session = request.getSession();
+		
+		MemberVO mvo = (MemberVO)session.getAttribute("loginuser");
+		
+		if(!admin.equals(mvo.getUserid())) {
+			
+			String message = "관리자만 접근 가능한 페이지입니다!";
+			String loc = "index.trip";
+
+			mav.addObject("message", message);
+			mav.addObject("loc", loc);
+			
+			mav.setViewName("msg");
+			
+			return mav;
+			
+		} // end of if
+		
+		mav.setViewName("community/registerFestival.tiles1");
+		
+		return mav;
+		
+	} // end of public ModelAndView goRegisterFestival
 	
 }

@@ -478,6 +478,28 @@ public class Js_TripDAO_imple implements Js_TripDAO {
 		
 	} // end of public List<Map<String, String>> excel_to_festivalList() {
 
+
+	// 관리자가 보는 축제/행사 정보 가져오기
+	@Override
+	public List<Map<String, String>> adminFestivalList(Map<String, String> paraMap) {
+		
+		List<Map<String, String>> adminFestivalList = sqlsession.selectList("js_trip.getMoreFestivalList", paraMap);
+																         
+		return adminFestivalList;
+		
+	} // end of public List<Map<String, String>> adminFestivalList() {
+
+
+	// 관리자가 보는 축제/행사 개수 가져오기
+	@Override
+	public int getFestivalTotalCount(Map<String, String> paraMap) {
+		
+		int totalCount = sqlsession.selectOne("js_trip.getFestivalTotalCount", paraMap);
+		
+		return totalCount;
+		
+	} // end of public int getFestivalTotalCount(Map<String, String> paraMap) {
+
 	
 	
 

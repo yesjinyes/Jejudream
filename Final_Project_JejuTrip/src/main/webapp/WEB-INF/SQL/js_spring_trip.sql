@@ -1605,5 +1605,22 @@ WHERE A.max_person >= 2
     where status =0;
     
     delete from tbl_lodging where lodging_code = 5574;
+    
+    
+    select * from tbl_festival where title_name = 'JEMI FESTA "JEMI LAND"';
+    
+    update tbl_festival set title_name = 'JEMI FESTA (JEMI LAND)' , img = 'JEMI FESTA (JEMI LAND).jpg'
+    where festival_no = 44
+    
     commit;
     
+    select rno, festival_no, title_name, img, startdate, enddate, local_status, link, recentdate
+    from
+    (
+    select rownum as rno, festival_no, title_name, img, to_char(startdate, 'yyyy-mm-dd') as startdate,
+            to_char(enddate, 'yyyy-mm-dd') as enddate, local_status, link, abs(round(sysdate - startdate)) as recentdate
+    from tbl_festival
+    where title_name like '%' || '파크' || '%'
+    order by recentdate asc
+    )V
+    where rno between 1 and 10
