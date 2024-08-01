@@ -361,13 +361,25 @@ div.accordion-content {
 	// == 질문 수정 == //
 	function goUpdateFaq() {
 
-		// const faq_seq = $("input[name='update_faq_seq']").val();
 		const question_update = $("textarea[name='question_update']").val();
 		const answer_update = $("textarea[name='answer_update']").val();
 		
 		$("input[name='question_update']").val(question_update);
 		$("input[name='answer_update']").val(answer_update);
-			
+		
+		// 유효성 검사
+		if(question_update == "") {
+			alert("질문을 작성해주세요.")
+			$("textarea[name='question_update']").focus();
+			return;
+		}
+		
+		if(answer_update == "") {
+			alert("답변을 작성해주세요.")
+			$("textarea[name='answer_update']").focus();
+			return;
+		}
+		
 		// 질문 Form
 		const updateFrm = $("form[name='reservationFrm']").serialize();
        	
