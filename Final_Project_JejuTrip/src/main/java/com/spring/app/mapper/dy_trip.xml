@@ -268,7 +268,9 @@
 			 , filename, orgfilename, filesize
 		FROM
 		(
-			select row_number() over(order by seq desc) AS rno
+    		select row_number() over(order by 
+                             		 CASE WHEN fk_userid = 'admin' THEN 0 ELSE 1 END,
+                             		 seq desc) AS rno
 				 , seq, fk_userid, name, subject
 			     , readCount, to_char(regDate, 'yyyy-mm-dd hh24:mi') AS regDate
 			     , commentCount, filename, orgfilename, filesize
@@ -436,7 +438,7 @@
 	<!-- 커뮤니티 글 삭제 처리하기 (status를 0으로 update 하기) -->
 	<update id="deleteBoard" parameterType="HashMap">
 		update tbl_board set status = 0
-		where seq = #{seq} and pw = #{pw}
+		where seq = #{seq}
 	</update>
 	
 	
@@ -585,5 +587,12 @@
 			  (lower(subject) like '%' || lower(#{searchWord}) || '%')
 		order by seq desc
 	</select>
+	
+	
+	<!-- 커뮤니티 원글에 대한 댓글 삭제 (status 0으로 update) -->
+	<update id="deleteCommentByParentSeq" parameterType="String">
+		update tbl_comment set status = 0
+		where parentSeq = #{parentSeq}
+	</update>
 	
 </mapper>

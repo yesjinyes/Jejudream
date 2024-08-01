@@ -90,14 +90,20 @@ public interface Yj_TripDAO {
 
 	//////////////////////////////////////////////////////////////////////////
 
-	// == 자주묻는질문 전체 띄우기 (페이징O) == //
+	// == 자주묻는질문(FAQ) 전체 띄우기 (페이징O) == //
 	List<Map<String, String>> viewAllFaqList_paging(Map<String, String> paraMap);
 
 	// == FAQ 리스트 페이징 처리 위함 == //
 	int getTotalFaqList(Map<String, String> paraMap);
 
-	// == 자주묻는질문 등록(관리자) == //
-	int registerQuestion(Map<String, String> paraMap);
+	// == FAQ 등록(관리자) == //
+	int registerFAQ(Map<String, String> paraMap);
+
+	// == FAQ 수정(관리자) == //
+	int updateFAQ(Map<String, String> paraMap);
+
+	// == FAQ 삭제(관리자) == //
+	int deleteFAQ(String faq_seq);
 
 
 

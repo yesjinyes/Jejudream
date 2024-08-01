@@ -384,5 +384,60 @@ ORDER BY lodging_code desc;
 
 
 
+-- ========= [일반회원] 휴면해제/비밀번호변경 확인 ========= --
+update tbl_member set lastpwdchangedate = '24/01/01'
+where userid = 'test000';
+commit;
+
+select *
+from tbl_member_loginhistory
+where fk_userid = 'test000';
+
+update tbl_member_loginhistory set logindate = '23/01/01'
+where fk_userid = 'test000';
+commit;
+
+select userid, lastpwdchangedate, idle
+from tbl_member
+where userid = 'test000';
+
+
+
+
+-- ========= [업체회원] 휴면해제/비밀번호변경 확인 ========= --
+update tbl_company set lastpwdchangedate = '24/01/01'
+where companyid = 'comkimdy';
+commit;
+
+select *
+from tbl_company_loginhistory
+where fk_companyid = 'comkimdy';
+
+update tbl_company_loginhistory set logindate = '23/01/01'
+where fk_companyid = 'comkimdy';
+commit;
+
+select companyid, lastpwdchangedate, idle
+from tbl_company
+where companyid = 'comkimdy';
+
+
+
+
+-- 관리자 글이 맨 위로 올라오도록 게시판 리스트 조회
+SELECT seq, fk_userid, name, subject, readCount, regDate, commentCount
+FROM
+(
+    select row_number() over(order by 
+                             CASE WHEN fk_userid = 'admin' THEN 0 ELSE 1 END,
+                             seq desc) AS rno
+         , seq, fk_userid, name, subject
+         , readCount, to_char(regDate, 'yyyy-mm-dd hh24:mi') AS regDate
+         , commentCount
+    from tbl_board
+    where status = 1 and category = 4
+    -- and lower(subject) like '%' || lower('추천') || '%'
+) V
+WHERE V.rno between 1 and 10;
 
 

@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import javax.mail.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -722,6 +723,13 @@ public class Dy_TripController {
 	// 휴면 해제 - 비밀번호 변경 페이지 요청
 	@GetMapping("login/idleUpdateEnd.trip")
 	public ModelAndView idleUpdateEnd(ModelAndView mav, HttpServletRequest request) {
+
+		String referer = request.getHeader("referer"); 
+		
+		if(referer == null) {
+			mav.setViewName("redirect:/index.trip");
+			return mav;
+		}
 		
 		String memberType = request.getParameter("memberType");
 		String id = request.getParameter("id");
@@ -1006,11 +1014,12 @@ public class Dy_TripController {
 	@PostMapping("community/addBoardEnd.trip")
 	public ModelAndView addBoardEnd(ModelAndView mav, BoardVO boardvo, MultipartHttpServletRequest mrequest) {
 		
+		HttpSession session = mrequest.getSession();
+		
 		MultipartFile attach = boardvo.getAttach();
 		
 		if(attach != null) {
 			
-			HttpSession session = mrequest.getSession();
 			String root = session.getServletContext().getRealPath("/"); 
 			// WAS의 webapp의 절대경로
 			
@@ -1054,6 +1063,13 @@ public class Dy_TripController {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
+		
+		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
+		
+		// 관리자가 글을 작성할 경우 글제목 앞에 "[관리자]" 붙이기
+		if("admin".equals(loginuser.getUserid())) {
+			boardvo.setSubject("[관리자] " + boardvo.getSubject());
 		}
 		
 		int n = 0;
@@ -1873,7 +1889,7 @@ public class Dy_TripController {
 					// 다운로드가 실패한 경우
 					
 					out = response.getWriter();
-					out.println("<script type='text/javascript'>alert('파일 다운로드가 실패되었습니다.'); window.close();</script>");
+					out.println("<script type='text/javascript'>alert('파일 다운로드가 실패되었습니다.'); history.back();</script>");
 				}
 			}
 			
@@ -1974,19 +1990,24 @@ public class Dy_TripController {
 	@ResponseBody
 	@PostMapping(value="community/deleteBoard.trip", produces="text/plain;charset=UTF-8")
 	public String deleteBoard(@RequestParam(defaultValue = "") String seq,
-							  @RequestParam(defaultValue = "") String pw,
 							  @RequestParam(defaultValue = "") String login_id) {
 		
 		Map<String, String> paraMap = new HashMap<>();
 		paraMap.put("seq", seq);
-		paraMap.put("pw", pw);
 		paraMap.put("login_id", login_id);
 		
-		int n = service.deleteBoard(paraMap);
-
+		int result = 0;
+		
+		try { // 커뮤니티 글 삭제(Transaction 처리)
+			result = service.deleteBoard(paraMap);
+			
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		
 		JSONObject jsonObj = new JSONObject();
-		jsonObj.put("n", n);
-
+		jsonObj.put("result", result);
+		
 		return jsonObj.toString();
 	}
 	

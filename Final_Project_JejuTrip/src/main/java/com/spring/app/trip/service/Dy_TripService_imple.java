@@ -616,27 +616,38 @@ public class Dy_TripService_imple implements Dy_TripService {
 	}
 
 
-	// 커뮤니티 글 삭제 처리하기
+	// 커뮤니티 글 삭제 처리하기 (Transaction 처리)
 	@Override
-	public int deleteBoard(Map<String, String> paraMap) {
+	@Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.READ_COMMITTED, rollbackFor={Throwable.class})
+	public int deleteBoard(Map<String, String> paraMap) throws Throwable {
 		
-		int n = 0;
+		int n1=0, n2=0, result=0;
 		
 		BoardVO boardvo = dao.getBoardInfo(paraMap.get("seq"));
 		
 		if(boardvo == null) {
-			return n;
+			return n1;
 			
 		} else {
-			if(!(paraMap.get("login_id").equals(boardvo.getFk_userid()))) {
-				return n;
+			if(!(paraMap.get("login_id").equals(boardvo.getFk_userid())) && !"admin".equals(paraMap.get("login_id"))) {
+				return n1;
 				
 			} else {
-				n = dao.deleteBoard(paraMap);
+				n1 = dao.deleteBoard(paraMap); // 커뮤니티 글 삭제 (status 0으로 update)
+				
+				int commentCount = Integer.parseInt(boardvo.getCommentCount());
+				
+				if(n1 == 1) {
+					n2 = dao.deleteCommentByParentSeq(paraMap.get("seq")); // 글에 대한 댓글 삭제 (status 0으로 update)
+					
+					if(commentCount == n2) { // 글에 대한 댓글 개수와 삭제된 댓글 개수가 같다면 (댓글이 모두 삭제되었다면)
+						result = 1;
+					}
+				}
 			}
 		}
 		
-		return n;
+		return result;
 	}
 
 

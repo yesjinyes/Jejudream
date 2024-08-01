@@ -25,7 +25,8 @@
 	}
 	
 	span#updateBoard:hover,
-	span#deleteBoard:hover {
+	span#deleteBoard:hover,
+	span#deleteBoardAdmin:hover {
 		cursor: pointer;
 		opacity: 0.7;
 	}
@@ -409,6 +410,47 @@
 	    	}
 	    });
 	    
+	    
+	    // 관리자가 글 삭제
+	    $("span#deleteBoardAdmin").click(function() {
+			if(confirm("글을 삭제하시겠습니까?")) {
+				$.ajax({
+					url: "<%=ctxPath%>/community/deleteBoard.trip",
+					data: {
+						"seq": "${requestScope.boardvo.seq}",
+						"login_id": "${sessionScope.loginuser.userid}"
+					},
+					type: "post",
+					dataType: "json",
+					success: function(json) {
+						if(json.result == 1) {
+							
+							if(${requestScope.boardvo.category} == 1) {
+								location.href = "<%=ctxPath%>/community/freeBoard.trip";
+								
+							} else if(${requestScope.boardvo.category} == 2) {
+								location.href = "<%=ctxPath%>/community/lodgingBoard.trip";
+								
+							} else if(${requestScope.boardvo.category} == 3) {
+								location.href = "<%=ctxPath%>/community/playBoard.trip";
+								
+							} else if(${requestScope.boardvo.category} == 4) {
+								location.href = "<%=ctxPath%>/community/foodBoard.trip";
+								
+							}
+							
+						} else {
+							alert("글 삭제 실패");
+							history.back();
+						}
+					},
+					error: function(request, status, error){
+						alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+					}
+				});
+			}
+	    });
+	    
 	}); // end of $(document).ready(function() {}) ---------------------
 	
 	
@@ -433,13 +475,12 @@
 				url: "<%=ctxPath%>/community/deleteBoard.trip",
 				data: {
 					"seq": seq,
-					"pw": pw,
 					"login_id": "${sessionScope.loginuser.userid}"
 				},
 				type: "post",
 				dataType: "json",
 				success: function(json) {
-					if(json.n == 1) {
+					if(json.result == 1) {
 						
 						if(${requestScope.boardvo.category} == 1) {
 							location.href = "<%=ctxPath%>/community/freeBoard.trip";
@@ -507,7 +548,7 @@
 	// === 댓글 쓰기 ===
 	function goAddComment() {
 		
-		const comment_content = $("textarea[name='content']").val().trim();
+		const comment_content = $("textarea#comment_content").val().trim();
 		
 		if(comment_content == "") {
 			alert("댓글 내용을 입력하세요!");
@@ -741,12 +782,15 @@
 							<span>조회수 : ${requestScope.boardvo.readCount}</span>
 						</div>
 						<c:if test="${not empty sessionScope.loginuser}">
-							<c:if test="${requestScope.boardvo.fk_userid == sessionScope.loginuser.userid}">
 								<div class="mr-2 d-flex justify-content-end" style="width: 10%;">
-									<span id="updateBoard" onclick="location.href='<%=ctxPath%>/community/updateBoard.trip?seq=${requestScope.boardvo.seq}'">수정</span>&nbsp;&nbsp;|&nbsp;&nbsp;
-									<span id="deleteBoard" data-toggle="modal" data-target="#deleteBoardModal">삭제</span>
+									<c:if test="${requestScope.boardvo.fk_userid == sessionScope.loginuser.userid}">
+										<span id="updateBoard" onclick="location.href='<%=ctxPath%>/community/updateBoard.trip?seq=${requestScope.boardvo.seq}'">수정</span>&nbsp;&nbsp;|&nbsp;&nbsp;
+										<span id="deleteBoard" data-toggle="modal" data-target="#deleteBoardModal">삭제</span>
+									</c:if>
+									<c:if test="${sessionScope.loginuser.userid == 'admin'}">
+										<span id="deleteBoardAdmin">삭제</span>
+									</c:if>
 								</div>
-							</c:if>
 						</c:if>
 					</div>
 				</div>
@@ -826,7 +870,7 @@
 								<input type="text" class="font-weight-bold" name="name" value="${sessionScope.loginuser.user_name}" style="border: none; background-color: #FAFAFA;" readonly>
 							</c:if>
 						</span>
-						<textarea class="mb-2" name="content" style="width: 100%; height: 100px; border: none; background-color: #fafafa;" placeholder="댓글을 작성해주세요."></textarea>
+						<textarea class="mb-2" id="comment_content" name="content" style="width: 100%; height: 100px; border: none; background-color: #fafafa;" placeholder="댓글을 작성해주세요."></textarea>
 						<input type="hidden" name="parentSeq" value="${requestScope.boardvo.seq}" readonly />
 						<div style="text-align: right;"><button type="button" class="btn" id="addCommentBtn" onclick="goAddComment()">등록</button></div>
 					</div>
