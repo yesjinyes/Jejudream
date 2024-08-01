@@ -3,6 +3,75 @@
 <% String ctxPath = request.getContextPath(); %>    
     
 
+<style>
+    body {
+        font-family: "Noto Sans KR", sans-serif;
+        font-optical-sizing: auto;
+    }
+    .container {
+    width: 100%;
+    max-width: 800px;
+    margin: 5% auto;
+    border: solid 1px rgba(0, 0, 0, 0.15);
+    border-radius: 40px;
+    box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    position: relative;
+	}
+
+	.ano_in{
+	
+		margin-left: 15%;
+	}
+
+	
+	.info {
+	    width: 100%;
+	}
+	
+	.info_block {
+		
+	    margin-bottom: 1em;
+
+	}
+	
+	.error {
+	    color: red;
+	}
+	
+	.input_error {
+	    border: solid 1px red !important;
+	}
+	
+	button#registerBtn {
+	    width: 50%;
+	    
+	    margin: 1% auto;
+	    border-radius: 8px;
+	    background-color: #ff5000;
+	    color: white;
+	}
+	
+	button {
+	    margin: 5px;
+	}
+	
+	
+	div.info_block > input  {
+	    display: block;
+	    width: 50%;
+	    
+	    height: 50px;
+	    margin-left: 15%;
+	    border-radius: 8px;
+	    border: solid 1px rgba(15, 19, 42, .1);
+	    padding: 0 0 0 15px;
+	    font-size: 16px;
+	    color:gray;
+	}
+	
+
+</style>
 <div class="container">
 
     <div style="width: 80%; margin: 7% auto;">
@@ -20,7 +89,8 @@
                 <span class="error"></span>
             </div>
             
-            <div class="info_block mt-3">
+            <div class="info_block ano_in mt-3">
+            	<h4 style="margin-top: 1%;" >지역구분</h4>
 				<select name="local_status">
 					<option selected>지역구분</option>
 					<option>제주시 시내</option>
@@ -45,11 +115,11 @@
 	        </div>
 	        
 			
-            <div class="info_block mt-3">
+            <div class="info_block ano_in mt-3">
                 <textarea name="lodging_content" id="lodging_content" placeholder="숙소 설명"></textarea>
                 <span class="error"></span>
             </div>
-            <div class="mt-3">
+            <div class="mt-3 ano_in">
                 <input type="file" name="attach" id="attach">
                 <span class="error"></span>
             </div>
