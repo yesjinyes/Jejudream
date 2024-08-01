@@ -130,3 +130,8 @@ from
 )
 where rownum < 4;
 
+select *
+from tbl_lodging
+where lodging_name like '%휘슬락%'
+
+select * from tbl_reservation;
