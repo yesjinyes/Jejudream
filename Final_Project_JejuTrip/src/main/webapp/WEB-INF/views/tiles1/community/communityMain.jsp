@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <% String ctxPath = request.getContextPath(); %>    
 
 <!-- 직접 만든 CSS -->
@@ -46,6 +47,13 @@
 	        frm.submit();
 		    
 	    });	// end of $("button#FestivalToExcel").click(function() {})
+	    
+	    
+	    $(document).on("click", $("button#adminFestivalList"), function(){
+	    	
+	    	location.href = "<%= ctxPath%>/admin_FestivalList.trip";
+	    	
+	    }); // end of $(document).on("click", $("button#adminFestivalList"), function(){}) 
 	    
 		
 	}); // $(document).ready(function() {})
@@ -300,7 +308,7 @@
     justify-content: space-between;
 }
 
-#content1 h4, #content2 h4, #content3 h4, #content4 h4 {
+#content2 h4, #content3 h4, #content4 h4 {
     margin-bottom: 1rem;
 }
 
@@ -342,7 +350,14 @@
  	<div id="content1">
  		<div style="display: flex; justify-content: space-between; align-items: center;">
 	        <h4>진행중인 축제 / 행사</h4>
+	        
+	        <div style="align-items: center; margin-bottom:.5rem;">
 	        <button type="button" class="btn btn-info" id="FestivalToExcel">전체기간 축제와 행사 엑셀다운받기</button>
+	        
+	        <c:if test="${sessionScope.loginuser.userid eq 'admin'}">
+	        <button type="button" class="btn btn-primary" id="adminFestivalList">관리자용 축제행사 관리</button>
+	        </c:if>
+	        </div>
 	    </div> 
 		<div class="text-right my-1">
 		    <div class="row mx-auto my-auto" id="festivalcontent">

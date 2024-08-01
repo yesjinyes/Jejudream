@@ -789,6 +789,29 @@ public class Js_TripService_imple implements Js_TripService {
 	} // end of public void festivalList_to_Excel(Model model) {
 
 
+	// 관리자가 보는 축제/행사 정보 가져오기
+	@Override
+	public List<Map<String, String>> adminFestivalList(Map<String,String> paraMap) {
+		
+		List<Map<String, String>> adminFestivalList = dao.adminFestivalList(paraMap);
+		
+		return adminFestivalList;
+		
+	} // end of public List<Map<String, String>> adminFestivalList() {
+
+
+	
+	// 관리자가 보는 축제/행사 개수 가져오기
+	@Override
+	public int getFestivalTotalCount(Map<String, String> paraMap) {
+		
+		int totalCount = dao.getFestivalTotalCount(paraMap);
+		
+		return totalCount;
+		
+	} // end of public int getFestivalTotalCount(Map<String, String> paraMap) {
+
+
 	
 
 

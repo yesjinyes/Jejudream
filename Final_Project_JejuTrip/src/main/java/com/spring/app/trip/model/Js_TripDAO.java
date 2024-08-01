@@ -132,6 +132,12 @@ public interface Js_TripDAO {
 
 	// db에서 엑셀로 다운받을 축제와 행사 가져오기
 	List<Map<String, String>> excel_to_festivalList();
+
+	// 관리자가 보는 축제/행사 정보 가져오기
+	List<Map<String, String>> adminFestivalList(Map<String, String> paraMap);
+
+	// 관리자가 보는 축제/행사 개수 가져오기
+	int getFestivalTotalCount(Map<String, String> paraMap);
 	
 	
 
