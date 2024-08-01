@@ -672,7 +672,7 @@ function add_joinUser(value){  // value 가 공유자로 선택한이름 이다.
     success:function(json){
  	
  	   let v_html = "";
-       let r_html = ""; 
+       let r_html = "0"; 
         if (json.length > 0) {    
            $.each(json, function(index, item){ 
               let writeuserid = item.fk_userid;
@@ -959,7 +959,7 @@ function goDelete() {
 					</div>
 					<p class="icon-title">리뷰</p>
 				</button>
-				<p class="count" id="reviewCount">5</p>
+				<p class="count" id="reviewCount">0</p>
 			</li>
 			<li class="list-item">
 				<button type="button" class="iconbtn" style="cursor: default;">
