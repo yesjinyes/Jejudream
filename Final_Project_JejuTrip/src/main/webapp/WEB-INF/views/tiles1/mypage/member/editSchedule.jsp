@@ -430,6 +430,7 @@ $(document).ready(function(){
         </ul>
     </div>
 	
+	
 	<div class="container">
 	    <div style="margin-left: 80px; width: 88%;  margin: 50px auto;">
 			<h3 style="display: inline-block;">일정 수정하기</h3>&nbsp;&nbsp;<a href="<%= ctxPath%>/schedule/scheduleManagement.action"><span>◀캘린더로 돌아가기</span></a>

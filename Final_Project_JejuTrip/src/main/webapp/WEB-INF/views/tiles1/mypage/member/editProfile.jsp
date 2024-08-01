@@ -332,6 +332,7 @@
         </ul>
     </div>
 	
+	
 	<div class="container">
 	    <div style="width: 80%; margin: 7% auto;">
 		    <h2 style="margin-top: 20%;" class="h2 font-weight-bold">회원정보수정</h2>

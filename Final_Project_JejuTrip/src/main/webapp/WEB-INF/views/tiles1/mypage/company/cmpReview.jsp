@@ -262,7 +262,7 @@ function goViewCmpLoginReviewList(selectedValue){
                 </a>
             </li>
             <li class="list active">
-                <a href="<%= ctxPath%>/review.trip">
+                <a href="<%= ctxPath%>/cmpReview.trip">
                     <span class="icon"><ion-icon name="clipboard-outline"></ion-icon></span>
                     <span class="title">이용후기</span>
                 </a>

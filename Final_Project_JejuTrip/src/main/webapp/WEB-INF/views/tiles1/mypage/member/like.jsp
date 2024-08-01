@@ -231,6 +231,7 @@ function goLogingLikeList(){
         </ul>
     </div>
 	
+	
     <form class = "likeFrm" name="likeFrm">
 		<div id="like">
 			<div id="top_color">

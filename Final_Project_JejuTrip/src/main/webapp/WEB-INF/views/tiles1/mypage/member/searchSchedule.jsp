@@ -186,6 +186,7 @@ function goSearch(){
         </ul>
     </div>
 	
+	
 	<div style="margin-left: 80px; width: 88%;">
 	<div>
 		<h3 style="display: inline-block;">일정 검색결과</h3>&nbsp;&nbsp;<a href="<%= ctxPath%>/my_schedule.trip"><span>◀캘린더로 돌아가기</span></a>

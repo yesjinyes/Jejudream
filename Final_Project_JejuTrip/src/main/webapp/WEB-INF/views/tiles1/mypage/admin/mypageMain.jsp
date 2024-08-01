@@ -570,6 +570,7 @@
         </ul>
     </div>
 	
+	
     <form class = "reservationFrm" name="reservationFrm">
 		<div id="reservation">
 			<div id="top_color">

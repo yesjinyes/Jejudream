@@ -459,7 +459,7 @@
                 </a>
             </li>
             <li class="list">
-                <a href="<%= ctxPath%>/review.trip">
+                <a href="<%= ctxPath%>/admin_review.trip">
                     <span class="icon"><ion-icon name="clipboard-outline"></ion-icon></span>
                     <span class="title">이용후기</span>
                 </a>

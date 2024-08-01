@@ -350,6 +350,7 @@ function add_joinUser(value){  // value 가 공유자로 선택한이름 이다.
             </li>
         </ul>
     </div>
+    
 	
 	<div class="container">
 	    <div style="width: 88%; margin: 100px auto;">
