@@ -108,7 +108,8 @@
 					let check_reservation_code = 0;
 					$.each(json, function(index, item){
 					    	v_html_all += "<tr>";
-						    v_html_all += "<th>"+item.user_name+"</th>";
+					    	v_html_all += "<th>"+item.from_id+"</th>";
+						    v_html_all += "<td>"+item.user_name+"</td>";
 							v_html_all += "<td>"+item.chatting_date+"</td>";
 							v_html_all += "<td class='go_chat'><ion-icon name='chatbubble-sharp'><input type='button' value='"+item.from_id+"'/></ion-icon>";
 							if(item.status == 0){
@@ -273,7 +274,8 @@
 					let check_reservation_code = 0;
 					$.each(json, function(index, item){
 						v_html_all += "<tr>";
-					    v_html_all += "<th>"+item.user_name+"</th>";
+						v_html_all += "<th>"+item.from_id+"</th>";
+					    v_html_all += "<td>"+item.user_name+"</td>";
 						v_html_all += "<td>"+item.chatting_date+"</td>";
 						v_html_all += "<td class='go_chat'><ion-icon name='chatbubble-sharp'><input type='button' value='"+item.user_name+"'/></ion-icon>";
 						if(item.status == 0){
@@ -479,9 +481,10 @@
 					<table class="table table-hover">
 					  <thead>
 					    <tr>
-					      <th>유저명</th>
-					      <th>채팅일자</th>
-					      <th>1:1채팅</th>
+					    	<th>아이디</th>
+					      	<th>유저명</th>
+					      	<th>채팅일자</th>
+					      	<th>1:1채팅</th>
 					    </tr>
 					  </thead>
 					  <tbody id="all_chatting_tbody">
@@ -495,9 +498,10 @@
 					<table class="table table-hover">
 					  <thead>
 					    <tr>
-					      <th>유저명</th>
-					      <th>채팅일자</th>
-					      <th>1:1채팅</th>
+					    	<th>아이디</th>
+					      	<th>유저명</th>
+					      	<th>채팅일자</th>
+					      	<th>1:1채팅</th>
 					    </tr>
 					  </thead>
 					  <tbody id="no_read_chatting_tbody">

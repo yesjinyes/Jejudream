@@ -41,10 +41,10 @@
 				</ol>
 				<div class="carousel-inner">
 					<div class="carousel-item active">
-						<a href="https://www.visitjeju.net/kr/themtour/view?contentsid=CNTS_300000000013053"><img src="<%= ctxPath %>/resources/images/main/olle_market.jpg" class="d-block w-100" alt="..."></a>
+						<a href="https://www.visitjeju.net/kr/detail/view?contentsid=CONT_000000000500731"><img src="<%= ctxPath %>/resources/images/main/olle_market.jpg" class="d-block w-100" alt="..."></a>
 					</div>
 					<div class="carousel-item">
-						<img src="<%= ctxPath %>/resources/images/main/mandarin_party.png" class="d-block w-100" alt="...">		      
+						<a href="https://www.jicexpo.com/main.do"><img src="<%= ctxPath %>/resources/images/main/mandarin_party.png" class="d-block w-100" alt="..."></a>		      
 					</div>
 				</div>
 				<a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
