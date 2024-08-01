@@ -202,7 +202,7 @@ function goViewCmpLoginReviewList(selectedValue){
 	              v_html += "<tr>";
 	              	v_html += "<td>"+item.rno+"</td>";
 					v_html += "<td>"+item.lodging_name+"</td>";
-              	    v_html += "<td>"+item.review_content+"</td>";
+              	    v_html += "<td style='overflow:hidden;white-space:nowrap;text-overflow:ellipsis;'>"+item.review_content+"</td>";
 					v_html += "<td>"+item.fk_userid+"</td>";
 					v_html += "<td>"+item.registerday+"</td>";
 					v_html += "<input type='hidden' value='<%= ctxPath%>/lodgingDetail.trip?lodging_code="+item.lodging_code+"'>";
@@ -292,14 +292,14 @@ function goViewCmpLoginReviewList(selectedValue){
 		</div>
 		<div class="reservation_bar" style="margin-top: 5%; height: 400px;">
 			<div class="tab-content" style="height: 400px;" id="tblcontent">
-				<table class="table table-borderless table-hover" >
+				<table style="table-layout:fixed" class="table table-borderless table-hover" >
 					<thead>
 						<tr>
-							<th>#</th>
-							<th>숙소명</th>
-							<th>후기내용</th>
-							<th>작성자ID</th>
-							<th>작성일자</th>
+							<th style="width: 7%;">#</th>
+							<th style="width: 20%;">숙소명</th>
+							<th style="width: 55%;">후기내용</th>
+							<th style="width: 8%;">작성자ID</th>
+							<th style="width: 10%;">작성일자</th>
 						</tr>
 					</thead>
 					<tbody id="login_review_tbody"></tbody>

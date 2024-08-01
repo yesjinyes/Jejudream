@@ -570,10 +570,10 @@ from
     <otherwise></otherwise>
       </choose>  
    
-    order by registerday desc
+    order by registerday
 )
 
-order by rno desc
+order by rno
 
 </select>
  

@@ -53,7 +53,7 @@ function goViewAllReviewList(currentShowPageNo){
 						v_html += "<td><span style='font-weight:bold;'>즐길거리</span></td>";
 						v_html += "<input type='hidden' value='<%= ctxPath%>/goAddSchedule.trip?play_code="+item.parent_code+"'>"
 					}
-					v_html += "<td>"+item.review_content+"</td>";
+					v_html += "<td style='overflow:hidden;white-space:nowrap;text-overflow:ellipsis;'>"+item.review_content+"</td>";
 					v_html += "<td>"+item.registerday+"</td>";
 					v_html += "</tr>";
 			    	
@@ -152,7 +152,7 @@ function goViewAllReviewList(currentShowPageNo){
 			              v_html += "<tr>";
 			              	v_html += "<td>"+item.rno+"</td>";
 							v_html += "<td>"+item.food_name+"</td>";
-		              	    v_html += "<td>"+item.review_content+"</td>";
+		              	    v_html += "<td style='overflow:hidden;white-space:nowrap;text-overflow:ellipsis;'>"+item.review_content+"</td>";
 							v_html += "<td>"+item.registerday+"</td>";
 							v_html += "<input type='hidden' value='<%= ctxPath%>/foodstoreDetail.trip?food_store_code="+item.parent_code+"'>";
 							v_html += "</tr>";
@@ -253,7 +253,7 @@ function goViewAllReviewList(currentShowPageNo){
 				              v_html += "<tr>";
 				              	v_html += "<td>"+item.rno+"</td>";
 								v_html += "<td>"+item.play_name+"</td>";
-								v_html += "<td>"+item.review_content+"</td>";
+								v_html += "<td style='overflow:hidden;white-space:nowrap;text-overflow:ellipsis;'>"+item.review_content+"</td>";
 								v_html += "<td>"+item.registerday+"</td>";
 								v_html += "<input type='hidden' value='<%= ctxPath%>/goAddSchedule.trip?play_code="+item.parent_code+"'>";
 								v_html += "</tr>";
@@ -356,7 +356,7 @@ function goViewAllReviewList(currentShowPageNo){
 					              v_html += "<tr>";
 					              	v_html += "<td>"+item.rno+"</td>";
 									v_html += "<td>"+item.lodging_name+"</td>";
-				              	    v_html += "<td>"+item.review_content+"</td>";
+				              	    v_html += "<td style='overflow:hidden;white-space:nowrap;text-overflow:ellipsis;'>"+item.review_content+"</td>";
 									v_html += "<td>"+item.registerday+"</td>";
 									v_html += "<input type='hidden' value='<%= ctxPath%>/lodgingDetail.trip?lodging_code="+item.parent_code+"'>";
 									v_html += "</tr>";
@@ -544,13 +544,13 @@ function goViewAllReviewList(currentShowPageNo){
 			<!-- Tab panes -->
 			<div class="tab-content">
 			  <div class="tab-pane active" id="all_review" >
-				<table class="table table-hover">
+				<table style="table-layout:fixed" class="table table-hover">
 				  <thead>
 				    <tr>
-				      <th>#</th>
-				      <th>카테고리</th>
-				      <th>내용</th>
-				      <th>작성일자</th>
+				      <th style="width: 10%;">#</th>
+				      <th style="width: 15%;">카테고리</th>
+				      <th style="width: 60%;">내용</th>
+				      <th style="width: 15%;">작성일자</th>
 				    </tr>
 				  </thead>
 				  <tbody id="all_review_tbody"></tbody>
@@ -559,13 +559,13 @@ function goViewAllReviewList(currentShowPageNo){
 			</div>
 			
 			  <div class="tab-pane fade" id="login_review">
-					<table class="table table-hover">
+					<table style="table-layout:fixed" class="table table-hover">
 				 		 <thead>
 						    <tr>
-						      <th>#</th>
-						      <th>숙소명</th>
-						      <th>후기내용</th>
-						      <th>작성일자</th>
+						      <th style="width: 10%;">#</th>
+						      <th style="width: 20%;">숙소명</th>
+						      <th style="width: 55%;">후기내용</th>
+						      <th style="width: 15%;">작성일자</th>
 						    </tr>
 						  </thead>
 			    		 <tbody id="login_review_tbody"></tbody>
@@ -574,13 +574,13 @@ function goViewAllReviewList(currentShowPageNo){
 				</div>
 				
 				<div class="tab-pane fade" id="food_review">
-					<table class="table table-hover">
+					<table style="table-layout:fixed" class="table table-hover">
 				 		 <thead>
 						    <tr>
-						      <th>#</th>
-						      <th>가게이름</th>
-						      <th>후기내용</th>
-						      <th>작성일자</th>
+						      <th style="width: 10%;">#</th>
+						      <th style="width: 20%;">가게이름</th>
+						      <th style="width: 55%;">후기내용</th>
+						      <th style="width: 15%;">작성일자</th>
 						    </tr>
 						  </thead>
 			    		 <tbody id="food_review_tbody"></tbody>
@@ -589,13 +589,13 @@ function goViewAllReviewList(currentShowPageNo){
 				</div>
 				
 				<div class="tab-pane fade" id="play_review">
-					<table class="table table-hover">
+					<table style="table-layout:fixed" class="table table-hover">
 				 		 <thead>
 						    <tr>
-						      <th>#</th>
-						      <th>즐길거리이름</th>
-						      <th>후기내용</th>
-						      <th>작성일자</th>
+						      <th style="width: 10%;">#</th>
+						      <th style="width: 20%;">즐길거리이름</th>
+						      <th style="width: 55%;">후기내용</th>
+						      <th style="width: 15%;">작성일자</th>
 						    </tr>
 						  </thead>
 			    		 <tbody id="play_review_tbody"></tbody>
