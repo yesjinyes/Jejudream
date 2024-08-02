@@ -620,6 +620,7 @@ public class Dy_TripController {
 	}
 	
 	
+	// 휴면 해제 페이지 - 이메일 인증 코드 만들어 전송하기
 	@ResponseBody
 	@PostMapping(value="login/emailCertifyJSON.trip", produces="text/plain;charset=UTF-8")
 	public String emailCertifyJSON(HttpServletRequest request) {
