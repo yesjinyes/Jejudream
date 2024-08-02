@@ -502,9 +502,13 @@ span#data {
 
 
     <div class="container">
-	        
-        <!-- 맛집 검색 카테고리 -->
-    	<div class="row py-3 mt-5 border rounded">
+    
+    	<c:if test="${sessionScope.loginuser.userid == 'admin'}">
+	    	<button type="button" class="btn btn-warning mt-5" id="btnRegisterFoodstore" onclick="javascript:location.href='<%=ctxPath%>/admin/foodstoreRegister.trip'">맛집 등록</button>
+	    </c:if> 
+	    
+        <!-- 맛집 검색 카테고리 --> 
+    	<div class="row py-3 mt-3 border rounded">
             <div class="row mt-2" style="width: 70%; margin-left: 4%;">
     			<h5 class="mr-5">카테고리 검색</h5>
     			<div class="mr-4">
