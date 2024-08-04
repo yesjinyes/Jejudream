@@ -277,13 +277,6 @@ span.plusUser{
 		
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
-		// == 리뷰 input 엔터 키 == //
-		/* $("textarea[name='review_content']").bind("keyup", function(e) {
-			if(e.keyCode == 13) {
-				goAddReview();
-			}
-		}); */
-		
 		// == 리뷰 아이콘 클릭 시 리뷰 리스트로 이동 == //
 		const reviewList = document.getElementById("reviewList");
 		
@@ -373,7 +366,7 @@ span.plusUser{
 						data:{"review_code": review_code},
 						dataType:"json",
 						success:function(json){
-							alert("리뷰가 삭제되었습니다.");
+							// alert("리뷰가 삭제되었습니다.");
 							goViewReview(1);
 						},
 						error: function(request, status, error){
@@ -410,6 +403,7 @@ span.plusUser{
 							goLikeDislikeCount();
 						}
 						else{
+							alert("관리자는 좋아요 기능을 사용할 수 없습니다.")
 							goLikeDislikeCount();
 						}
 			        },
@@ -748,7 +742,7 @@ span.plusUser{
 			type:"post",
 			data:schedule,
 			success:function(json) {
-				alert("일정 등록에 성공했습니다.");
+				alert("일정이 등록되었습니다.");
 				$("#calendarModal").modal("hide");
 			},
 			error: function(request, status, error) {
@@ -780,7 +774,7 @@ span.plusUser{
 	        success:function(json){
 	        	
 	        	if(json.n == 1) {
-	        		alert("리뷰가 등록되었습니다.");
+	        		// alert("리뷰가 등록되었습니다.");
 	        		goViewReview(1);
 	        	}
 	        	else {
@@ -820,19 +814,53 @@ span.plusUser{
 								       <td>\${item.fk_userid}</td>
 								       <td class='review'>\${item.registerday}</td>`;    
 								       
-								       if(${sessionScope.loginuser != null} &&
-								          "${sessionScope.loginuser.userid}" == item.fk_userid) {
+								       if(${sessionScope.loginuser != null}) {
 								    	   
-								    	   v_html += `<td class='review'>
+								    	   // 관리자 계정으로 로그인 한 경우
+								    	   if("${sessionScope.loginuser.userid}" == 'admin') {
+								    		   if(item.fk_userid == 'admin') {
+								    			   v_html += `<td class='review'>
+										    	   				  <button class='btn btn-secondary btn-sm btnUpdateReview'>수정</button>
+										    	   				  <input type='hidden' value='\${item.parent_code}'/>
+										    		              <button class='btn btn-secondary btn-sm btnDeleteReview'>삭제</button>
+										    		              <input type='hidden' value='\${currentShowPageNo}' class='currentShowPageNo' />
+										    		          </td>`;
+								    		   }
+								    		   
+								    		   if(item.fk_userid != 'admin') { 
+								    			   v_html += `<td class='review'>
+										    	   				  <input type='hidden' value='\${item.parent_code}'/>
+										    		              <button class='btn btn-secondary btn-sm btnDeleteReview'>삭제</button>
+										    		              <input type='hidden' value='\${currentShowPageNo}' class='currentShowPageNo' />
+										    		          </td>`;
+								    		   }
+									       }// end of if("${sessionScope.loginuser.userid}" == 'admin')
+									    	   
+									       // 일반 회원 계정으로 로그인 한 경우
+									       else {
+								    		   if(item.fk_userid != 'admin') { 
+								    			   v_html += `<td class='review'>
+								    				   			  <button class='btn btn-secondary btn-sm btnUpdateReview'>수정</button>
+										    	   				  <input type='hidden' value='\${item.parent_code}'/>
+										    		              <button class='btn btn-secondary btn-sm btnDeleteReview'>삭제</button>
+										    		              <input type='hidden' value='\${currentShowPageNo}' class='currentShowPageNo' />
+										    		          </td>`;
+								    		   }
+									       }
+								    	   
+								    	   
+								    	   
+								    	  /*  v_html += `<td class='review'>
 								    	   				  <button class='btn btn-secondary btn-sm btnUpdateReview'>수정</button>
 								    	   				  <input type='hidden' value='\${item.parent_code}'/>
 								    		              <button class='btn btn-secondary btn-sm btnDeleteReview'>삭제</button>
 								    		              <input type='hidden' value='\${currentShowPageNo}' class='currentShowPageNo' />
-								    		          </td>`;
+								    		          </td>`; */
 								       }
+								       
 								        
 						v_html += `</tr>`;
-						count_html = item.totalCount;  
+						count_html = item.totalCount;
 					});
 					
 					const totalPage = Math.ceil( json[0].totalCount / json[0].sizePerPage);
@@ -1023,46 +1051,47 @@ span.plusUser{
 		<!-- 오른쪽 div -->
 		<div class="col-md-7">
 			<div class="border rounded" style="margin: 0 -2% 0 2%; padding: 3% 0 2% 0;">
-				
 				<!-- 아이콘 모음 시작 -->
-				<ul class="list" style="display: flex; margin-left: 8%;">
-					<li class="list-item">
-						<button type="button" class="iconbtn" id="btnLike">
-							<div class="item-each">
-								<img class="icon like" id="like" src="<%= ctxPath %>/resources/images/foodstore/icon/Like.png">
-								<img class="icon likeup" id="likeup" src="<%= ctxPath %>/resources/images/foodstore/icon/LikeUp.png">
-							</div>
-							<p class="icon-title">좋아요</p>
-						</button>
-						<p class="count" id="likeCount"></p>
-					</li>
-					<li class="list-item">
-						<button type="button" class="iconbtn" id="btnReview">
-							<div>
-								<img class="icon" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_review2.png">
-							</div>
-							<p class="icon-title">리뷰</p>
-						</button>
-						<p class="count" id="reviewCount"></p>
-					</li>
-					<li class="list-item">
-						<button type="button" class="iconbtn" style="cursor: default;">
-							<div>
-								<img class="icon" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_viewcount.png">
-							</div>
-							<p class="icon-title">조회수</p>
-						</button>
-						<p class="count" id="readCount">${requestScope.foodstorevo.readCount}</p>
-					</li>
-					<li class="list-item">
-						<button type="button" class="iconbtn" id="btnSchedule">
-							<div>
-								<img class="icon" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_calender.png">
-							</div>
-							<p class="icon-title" id="addSchedule">일정 추가</p>
-						</button>
-					</li>
-				</ul>
+				<c:if test="${sessionScope.loginuser.userid != 'admin'}">
+					<ul class="list" style="display: flex; margin-left: 8%;">
+						<li class="list-item">
+							<button type="button" class="iconbtn" id="btnLike">
+								<div class="item-each">
+									<img class="icon like" id="like" src="<%= ctxPath %>/resources/images/foodstore/icon/Like.png">
+									<img class="icon likeup" id="likeup" src="<%= ctxPath %>/resources/images/foodstore/icon/LikeUp.png">
+								</div>
+								<p class="icon-title">좋아요</p>
+							</button>
+							<p class="count" id="likeCount"></p>
+						</li>
+						<li class="list-item">
+							<button type="button" class="iconbtn" id="btnReview">
+								<div>
+									<img class="icon" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_review2.png">
+								</div>
+								<p class="icon-title">리뷰</p>
+							</button>
+							<p class="count" id="reviewCount"></p>
+						</li>
+						<li class="list-item">
+							<button type="button" class="iconbtn" style="cursor: default;">
+								<div>
+									<img class="icon" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_viewcount.png">
+								</div>
+								<p class="icon-title">조회수</p>
+							</button>
+							<p class="count" id="readCount">${requestScope.foodstorevo.readCount}</p>
+						</li>
+						<li class="list-item">
+							<button type="button" class="iconbtn" id="btnSchedule">
+								<div>
+									<img class="icon" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_calender.png">
+								</div>
+								<p class="icon-title" id="addSchedule">일정 추가</p>
+							</button>
+						</li>
+					</ul>
+				</c:if>
 				<!-- 아이콘 모음 끝-->
 				
 				<!-- 일정 추가 모달 시작-->
