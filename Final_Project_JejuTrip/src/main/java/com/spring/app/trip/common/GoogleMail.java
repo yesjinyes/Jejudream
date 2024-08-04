@@ -372,7 +372,7 @@ public class GoogleMail {
        MimeMessage msg = new MimeMessage(ses);
 
        // 제목 설정
-       String subject = "localhost:9099/board/ 방문 예약일자를 알려드립니다.";
+       String subject = "예약하신 숙소의 방문일자가 하루밖에 남지않았습니다!";
        msg.setSubject(subject);
                
        // 보내는 사람의 메일주소

@@ -68,6 +68,7 @@ public class CommonAop {
 			
 			// >>> 로그인 성공 후 로그인 하기 전 페이지로 돌아가는 작업 만들기 <<<
 			String url = MyUtil.getCurrentURL(request);
+			System.out.println("1번 AOP url : " + url);
 			session.setAttribute("goBackURL", url); // 세션에 url 정보를 저장시켜둔다.
 			
 			RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/msg.jsp"); // request를 보낼 경로 지정
@@ -81,6 +82,48 @@ public class CommonAop {
 		}
 	}
 	
+	
+	@Pointcut("execution(public * com.spring.app..*Controller.requiredLogin2_*(..) )")
+	// 예) com.spring.app.board.controller.BoardController.requiredLogin_add(ModelAndView mav)
+	// 예) com.spring.app.employees.controller.EmpController.requiredLogin_empList()
+	public void requiredLogin2() {}
+	
+	// === Before Advice(공통관심사, 보조업무)를 구현한다. === //
+	@Before("requiredLogin2()")
+	public void loginCheck2(JoinPoint joinpoint) { // 로그인 유무 검사를 하는 메소드 작성하기
+		// JoinPoint joinpoit는 Pointcut 된 주업무의 메소드이다.
+		
+		// 로그인 유무를 확인하기 위해서는 request를 통해 session 을 얻어와야 한다.
+		HttpServletRequest request = (HttpServletRequest)joinpoint.getArgs()[0]; // 주업무 메소드의 첫 번째 파라미터를 얻어오는 것이다.
+		HttpServletResponse response = (HttpServletResponse)joinpoint.getArgs()[1]; // 주업무 메소드의 두 번째 파라미터를 얻어오는 것이다.
+		
+		HttpSession session = request.getSession();
+		
+		if(session.getAttribute("loginuser") != null || session.getAttribute("loginCompanyuser") != null) {
+			
+		}
+		else {
+			String message = "로그인 후 이용 가능합니다.";
+			String loc = request.getContextPath() + "/login.trip";
+
+			request.setAttribute("message", message);
+			request.setAttribute("loc", loc);
+			
+			// >>> 로그인 성공 후 로그인 하기 전 페이지로 돌아가는 작업 만들기 <<<
+			String url = MyUtil.getPreviousPageURL(request);
+			System.out.println("2번 AOP url : " + url);
+			session.setAttribute("goBackURL", url); // 세션에 url 정보를 저장시켜둔다.
+			
+			RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/msg.jsp"); // request를 보낼 경로 지정
+			
+			try {
+				dispatcher.forward(request, response); // 사용자 요청에 의해 컨테이너에서 생성된 request와 response를 jsp로 넘겨주는 역할
+				
+			} catch (ServletException | IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 	
 	
 	// ===== Around Advice(보조업무) 만들기 ====== //

@@ -572,15 +572,28 @@
        <result property="user_name"        column="user_name"        javaType="String" />
        <result property="email"        column="email"        javaType="String" />
        <result property="check_in"        column="check_in"        javaType="String" />
+       <result property="lodging_name"        column="lodging_name"        javaType="String" />
+       <result property="room_name"        column="room_name"        javaType="String" />
+       <result property="room_img"        column="room_img"        javaType="String" />
+       <result property="check_out"        column="check_out"        javaType="String" />
    </resultMap>
 	<select id="reservationEmailList" resultMap="reservationEmailList_Map">
- 	SELECT R.reservation_code, M.userid, M.user_name, M.email,
-       		   to_char(R.check_in, 'yyyy-mm-dd hh24:mi') AS check_in
+ 	select V.reservation_code, V.userid, V.user_name, V.email, V.check_in, V.check_out,
+          D.room_name, L.lodging_name, D.room_img
+    from 
+    (
+    SELECT R.reservation_code, M.userid, M.user_name, M.email, fk_room_detail_code,
+       		   to_char(R.check_in, 'yyyy-mm-dd hh24:mi') AS check_in ,
+               to_char(R.check_out, 'yyyy-mm-dd hh24:mi') AS check_out
 		FROM tbl_member M JOIN (select * from tbl_reservation 
         where mailsendcheck = 0 and status = 1 and
-        	  
               to_char(check_in,'yyyymmdd') = to_char(sysdate+1,'yyyymmdd') ) R 
 		ON M.userid = R.fk_userid
+     )V   
+        join tbl_room_detail D
+        on V.fk_room_detail_code = D.room_detail_code
+        join tbl_lodging L
+        on D.fk_lodging_code = L.lodging_code
  	</select>
  	
  	
@@ -695,38 +708,44 @@
 		select festival_no, title_name, img, to_char(startdate, 'yyyy-mm-dd') as startdate,
 				to_char(enddate, 'yyyy-mm-dd') as enddate, local_status, link
 		from tbl_festival
-	
+		
 	</select>
  
  
+ 	<!-- 관리자가 보는 축제/행사 정보 가져오기 -->
  	<resultMap type="HashMap" id="getMoreFestivalList_map">
        <result property="festival_no"      column="festival_no"        javaType="String" />
        <result property="title_name"        	  column="title_name"        javaType="String" />
        <result property="img"       column="img"        javaType="String" />
+       <result property="org_img"       column="org_img"        javaType="String" />
        <result property="startdate"         column="startdate"        javaType="String" />
        <result property="enddate"    column="enddate"        javaType="String" />
        <result property="local_status"            column="local_status"        javaType="String" />
        <result property="link"            column="link"        javaType="String" />
    </resultMap>
  	<select id="getMoreFestivalList" resultMap="getMoreFestivalList_map" parameterType="HashMap">
+ 		
  		select rno, festival_no, title_name, img, startdate, enddate, local_status, link, recentdate
 	    from
 	    (
-	    select rownum as rno, festival_no, title_name, img, to_char(startdate, 'yyyy-mm-dd') as startdate,
-	            to_char(enddate, 'yyyy-mm-dd') as enddate, local_status, link, abs(round(sysdate - startdate)) as recentdate
-	    from tbl_festival
-	    where 1 = 1
-	    <if test='searchWord != ""'>
-	    and title_name like '%' || #{searchWord} || '%'
-	    </if>
-	    order by recentdate asc
-	    )V
-	    where rno between #{start} and #{end}
- 	
+		    select rownum as rno, festival_no, title_name, img, startdate,enddate, local_status, link,recentdate
+		    from 
+		        (
+		        select festival_no, title_name, img, to_char(startdate, 'yyyy-mm-dd') as startdate,
+		                to_char(enddate, 'yyyy-mm-dd') as enddate, local_status, link, abs(round(sysdate - startdate)) as recentdate
+		        from tbl_festival
+		        where 1 = 1
+			    <if test='searchWord != ""'>
+			    and title_name like '%' || #{searchWord} || '%'
+			    </if>
+		        order by recentdate asc
+		        )V
+	    )Q
+	    where Q.rno between #{start} and #{end}
  	</select>
  	
  	
- 	
+ 	<!-- 관리자가 보는 축제/행사 개수 가져오기  -->
  	<select id="getFestivalTotalCount" resultType="int" parameterType="HashMap">
  		select count(*)
  		from tbl_festival
@@ -735,8 +754,51 @@
  		and title_name like '%' || #{searchWord} || '%'
  		</if>
  	</select>
+ 	
+ 	
+ 	<!-- 관리자가 등록하는 축제/행사 -->
+ 	<insert id="registerFestival" parameterType="HashMap">
+ 		insert into tbl_festival (festival_no, title_name, img, org_img , startdate, enddate, local_status, link)
+ 		values (seq_festival.nextval, #{title_name} , #{img}, #{org_img}, #{startdate}, #{enddate}, #{local_status}, #{link})
+ 	</insert>
+ 	
+ 
+ 	<!-- 관리자가 삭제하는 축제/행사 -->
+ 	<delete id="adminDeleteFestival" parameterType="String">
+ 		delete from tbl_festival
+ 		where festival_no = #{festival_no}
+ 	</delete>
  
  
- 
+ 	<!-- 관리자가 수정하기 위해 원래 정보 가져오기 -->
+ 	<resultMap type="HashMap" id="getEditFestivalInfo_Map">
+       <result property="festival_no"      column="festival_no"        javaType="String" />
+       <result property="title_name"        	  column="title_name"        javaType="String" />
+       <result property="img"       column="img"        javaType="String" />
+       <result property="org_img"       column="org_img"        javaType="String" />
+       <result property="startdate"         column="startdate"        javaType="String" />
+       <result property="enddate"    column="enddate"        javaType="String" />
+       <result property="local_status"            column="local_status"        javaType="String" />
+       <result property="link"            column="link"        javaType="String" />
+   </resultMap>
+	<select id="getEditFestivalInfo" parameterType="HashMap" resultMap="getEditFestivalInfo_Map">
+		select festival_no, title_name, img, org_img , to_char(startdate, 'yyyy-mm-dd') as startdate,
+		       to_char(enddate, 'yyyy-mm-dd') as enddate, local_status, link
+		from tbl_festival
+		where festival_no = #{festival_no}
+	</select>
+	
+	
+	
+	<update id="updateFestival" parameterType="HashMap">
+		update tbl_festival set title_name = #{title_name},
+			   img = #{img},
+			   org_img = #{org_img},
+			   startdate = #{startdate},
+			   enddate = #{enddate},
+			   local_status = #{local_status},
+			   link = #{link}
+		where festival_no = #{festival_no}
+	</update>
  
 </mapper>

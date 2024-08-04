@@ -500,6 +500,51 @@ public class Js_TripDAO_imple implements Js_TripDAO {
 		
 	} // end of public int getFestivalTotalCount(Map<String, String> paraMap) {
 
+
+	// 관리자가 등록하는 축제/행사
+	@Override
+	public int registerFestival(Map<String, String> paraMap) {
+		
+		int n = sqlsession.insert("js_trip.registerFestival", paraMap);
+		
+		return n;
+		
+	} // end of public int registerFestival(Map<String, String> paraMap) {}
+
+
+	// 관리자가 해당 축제 및 행사 삭제하기
+	@Override
+	public int adminDeleteFestival(String festival_no) {
+		
+		int n = sqlsession.delete("js_trip.adminDeleteFestival", festival_no);
+		
+		return n;
+		
+	} // end of public int adminDeleteFestival(String festival_no) {
+
+
+	// 관리자가 수정할려는 축제 및 행사 정보 가져오기
+	@Override
+	public Map<String, String> getEditFestivalInfo(String festival_no) {
+		
+		Map<String, String> resultMap = sqlsession.selectOne("js_trip.getEditFestivalInfo", festival_no);
+		
+		return resultMap;
+		
+	} // end of public Map<String, String> getEditFestivalInfo(String festival_no) {
+
+
+	
+	// 관리자가 입력한 축제정보 DB 수정하기
+	@Override
+	public int updateFestival(Map<String, String> paraMap) {
+		
+		int n = sqlsession.update("js_trip.updateFestival", paraMap);
+		
+		return n;
+		
+	} // end of public int updateFestival(Map<String, String> paraMap) {
+
 	
 	
 

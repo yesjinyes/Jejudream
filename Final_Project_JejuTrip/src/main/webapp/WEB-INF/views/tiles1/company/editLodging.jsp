@@ -3,6 +3,24 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <% String ctxPath = request.getContextPath();%>
 <link rel="stylesheet" href="<%=ctxPath%>/resources/css/company/registerHotel.css"/>
+
+<style>
+
+span.error {
+    font-size: 11pt;
+    margin: 0 3%;
+    color: red;
+}
+
+/* 유효성 검사 에러 시 input 테두리 색 변경 */
+.input_error {
+    border: solid 1px red !important;
+}
+
+
+</style>
+
+
 <script type="text/javascript">
 	let checkLodging_name = false;
 	let checkLodging_tell = false;

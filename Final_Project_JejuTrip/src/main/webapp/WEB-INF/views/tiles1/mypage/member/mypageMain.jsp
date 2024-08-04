@@ -843,7 +843,7 @@ function open_modal(reservation_code){
 					  	   <div style="margin-bottom:5px;">체크인 시간 : \${json.check_intime}</div>
 					  	   <div style="margin-bottom:5px;">체크아웃 시간 : \${json.check_outtime}</div>
 						   <div style="margin-bottom:5px;">예약결제일자 : \${json.reservation_date}</div>
-						   <div style="margin-bottom:5px;">예약결제금액 : \${json.reservation_price}</div>
+						   <div style="margin-bottom:5px;">예약결제금액 : \${Number(json.reservation_price).toLocaleString('en')}원</div>
 						   <div style="margin-bottom:5px;">예약 체크인일자 : \${json.check_in}</div>
 						   <div style="margin-bottom:5px;">예약 체크아웃일자 : \${json.check_out}</div>
 						   <img src="<%=ctxPath%>/resources/images/lodginglist/room/\${json.room_img}" style="width:100%; margin-bottom:20px;"/>`;

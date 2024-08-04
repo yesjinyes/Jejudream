@@ -36,7 +36,7 @@
 	    });
 	    
 	 
-	    $("button#FestivalToExcel").click(function() {
+	    $(document).on("click", "button#FestivalToExcel" ,function() {
 		
 			// alert('히히');
 			const frm = document.goExcelDown;
@@ -49,7 +49,7 @@
 	    });	// end of $("button#FestivalToExcel").click(function() {})
 	    
 	    
-	    $(document).on("click", $("button#adminFestivalList"), function(){
+	    $(document).on("click", "button#adminFestivalList", function(){
 	    	
 	    	location.href = "<%= ctxPath%>/admin_FestivalList.trip";
 	    	

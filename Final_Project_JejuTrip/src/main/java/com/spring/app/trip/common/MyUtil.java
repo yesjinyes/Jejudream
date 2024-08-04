@@ -42,5 +42,38 @@ public class MyUtil {
 		
 	} // end of public static String getCurrentURL(HttpServletRequest request) {}
 	
+	
+	
+	
+	// 이전페이지를 가져오는 메소드
+	public static String getPreviousPageURL(HttpServletRequest request) {
+		
+        String previousPageUrl = request.getHeader("Referer");
+        
+        if(previousPageUrl == null) {
+        	
+        	previousPageUrl = "index.trip";
+        	
+        }
+        
+        return previousPageUrl;
+        
+    } // end of public static String getPreviousPageURL(HttpServletRequest request) {}
+	
+	
+	
+	// <> 태그를 입력받으면 내용 바꾸는 메소드
+	public static String changeEtcTag(String content) {
+		
+		// !!!! 크로스 사이트 스크립트 공격에 대응하는 안전한 코드(시큐어코드) 작성하기 !!!!
+		content = content.replaceAll("<", "&lt");
+		content = content.replaceAll(">", "&gt");
+
+        // 입력한 내용에서 엔터는 <br>로 변환하기
+		content = content.replaceAll("\r\n", "<br>");
+		
+		return content;
+		
+	} // end of public static String changEtcTag(String tag) {}
 
 }
