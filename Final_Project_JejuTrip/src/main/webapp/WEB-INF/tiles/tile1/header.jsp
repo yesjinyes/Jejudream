@@ -433,12 +433,6 @@ function goMainSearch(event) {
 					
 					<c:if test="${sessionScope.loginuser.userid == 'admin'}">
 						<li class="user_menu nav-item mr-3">
-							<a class="nav-link text-center" href="<%=ctxPath%>/admin/foodstoreRegister.trip">
-								<i class="fa-solid fa-utensils"></i>
-								<div>맛집등록</div>
-							</a>
-						</li>
-						<li class="user_menu nav-item mr-3">
 							<a class="nav-link text-center" href="<%=ctxPath%>/screeningRegister.trip">
 								<i class="fa-solid fa-check"></i>
 								<div>신청검토</div>

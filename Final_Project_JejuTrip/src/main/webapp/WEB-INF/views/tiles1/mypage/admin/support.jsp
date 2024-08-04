@@ -219,7 +219,6 @@ div.accordion-content {
 					success:function(json) {
 
 						if(json.n == 1) {
-							alert("질문을 삭제했습니다.");
 							goViewFaqList(1, "");
 						}
 						else {
@@ -389,7 +388,6 @@ div.accordion-content {
 			type:"post",
 			data:updateFrm,
 			success:function(json) {
-				alert("질문 수정 완료");
 				$("#faqUpdateModal").modal("hide");
 				goViewFaqList(1, "");
 			},
@@ -451,7 +449,6 @@ div.accordion-content {
 			dataType:"json",
 			success:function(json) {
 				if(json.n == 1) {
-					alert("질문을 등록했습니다.");
 	        		$("#faqRegisterModal").modal("hide");
 	        		location.href = "<%= ctxPath%>/support.trip"
 	        	}
