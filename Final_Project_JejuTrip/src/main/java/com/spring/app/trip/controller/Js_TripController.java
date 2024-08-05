@@ -2198,6 +2198,32 @@ public class Js_TripController {
 	} // end of public ModelAndView admin_EditFestival
 	
 	
+	// JSON메소드를 위한 로그인 후 원래페이지로 보내기
+	@GetMapping("rememberlogin.trip")
+	public ModelAndView rememberlogin (ModelAndView mav, HttpServletRequest request) {
+		
+		String goBackURL = request.getParameter("goBackURL");
+
+		HttpSession session = request.getSession();
+		
+		String referer = request.getHeader("referer"); 
+		// request.getHeader("referer"); 은 이전 페이지의 URL을 가져오는 것이다.
+		
+		if(referer == null) {
+			// referer == null 은 웹브라우저 주소창에 URL 을 직접 입력하고 들어온 경우이다.
+			mav.setViewName(request.getContextPath() + "/index.trip");
+			return mav;
+		}
+		
+	    if (goBackURL != null && !goBackURL.isEmpty()) {
+	    	session.setAttribute("goBackURL", goBackURL);
+	    }
+	    
+	    mav.setViewName("login/login.tiles1");
+		
+		return mav;
+		
+	} // end of public ModelAndView sessionMethod (ModelAndView mav, HttpServletRequest request) {}
 	
 }
 
