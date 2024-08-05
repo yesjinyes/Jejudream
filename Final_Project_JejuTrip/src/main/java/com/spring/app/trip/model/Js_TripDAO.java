@@ -138,6 +138,18 @@ public interface Js_TripDAO {
 
 	// 관리자가 보는 축제/행사 개수 가져오기
 	int getFestivalTotalCount(Map<String, String> paraMap);
+
+	// 관리자가 등록하는 축제/행사
+	int registerFestival(Map<String, String> paraMap);
+
+	// 관리자가 해당 축제 및 행사 삭제하기
+	int adminDeleteFestival(String festival_no);
+
+	// 관리자가 수정할려는 축제 및 행사 정보 가져오기
+	Map<String, String> getEditFestivalInfo(String festival_no);
+
+	// 관리자가 입력한 축제정보 DB 수정하기
+	int updateFestival(Map<String, String> paraMap);
 	
 	
 

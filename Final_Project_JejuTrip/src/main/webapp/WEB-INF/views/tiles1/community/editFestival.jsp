@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <% String ctxPath = request.getContextPath(); %>    
-    
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <style>
     body {
@@ -45,6 +45,7 @@
 	.input_error {
 	    border: solid 1px red !important;
 	}
+
 	
 	button#registerBtn {
 	    width: 50%;
@@ -78,8 +79,6 @@
 
 
 <script type="text/javascript">
-
-let chk_link = false;
 
 $(document).ready(function(){
 	
@@ -117,13 +116,7 @@ $(document).ready(function(){
 	    // input을 datepicker로 선언
 	    $("input#fromDate").datepicker();                    
 	    $("input#toDate").datepicker();
-	        
-	        
-	    // From의 초기값을 오늘 날짜로 설정
-	    $('input#fromDate').datepicker('setDate', 'today'); //(-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, +1M:한달후, +1Y:일년후)
-	    
-	    // To의 초기값을 1일후로 설정
-	    $('input#toDate').datepicker('setDate', '+1D'); //(-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, +1M:한달후, +1Y:일년후)
+	   
 	    
 	} // end of function setDatePickers() {}
 	
@@ -169,6 +162,8 @@ $(document).ready(function(){
  	// ==>> 제품이미지 파일선택을 선택하면 화면에 이미지를 미리 보여주기 시작 <<== //
 	$(document).on("change", "input#attach", function(e){
 		
+		$("p#previmg").hide();
+		
 		const input_file = $(e.target).get(0);
 		     
 		// 자바스크립트에서 file 객체의 실제 데이터(내용물)에 접근하기 위해 FileReader 객체를 생성하여 사용한다.
@@ -186,38 +181,15 @@ $(document).ready(function(){
 		};
     	
 	}); // end of $(document).on("change", "input.img_file", function(e){} 
-    
-	
-	$(document).on("blur", "input#festival_link", function() {
-		
-		const festival_link = $("input#festival_link").val().trim();
-		
-		const regExp_link = new RegExp("(http|https|ftp|telnet|news|irc)://([-/.a-zA-Z0-9_~#%$?&=:200-377()]+)","gi");
-		const bool = regExp_link.test(festival_link);
-		
-		if(bool){
-			
-			// alert("오");
-			chk_link = true;
-			
-		}else{
-			
-			$(this).next('.error').text('올바른 형식의 링크주소를 입력하세요.');
-	        $(this).addClass('input_error');
-			
-		}
-		
-	}); // end of $(document).on("blur", "input#festival_link", function() {})
-	
+
 	
 	
 }); // end of $(document).ready(function(){})
 
 let isCheck = true;
 
-function goRegister(){
-	
-	
+function goUpdate() {
+    // 초기화
     isCheck = true;
     
     // 축제명 검사하기
@@ -239,19 +211,18 @@ function goRegister(){
     // 지역구분 검사하기
     const local_status = $("select[name='local_status']").val();
     
-	if (local_status == "지역구분") {
+    if (local_status == "지역구분") {
     	
         $("select[name='local_status']").next('.error').text('지역구분을 선택하세요.');
         $("select[name='local_status']").addClass('input_error');
         isCheck = false;
         
-    }  else {
+    } else {
     	
         $("select[name='local_status']").next('.error').text('');
         $("select[name='local_status']").removeClass('input_error');
         
     }
-    
     
     // 링크 검사하기
     const festival_link = $("input#festival_link").val().trim();
@@ -299,47 +270,45 @@ function goRegister(){
         return;
     }
 
-	// 축제 및 행사 등록 처리하기.
-    const frm = document.registerFrm;
+    // 축제/행사 수정 처리하기
+    const frm = document.editFrm;
     
-    frm.send_fromdate.value = fromdate;
-    frm.send_todate.value = todate;
-
-	frm.method = "post";
-	frm.action = "<%= ctxPath%>/admin_RegisterFestival.trip";
-	
-   	frm.submit();
+    frm.send_fromdate.value = $("input#fromDate").val().trim();
+    frm.send_todate.value = $("input#toDate").val().trim();
+    frm.method = "post";
+    frm.action = "<%= ctxPath %>/admin_EditFestival.trip";
     
-	
-	
+    frm.submit();
+    
 } // end of function goRegister(){}
+
 
 
 </script>
 
 
 <div class="container">
-
+	<c:set var="fvo" value="${requestScope.resultMap}" />
     <div style="width: 80%; margin: 7% auto;">
-        <h2 style="margin-top: 20%;" class="font-weight-bold">축제 및 행사 등록</h2>
+        <h2 style="margin-top: 20%;" class="font-weight-bold">축제 및 행사 수정하기</h2>
        
     </div>
 
-    <form name="registerFrm" enctype="multipart/form-data">
+    <form name="editFrm" enctype="multipart/form-data">
 
         <div class="info">
-
+			<input type="hidden" name="festival_no" value="${fvo.festival_no}" />
             <!-- 유효성 검사 시 input 테두리 색 변경 및 span error 띄우기 -->
             <div class="info_block">
             	<h4 class="ano_in" style="margin-top: 1%; " >축제 및 행사명</h4>
-                <input type="text" class="input_tag" name="title_name" id="title_name" placeholder="축제 명칭 입력">
+                <input type="text" class="input_tag" name="title_name" id="title_name" value="${fvo.title_name}" placeholder="축제 명칭 입력">
                 <span class="error"></span>
             </div>
             
-            <div class="info_block mt-3">
-            	<h4 style="margin-left: 15%;">지역구분</h4>
-				<select style="cursor: pointer; width:20%; margin-left: 15%;" class="input_tag" name="local_status">
-					<option selected>지역구분</option>
+            <div class="info_block ano_in mt-3">
+            	<h4 style="margin-top: 1%;" >지역구분</h4>
+				<select style="cursor: pointer; width:20%; margin-left: 0;" class="input_tag" name="local_status">
+					<option selected>${fvo.local_status}</option>
 					<option>제주시 시내</option>
 					<option>제주시 서부</option>
 					<option>제주시 동부</option>
@@ -352,20 +321,20 @@ function goRegister(){
             <div class="info_block ano_in mt-3">
                 
                  <h4 style="margin-top: 1%;" >축제 시작날짜</h4>
-                 <div class="info_block">
+                 <div>
                      <div class="date-container">
                          <span class="date-pick">
-                             <input class="datepicker input_tag" style="cursor: pointer; width:20%; margin-left: 0;" type="text" id="fromDate" name="datepicker" />
+                             <input class="datepicker input_tag" style="cursor: pointer; width:20%; margin-left: 0;" type="text" id="fromDate" name="datepicker" value="${fvo.startdate}" >
                              <input type="hidden" name="send_fromdate" />
                          </span>
                      </div>
                  </div>
              
                  <h4 style="margin-top: 1%;" >축제 종료날짜</h4>
-                 <div class="info_block">
+                 <div>
                      <div class="date-container">
                          <span class="date-pick">
-                             <input class="datepicker input_tag" style="cursor: pointer; width:20%; margin-left: 0;" type="text" id="toDate" name="datepicker" />
+                             <input class="datepicker input_tag" style="cursor: pointer; width:20%; margin-left: 0;" type="text" id="toDate" name="datepicker" value="${fvo.enddate}" >
                              <input type="hidden" name="send_todate" />
                          </span>
                      </div>
@@ -374,7 +343,7 @@ function goRegister(){
             </div>
             <div class="info_block mt-3">
             	<h4 class="ano_in" style="margin-top: 1%;" >관광공사 상세링크</h4>
-	            <input type="text" name="festival_link" class="input_tag" id="festival_link" placeholder="연결될 상세링크 입력">
+	            <input type="text" name="festival_link" class="input_tag" id="festival_link" value="${fvo.link}" placeholder="연결될 상세링크 입력">
 	            <span class="error"></span>
 	        </div>
 
@@ -387,12 +356,14 @@ function goRegister(){
             </div>
             <div class="mt-3 ano_in">
             	<h4 style="margin-top: 2%;" >축제 및 행사 이미지 미리보기</h4>
-                <img class="img-fluid" style="width: 200px; height: 200px;" id="previewImg" />
+            	<p id="previmg">이전 이미지</p>
+                <img class="img-fluid" style="width: 200px; height: 200px;" id="previewImg" src="<%=ctxPath%>/resources/images/festival/${fvo.img}" />
+                <input type="hidden" name="forDeleteimgfileName" value="${fvo.img}" />
            	</div>
         </div>
 
         <div class="pt-4" style="text-align: center; margin-bottom: 13%;">
-            <button type="button" class="btn" id="registerBtn" onclick="goRegister('<%=ctxPath%>')">등록하기</button>
+            <button type="button" class="btn" id="registerBtn" onclick="goUpdate()">수정하기</button>
         </div>
 
     </form>

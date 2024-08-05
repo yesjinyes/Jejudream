@@ -104,8 +104,7 @@ function goReserveInsert(){
 		
 			if(json.n == 1){
 				
-				alert('예약 테이블 insert 성공');
-				
+				// alert('예약 테이블 insert 성공');
 				
 				frm.reservation_code.value = json.num;
 				frm.method = "post";
@@ -116,7 +115,7 @@ function goReserveInsert(){
 			}
 			else{
 				
-				alert('예약 테이블 inset 실패');
+				// alert('예약 테이블 inset 실패');
 				return;
 			}
 			

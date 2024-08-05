@@ -1416,6 +1416,45 @@ COMMENT ON COLUMN tbl_chattinglog.status IS '읽은상태';
 COMMENT ON COLUMN tbl_chattinglog.fk_reservation_code IS 'FK예약일련번호';
 COMMENT ON COLUMN tbl_chattinglog.CHATTING_DATE IS '채팅발신일자';
 
+/* 축제와 행사 테이블 코멘트*/
+
+COMMENT ON TABLE TBL_FESTIVAL IS '축제와 행사 테이블';
+COMMENT ON COLUMN TBL_FESTIVAL.FESTIVAL_NO IS '축제행사 일련번호(PK)';
+COMMENT ON COLUMN TBL_FESTIVAL.LOCAL_STATUS IS '지역구분';
+COMMENT ON COLUMN TBL_FESTIVAL.TITLE_NAME IS '축제행사명칭';
+COMMENT ON COLUMN TBL_FESTIVAL.STARTDATE IS '축제시작일자';
+COMMENT ON COLUMN TBL_FESTIVAL.ENDDATE IS '축제종료일자';
+COMMENT ON COLUMN TBL_FESTIVAL.IMG IS '이미지파일명(업로드시 나노타임적용)';
+COMMENT ON COLUMN TBL_FESTIVAL.ORG_IMG IS '원래파일이미지명';
+COMMENT ON COLUMN TBL_FESTIVAL.LINK IS '해당축제에 대한 관광공사 상세페이지 링크';
+
+/* 게시판 댓글 테이블 코멘트*/
+
+COMMENT ON TABLE TBL_COMMENT IS '게시판 댓글 테이블';
+COMMENT ON COLUMN TBL_COMMENT.SEQ IS '댓글번호(PK)';
+COMMENT ON COLUMN TBL_COMMENT.FK_USERID IS '작성유저아이디(FK)';
+COMMENT ON COLUMN TBL_COMMENT.NAME IS '댓글 글쓴이';
+COMMENT ON COLUMN TBL_COMMENT.CONTENT IS '댓글 내용';
+COMMENT ON COLUMN TBL_COMMENT.REGDATE IS '댓글 작성일자';
+COMMENT ON COLUMN TBL_COMMENT.PARENTSEQ IS '원게시판글번호';
+COMMENT ON COLUMN TBL_COMMENT.STATUS IS '댓글삭제여부';
+COMMENT ON COLUMN TBL_COMMENT.GROUPNO IS '댓글그룹번호';
+COMMENT ON COLUMN TBL_COMMENT.FK_SEQ IS '원댓글번호';
+COMMENT ON COLUMN TBL_COMMENT.DEPTHNO IS '0이면 원댓글, 1이상이면 대댓글';
+
+desc tbl_board;
+
+SELECT *
+  FROM USER_COL_COMMENTS
+  where comments is null
+  order by 1 desc;  
+
+SELECT * FROM COLS WHERE TABLE_NAME LIKE 'TBL_COMMENT';
+
+select *
+from TBL_COMMENT
+drop table TBL_LOCAL purge;
+
 -- 숙소명 리뷰내용 예약체크인일자 리뷰작성일자 작성아이디 숙소번호
 select *
 from tbl_review;
@@ -1617,10 +1656,53 @@ WHERE A.max_person >= 2
     select rno, festival_no, title_name, img, startdate, enddate, local_status, link, recentdate
     from
     (
-    select rownum as rno, festival_no, title_name, img, to_char(startdate, 'yyyy-mm-dd') as startdate,
-            to_char(enddate, 'yyyy-mm-dd') as enddate, local_status, link, abs(round(sysdate - startdate)) as recentdate
-    from tbl_festival
-    where title_name like '%' || '파크' || '%'
-    order by recentdate asc
-    )V
-    where rno between 1 and 10
+    select rownum as rno, festival_no, title_name, img, startdate,enddate, local_status, link,recentdate
+    from 
+        (
+        select festival_no, title_name, img, to_char(startdate, 'yyyy-mm-dd') as startdate,
+                to_char(enddate, 'yyyy-mm-dd') as enddate, local_status, link, abs(round(sysdate - startdate)) as recentdate
+        from tbl_festival
+        
+        order by recentdate asc
+        )V
+    )Q
+    where Q.rno between 1 and 10
+ t
+    
+    desc tbl_comment;
+    
+    select *
+    from user_constraints
+    where TABLE_NAME = 'TBL_COMMENT';
+    
+    select *
+    from tbl_comment;
+    
+    commit;
+    
+    select *
+    from tbl_festival;
+    
+    select *
+    from tbl_reservation;
+    
+    select V.reservation_code, V.userid, V.user_name, V.email, V.check_in, V.check_out,
+          D.room_name, L.lodging_name, D.room_img
+    from 
+    (
+    SELECT R.reservation_code, M.userid, M.user_name, M.email, fk_room_detail_code,
+       		   to_char(R.check_in, 'yyyy-mm-dd hh24:mi') AS check_in ,
+               to_char(R.check_out, 'yyyy-mm-dd hh24:mi') AS check_out
+		FROM tbl_member M JOIN (select * from tbl_reservation 
+        where mailsendcheck = 1 and status = 1 and
+              to_char(check_in,'yyyymmdd') = to_char(sysdate+1,'yyyymmdd') ) R 
+		ON M.userid = R.fk_userid
+     )V   
+        join tbl_room_detail D
+        on V.fk_room_detail_code = D.room_detail_code
+        join tbl_lodging L
+        on D.fk_lodging_code = L.lodging_code
+        
+        update tbl_reservation set mailsendcheck = 0 where reservation_code = 58;
+        commit;
+        

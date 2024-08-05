@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.poi.common.usermodel.HyperlinkType;
-import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
@@ -429,7 +429,7 @@ public class Js_TripService_imple implements Js_TripService {
     // 고객들의 email 주소는 List<String(e메일주소)> 으로 만들면 된다.
     // 또는 e메일 자동 발송 대신에 휴대폰 문자를 자동 발송하는 것도 가능하다.
 	@Override
-	@Scheduled(cron="0 00 11 * * *")
+	@Scheduled(cron="0 35 21 * * *")
 	public void reservationEmailSending() throws Exception {
 		
 		// !!! <주의> !!!
@@ -456,16 +456,27 @@ public class Js_TripService_imple implements Js_TripService {
 					    + "<p>예약해주신 체크인일자가 1일 남았습니다!</p>"
 					    + "<table style='border-collapse: collapse; width: 100%;'>"
 					    + "  <tr>"
-					    + "    <td style='border: 1px solid #ddd; padding: 8px; font-weight: bold;'>사용자 ID:</td>"
-					    + "    <td style='border: 1px solid #ddd; padding: 8px;'>" + reservationList.get(i).get("userid") + "</td>"
+					    + "    <td style='border: 1px solid #ddd; width:200px; text-align:center; padding: 8px; font-weight: bold;'>예약숙소명</td>"
+					    + "    <td style='border: 1px solid #ddd; padding: 8px;'>" + reservationList.get(i).get("lodging_name") + "</td>"
 					    + "  </tr>"
 					    + "  <tr>"
-					    + "    <td style='border: 1px solid #ddd; padding: 8px; font-weight: bold;'>예약자명:</td>"
+					    + "    <td style='border: 1px solid #ddd; width:200px; text-align:center; padding: 8px; font-weight: bold;'>예약객실명</td>"
+					    + "    <td style='border: 1px solid #ddd; padding: 8px;'>" + reservationList.get(i).get("room_name") + "</td>"
+					    + "  </tr>"
+					    + "  <tr>"
+					    + "    <td style='border: 1px solid #ddd; width:200px; text-align:center; padding: 8px; font-weight: bold;'>예약자명</td>"
 					    + "    <td style='border: 1px solid #ddd; padding: 8px;'>" + reservationList.get(i).get("user_name") + "</td>"
 					    + "  </tr>"
 					    + "  <tr>"
-					    + "    <td style='border: 1px solid #ddd; padding: 8px; font-weight: bold;'>방문 예약일:</td>"
+					    + "    <td style='border: 1px solid #ddd; width:200px; text-align:center; padding: 8px; font-weight: bold;'>예약 체크인시간</td>"
 					    + "    <td style='border: 1px solid #ddd; padding: 8px; color: red;'>" + reservationList.get(i).get("check_in") + "</td>"
+					    + "  </tr>"
+					    + "  <tr>"
+					    + "    <td style='border: 1px solid #ddd; width:200px; text-align:center; padding: 8px; font-weight: bold;'>예약 체크아웃시간</td>"
+					    + "    <td style='border: 1px solid #ddd; padding: 8px; color: red;'>" + reservationList.get(i).get("check_out") + "</td>"
+					    + "  </tr>"
+					    + "  <tr>"
+					    + "    <td colspan='2' style='border: 1px solid #ddd; padding: 8px; font-weight: bold;'><img src='http://127.0.0.1:9090/JejuDream/resources/images/lodginglist/room/"+reservationList.get(i).get("room_img") +"' style='width: 200px; height: 200px;'</td>"
 					    + "  </tr>"
 					    + "</table>"
 					    + "<p>예약 변경이나 취소를 원하시면 고객 센터로 연락해 주시기 바랍니다.</p>"
@@ -810,6 +821,52 @@ public class Js_TripService_imple implements Js_TripService {
 		return totalCount;
 		
 	} // end of public int getFestivalTotalCount(Map<String, String> paraMap) {
+
+
+	
+	// 관리자가 등록하는 축제/행사
+	@Override
+	public int registerFestival(Map<String, String> paraMap) {
+		
+		int n = dao.registerFestival(paraMap);
+		
+		return n;
+		
+	} // end of public int registerFestival(Map<String, String> paraMap) {}
+
+
+	// 관리자가 해당 축제 및 행사 삭제하기
+	@Override
+	public int adminDeleteFestival(String festival_no) {
+		
+		int n = dao.adminDeleteFestival(festival_no);
+		
+		return n;
+		
+	} // end of public int adminDeleteFestival(String festival_no) {
+
+
+	// 관리자가 수정할려는 축제 및 행사 정보 가져오기
+	@Override
+	public Map<String, String> getEditFestivalInfo(String festival_no) {
+		
+		Map<String, String> resultMap = dao.getEditFestivalInfo(festival_no);
+		
+		return resultMap;
+		
+	} // end of public Map<String, String> getEditFestivalInfo(String festival_no) {
+
+
+	
+	// 관리자가 입력한 축제정보 DB 수정하기
+	@Override
+	public int updateFestival(Map<String, String> paraMap) {
+		
+		int n = dao.updateFestival(paraMap);
+		
+		return n;
+		 
+	} // end of public int updateFestival(Map<String, String> paraMap) {}
 
 
 	

@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.app.trip.common.FileManager;
+import com.spring.app.trip.common.MyUtil;
 import com.spring.app.trip.domain.BoardVO;
 import com.spring.app.trip.domain.CompanyVO;
 import com.spring.app.trip.domain.FoodstoreVO;
@@ -296,9 +297,6 @@ public class Js_TripController {
 		} // end of if
 		
 		
-		
-		
-		
 		// System.out.println("~~~ 확인용 : " + lodgingCode);
 		
 		LodgingVO lodgingDetail = service.getLodgingDetail(lodging_code);
@@ -469,14 +467,14 @@ public class Js_TripController {
 	
 	// 결제 페이지 넘어가기
 	@RequestMapping("/lodgingReservation.trip")
-	public ModelAndView lodgingReservation(HttpServletRequest request, 
+	public ModelAndView requiredLogin2_lodgingReservation(HttpServletRequest request, 
 										   HttpServletResponse response, 
 										   ModelAndView mav,
 										   @RequestParam(defaultValue = "") String lodging_code,
 										   @RequestParam(defaultValue = "") String room_detail_code,
 										   @RequestParam(defaultValue = "") String check_in,
 										   @RequestParam(defaultValue = "") String check_out) {
-		
+		/*
 		HttpSession session = request.getSession();
 		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
 		
@@ -494,7 +492,7 @@ public class Js_TripController {
 	    	return mav;
 			
 		} // end of if
-		
+		*/
 		
 		Map<String,String> paraMap = new HashMap<>();
 		
@@ -652,10 +650,8 @@ public class Js_TripController {
 				
 			}
 			
-			
-			
-			System.out.println("체크인시간 : " + paraMap.get("check_in"));
-			System.out.println("체크아웃시간 : " + paraMap.get("check_out"));
+			// System.out.println("체크인시간 : " + paraMap.get("check_in"));
+			// System.out.println("체크아웃시간 : " + paraMap.get("check_out"));
 			
 			// 예약결과 예약번호 표현을 위한 채번해오기
 			String num = service.getReservationNum();
@@ -842,12 +838,7 @@ public class Js_TripController {
 		
 		if(review_code !=null && content !=null) {
 			
-			// !!!! 크로스 사이트 스크립트 공격에 대응하는 안전한 코드(시큐어코드) 작성하기 !!!!
-			content = content.replaceAll("<", "&lt");
-			content = content.replaceAll(">", "&gt");
-
-	        // 입력한 내용에서 엔터는 <br>로 변환하기
-			content = content.replaceAll("\r\n", "<br>");
+			content = MyUtil.changeEtcTag(content);
 	       
 			paraMap.put("review_code", review_code);
 			paraMap.put("content", content);
@@ -903,14 +894,10 @@ public class Js_TripController {
 		*/
 		
 		
-		// !!!! 크로스 사이트 스크립트 공격에 대응하는 안전한 코드(시큐어코드) 작성하기 !!!!
 		String content = rvo.getReview_content();
 		
-		content = content.replaceAll("<", "&lt");
-		content = content.replaceAll(">", "&gt");
-
-        // 입력한 내용에서 엔터는 <br>로 변환하기
-		content = content.replaceAll("\r\n", "<br>");
+		// !!!! 크로스 사이트 스크립트 공격에 대응하는 안전한 코드(시큐어코드) 작성하기 !!!!
+		content = MyUtil.changeEtcTag(content);
 		
 		rvo.setReview_content(content);
 		
@@ -1329,11 +1316,11 @@ public class Js_TripController {
 
 	                    int n = service.updateRoomDetail(rvo); // 객실 수정하기
 	                    
-	                    System.out.println(n + "번 객실 수정 완료");
+	                    // System.out.println(n + "번 객실 수정 완료");
 
 	                } catch (Exception e) {
 	                    
-	                	System.out.println(i + "번째 객실 수정 실패");
+	                	// System.out.println(i + "번째 객실 수정 실패");
 	                    e.printStackTrace();
 	                    
 	                } // end of catch
@@ -1383,10 +1370,10 @@ public class Js_TripController {
 	                rvo.setCheck_out(arr_check_out[i]);
 
 	                int n = service.insertRoomDetail(rvo); // 객실 등록하기
-	                System.out.println(n + "번째 추가된 객실 등록");
+	                // System.out.println(n + "번째 추가된 객실 등록");
 
 	            } catch (Exception e) {
-	                System.out.println(i + "번째 객실 추가 실패");
+	                // System.out.println(i + "번째 객실 추가 실패");
 	                e.printStackTrace();
 	                
 	            } // end of catch
@@ -1431,19 +1418,19 @@ public class Js_TripController {
 			
 			if (n == 1) {
 	        	
-	            System.out.println("객실 삭제성공");
+	            // System.out.println("객실 삭제성공");
 	            jsonObj.put("result", n);
 	            
 	        } else {
 	        	
 	        	jsonObj.put("result", n);
-	        	System.out.println("객실 삭제실패");
+	        	// System.out.println("객실 삭제실패");
 	            
 	        } // end of else
 			
 		}else {
 			
-			System.out.println("뭔가 데이터가 잘못됨");
+			// System.out.println("뭔가 데이터가 잘못됨");
 			
 		} // end of else
 		
@@ -1552,30 +1539,15 @@ public class Js_TripController {
 		// !!!! 크로스 사이트 스크립트 공격에 대응하는 안전한 코드(시큐어코드) 작성하기 !!!!
 		String content = lvo.getLodging_content();
 		
-		content = content.replaceAll("<", "&lt");
-		content = content.replaceAll(">", "&gt");
-
-        // 입력한 내용에서 엔터는 <br>로 변환하기
-		content = content.replaceAll("\r\n", "<br>");
+		content = MyUtil.changeEtcTag(content);
+		lvo.setLodging_content(content);
 		
 		String lvo_name = lvo.getLodging_name();
 		
-		lvo_name = lvo_name.replaceAll("<", "&lt");
-		lvo_name = lvo_name.replaceAll(">", "&gt");
-
-        // 입력한 내용에서 엔터는 <br>로 변환하기
-		lvo_name = lvo_name.replaceAll("\r\n", "<br>");
-		
+		lvo_name = MyUtil.changeEtcTag(lvo_name);
 		lvo.setLodging_name(lvo_name);
 
-		detail_address = detail_address.replaceAll("<", "&lt");
-		detail_address = detail_address.replaceAll(">", "&gt");
-
-        // 입력한 내용에서 엔터는 <br>로 변환하기
-		detail_address = detail_address.replaceAll("\r\n", "<br>");
-		
-		
-		
+		detail_address = MyUtil.changeEtcTag(detail_address);
 		lvo.setLodging_address((address + " " + detail_address).trim());
 		
 		// 입력된 정보로 숙소 정보 수정하기
@@ -1601,11 +1573,11 @@ public class Js_TripController {
 					
 				} catch (Throwable e) {
 					
-					System.out.println("트랜잭션 처리 오류");
+					// System.out.println("트랜잭션 처리 오류");
 					e.printStackTrace();
 				}
 				
-				System.out.println("트랜잭션 처리 delete after insert " + m);
+				// System.out.println("트랜잭션 처리 delete after insert " + m);
 				
 			} // 편의시설정보가 비어있지않다면
 			
@@ -1826,6 +1798,21 @@ public class Js_TripController {
 		
 		MemberVO mvo = (MemberVO)session.getAttribute("loginuser");
 		
+		if(mvo.getUserid() == null) {
+			
+			String message = "비정상적인 접근입니다!!";
+			String loc = "communityMain.trip";
+
+			mav.addObject("message", message);
+			mav.addObject("loc", loc);
+			
+			mav.setViewName("msg");
+			
+			return mav;
+			
+		}
+		
+		
 		if(!"admin".equals(mvo.getUserid())) {
 			
 			String message = "관리자만 접근 가능한 페이지입니다!";
@@ -1847,7 +1834,7 @@ public class Js_TripController {
 	} // end of public ModelAndView memberCancelReserve(ModelAndView mav) {
 	
 	
-	// 
+	// 관리자용 축제 및 행사 페이지 정보 가져오기
 	@ResponseBody
 	@PostMapping(value="JSONAdminFestivalList.trip", produces="text/plain;charset=UTF-8")
 	public String adminFestivalList(@RequestParam (value="searchWord", defaultValue = "") String searchWord,
@@ -1856,6 +1843,8 @@ public class Js_TripController {
 		
 		
 		Map<String,String> paraMap = new HashMap<>();
+		
+		searchWord = MyUtil.changeEtcTag(searchWord);
 		
 		paraMap.put("searchWord", searchWord);
 		
@@ -1885,6 +1874,7 @@ public class Js_TripController {
 				
 				jsonObj.put("festival_no", map.get("festival_no"));
 				jsonObj.put("title_name", map.get("title_name"));
+				jsonObj.put("org_img", map.get("org_img"));
 				jsonObj.put("img", map.get("img"));
 				jsonObj.put("startdate", map.get("startdate"));
 				jsonObj.put("enddate", map.get("enddate"));
@@ -1905,6 +1895,7 @@ public class Js_TripController {
 	
 	
 	
+	// 관리자용 축제 및 행사 입력페이지로 이동하기
 	@PostMapping("RegisterFestival.trip")
 	public ModelAndView goRegisterFestival(ModelAndView mav, HttpServletRequest request,
 										   @RequestParam (value="admin", defaultValue = "") String admin) {
@@ -1933,4 +1924,280 @@ public class Js_TripController {
 		
 	} // end of public ModelAndView goRegisterFestival
 	
+	
+	
+	// 관리자가 등록하는 축제/행사 DB에 insert
+	@PostMapping("admin_RegisterFestival.trip")
+	public ModelAndView registerFestival(ModelAndView mav, MultipartHttpServletRequest mrequest,
+			   							 @RequestParam (value="title_name") String title_name,
+			   							@RequestParam (value="local_status") String local_status,
+			   							@RequestParam (value="send_fromdate") String send_fromdate,
+			   							@RequestParam (value="send_todate") String send_todate,
+			   							@RequestParam (value="festival_link") String festival_link,
+			   							@RequestParam("attach") MultipartFile attach) {
+		
+		
+		Map<String,String> paraMap = new HashMap<>();
+		
+		if( !attach.isEmpty() ) {
+	          
+			HttpSession session = mrequest.getSession(); 
+			String root = session.getServletContext().getRealPath("/"); 
+			
+			String path = root + "resources"+File.separator+"images"+File.separator+"festival";     
+	        // System.out.println("경로명 : " + path);
+	        
+	        String newFileName = "";
+	        // WAS(톰캣)의 디스크에 저장될 파일명 
+	         
+	        byte[] bytes = null;
+	        // 첨부파일의 내용물을 담는 것
+	        
+	        try {
+	            bytes = attach.getBytes();
+	             
+	            String originalFilename = attach.getOriginalFilename();
+	            
+	            // 새로 받아온 이미지파일 업로드하기
+	            newFileName = fileManager.doFileUpload(bytes, originalFilename, path); 
+	            
+	            paraMap.put("org_img", originalFilename);
+	            paraMap.put("img", newFileName);
+	                     
+	         } catch (Exception e) {
+	            e.printStackTrace();
+	         }   
+	        
+		} // end of if
+		/*
+		System.out.println("title_name : " + title_name);
+		System.out.println("local_status : " + local_status);
+		System.out.println("send_fromdate : " + send_fromdate);
+		System.out.println("send_todate : " + title_name);
+		System.out.println("festival_link : " + festival_link);
+		*/
+		
+		paraMap.put("title_name",title_name);
+		paraMap.put("local_status",local_status);
+		paraMap.put("startdate",send_fromdate);
+		paraMap.put("enddate",send_todate);
+		paraMap.put("link",festival_link);
+		
+		int n = service.registerFestival(paraMap);
+		// 관리자가 등록하는 축제/행사 DB에 insert
+		
+		if(n == 1) {
+			
+			// System.out.println("축제 insert 성공");
+			
+			String message = "축제 및 행사 등록이 성공하였습니다!";
+			String loc = "admin_FestivalList.trip";
+
+			mav.addObject("message", message);
+			mav.addObject("loc", loc);
+			
+			mav.setViewName("msg");
+			
+		}
+		else {
+			
+			// System.out.println("insert 실패");
+			
+			String message = "축제 및 행사 등록이 실패하였습니다!";
+			String loc = "javascript:history.back()";
+
+			mav.addObject("message", message);
+			mav.addObject("loc", loc);
+			
+			mav.setViewName("msg");
+		}
+		
+		
+		return mav;
+		
+	} // end of public ModelAndView registerFestival
+	
+	
+	
+	// 관리자가 삭제하는 축제 및 행사 
+	@ResponseBody
+	@PostMapping(value="JSONAdminDeleteFestival.trip", produces="text/plain;charset=UTF-8")
+	public String adminDeleteFestival(@RequestParam (value="festival_no", defaultValue = "") String festival_no, 
+									  @RequestParam (value="festival_img", defaultValue = "") String festival_img,
+									  HttpServletRequest request) {
+		
+		
+		JSONObject jsonObj = new JSONObject();
+		
+		if("".equals(festival_no) || "".equals(festival_img)) {
+			
+			jsonObj.put("msg", "전송된 데이터가 올바르지 못합니다.");
+			
+			return jsonObj.toString();
+			
+		}
+		
+		HttpSession session = request.getSession(); 
+		String root = session.getServletContext().getRealPath("/"); 
+		
+		String path = root + "resources"+File.separator+"images"+File.separator+"festival";
+		
+		try {
+			
+			fileManager.doFileDelete(festival_img, path);
+		
+		} catch (Exception e) {
+			
+			// System.out.println("이미지 삭제실패");
+			
+			jsonObj.put("msg", "이전에 등록했던 이미지 삭제를 실패하였습니다.");
+			
+			e.printStackTrace();
+			return jsonObj.toString();
+			
+		}
+		
+		int n = service.adminDeleteFestival(festival_no);
+		// 관리자가 해당 축제 및 행사 삭제하기
+		
+		jsonObj.put("result", n);
+		
+		return jsonObj.toString();
+		
+	} // end of adminDeleteFestival
+	
+	
+	
+	// 관리자가 축제 및 행사 수정하는 페이지로 보내주기
+	@PostMapping("goEditFestival.trip")
+	public ModelAndView goEditFestival(ModelAndView mav,
+									  @RequestParam (value="for_edit_festival_no", defaultValue = "") String festival_no) {
+		
+		if("".equals(festival_no)) {
+			
+			String message = "축제 및 행사 등록이 실패하였습니다!";
+			String loc = "javascript:history.back()";
+
+			mav.addObject("message", message);
+			mav.addObject("loc", loc);
+			
+			mav.setViewName("msg");
+			
+		}
+		
+		Map<String,String> resultMap = service.getEditFestivalInfo(festival_no);
+		// 관리자가 수정할려는 축제 및 행사 정보 가져오기
+		
+		if(resultMap != null) {
+			
+			mav.addObject("resultMap", resultMap);
+			
+		}
+		
+		mav.setViewName("community/editFestival.tiles1");
+		
+		return mav;
+		
+	} // end of public ModelAndView goEditFestival
+	
+	
+	
+	// 관리자가 수정한 내용 DB에 반영하기
+	@PostMapping("admin_EditFestival.trip")
+	public ModelAndView admin_EditFestival(ModelAndView mav, MultipartHttpServletRequest mrequest,
+										   @RequestParam (value="festival_no") String festival_no,
+										   @RequestParam (value="title_name") String title_name,
+										   @RequestParam (value="local_status") String local_status,
+										   @RequestParam (value="send_fromdate") String send_fromdate,
+										   @RequestParam (value="send_todate") String send_todate,
+										   @RequestParam (value="festival_link") String festival_link,
+										   @RequestParam (value="forDeleteimgfileName") String forDeleteimgfileName,
+										   @RequestParam("attach") MultipartFile attach) {
+		
+		Map<String,String> paraMap = new HashMap<>();
+		
+		if( !attach.isEmpty() ) {
+	          
+			HttpSession session = mrequest.getSession(); 
+			String root = session.getServletContext().getRealPath("/"); 
+			
+			String path = root + "resources"+File.separator+"images"+File.separator+"festival";     
+	        // System.out.println("경로명 : " + path);
+	        
+	        String newFileName = "";
+	        // WAS(톰캣)의 디스크에 저장될 파일명 
+	         
+	        byte[] bytes = null;
+	        // 첨부파일의 내용물을 담는 것
+	        
+	        try {
+	        	
+	        	fileManager.doFileDelete(forDeleteimgfileName, path);
+	        	
+	            bytes = attach.getBytes();
+	             
+	            String originalFilename = attach.getOriginalFilename();
+	            
+	            // 새로 받아온 이미지파일 업로드하기
+	            newFileName = fileManager.doFileUpload(bytes, originalFilename, path); 
+	            
+	            paraMap.put("org_img", originalFilename);
+	            paraMap.put("img", newFileName);
+	                     
+	         } catch (Exception e) {
+	            e.printStackTrace();
+	         }   
+	        
+		} // end of if
+		/*
+		System.out.println("title_name : " + title_name);
+		System.out.println("local_status : " + local_status);
+		System.out.println("send_fromdate : " + send_fromdate);
+		System.out.println("send_todate : " + title_name);
+		System.out.println("festival_link : " + festival_link);
+		*/
+		
+		paraMap.put("festival_no",festival_no);
+		paraMap.put("title_name",title_name);
+		paraMap.put("local_status",local_status);
+		paraMap.put("startdate",send_fromdate);
+		paraMap.put("enddate",send_todate);
+		paraMap.put("link",festival_link);
+		
+		int n = service.updateFestival(paraMap);
+		// 관리자가 입력한 축제정보 DB 수정하기
+		
+		if(n == 1) {
+			
+			// System.out.println("축제 update 성공");
+			
+			String message = "축제 및 행사 수정이 성공하였습니다!";
+			String loc = "admin_FestivalList.trip";
+
+			mav.addObject("message", message);
+			mav.addObject("loc", loc);
+			
+			mav.setViewName("msg");
+			
+		}
+		else {
+			
+			// System.out.println("축제 update 실패");
+			
+			String message = "축제 및 행사 수정이 실패하였습니다!";
+			String loc = "javascript:history.back()";
+
+			mav.addObject("message", message);
+			mav.addObject("loc", loc);
+			
+			mav.setViewName("msg");
+		}
+		
+		return mav;
+		
+	} // end of public ModelAndView admin_EditFestival
+	
+	
+	
 }
+

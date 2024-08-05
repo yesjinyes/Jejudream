@@ -110,7 +110,7 @@
                         <div class="rand">
                             <div>
                                 <a href="<%= ctxPath %>/foodstoreDetail.trip?food_store_code=${requestScope.randMap.fvo.food_store_code}">
-                                    <img class="mini_img" alt="" src="<%= ctxPath %>/resources/images/foodstore/imgMain/${requestScope.randMap.fvo.food_main_img}">
+                                    <img class="mini_img" alt="" src="<%= ctxPath %>/resources/images/foodimg/${requestScope.randMap.fvo.food_main_img}">
                                 </a>
                             </div>
                             <div>
