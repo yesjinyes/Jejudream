@@ -472,6 +472,11 @@ $(document).ready(function(){
        		
        		alert('좋아요를 누르시려면 로그인을 하셔야합니다!');
        		
+       		// 현재 URL을 세션에 저장하고 로그인 페이지로 리다이렉트
+            const currentUrl = window.location.href;
+       		
+            window.location.href = "rememberlogin.trip?goBackURL=" + encodeURIComponent(currentUrl);
+       		
        		return false;
        	}
        	

@@ -1667,7 +1667,7 @@ WHERE A.max_person >= 2
         )V
     )Q
     where Q.rno between 1 and 10
- t
+ 
     
     desc tbl_comment;
     
@@ -1679,6 +1679,17 @@ WHERE A.max_person >= 2
     from tbl_comment;
     
     commit;
+    
+    select *
+    from tbl_lodging;
+    
+    
+    select *
+    from tbl_lodging L
+    join tbl_room_detail R
+    on L.lodging_code = R.fk_lodging_code
+    where fk_lodging_code is null
+    
     
     select *
     from tbl_festival;

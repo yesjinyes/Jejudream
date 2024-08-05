@@ -159,13 +159,16 @@
 	
 	
 	<!-- 맛집 랜덤 추천 -->
-	<select id="randomRecommend" parameterType="HashMap" resultType="com.spring.app.trip.domain.FoodstoreVO">
+	
+	<select id="randomRecommend" parameterType="HashMap" resultType="FoodstoreVO">
 		<![CDATA[
-			select food_store_code, local_status, food_name, food_content, food_businesshours, food_mobile
+			select food_store_code, local_status, food_name
+				 , food_content, food_businesshours, food_mobile
 				 , food_address, food_main_img, review_division, food_category
 			from (
-			    select food_store_code, local_status, food_name, food_content, food_businesshours, food_mobile
-					 , food_address, food_main_img, review_division, food_category
+			    select food_store_code, local_status, food_name, food_content
+			    	 , food_businesshours, food_mobile, food_address
+			    	 , food_main_img, review_division, food_category
 			    from tbl_food_store
 			    order by DBMS_RANDOM.RANDOM
 			)
