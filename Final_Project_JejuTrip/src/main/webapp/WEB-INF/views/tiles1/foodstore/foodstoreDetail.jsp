@@ -386,9 +386,12 @@ span.plusUser{
 			if(${empty sessionScope.loginuser}) {
 				alert("좋아요는 로그인 후 가능합니다.");
 				
-				location.href = "login.trip";
-				
-				return;
+	            // 현재 URL을 세션에 저장하고 로그인 페이지로 리다이렉트
+	            const currentUrl = window.location.href;
+	             
+	            window.location.href = "rememberlogin.trip?goBackURL=" + encodeURIComponent(currentUrl);
+	             
+	            return false;
 			} 
 			else{
 				//로그인을 한 경우라면
@@ -461,7 +464,13 @@ span.plusUser{
 	    $("button#btnSchedule").click(function() {
 	    	if(${empty sessionScope.loginuser}) {
 	    		alert("일정 추가 기능은 로그인 후 사용 가능합니다.");
-	    	 	location.href = "login.trip";
+	    	 	
+	    		// 현재 URL을 세션에 저장하고 로그인 페이지로 리다이렉트
+	            const currentUrl = window.location.href;
+	             
+	            window.location.href = "rememberlogin.trip?goBackURL=" + encodeURIComponent(currentUrl);
+	             
+	            return false;
 	    	}
 	    	else {
 	    		viewScheduleModal(); // 일정 모달 띄우기
