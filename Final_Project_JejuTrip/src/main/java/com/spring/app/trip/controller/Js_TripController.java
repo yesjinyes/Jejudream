@@ -1844,6 +1844,8 @@ public class Js_TripController {
 		
 		Map<String,String> paraMap = new HashMap<>();
 		
+		searchWord = MyUtil.changeEtcTag(searchWord);
+		
 		paraMap.put("searchWord", searchWord);
 		
 		paraMap.put("start", start);

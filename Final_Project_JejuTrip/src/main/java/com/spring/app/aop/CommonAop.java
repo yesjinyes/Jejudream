@@ -84,11 +84,8 @@ public class CommonAop {
 	
 	
 	@Pointcut("execution(public * com.spring.app..*Controller.requiredLogin2_*(..) )")
-	// 예) com.spring.app.board.controller.BoardController.requiredLogin_add(ModelAndView mav)
-	// 예) com.spring.app.employees.controller.EmpController.requiredLogin_empList()
 	public void requiredLogin2() {}
 	
-	// === Before Advice(공통관심사, 보조업무)를 구현한다. === //
 	@Before("requiredLogin2()")
 	public void loginCheck2(JoinPoint joinpoint) { // 로그인 유무 검사를 하는 메소드 작성하기
 		// JoinPoint joinpoit는 Pointcut 된 주업무의 메소드이다.
