@@ -400,7 +400,7 @@ function goRegister() {
         }
 
         
-        const food_main_img = $("input#food_main_img").val();
+        const food_main_img = $("input#attach").val();
         
         if(food_main_img == "") {
         	alert("대표 이미지를 추가해주세요.");
