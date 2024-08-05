@@ -294,6 +294,9 @@ ul.list li {
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f42c6cbd2d2060c5c719ee80540fbfbc&libraries=services"></script> 
 <script type="text/javascript">
 
+//== 새로고침 시 맨 위로 이동 == //
+history.scrollRestoration = "manual"
+
 $(document).ready(function() {
 	
 	goLikeDislikeCount();
@@ -307,24 +310,33 @@ $(document).ready(function() {
     let currentShowPageNo = 1; // currentShowPageNo 초기값
     goReviewListView(currentShowPageNo); // 페이징처리된 리뷰보여주는 함수
 
+    
+    
     //리뷰 작성-----------------------------------------------------------------
    
     $("button#btnCommentOK").click(function(){
     	  
-    	  if(${empty sessionScope.loginuser}) {
- 	         alert("리뷰를 작성하시려면 로그인을 해주세요!");
- 	         return; // 종료
- 	      }
-	  	  else{
+    	if(${empty sessionScope.loginuser}) {
+			alert("리뷰 작성은 로그인 후 가능합니다.");
+			
+            // 현재 URL을 세션에 저장하고 로그인 페이지로 리다이렉트
+            const currentUrl = window.location.href;
+             
+            window.location.href = "rememberlogin.trip?goBackURL=" + encodeURIComponent(currentUrl);
+             
+            return false;
+		} 
+  	  	else{
 			const review_content = $("textarea[name='review_content']").val().trim(); 
-            
+           
             if(review_content == "") {
                alert("리뷰 내용을 입력해 주세요.");
                $("textarea[name='review_content']").val(""); 
                return; // 종료
-            }  
+           }  
             
             const queryString = $("form[name='reviewFrm']").serialize();
+            
             $.ajax({
                 url:"<%= ctxPath%>/reviewRegister.trip",
                 type:"post",
@@ -490,6 +502,7 @@ $(document).ready(function() {
 		$(document).on('keyup',"input#joinUserName2",function(){
 		
         var joinUserName = $(this).val();
+        var loginuserId = "${sessionScope.loginuser.userid}";
         $.ajax({
             url: "<%= ctxPath%>/schedule/insertSchedule/searchPlayJoinUserList.trip",
             data: { "joinUserName": joinUserName },
@@ -500,7 +513,9 @@ $(document).ready(function() {
                 if (json.length > 0) {
                     $.each(json, function(index, item) {
                         var name = item.user_name;
-                        if (name.includes(joinUserName)) {
+                        var userId = item.userid;
+                        
+                        if (name.includes(joinUserName) && userId !== loginuserId) {
                             joinUserArr.push(name + "(" + item.userid + ")");
                         }
                     });
@@ -632,10 +647,9 @@ $(document).ready(function() {
         
         
 		$('#exampleModal_scrolling_2 .btn.btn-danger').on('click', function () {
-	        $("input#joinUserName2").autocomplete("destroy"); // 기존 autocomplete 제거
-	        $("input#joinUserName2").empty(); // 기존 autocomplete 제거
-	        $("input#joinUserName2").val(""); // 입력값 비우기
-	        $("div.displayUserList2").empty();
+			$('#exampleModal_scrolling_2 form')[0].reset(); // 폼 전체 초기화
+		    $("input#joinUserName2").autocomplete("destroy").val(""); // autocomplete 제거 및 입력값 비우기
+		    $("div.displayUserList2").empty(); // 사용자 리스트 비우기
 	    });
 		
 });//end of $(document).ready(function() {
@@ -844,36 +858,42 @@ function updateMyReview(index,review_code){
 
 function golikeAdd(){
  
- if(${empty sessionScope.loginuser}) {
-       alert("좋아요는 로그인 후 가능합니다.");
-       return; // 종료
-    }
- else{//로그인을 한 경우라면
+	if(${empty sessionScope.loginuser}) {
+		alert("좋아요는 로그인 후 가능합니다.");
+		
+        // 현재 URL을 세션에 저장하고 로그인 페이지로 리다이렉트
+        const currentUrl = window.location.href;
+         
+        window.location.href = "rememberlogin.trip?goBackURL=" + encodeURIComponent(currentUrl);
+         
+        return false;
+	} 
+  	else{//로그인을 한 경우라면
   
-  $.ajax({
-          url:"<%= ctxPath%>/play/playLike.trip",
-          type:"POST",
-          data:{"parent_code":"${requestScope.playvo.play_code}",
-          	  "fk_userid":"${sessionScope.loginuser.userid}"},
-          dataType:"json", 
-          success:function(json) {
-          	if(json.n == 1){
-          		alert("좋아요 등록 완료");
-          		goLikeDislikeCount();
-          	}
-          	else{
-          		alert("좋아요 취소");
-          		goLikeDislikeCount();
-          		
-          	}
-
-          },
-          error: function(request, status, error){
-             alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
-          }
-       });
+	  $.ajax({
+	          url:"<%= ctxPath%>/play/playLike.trip",
+	          type:"POST",
+	          data:{"parent_code":"${requestScope.playvo.play_code}",
+	          	  "fk_userid":"${sessionScope.loginuser.userid}"},
+	          dataType:"json", 
+	          success:function(json) {
+	          	if(json.n == 1){
+	          		alert("좋아요 등록 완료");
+	          		goLikeDislikeCount();
+	          	}
+	          	else{
+	          		
+	          		goLikeDislikeCount();
+	          		
+	          	}
+	
+	          },
+	          error: function(request, status, error){
+	             alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+	          }
+      			});
   
- }
+ 		}
 
 }// end of function golikeAdd(pnum}
 
@@ -910,12 +930,19 @@ function goLikeDislikeCount(){ // 좋아요, 싫어요 갯수를 보여주도록
 
 function goScheduleAdd(){
 	
-    if (${sessionScope.loginuser.userid == null}) {
-        alert("일정 추가는 로그인 후 이용 가능합니다");
-    } else {
+	if(${empty sessionScope.loginuser}) {
+		alert("일정추가는 로그인 후 가능합니다.");
+		
+        // 현재 URL을 세션에 저장하고 로그인 페이지로 리다이렉트
+        const currentUrl = window.location.href;
+         
+        window.location.href = "rememberlogin.trip?goBackURL=" + encodeURIComponent(currentUrl);
+         
+        return false;
+	} 
+	  	else{
         $('#exampleModal_scrolling_2').modal('show');
     }
-
 }
 
 
@@ -1053,8 +1080,8 @@ function goDelete() {
 <!---------------------------------------------예약하는 모달시작---------------------------------------------------------------------->
 	 
 	 
+<div class="modal fade" id="exampleModal_scrolling_2">
 	 <form name="addSchedulePlayFrm" enctype="multipart/form-data">
-		<div class="modal fade" id="exampleModal_scrolling_2">
 		  <div class="modal-dialog modal-lg modal-dialog-scrollable">
 		    <div class="modal-content">
 		      
@@ -1125,9 +1152,9 @@ function goDelete() {
 		      </div>
 		    </div>
 		  </div>
-		</div>
-		<!----------------------------------------------------------------------  -->
 	</form>
+</div>
+		<!----------------------------------------------------------------------  -->
 	
 	
 
