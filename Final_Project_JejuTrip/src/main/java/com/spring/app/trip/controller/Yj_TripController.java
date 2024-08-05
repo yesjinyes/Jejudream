@@ -24,7 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.spring.app.trip.common.FileManager;
-import com.spring.app.trip.domain.FaqVO;
+import com.spring.app.trip.common.MyUtil;
 import com.spring.app.trip.domain.FoodstoreVO;
 import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.MemberVO;
@@ -139,6 +139,8 @@ public class Yj_TripController {
 		}
 		
 		// 검색하기 //
+		searchWordFood = MyUtil.changeEtcTag(searchWordFood);
+		
 		if(searchWordFood == null) {
 			searchWordFood = "";
 		}
