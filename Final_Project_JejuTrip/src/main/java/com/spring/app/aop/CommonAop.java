@@ -68,7 +68,7 @@ public class CommonAop {
 			
 			// >>> 로그인 성공 후 로그인 하기 전 페이지로 돌아가는 작업 만들기 <<<
 			String url = MyUtil.getCurrentURL(request);
-			System.out.println("1번 AOP url : " + url);
+			// System.out.println("1번 AOP url : " + url);
 			session.setAttribute("goBackURL", url); // 세션에 url 정보를 저장시켜둔다.
 			
 			RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/msg.jsp"); // request를 보낼 경로 지정
@@ -108,7 +108,7 @@ public class CommonAop {
 			
 			// >>> 로그인 성공 후 로그인 하기 전 페이지로 돌아가는 작업 만들기 <<<
 			String url = MyUtil.getPreviousPageURL(request);
-			System.out.println("2번 AOP url : " + url);
+			// System.out.println("2번 AOP url : " + url);
 			session.setAttribute("goBackURL", url); // 세션에 url 정보를 저장시켜둔다.
 			
 			RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/msg.jsp"); // request를 보낼 경로 지정
