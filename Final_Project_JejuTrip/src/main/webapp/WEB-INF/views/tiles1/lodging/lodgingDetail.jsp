@@ -221,7 +221,7 @@ $(document).ready(function(){
                                         <p style="color:#b5aec4;">퇴실시간 : \${item.check_outTime}</p>
                         			</div>
                         			<div class="px-3" style="align-self: flex-end;">
-                            			<span style="color:#b5aec4;">1박 기준 히히</span>
+                            			<span style="color:#b5aec4;">1박 기준 - 재검색 결과</span>
                             			<br>
         								<span>잔여객실 \${item.remaining_qty}개</span>
         								<br>
