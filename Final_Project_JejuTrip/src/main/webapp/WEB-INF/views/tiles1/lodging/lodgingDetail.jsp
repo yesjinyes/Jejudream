@@ -279,6 +279,16 @@ $(document).ready(function(){
     $(document).on('click', "button:button[name='reservation']", function(e){
     	
     	
+		const companyid = "${sessionScope.loginCompanyuser.companyid}";
+       	
+       	if(companyid != ""){
+       		
+       		alert('숙소 예약은 회원유저만 가능합니다!');
+       		
+       		return false;
+       		
+       	}
+    	
 		if(!chk){
     		
     		alert('날짜 변경시에 재검색 버튼을 눌러주세요!');
@@ -461,12 +471,22 @@ $(document).ready(function(){
 	
 	goViewComment(1);
 	
-	
-	$(document).on('click', "i", function(e) {
+	// 좋아요 버튼 클릭시
+	$(document).on('click', "i.likebtn", function(e) {
 		
        	// alert($(e.target).attr("id"));
         
+       	const companyid = "${sessionScope.loginCompanyuser.companyid}";
+       	
        	const loginuserid = "${sessionScope.loginuser.userid}";
+       	
+       	if(companyid != ""){
+       		
+       		alert('좋아요는 회원유저만 가능합니다!');
+       		
+       		return false;
+       		
+       	}
        	
        	if(loginuserid == ""){
        		
@@ -821,10 +841,10 @@ function open_modal_img(imgsrc){
                 <span class="lodging-name">${requestScope.lodgingDetail.lodging_name}</span>
                 <div class="icon-container">
                     <c:if test="${not empty sessionScope.loginuser and not empty requestScope.dateSendMap.chkLike}">
-                        <i class="fa-solid fa-heart" id="cancelAddLike" style="cursor: pointer; color: #fbb623; font-size: 35px;"></i>
+                        <i class="fa-solid fa-heart likebtn" id="cancelAddLike" style="cursor: pointer; color: #fbb623; font-size: 35px;"></i>
                     </c:if>
                     <c:if test="${empty sessionScope.loginuser or (not empty sessionScope.loginuser and empty requestScope.dateSendMap.chkLike)}">
-                        <i class="fa-regular fa-heart" id="addLike" style="cursor: pointer; color: #fbb623; font-size: 35px;"></i>
+                        <i class="fa-regular fa-heart likebtn" id="addLike" style="cursor: pointer; color: #fbb623; font-size: 35px;"></i>
                     </c:if>
                     
                 </div>
