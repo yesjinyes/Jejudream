@@ -209,7 +209,7 @@ div.accordion-content {
 		    // const deleteFrm = $("form[name='reservationFrm']").serialize();
 	       	
 			// 질문 삭제 데이터 넘기기
-			if(confirm("정말로 삭제하시겠습니까?")) {
+			if(confirm("FAQ를 정말로 삭제하시겠습니까?")) {
 				
 				$.ajax({
 					url:"<%= ctxPath%>/deleteFAQ.trip",

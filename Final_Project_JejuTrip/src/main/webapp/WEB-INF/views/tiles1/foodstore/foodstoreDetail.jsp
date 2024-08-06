@@ -846,7 +846,7 @@ span.plusUser{
 									    	   
 									       // 일반 회원 계정으로 로그인 한 경우
 									       else {
-								    		   if(item.fk_userid != 'admin') { 
+								    		   if(item.fk_userid != 'admin' && ${sessionScope.loginuser.userid == item.fk_userid}) { 
 								    			   v_html += `<td class='review'>
 								    				   			  <button class='btn btn-secondary btn-sm btnUpdateReview'>수정</button>
 										    	   				  <input type='hidden' value='\${item.parent_code}'/>
@@ -855,17 +855,8 @@ span.plusUser{
 										    		          </td>`;
 								    		   }
 									       }
-								    	   
-								    	   
-								    	   
-								    	  /*  v_html += `<td class='review'>
-								    	   				  <button class='btn btn-secondary btn-sm btnUpdateReview'>수정</button>
-								    	   				  <input type='hidden' value='\${item.parent_code}'/>
-								    		              <button class='btn btn-secondary btn-sm btnDeleteReview'>삭제</button>
-								    		              <input type='hidden' value='\${currentShowPageNo}' class='currentShowPageNo' />
-								    		          </td>`; */
+								    	
 								       }
-								       
 								        
 						v_html += `</tr>`;
 						count_html = item.totalCount;
