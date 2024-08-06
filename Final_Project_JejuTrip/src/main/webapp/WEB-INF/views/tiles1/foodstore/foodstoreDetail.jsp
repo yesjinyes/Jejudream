@@ -857,17 +857,17 @@ span.plusUser{
 									    	   
 									       // 일반 회원 계정으로 로그인 한 경우
 									       else {
-								    		   if(item.fk_userid != 'admin' && ${sessionScope.loginuser.userid == item.fk_userid}) { 
+									    	   if(item.fk_userid != 'admin' && "${sessionScope.loginuser.userid}" == item.fk_userid)  {
 								    			   v_html += `<td class='review'>
 								    				   			  <button class='btn btn-secondary btn-sm btnUpdateReview'>수정</button>
 										    	   				  <input type='hidden' value='\${item.parent_code}'/>
 										    		              <button class='btn btn-secondary btn-sm btnDeleteReview'>삭제</button>
 										    		              <input type='hidden' value='\${currentShowPageNo}' class='currentShowPageNo' />
 										    		          </td>`;
-								    		   }
+									    	   }
 									       }
 								    	
-								       }
+								       }// end of  if(${sessionScope.loginuser != null})-------------
 								        
 						v_html += `</tr>`;
 						count_html = item.totalCount;
@@ -1003,12 +1003,6 @@ span.plusUser{
 
 
 <div id="container">
-	<c:if test="${sessionScope.loginuser.userid == 'admin'}">
-		<div style="width: 90%; margin: 3% auto;text-align: right;">
-			<button type="button" onclick="javascript:location.href='<%= ctxPath%>/editFoodstore.trip?food_store_code=${requestScope.foodstorevo.food_store_code}'" class="btn btn-secondary mr-2">맛집 수정</button>
-			<button type="button" onclick="goDeleteFoodstore('${requestScope.foodstorevo.food_store_code}')" class="btn btn-danger" >맛집 삭제</button>
-		</div>
-	</c:if>
 	
 	<div class="imgcrop">
 		<c:forEach var="addimgList" items="${requestScope.addimgList}" begin="0" end="0">
@@ -1061,6 +1055,13 @@ span.plusUser{
 		<!-- 오른쪽 div -->
 		<div class="col-md-7">
 			<div class="border rounded" style="margin: 0 -2% 0 2%; padding: 3% 0 2% 0;">
+				<c:if test="${sessionScope.loginuser.userid == 'admin'}">
+					<div style="width: 90%; margin: 3% auto;text-align: right;">
+						<button type="button" onclick="javascript:location.href='<%= ctxPath%>/editFoodstore.trip?food_store_code=${requestScope.foodstorevo.food_store_code}'" class="btn btn-secondary mr-2">맛집 수정</button>
+						<button type="button" onclick="goDeleteFoodstore('${requestScope.foodstorevo.food_store_code}')" class="btn btn-danger" >맛집 삭제</button>
+					</div>
+				</c:if>
+			
 				<!-- 아이콘 모음 시작 -->
 				<c:if test="${sessionScope.loginuser.userid != 'admin'}">
 					<ul class="list" style="display: flex; margin-left: 8%;">
@@ -1210,11 +1211,15 @@ span.plusUser{
 	<div class="border rounded" id="reviewList">
 
 		<!-- 리뷰쓰기 -->
-		<c:if test="${empty sessionScope.loginuser}">
-			<h4 class="mb-5" style="color: orange;">리뷰를 작성하려면 먼저 로그인을 해주세요.
-				<button type="button" class="btn btn-secondary ml-4" onclick="goLogin()">로그인하기</button>
-			</h4>
+		<c:if test="${empty sessionScope.loginCompanyuser}">
+			<c:if test="${empty sessionScope.loginuser}">
+				<h4 class="mb-5" style="color: orange;">리뷰를 작성하려면 먼저 로그인을 해주세요.
+					<button type="button" class="btn btn-secondary ml-4" onclick="goLogin()">로그인하기</button>
+				</h4>
+			</c:if>
 		</c:if>
+		
+		
         <c:if test="${not empty sessionScope.loginuser}">
            <h3 style="margin: 0 0 2% 4%;">리뷰 작성</h3>
            <form name="addReviewFrm" id="addReviewFrm">
