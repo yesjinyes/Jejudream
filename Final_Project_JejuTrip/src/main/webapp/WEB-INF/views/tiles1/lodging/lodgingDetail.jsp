@@ -280,8 +280,9 @@ $(document).ready(function(){
     	
     	
 		const companyid = "${sessionScope.loginCompanyuser.companyid}";
+		const loginuserid = "${sessionScope.loginuser.userid}";
        	
-       	if(companyid != ""){
+       	if(companyid != "" || loginuserid == "admin"){
        		
        		alert('숙소 예약은 회원유저만 가능합니다!');
        		
@@ -478,8 +479,6 @@ $(document).ready(function(){
         
        	const companyid = "${sessionScope.loginCompanyuser.companyid}";
        	
-       	const loginuserid = "${sessionScope.loginuser.userid}";
-       	
        	if(companyid != ""){
        		
        		alert('좋아요는 회원유저만 가능합니다!');
@@ -487,6 +486,8 @@ $(document).ready(function(){
        		return false;
        		
        	}
+       	
+       	const loginuserid = "${sessionScope.loginuser.userid}";
        	
        	if(loginuserid == ""){
        		
@@ -498,6 +499,12 @@ $(document).ready(function(){
             window.location.href = "rememberlogin.trip?goBackURL=" + encodeURIComponent(currentUrl);
        		
        		return false;
+       	}else if(loginuserid == "admin"){
+       		
+			alert('좋아요는 회원유저만 가능합니다!');
+       		
+       		return false;
+       		
        	}
        	
        	const likeId = $(e.target).attr("id");
