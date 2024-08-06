@@ -1005,9 +1005,22 @@ public class Dy_TripController {
 	
 	// 커뮤니티 글 등록 페이지 요청
 	@GetMapping("community/addBoard.trip")
-	public String requiredLogin_addBoard(HttpServletRequest request, HttpServletResponse response) {
+	public ModelAndView requiredLogin_addBoard(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
 		
-		return "community/addBoard.tiles1";
+		HttpSession session = request.getSession();
+		CompanyVO loginCompanyuser = (CompanyVO)session.getAttribute("loginCompanyuser");
+		
+		if(loginCompanyuser != null) {
+			mav.addObject("message", "글 작성은 일반회원만 가능합니다.");
+			mav.addObject("loc", request.getContextPath() + "/communityMain.trip");
+			
+			mav.setViewName("msg");
+			
+		} else {
+			mav.setViewName("community/addBoard.tiles1");
+		}
+		
+		return mav;
 	}
 	
 	
@@ -2184,6 +2197,9 @@ public class Dy_TripController {
 		mav.addObject("playCount", playCount);
 		mav.addObject("boardCount", boardCount);
 		mav.addObject("allCount", lodgingCount + foodstoreCount + playCount + boardCount);
+		
+		HttpSession session = request.getSession();
+		session.setAttribute("readCountPermission", "yes");
 		
 		mav.setViewName("main/allSearch.tiles1");
 		
