@@ -383,6 +383,11 @@ span.plusUser{
 		// == 좋아요 기능 == //
 		$("button#btnLike").click(function() {
 			
+			if(${not empty sessionScope.loginCompanyuser}) {
+				alert("좋아요는 회원만 가능합니다.");
+				return false;
+			}
+			
 			if(${empty sessionScope.loginuser}) {
 				alert("좋아요는 로그인 후 가능합니다.");
 				
@@ -462,8 +467,14 @@ span.plusUser{
 	    
 	    // == 로그인 하지 않고 일정 추가 버튼 시 로그인 페이지로 이동 , 로그인 시에는 모달 띄우기 == //
 	    $("button#btnSchedule").click(function() {
+	    	
+	    	if(${not empty sessionScope.loginCompanyuser}) {
+				alert("일정 추가는 회원만 가능합니다.");
+				return false;
+			}
+	    	
 	    	if(${empty sessionScope.loginuser}) {
-	    		alert("일정 추가 기능은 로그인 후 사용 가능합니다.");
+	    		alert("일정 추가는 로그인 후 사용 가능합니다.");
 	    	 	
 	    		// 현재 URL을 세션에 저장하고 로그인 페이지로 리다이렉트
 	            const currentUrl = window.location.href;
@@ -846,7 +857,7 @@ span.plusUser{
 									    	   
 									       // 일반 회원 계정으로 로그인 한 경우
 									       else {
-								    		   if(item.fk_userid != 'admin') { 
+								    		   if(item.fk_userid != 'admin' && ${sessionScope.loginuser.userid == item.fk_userid}) { 
 								    			   v_html += `<td class='review'>
 								    				   			  <button class='btn btn-secondary btn-sm btnUpdateReview'>수정</button>
 										    	   				  <input type='hidden' value='\${item.parent_code}'/>
@@ -855,17 +866,8 @@ span.plusUser{
 										    		          </td>`;
 								    		   }
 									       }
-								    	   
-								    	   
-								    	   
-								    	  /*  v_html += `<td class='review'>
-								    	   				  <button class='btn btn-secondary btn-sm btnUpdateReview'>수정</button>
-								    	   				  <input type='hidden' value='\${item.parent_code}'/>
-								    		              <button class='btn btn-secondary btn-sm btnDeleteReview'>삭제</button>
-								    		              <input type='hidden' value='\${currentShowPageNo}' class='currentShowPageNo' />
-								    		          </td>`; */
+								    	
 								       }
-								       
 								        
 						v_html += `</tr>`;
 						count_html = item.totalCount;
