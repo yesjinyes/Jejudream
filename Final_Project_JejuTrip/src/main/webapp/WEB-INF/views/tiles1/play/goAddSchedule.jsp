@@ -315,55 +315,57 @@ $(document).ready(function() {
     //리뷰 작성-----------------------------------------------------------------
    
     $("button#btnCommentOK").click(function(){
-    	  
-    	if(${empty sessionScope.loginuser}) {
-			alert("리뷰 작성은 로그인 후 가능합니다.");
-			
-            // 현재 URL을 세션에 저장하고 로그인 페이지로 리다이렉트
-            const currentUrl = window.location.href;
-             
-            window.location.href = "rememberlogin.trip?goBackURL=" + encodeURIComponent(currentUrl);
-             
-            return false;
-		} 
-  	  	else{
-			const review_content = $("textarea[name='review_content']").val().trim(); 
-           
-            if(review_content == "") {
-               alert("리뷰 내용을 입력해 주세요.");
-               $("textarea[name='review_content']").val(""); 
-               return; // 종료
-           }  
-            
-            const queryString = $("form[name='reviewFrm']").serialize();
-            
-            $.ajax({
-                url:"<%= ctxPath%>/reviewRegister.trip",
-                type:"post",
-                data:queryString,
-                dataType:"json",
-                success:function(json){ 
-                   console.log(JSON.stringify(json));
-                  
-                   if(json.n == 1) {
-                       goReviewListView(currentShowPageNo);
-                     }
-                    
-                   else  {
-                      alert("리뷰 작성이 실패했습니다.");
-                   }
-                   
-                   $("textarea[name='review_content']").val("").focus();
-                },
-                error: function(request, status, error){
-                   alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
-                
-                }
-             });
-            
-            
-            
-	  	  }
+    	if(${empty sessionScope.loginCompanyuser}){  
+	    	if(${empty sessionScope.loginuser}) {
+				alert("리뷰 작성은 로그인 후 가능합니다.");
+				
+	            // 현재 URL을 세션에 저장하고 로그인 페이지로 리다이렉트
+	            const currentUrl = window.location.href;
+	             
+	            window.location.href = "rememberlogin.trip?goBackURL=" + encodeURIComponent(currentUrl);
+	             
+	            return false;
+			} 
+	  	  	else{
+				const review_content = $("textarea[name='review_content']").val().trim(); 
+	           
+	            if(review_content == "") {
+	               alert("리뷰 내용을 입력해 주세요.");
+	               $("textarea[name='review_content']").val(""); 
+	               return; // 종료
+	           }  
+	            
+	            const queryString = $("form[name='reviewFrm']").serialize();
+	            
+	            $.ajax({
+	                url:"<%= ctxPath%>/reviewRegister.trip",
+	                type:"post",
+	                data:queryString,
+	                dataType:"json",
+	                success:function(json){ 
+	                   console.log(JSON.stringify(json));
+	                  
+	                   if(json.n == 1) {
+	                       goReviewListView(currentShowPageNo);
+	                     }
+	                    
+	                   else  {
+	                      alert("리뷰 작성이 실패했습니다.");
+	                   }
+	                   
+	                   $("textarea[name='review_content']").val("").focus();
+	                },
+	                error: function(request, status, error){
+	                   alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+	                
+	                }
+	             });
+		  	  }
+    	}
+    	else{
+    		$("textarea[name='review_content']").val("").focus();
+    		alert("기업은 리뷰 작성을 할 수 없습니다.")
+    	}
     	  
       });//end of  $("button#btnCommentOK").click(function())--------------
     
@@ -697,20 +699,19 @@ function add_joinUser(value){  // value 가 공유자로 선택한이름 이다.
                         + "<div class='customDisplay' style='font-size: 12px;'>&nbsp;"+item.registerday+"</div>"
                         + "<input type='hidden' name='review_code' value='" + item.review_code + "'/>";
                r_html = item.totalCount
-               if( loginuserid == "") { 
-                  // 로그인을 안한 경우 
+               if(loginuserid == "") { 
+                  // 로그인을 안한 경우  
                   v_html += "<div class='customDisplay spacediv'>&nbsp;</div><br>";
                }      
-               else if( loginuserid != "" && writeuserid != loginuserid ) { 
+               else if(loginuserid != "" && loginuserid == "admin" || writeuserid == loginuserid ) { 
                   // 로그인을 했으나 후기글이 로그인한 사용자 쓴 글이 아니라 다른 사용자 쓴 후기글 이라면  
-                  v_html += "<div class='customDisplay spacediv'>&nbsp;</div><br>";
-               }    
-               else if( loginuserid != "" && writeuserid == loginuserid ) {
-                  // 로그인을 했고 후기글이 로그인한 사용자 쓴 글 이라면
-                           v_html += "<div class='customDisplay spacediv commentDel commentUpdate' onclick='updateMyReview("+index+","+item.review_code+")'>후기수정</div>&nbsp;&nbsp;"; 
-                  		   v_html += "<div class='customDisplay spacediv commentDel' onclick='delMyReview("+item.review_code+")'>후기삭제</div><br><br>"; 
-                  		   
-               }
+   	       		  v_html += "<div class='customDisplay spacediv commentDel' onclick='delMyReview("+item.review_code+")'>후기삭제</div>&nbsp;&nbsp;"; 
+   	       		
+   	       		  if( loginuserid != "admin" && writeuserid == loginuserid ) {
+              	  		v_html += "<div class='customDisplay spacediv commentDel commentUpdate' onclick='updateMyReview("+index+","+item.review_code+")'>후기수정</div><br><br>"; 
+   	       			}
+   	       		}
+            
            }); 
            
            const totalPage = Math.ceil(json[0].totalCount / json[0].sizePerPage);
@@ -858,43 +859,49 @@ function updateMyReview(index,review_code){
 
 function golikeAdd(){
  
-	if(${empty sessionScope.loginuser}) {
-		alert("좋아요는 로그인 후 가능합니다.");
-		
-        // 현재 URL을 세션에 저장하고 로그인 페이지로 리다이렉트
-        const currentUrl = window.location.href;
-         
-        window.location.href = "rememberlogin.trip?goBackURL=" + encodeURIComponent(currentUrl);
-         
-        return false;
-	} 
-  	else{//로그인을 한 경우라면
-  
-	  $.ajax({
-	          url:"<%= ctxPath%>/play/playLike.trip",
-	          type:"POST",
-	          data:{"parent_code":"${requestScope.playvo.play_code}",
-	          	  "fk_userid":"${sessionScope.loginuser.userid}"},
-	          dataType:"json", 
-	          success:function(json) {
-	          	if(json.n == 1){
-	          		alert("좋아요 등록 완료");
-	          		goLikeDislikeCount();
-	          	}
-	          	else{
-	          		
-	          		goLikeDislikeCount();
-	          		
-	          	}
-	
-	          },
-	          error: function(request, status, error){
-	             alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
-	          }
-      			});
-  
- 		}
-
+	if(${empty sessionScope.loginCompanyuser}){
+		if(${empty sessionScope.loginuser}) {
+			alert("좋아요는 로그인 후 가능합니다.");
+			
+	        // 현재 URL을 세션에 저장하고 로그인 페이지로 리다이렉트
+	        const currentUrl = window.location.href;
+	         
+	        window.location.href = "rememberlogin.trip?goBackURL=" + encodeURIComponent(currentUrl);
+	         
+	        return false;
+		} 
+		else{//로그인을 한 경우라면
+	  		
+			  $.ajax({
+			          url:"<%= ctxPath%>/play/playLike.trip",
+			          type:"POST",
+			          data:{"parent_code":"${requestScope.playvo.play_code}",
+			          	    "fk_userid":"${sessionScope.loginuser.userid}"},
+			          dataType:"json", 
+			          success:function(json) {
+			          	if(json.n == 1){
+			          		alert("좋아요 등록 완료");
+			          		goLikeDislikeCount();
+			          	}
+			          	else{
+			          		
+			          		goLikeDislikeCount();
+			          		
+			          	}
+			
+			          },
+			          error: function(request, status, error){
+			             alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+			          }
+		      			});
+		  
+		 		
+			}
+  	
+  	}
+	else{
+		alert("기업은 좋아요 등록을 할 수 없습니다.");
+	}
 }// end of function golikeAdd(pnum}
 
 
@@ -929,20 +936,25 @@ function goLikeDislikeCount(){ // 좋아요, 싫어요 갯수를 보여주도록
 
 
 function goScheduleAdd(){
+	if(${empty sessionScope.loginCompanyuser}){
+		if(${empty sessionScope.loginuser}) {
+			alert("일정추가는 로그인 후 가능합니다.");
+			
+	        // 현재 URL을 세션에 저장하고 로그인 페이지로 리다이렉트
+	        const currentUrl = window.location.href;
+	         
+	        window.location.href = "rememberlogin.trip?goBackURL=" + encodeURIComponent(currentUrl);
+	         
+	        return false;
+		} 
+		  	else{
+	        $('#exampleModal_scrolling_2').modal('show');
+	    }
+	}
+	else{
+		alert("기업은 일정 등록을 할 수 없습니다.");
+	}
 	
-	if(${empty sessionScope.loginuser}) {
-		alert("일정추가는 로그인 후 가능합니다.");
-		
-        // 현재 URL을 세션에 저장하고 로그인 페이지로 리다이렉트
-        const currentUrl = window.location.href;
-         
-        window.location.href = "rememberlogin.trip?goBackURL=" + encodeURIComponent(currentUrl);
-         
-        return false;
-	} 
-	  	else{
-        $('#exampleModal_scrolling_2').modal('show');
-    }
 }
 
 
@@ -970,12 +982,21 @@ function goDelete() {
 	<div style="width: 90%; margin: 3% auto;text-align: right;">
 		<ul class="list" style="display: flex; margin-left: 8%;">
 			<li class="list-item">
-				<button type="button" class="iconbtn" onclick="golikeAdd()">	
-					<div class="item-each">
-						<img class="icon like" id="like" src="<%= ctxPath %>/resources/images/foodstore/icon/Like.png">
-						<img class="icon likeup" id="likeup" src="<%= ctxPath %>/resources/images/foodstore/icon/LikeUp.png">
-					</div>
-				</button>
+				<c:if test="${sessionScope.loginuser.userid == 'admin'}">
+					<button type="button" class="iconbtn">	
+						<div class="item-each">
+							<img class="icon like" id="like" src="<%= ctxPath %>/resources/images/foodstore/icon/Like.png">
+						</div>
+					</button>
+				</c:if>
+				<c:if test="${sessionScope.loginuser.userid != 'admin'}">
+					<button type="button" class="iconbtn" onclick="golikeAdd()">	
+						<div class="item-each">
+							<img class="icon like" id="like" src="<%= ctxPath %>/resources/images/foodstore/icon/Like.png">
+							<img class="icon likeup" id="likeup" src="<%= ctxPath %>/resources/images/foodstore/icon/LikeUp.png">
+						</div>
+					</button>
+				</c:if>
 					<p class="icon-title">좋아요</p>
 				<p class="count" id="likeCount"></p>
 			</li>
@@ -999,9 +1020,16 @@ function goDelete() {
 			</li>
 			<li class="list-item">
 				<div>
+				<c:if test="${sessionScope.loginuser.userid == 'admin'}">
+					<button type="button" class="iconbtn addSchedule" id ="addSchedule_btn">
+							<img class="icon" id="calender" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_calender.png">
+					</button>
+				</c:if>
+				<c:if test="${sessionScope.loginuser.userid != 'admin'}">
 					<button type="button" class="iconbtn addSchedule" id ="addSchedule_btn" onclick="goScheduleAdd()">
 							<img class="icon" id="calender" src="<%= ctxPath %>/resources/images/foodstore/icon/icon_calender.png">
 					</button>
+				</c:if>
 					<p class="icon-title" id="addScheduletitle">일정추가</p>
 				</div>
 			</li>
