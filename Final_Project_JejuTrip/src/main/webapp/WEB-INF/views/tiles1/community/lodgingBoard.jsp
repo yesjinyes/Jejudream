@@ -193,7 +193,9 @@ div#pageBar a {
 	--%>
 	
 	<div style="width: 7%;">
-		<button type="button" id="writeBtn" class="btn" onclick="location.href='<%=ctxPath%>/community/addBoard.trip'">글쓰기</button>
+		<c:if test="${empty sessionScope.loginCompanyuser}">
+			<button type="button" id="writeBtn" class="btn" onclick="location.href='<%=ctxPath%>/community/addBoard.trip'">글쓰기</button>
+		</c:if>
 	</div>
 </div>
 
