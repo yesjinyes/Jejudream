@@ -1716,4 +1716,5 @@ WHERE A.max_person >= 2
         
         update tbl_reservation set mailsendcheck = 0 where reservation_code = 58;
         commit;
+ 
         

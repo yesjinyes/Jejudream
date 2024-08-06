@@ -139,6 +139,8 @@ public class Dy_TripController {
 		// === 클라이언트의 IP 주소를 알아오는 것 === //
 		String clientip = request.getRemoteAddr();
 		
+		HttpSession session = request.getSession();
+		
 		Map<String, String> paraMap = new HashMap<>();
 		paraMap.put("id", id);
 		paraMap.put("pw", Sha256.encrypt(pw));
@@ -146,9 +148,11 @@ public class Dy_TripController {
 		
 		if("company".equals(memberType)) {
 			mav = service.companyLoginEnd(paraMap, mav, request);
+			session.removeAttribute("loginuser");
 			
 		} else {
 			mav = service.loginEnd(paraMap, mav, request);
+			session.removeAttribute("loginCompanyuser");
 		}
 		
 		return mav;
