@@ -170,9 +170,7 @@ public class Js_TripController {
 				break;
 		} // end of switch
 		
-		
 		paraMap.put("currentShowPageNo",currentShowPageNo);
-		
 		
 		paraMap.put("check_in", check_in);
 		paraMap.put("check_out", check_out);
@@ -248,7 +246,9 @@ public class Js_TripController {
 			
 			
 			try {
-				int int_lodging_code = Integer.parseInt(lodging_code); 
+				int int_lodging_code = Integer.parseInt(lodging_code);
+				// 유효성 검사를 위한 ParseInt
+				
 				int int_people = Integer.parseInt(detail_people); 
 				
 				String now = sdf.format(new Date());
@@ -260,7 +260,6 @@ public class Js_TripController {
 				
 				if(check_in.before(nowdate) || check_out.compareTo(nowdate) <= 0  || 
 				   int_people <=0 || int_people > 20 ) {
-					
 					
 					// System.out.println("날짜 잘못입력함");
 					String message = "비정상적인 접근입니다.";
@@ -316,7 +315,6 @@ public class Js_TripController {
 	    	return mav;
 			
 		}else {
-			
 			
 			Map<String,String> dateSendMap = new HashMap<>();
 			
@@ -1099,6 +1097,17 @@ public class Js_TripController {
 					
 					System.out.println(i+"번째 파일 업로드 실패함");
 					e.printStackTrace();
+					
+					String message = "객실 등록의 데이터가 정상적이지 않습니다!";
+					String loc = "javascript:history.back()";
+
+					mav.addObject("message", message);
+					mav.addObject("loc", loc);
+					
+					mav.setViewName("msg");
+					
+					return mav;
+					
 				}
 		        
 			} // end of for
@@ -1144,7 +1153,7 @@ public class Js_TripController {
 			
 			jsonObj.put("result", room_cnt);
 			
-		}
+		} // end of if
 		
 		return jsonObj.toString();
 		
