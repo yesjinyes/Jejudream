@@ -697,7 +697,7 @@ function add_joinUser(value){  // value 가 공유자로 선택한이름 이다.
                v_html  += "<div class='customDisplay'><img src='<%= ctxPath %>/resources/images/play/rogo.png' style='width: 30px;'>&nbsp;"+item.fk_userid+"</div>"    
             	   	    + "<div id='review"+index+"' style='font-weight: bold;'><span class='markColor'></span>&nbsp;"+item.review_content+"</div>"
                         + "<div class='customDisplay' style='font-size: 12px;'>&nbsp;"+item.registerday+"</div>"
-                        + "<input type='hidden' name='review_code' value='" + item.review_code + "'/>";
+                        + "<input type='hidden' name='review_code' value='" + item.review_code + "'/><br>";
                r_html = item.totalCount
                if(loginuserid == "") { 
                   // 로그인을 안한 경우  
@@ -705,10 +705,10 @@ function add_joinUser(value){  // value 가 공유자로 선택한이름 이다.
                }      
                else if(loginuserid != "" && loginuserid == "admin" || writeuserid == loginuserid ) { 
                   // 로그인을 했으나 후기글이 로그인한 사용자 쓴 글이 아니라 다른 사용자 쓴 후기글 이라면  
-   	       		  v_html += "<div class='customDisplay spacediv commentDel' onclick='delMyReview("+item.review_code+")'>후기삭제</div>&nbsp;&nbsp;"; 
+   	       		  v_html += "<div class='customDisplay spacediv commentDel' onclick='delMyReview("+item.review_code+")'>후기삭제</div>&nbsp;&nbsp;<br>"; 
    	       		
    	       		  if( loginuserid != "admin" && writeuserid == loginuserid ) {
-              	  		v_html += "<div class='customDisplay spacediv commentDel commentUpdate' onclick='updateMyReview("+index+","+item.review_code+")'>후기수정</div><br><br>"; 
+              	  		v_html += "<div class='customDisplay spacediv commentDel commentUpdate' onclick='updateMyReview("+index+","+item.review_code+")'>후기수정</div><br>"; 
    	       			}
    	       		}
             

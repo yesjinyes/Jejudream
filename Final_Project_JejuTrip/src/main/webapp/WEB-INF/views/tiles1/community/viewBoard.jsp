@@ -659,6 +659,19 @@
 													<span id="deleteComment" class="d-block">삭제</span>
 												</div>
 											 </div>`;
+							}else if(${sessionScope.loginuser != null} &&
+									("${sessionScope.loginuser.userid}" == "admin")){
+								v_html += `  <div class="more-options" style="width: 10%; padding-top: 1.5%; text-align: right;">
+									<span><i class="fa-solid fa-ellipsis-vertical"></i></span>
+									<div class="options-menu" style="display: none;">
+										
+										<span id="deleteComment" class="d-block">삭제</span>
+									</div>
+								 </div>`;
+								
+								
+								
+								
 							}
 							
 							v_html += `	  </div>

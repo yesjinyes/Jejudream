@@ -2070,7 +2070,7 @@ public class Dy_TripController {
 		HttpSession session = request.getSession();
 		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
 		
-		if(commentvo != null && loginuser.getUserid().equals(commentvo.getFk_userid())) {
+		if(commentvo != null && loginuser.getUserid().equals(commentvo.getFk_userid()) || "admin".equals(loginuser.getUserid())) {
 			
 			Map<String, String> paraMap = new HashMap<>();
 			paraMap.put("seq", seq);
