@@ -426,7 +426,7 @@ $(document).ready(function(){
 			
 			const $content = $(e.target).parent().find("p");
 			// 선택자를 의미하는 태그 
-			$content.html(`\${origin_comment_content}`);
+			$content.text(origin_comment_content);
 			// 밖으로 빼놓은 원래 내용을 태그로 교체해버린다? , 일단 저 변수는 수정버튼 눌렀을때만 값이 들어가게되고, 취소가 나오는경우는 무조건 수정이 눌렸을 경우이기 때문에 가능해진다!
 			
 			$(e.target).text("삭제").removeClass("btn-danger").addClass("btn-outline-danger");
@@ -453,7 +453,7 @@ $(document).ready(function(){
 						goViewComment(1); // 페이징 처리한 댓글 읽어오기
 						
 						$("textarea#review_content").val("");
-						$("form[name='review']").show();
+						$("form#setreview").show();
 						
 					},
 					error: function(request, status, error){
@@ -993,7 +993,7 @@ function open_modal_img(imgsrc){
 
             <h3>방문자 리뷰</h3>
             <c:if test="${not empty sessionScope.loginuser and not empty requestScope.dateSendMap.chkR and empty requestScope.dateSendMap.chkC}">
-                <form name="review">
+                <form name="review" id="setreview">
                     <div id="input-review">
                         <div class="input-container d-flex">
                             <div class="comment-avatar text-center mr-3">
