@@ -1647,7 +1647,7 @@ public class Ws_TripController {
             String r_html = "<div style=\"border:solid 1px black; width:80%; margin:auto;\">";
             r_html += "<div style=\"font-size:30pt; font-weight:bold; text-align:center;\">"+emailMap.get("lodging_name")+"<span style=\"float:right; font-size:15pt; margin-right: 10px;\">No."+emailMap.get("reservation_code")+"</span></div>";
             r_html += "<hr>";
-            r_html += "<div><img style=\"width:250px; margin-left:50px;\" src='http://127.0.0.1:9090/JejuDream/resources/images/lodginglist/room/"+emailMap.get("room_img")+"'/></div>";
+            r_html += "<div><img style=\"width:250px; margin-left:50px;\" src='http://127.0.0.1:9099/JejuDream/resources/images/lodginglist/room/"+emailMap.get("room_img")+"'/></div>";
             r_html += "<div style=\"font-size:15pt; font-weight:bold; margin-left: 50px; margin-top: 10px;\">ROOM : "+emailMap.get("room_name")+"</div>";
             r_html += "<div style=\"font-size:15pt; font-weight:bold; margin-left: 50px; margin-top: 10px;\">NAME : "+emailMap.get("user_name")+"</div>";
             r_html += "<div style=\"font-size:15pt; font-weight:bold; margin-left: 50px; margin-top: 10px;\">TEL : "+emailMap.get("lodging_tell")+"</div>";
