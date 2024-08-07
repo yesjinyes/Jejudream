@@ -787,7 +787,7 @@
 										<span id="updateBoard" onclick="location.href='<%=ctxPath%>/community/updateBoard.trip?seq=${requestScope.boardvo.seq}'">수정</span>&nbsp;&nbsp;|&nbsp;&nbsp;
 										<span id="deleteBoard" data-toggle="modal" data-target="#deleteBoardModal">삭제</span>
 									</c:if>
-									<c:if test="${sessionScope.loginuser.userid == 'admin'}">
+									<c:if test="${(requestScope.boardvo.fk_userid != sessionScope.loginuser.userid) && sessionScope.loginuser.userid == 'admin'}">
 										<span id="deleteBoardAdmin">삭제</span>
 									</c:if>
 								</div>
