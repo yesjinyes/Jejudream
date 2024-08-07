@@ -1259,9 +1259,9 @@ public class Dy_TripController {
 
 			// 글목록보기 에서 session.setAttribute("readCountPermission", "yes"); 해두었다.
 			BoardVO boardvo = null;
-
+			
 			if("yes".equals( (String)session.getAttribute("readCountPermission") )) {
-				// 글목록보기인 /freeBoard.trip 페이지를 클릭한 다음에 특정글을 조회해온 경우이다.
+				// 글목록보기 페이지를 클릭한 다음에 특정글을 조회해온 경우이다.
 				
 				boardvo = service.getViewBoard(paraMap);
 				// 글 조회수 증가와 함께 글 1개 조회하기
