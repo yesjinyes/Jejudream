@@ -41,7 +41,7 @@
 		        select lodging_code, local_status, lodging_category, fk_companyid, lodging_name, lodging_tell, lodging_content, lodging_address, main_img, filename, orgfilename, filesize, status, feedback_msg
 		        from tbl_lodging
 		        <if test="choice_status != ''">where status = #{choice_status}</if>
-		        order by lodging_code asc
+		        order by status
 		    )V
 		) T
 		WHERE RNO between #{startRno} and #{endRno}
