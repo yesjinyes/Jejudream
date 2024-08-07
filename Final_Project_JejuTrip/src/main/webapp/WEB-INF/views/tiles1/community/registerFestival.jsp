@@ -217,7 +217,9 @@ let isCheck = true;
 
 function goRegister(){
 	
-	
+	const fromdate = $("input:text[id='fromDate']").val();
+    const todate = $("input#toDate").val();
+    
     isCheck = true;
     
     // 축제명 검사하기

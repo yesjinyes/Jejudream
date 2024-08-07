@@ -422,18 +422,15 @@ public class Js_TripService_imple implements Js_TripService {
 		return n;
 		
 	} // end of public int deleteLodgingInfo(String lodgingCode) {
-
+	
 
 	// ==== Spring Scheduler(스프링 스케줄러)를 사용한 email 발송하기 ====
     // <주의> 스케줄러로 사용되어지는 메소드는 반드시 파라미터가 없어야 한다.!!!!
     // 고객들의 email 주소는 List<String(e메일주소)> 으로 만들면 된다.
     // 또는 e메일 자동 발송 대신에 휴대폰 문자를 자동 발송하는 것도 가능하다.
 	@Override
-	@Scheduled(cron="0 35 21 * * *")
+	@Scheduled(cron="0 00 11 * * *")
 	public void reservationEmailSending() throws Exception {
-		
-		// !!! <주의> !!!
-	    // 스케줄러로 사용되어지는 메소드는 반드시 파라미터는 없어야 한다.!!!!!
 		
 		// ==== e메일을 발송할 회원 대상 알아오기 ==== 
 		List<Map<String,String>> reservationList = dao.getReservationList();
@@ -476,7 +473,7 @@ public class Js_TripService_imple implements Js_TripService {
 					    + "    <td style='border: 1px solid #ddd; padding: 8px; color: red;'>" + reservationList.get(i).get("check_out") + "</td>"
 					    + "  </tr>"
 					    + "  <tr>"
-					    + "    <td colspan='2' style='border: 1px solid #ddd; padding: 8px; font-weight: bold;'><img src='http://127.0.0.1:9090/JejuDream/resources/images/lodginglist/room/"+reservationList.get(i).get("room_img") +"' style='width: 200px; height: 200px;'</td>"
+					    + "    <td colspan='2' style='border: 1px solid #ddd; padding: 8px; font-weight: bold;'><img src='http://127.0.0.1:9099/JejuDream/resources/images/lodginglist/room/"+reservationList.get(i).get("room_img") +"' style='width: 200px; height: 200px;'</td>"
 					    + "  </tr>"
 					    + "</table>"
 					    + "<p>예약 변경이나 취소를 원하시면 고객 센터로 연락해 주시기 바랍니다.</p>"
