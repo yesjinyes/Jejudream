@@ -552,16 +552,8 @@ public class Dy_TripController {
         
 		
 		// !!!! XSS 공격 막기 !!!!
-		String food_content = fvo.getFood_content();
-		food_content = food_content.replaceAll("<", "&lt");
-		food_content = food_content.replaceAll(">", "&gt");
-
-        // 입력한 내용에서 엔터는 <br>로 변환하기
-		food_content = food_content.replaceAll("\r\n", "<br>");
-        
+		String food_content = MyUtil.changeEtcTag(fvo.getFood_content());
 		fvo.setFood_content(food_content);
-		
-		
 		
 		// 일련번호 채번 해오기
 		String food_store_code = service.getCommonSeq();
