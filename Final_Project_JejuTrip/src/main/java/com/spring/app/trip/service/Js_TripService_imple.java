@@ -429,7 +429,7 @@ public class Js_TripService_imple implements Js_TripService {
     // 고객들의 email 주소는 List<String(e메일주소)> 으로 만들면 된다.
     // 또는 e메일 자동 발송 대신에 휴대폰 문자를 자동 발송하는 것도 가능하다.
 	@Override
-	@Scheduled(cron="0 00 11 * * *")
+	@Scheduled(cron="0 20 11 * * *")
 	public void reservationEmailSending() throws Exception {
 		
 		// ==== e메일을 발송할 회원 대상 알아오기 ==== 

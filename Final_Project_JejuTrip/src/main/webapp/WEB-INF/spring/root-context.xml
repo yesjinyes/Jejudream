@@ -12,8 +12,8 @@
    <!-- DBCP 2.x를 위한 DataSource 객체 -->
    <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
       <property name="driverClassName" value="net.sf.log4jdbc.DriverSpy" />
-      <property name="url" value="jdbc:log4jdbc:oracle:thin:@//211.238.142.186:1521/xe" />
-      <property name="username" value="final_orauser2" />
+      <property name="url" value="jdbc:log4jdbc:oracle:thin:@//127.0.0.1:1521/xe" />
+      <property name="username" value="local_final_orauser2" />
       <property name="password" value="gclass" />
       
       <property name="initialSize" value="20"/>   <!-- BasicDataSource 클래스 생성 후 최초로 getConnection() 메소드를 호출할 때 커넥션 풀에 채워 넣을 커넥션 개수(default=0). initialSize 값이 maxTotal 값보다 커버리면 논리적으로 오류가 있는 설정이다. -->   
