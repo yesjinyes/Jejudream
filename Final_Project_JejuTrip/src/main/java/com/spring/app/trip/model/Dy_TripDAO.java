@@ -7,7 +7,6 @@ import com.spring.app.trip.domain.BoardVO;
 import com.spring.app.trip.domain.CommentVO;
 import com.spring.app.trip.domain.CompanyVO;
 import com.spring.app.trip.domain.FoodstoreVO;
-import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.domain.PlayVO;
 
@@ -22,8 +21,11 @@ public interface Dy_TripDAO {
 	// 일반회원 이메일 중복확인
 	String userEmailDuplicateCheck(String email);
 
-	// 일반회원 휴대폰 중복확인
+	// 일반회원 연락처 중복확인
 	String userMobileDuplicateCheck(String mobile);
+	
+	// 업체회원 연락처 중복확인
+	String companyMobileDuplicateCheck(String mobile);
 	
 	// 로그인 처리하기 (일반회원, 관리자)
 	MemberVO getLoginMember(Map<String, String> paraMap);

@@ -30,10 +30,18 @@
 	</select>
 	
 	
-	<!-- 일반회원 휴대폰 중복확인 -->
+	<!-- 일반회원 연락처 중복확인 -->
 	<select id="userMobileDuplicateCheck" parameterType="String" resultType="String">
 		select mobile
 		from tbl_member
+		where mobile = #{mobile}
+	</select>
+	
+	
+	<!-- 업체회원 연락처 중복확인 -->
+	<select id="companyMobileDuplicateCheck" parameterType="String" resultType="String">
+		select mobile
+		from tbl_company
 		where mobile = #{mobile}
 	</select>
 	

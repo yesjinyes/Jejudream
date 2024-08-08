@@ -289,7 +289,7 @@ $(function () {
             checkMobile = false;
 
         } else {
-
+            
             $.ajax({
                 url: "userMobileDuplicateCheck.trip",
                 type: "post",

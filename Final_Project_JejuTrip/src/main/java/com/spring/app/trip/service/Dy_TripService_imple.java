@@ -35,7 +35,6 @@ import com.spring.app.trip.domain.BoardVO;
 import com.spring.app.trip.domain.CommentVO;
 import com.spring.app.trip.domain.CompanyVO;
 import com.spring.app.trip.domain.FoodstoreVO;
-import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.domain.PlayVO;
 import com.spring.app.trip.model.Dy_TripDAO;
@@ -112,7 +111,7 @@ public class Dy_TripService_imple implements Dy_TripService {
 	}
 	
 
-	// 일반회원 휴대폰 중복확인
+	// 일반회원 연락처 중복확인
 	@Override
 	public boolean userMobileDuplicateCheck(String mobile) {
 
@@ -133,7 +132,30 @@ public class Dy_TripService_imple implements Dy_TripService {
 		
 		return isExist;
 	}
+	
+	
+	// 업체회원 연락처 중복확인
+	@Override
+	public boolean companyMobileDuplicateCheck(String mobile) {
 
+		boolean isExist = false;
+		
+		try {
+			mobile = aES256.encrypt(mobile);
+			
+			String exist_mobile = dao.companyMobileDuplicateCheck(mobile);
+			
+			if(exist_mobile != null) {
+				isExist = true;
+			}
+			
+		} catch (UnsupportedEncodingException | GeneralSecurityException e) {
+			e.printStackTrace();
+		}
+		
+		return isExist;
+	}
+	
 
 	// 로그인 처리하기 (일반회원, 관리자)
 	@Override

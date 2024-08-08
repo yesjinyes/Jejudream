@@ -12,7 +12,6 @@ import com.spring.app.trip.domain.BoardVO;
 import com.spring.app.trip.domain.CommentVO;
 import com.spring.app.trip.domain.CompanyVO;
 import com.spring.app.trip.domain.FoodstoreVO;
-import com.spring.app.trip.domain.LodgingVO;
 import com.spring.app.trip.domain.MemberVO;
 import com.spring.app.trip.domain.PlayVO;
 
@@ -54,11 +53,21 @@ public class Dy_TripDAO_imple implements Dy_TripDAO {
 	}
 
 	
-	// 일반회원 휴대폰 중복확인
+	// 일반회원 연락처 중복확인
 	@Override
 	public String userMobileDuplicateCheck(String mobile) {
 
 		String exist_mobile = sqlsession.selectOne("dy_trip.userMobileDuplicateCheck", mobile);
+		
+		return exist_mobile;
+	}
+	
+
+	// 업체회원 연락처 중복확인
+	@Override
+	public String companyMobileDuplicateCheck(String mobile) {
+
+		String exist_mobile = sqlsession.selectOne("dy_trip.companyMobileDuplicateCheck", mobile);
 		
 		return exist_mobile;
 	}

@@ -89,7 +89,7 @@ public class Dy_TripController {
 	
 	// 일반회원 아이디 중복확인
 	@ResponseBody
-	@PostMapping("useridDuplicateCheck.trip")
+	@PostMapping("/useridDuplicateCheck.trip")
 	public String useridDuplicateCheck(HttpServletRequest request) {
 		
 		String userid = request.getParameter("userid");
@@ -119,14 +119,30 @@ public class Dy_TripController {
 	}
 	
 	
-	// 일반회원 휴대폰 중복확인
+	// 일반회원 연락처 중복확인
 	@ResponseBody
-	@PostMapping("userMobileDuplicateCheck.trip")
+	@PostMapping("/userMobileDuplicateCheck.trip")
 	public String userMobileDuplicateCheck(HttpServletRequest request) {
 		
 		String mobile = request.getParameter("mobile");
 		
 		boolean isExist = service.userMobileDuplicateCheck(mobile);
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("isExist", isExist);
+		
+		return jsonObj.toString();
+	}
+	
+	
+	// 업체회원 연락처 중복확인
+	@ResponseBody
+	@PostMapping("companyMobileDuplicateCheck.trip")
+	public String companyMobileDuplicateCheck(HttpServletRequest request) {
+
+		String mobile = request.getParameter("mobile");
+		
+		boolean isExist = service.companyMobileDuplicateCheck(mobile);
 		
 		JSONObject jsonObj = new JSONObject();
 		jsonObj.put("isExist", isExist);
