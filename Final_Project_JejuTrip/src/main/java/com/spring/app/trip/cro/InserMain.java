@@ -80,28 +80,27 @@ public class InserMain {
                 // 필요한 데이터 추출
                 
                 WebElement lvoname = driver.findElement(By.cssSelector("div.ad-info-area div.ad-title"));
-                System.out.println("Hotel Name: " + lvoname.getText());
                 
                 WebElement lvoimg = driver.findElement(By.cssSelector("div.moMain span img")); 
                 
                 String mainImageUrl = lvoimg.getAttribute("src");
+                // System.out.println("Hotel Name: " + lvoname.getText());
                 // System.out.println(lvoimg.getAttribute("src")); // 메인 img src 확인
               
                 String mainImageDir = System.getProperty("user.dir") + "/src/main/webapp/resources/images/lodginglist/" + lvoname.getText() +"_main.jpg";
+                String mainImgname = lvoname.getText() +"_main.jpg";
                 
                 downloadImage(mainImageUrl, mainImageDir);
                 
-                System.out.println("메인 이미지 다운로드 완료");
+                // System.out.println("메인 이미지 다운로드 완료");
                 
                 WebElement lvoaddress = driver.findElement(By.cssSelector("div.ad-info-area div.ad-address")); 
                 
-                System.out.println(lvoaddress.getText()); // 숙소 주소 출력확인
-                
+                // System.out.println(lvoaddress.getText()); // 숙소 주소 출력확인
                 
                 LodgingVO lvo = new LodgingVO();
                 
                 lvo.setLodging_name(lvoname.getText()); // VO 숙소명 세팅
-                String mainImgname = lvoname.getText() +"_main.jpg";
                 lvo.setMain_img(mainImgname); // 메인이미지 vo 세팅
                 lvo.setLodging_address(lvoaddress.getText()); // 주소 vo세팅
                 
@@ -111,7 +110,6 @@ public class InserMain {
                 for(WebElement p : lvoconvient ) {
                 	// 편의시설 출력확인
                 	// System.out.println(p.findElement(By.cssSelector("p")).getText());
-                	
                 	
                 }
                 

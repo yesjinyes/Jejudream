@@ -255,7 +255,7 @@
         </div>
 
         <div style="text-align: center; margin-bottom: 13%;">
-            <button type="button" class="btn" id="registerBtn" onclick="goRegister('<%=ctxPath%>')">가입하기</button>
+            <button type="button" class="btn" id="registerBtn" onclick="goRegister('<%=ctxPath%>')">숙소 등록하기</button>
         </div>
 
     </form>

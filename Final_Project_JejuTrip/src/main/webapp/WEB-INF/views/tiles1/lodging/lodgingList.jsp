@@ -954,42 +954,42 @@ list-style: none;
                                 <img src="<%= ctxPath %>/resources/images/areamap_city.png" />
                                 <div>
                                     <input name="local_status" id="area02" type="checkbox" class="are_map" value="제주시 시내">
-                                    <label for="area02" class="label_chk">제주시 시내</label>
+                                    <br><label for="area02" class="label_chk">제주시 시내</label>
                                 </div>
                             </div>
                             <div class="areamap mx-2" style="width: 15%;">
                                 <img src="<%= ctxPath %>/resources/images/areamap_jeju_east.png" />
                                 <div>
                                     <input name="local_status" id="area03" type="checkbox" class="are_map" value="제주시 동부">
-                                    <label for="area03" class="label_chk">제주시 동부</label>
+                                    <br><label for="area03" class="label_chk">제주시 동부</label>
                                 </div>
                             </div>
                             <div class="areamap mx-2" style="width: 15%;">
                                 <img src="<%= ctxPath %>/resources/images/areamap_jeju_west.png" />
                                 <div>
                                     <input name="local_status" id="area04" type="checkbox" class="are_map" value="제주시 서부">
-                                    <label for="area04" class="label_chk">제주시 서부</label>
+                                    <br><label for="area04" class="label_chk">제주시 서부</label>
                                 </div>
                             </div>
                             <div class="areamap mx-2" style="width: 15%;">
                                 <img src="<%= ctxPath %>/resources/images/areamap_bt_city.png" />
                                 <div>
                                     <input name="local_status" id="area05" type="checkbox" class="are_map" value="서귀포시 시내">
-                                    <label for="area05" class="label_chk">서귀포시 시내</label>
+                                    <br><label for="area05" class="label_chk">서귀포시 시내</label>
                                 </div>
                             </div>
                             <div class="areamap mx-2" style="width: 15%;">
                                 <img src="<%= ctxPath %>/resources/images/areamap_bt_east.png" />
                                 <div>
                                     <input name="local_status" id="area06" type="checkbox" class="are_map" value="서귀포시 동부">
-                                    <label for="area06" class="label_chk">서귀포시 동부</label>
+                                    <br><label for="area06" class="label_chk">서귀포시 동부</label>
                                 </div>
                             </div>
                             <div class="areamap mx-2" style="width: 15%;">
                                 <img src="<%= ctxPath %>/resources/images/areamap_bt_west.png" />
                                 <div>
                                     <input name="local_status" id="area07" type="checkbox" class="are_map" value="서귀포시 서부">
-                                    <label for="area07" class="label_chk">서귀포시 서부</label>
+                                    <br><label for="area07" class="label_chk">서귀포시 서부</label>
                                 </div>
                             </div>
                         </div>

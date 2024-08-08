@@ -1714,7 +1714,12 @@ WHERE A.max_person >= 2
         join tbl_lodging L
         on D.fk_lodging_code = L.lodging_code
         
-        update tbl_reservation set mailsendcheck = 0 where reservation_code = 58;
+        update tbl_reservation set mailsendcheck = 0 where reservation_code = 59;
         commit;
+        select *
+        from tbl_lodging
+        order by lodging_code desc
  
+ select *
+ from tbl_reservation
         
