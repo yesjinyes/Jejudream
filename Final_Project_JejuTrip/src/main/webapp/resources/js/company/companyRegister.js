@@ -183,7 +183,7 @@ $(function () {
 
         const mobile = $(e.target).val().trim();
 
-        const regExp_mobile = new RegExp(/^0[0-9]{2}[0-9]{3,4}[0-9]{4}$/);
+        const regExp_mobile = new RegExp(/^0\d{1,2}\d{3,4}\d{4}$/);
         const bool = regExp_mobile.test(mobile);
 		
         if(mobile == "") {
