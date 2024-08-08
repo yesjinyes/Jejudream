@@ -25,7 +25,10 @@ public interface Dy_TripService {
 	
 	// 일반회원 이메일 중복확인
 	boolean userEmailDuplicateCheck(String email);
-
+	
+	// 일반회원 휴대폰 중복확인
+	boolean userMobileDuplicateCheck(String mobile);
+	
 	// 로그인 처리하기 (일반회원, 관리자)
 	ModelAndView loginEnd(Map<String, String> paraMap, ModelAndView mav, HttpServletRequest request);
 

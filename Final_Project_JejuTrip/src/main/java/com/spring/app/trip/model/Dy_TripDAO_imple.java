@@ -54,6 +54,16 @@ public class Dy_TripDAO_imple implements Dy_TripDAO {
 	}
 
 	
+	// 일반회원 휴대폰 중복확인
+	@Override
+	public String userMobileDuplicateCheck(String mobile) {
+
+		String exist_mobile = sqlsession.selectOne("dy_trip.userMobileDuplicateCheck", mobile);
+		
+		return exist_mobile;
+	}
+	
+	
 	// 로그인 처리하기 (일반회원, 관리자)
 	@Override
 	public MemberVO getLoginMember(Map<String, String> paraMap) {
@@ -532,5 +542,4 @@ public class Dy_TripDAO_imple implements Dy_TripDAO {
 		return n;
 	}
 	
-
 }

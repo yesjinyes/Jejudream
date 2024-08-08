@@ -119,6 +119,22 @@ public class Dy_TripController {
 	}
 	
 	
+	// 일반회원 휴대폰 중복확인
+	@ResponseBody
+	@PostMapping("userMobileDuplicateCheck.trip")
+	public String userMobileDuplicateCheck(HttpServletRequest request) {
+		
+		String mobile = request.getParameter("mobile");
+		
+		boolean isExist = service.userMobileDuplicateCheck(mobile);
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("isExist", isExist);
+		
+		return jsonObj.toString();
+	}
+	
+	
 	// 로그인 페이지 요청
 	@GetMapping("login.trip")
 	public String login() {

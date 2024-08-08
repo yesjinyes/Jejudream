@@ -110,6 +110,29 @@ public class Dy_TripService_imple implements Dy_TripService {
 		
 		return isExist;
 	}
+	
+
+	// 일반회원 휴대폰 중복확인
+	@Override
+	public boolean userMobileDuplicateCheck(String mobile) {
+
+		boolean isExist = false;
+		
+		try {
+			mobile = aES256.encrypt(mobile);
+			
+			String exist_mobile = dao.userMobileDuplicateCheck(mobile);
+			
+			if(exist_mobile != null) {
+				isExist = true;
+			}
+			
+		} catch (UnsupportedEncodingException | GeneralSecurityException e) {
+			e.printStackTrace();
+		}
+		
+		return isExist;
+	}
 
 
 	// 로그인 처리하기 (일반회원, 관리자)

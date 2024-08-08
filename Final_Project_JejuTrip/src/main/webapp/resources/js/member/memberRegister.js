@@ -289,9 +289,30 @@ $(function () {
             checkMobile = false;
 
         } else {
-            $(e.target).removeClass("input_error");
-            $(e.target).next().hide();
-            checkMobile = true;
+
+            $.ajax({
+                url: "userMobileDuplicateCheck.trip",
+                type: "post",
+                data: {"mobile": $(e.target).val()},
+                dataType: "json",
+                success: function(json) {
+                    if(json.isExist) {
+                        $(e.target).addClass("input_error");
+                        $(e.target).next().show();
+                        $(e.target).next().text("중복된 연락처입니다.");
+                        checkMobile = false;
+
+                    } else {
+                        $(e.target).removeClass("input_error");
+                        $(e.target).next().hide();
+                        checkMobile = true;
+                    }
+                },
+                error: function(request, status, error) {
+                    alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+                }
+            });
+
         }
 
     });

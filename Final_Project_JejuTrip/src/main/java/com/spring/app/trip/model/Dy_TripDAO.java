@@ -21,6 +21,9 @@ public interface Dy_TripDAO {
 
 	// 일반회원 이메일 중복확인
 	String userEmailDuplicateCheck(String email);
+
+	// 일반회원 휴대폰 중복확인
+	String userMobileDuplicateCheck(String mobile);
 	
 	// 로그인 처리하기 (일반회원, 관리자)
 	MemberVO getLoginMember(Map<String, String> paraMap);
@@ -153,6 +156,5 @@ public interface Dy_TripDAO {
 
 	// 커뮤니티 원글에 대한 댓글 삭제
 	int deleteCommentByParentSeq(String parentSeq);
-
 	
 }

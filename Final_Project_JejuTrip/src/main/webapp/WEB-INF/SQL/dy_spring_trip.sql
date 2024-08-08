@@ -441,3 +441,8 @@ FROM
 WHERE V.rno between 1 and 10;
 
 
+select *
+from user_constraints
+where table_name = 'TBL_MEMBER';
+
+

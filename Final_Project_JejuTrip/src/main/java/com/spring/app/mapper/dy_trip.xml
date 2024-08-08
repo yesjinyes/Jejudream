@@ -30,6 +30,14 @@
 	</select>
 	
 	
+	<!-- 일반회원 휴대폰 중복확인 -->
+	<select id="userMobileDuplicateCheck" parameterType="String" resultType="String">
+		select mobile
+		from tbl_member
+		where mobile = #{mobile}
+	</select>
+	
+	
 	<!-- 로그인 처리하기 (일반회원, 관리자) -->
 	<select id="getLoginMember" parameterType="HashMap" resultType="MemberVO">
 		SELECT userid, user_name, pwdchangegap,
